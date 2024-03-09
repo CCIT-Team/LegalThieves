@@ -7,8 +7,8 @@ public class InvenController : MonoBehaviour {
     
 
     // Start is called before the first frame update
-    [SerializeField] private Transform itemList;
-    [SerializeField] private Transform itemObject;
+    [SerializeField] private RectTransform itemList;
+    [SerializeField] private RectTransform itemObject;
      private void Update() {
         if(Input.GetKeyDown(KeyCode.T)){
             CreateItem();
@@ -17,6 +17,6 @@ public class InvenController : MonoBehaviour {
      }
 
     void CreateItem(){
-        Instantiate(itemObject,itemList.position,Quaternion.identity,itemList);
+        Instantiate(itemObject,itemList.anchoredPosition ,Quaternion.identity,itemList);
     }
 }

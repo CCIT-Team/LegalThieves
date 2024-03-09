@@ -10,7 +10,7 @@ public class ItemMove : MonoBehaviour, IDragHandler, IEndDragHandler
     private InventoryGenerator inventoryGenerater;
     private RectTransform _transform;
     private Canvas _canvas;
-    
+    public RectTransform parent;
 
     void Start()
     {
@@ -18,7 +18,7 @@ public class ItemMove : MonoBehaviour, IDragHandler, IEndDragHandler
         inventoryGenerater = FindObjectOfType<InventoryGenerator>();
         _transform = GetComponent<RectTransform>();
         _canvas = GetComponentInParent<Canvas>();
-        
+        parent = GetComponentInParent<RectTransform>();
     }
     
     public void OnDrag(PointerEventData eventData)
@@ -30,14 +30,14 @@ public class ItemMove : MonoBehaviour, IDragHandler, IEndDragHandler
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        
-        int x, y;
- 
 
-x =Mathf.RoundToInt(_transform.position.x)/100;
-
-y = Mathf.RoundToInt(_transform.position.y)/100;
-_transform.position =   new Vector3(x * inventoryGenerater.cellSize+60, y * inventoryGenerater.cellSize+40,0);
+    
+    int x =Mathf.RoundToInt(_transform.position.x/10); 
+    int y = Mathf.RoundToInt(_transform.position.y/10); 
+    x = Mathf.Clamp(x, 0, inventoryGenerater.x -1);
+    y = Mathf.Clamp(y, 0, inventoryGenerater.y-1);
+        Debug.Log(x + " " + y);
+    _transform.anchoredPosition = new Vector2(x * inventoryGenerater.cellSize, y * inventoryGenerater.cellSize);
 
     }
 }

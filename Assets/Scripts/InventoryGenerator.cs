@@ -6,22 +6,24 @@ using UnityEngine;
 public class InventoryGenerator : MonoBehaviour
 {
     [SerializeField] private GameObject menutilePrefab;
-    [SerializeField] private Transform menutileParent;
+    [SerializeField] private RectTransform menutileParent;
     public int cellSize;
-    [SerializeField] private int x;
-    [SerializeField] private int y;
-    
-    public GameObject[] InventoryPanel = new GameObject[45];
-    
+    public int x;
+    public int y;
+
+    public GameObject[,] InventoryPanel;
+
     // Start is called before the first frame update
     void Start()
+
     {
-        int index = 0;
+        InventoryPanel = new GameObject[x,y];
+   
         for (int i = 0; i < x; i++)
         {
             for (int j = 0; j < y; j++)
             {
-            InventoryPanel[index++] = Instantiate(menutilePrefab,menutileParent.position + new Vector3(i,j) * cellSize  , Quaternion.identity, menutileParent);
+                InventoryPanel[i,j] = Instantiate(menutilePrefab,menutileParent.anchoredPosition + new Vector2(i,j) * cellSize  , Quaternion.identity, menutileParent);
             
             }
         }
