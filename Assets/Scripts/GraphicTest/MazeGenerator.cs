@@ -7,7 +7,6 @@ public class MazeGenerator : MonoBehaviour
     [SerializeField] MazeNode nodePrefab;
     [SerializeField] Vector2Int mazeSize;
     [SerializeField] float nodeSize;
-    [SerializeField] LightingSettings lightingSettings;
 
     private void Start()
     {
@@ -121,7 +120,5 @@ public class MazeGenerator : MonoBehaviour
                 currentPath.RemoveAt(currentPath.Count - 1);
             }
         }
-
-        //lightingSettings.autoGenerate = true;
     }
 }
