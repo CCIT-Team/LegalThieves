@@ -2,40 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Room : MonoBehaviour
+public class Room
 {
+    public BoundsInt bounds;
+    public List<Vector3> doors = new List<Vector3>();
 
-    [SerializeField]
-    ROOMTYPE roomType;
-
-    [SerializeField]
-    List<Transform> doorTransforms;
-
-    private bool isvisited = false;
-
-    public GameObject debugObject;
-    void Start()
+    public Room(Vector3Int location, Vector3Int size)
     {
-        
+        bounds = new BoundsInt(location, size);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void setDoors()
     {
-        
-    }
-
-    public void CheckRoom()
-    {
-        if(!isvisited)
-        {
-            isvisited = true;
-            for (int i = 0; i < doorTransforms.Count; i++)
-            {
-
-            }
-        }
+        doors.Add(new Vector3(bounds.xMin, 0, bounds.center.z));
+        doors.Add(new Vector3(bounds.xMax, 0, bounds.center.z));
+        doors.Add(new Vector3(bounds.center.x, 0, bounds.zMin));
+        doors.Add(new Vector3(bounds.center.x, 0, bounds.zMax));
     }
 }
-
-public enum ROOMTYPE { None = -1,Room, Path}

@@ -278,7 +278,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1050195833
 Transform:
   m_ObjectHideFlags: 0
@@ -288,7 +288,7 @@ Transform:
   m_GameObject: {fileID: 1050195832}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.04, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -306,11 +306,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0f0395b0dbc1d048bbbf4bb9d64b7f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rooms:
+  door: {fileID: 4136682325805919059, guid: a1197d70528a56e4ea403b5ac597a493, type: 3}
+  maxDungeonSize: {x: 50, y: 40, z: 50}
+  maxRoomSize: {x: 20, y: 10, z: 20}
+  roomPrefabs:
+  - {fileID: 4136682325805919059, guid: 7d00fce4aeed9404db048861f54482f8, type: 3}
+--- !u!1 &1837521049
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1837521051}
+  - component: {fileID: 1837521050}
+  m_Layer: 0
+  m_Name: DungeonGen2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1837521050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837521049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d435dc8d0a5dd854282d4588a5115dfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LobbyPrefabs: {fileID: 4136682325805919059, guid: 7d00fce4aeed9404db048861f54482f8,
+    type: 3}
+  RoomPrefabs:
   - {fileID: 5084960942396713116, guid: 01b6221d3172787449095261a923f2ff, type: 3}
   - {fileID: 2013936699580826144, guid: 4aa75988ba6ce0442b37f3ffe2a70be9, type: 3}
   - {fileID: 5731405667662825977, guid: 1dcf44e380950a14f9b41ab5f2453a5f, type: 3}
   - {fileID: 5084960942396713116, guid: df77dc6178416e04ba2aa44298cce42f, type: 3}
+  - {fileID: 5084960942396713116, guid: a507859e97c5f26439d091120a3274d6, type: 3}
+  dungeonSize: {x: 50, y: 0, z: 50}
+  multyFloor: 0
+  roomCountMax: 10
+  roomCountMin: 6
+  roomsizes:
+  - {x: 15, y: 10, z: 20}
+  - {x: 20, y: 10, z: 15}
+  - {x: 5, y: 10, z: 5}
+  - {x: 10, y: 10, z: 15}
+  - {x: 15, y: 10, z: 10}
+  - {x: 15, y: 10, z: 15}
+  - {x: 15, y: 10, z: 15}
+  - {x: 15, y: 10, z: 15}
+  - {x: 15, y: 10, z: 2}
+  - {x: 2, y: 10, z: 15}
+  - {x: 20, y: 10, z: 20}
+  - {x: 8, y: 10, z: 6}
+  - {x: 6, y: 10, z: 8}
+--- !u!4 &1837521051
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837521049}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1934074053
 GameObject:
   m_ObjectHideFlags: 0
@@ -436,3 +506,4 @@ SceneRoots:
   - {fileID: 730620560}
   - {fileID: 1934074055}
   - {fileID: 1050195833}
+  - {fileID: 1837521051}
