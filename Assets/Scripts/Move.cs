@@ -9,7 +9,7 @@ public class Move : MonoBehaviour
     public float speed = 5f;
 
     Rigidbody rigid;
-    void Start()
+    private void OnEnable()
     {
         
     }

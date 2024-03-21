@@ -11,12 +11,12 @@ public class FirstPersonCam : MonoBehaviour
 
     
 
-    bool lockedCursor = true; // 마우스 커서 고정
+    //bool lockedCursor = true; 
 
     void Start()
     {
-        Cursor.visible = false; // 커서 숨김
-        Cursor.lockState = CursorLockMode.Locked; // 커서 잠금
+        Cursor.visible = false; 
+        Cursor.lockState = CursorLockMode.Locked; 
     }
 
     void Awake()
