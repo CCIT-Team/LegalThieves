@@ -26,6 +26,10 @@ public class DispenserTrap : MonoBehaviour
     private Vector3 currentDispenserPosition;
     private Vector3 targetDispenserPosition;
 
+    private float delta;
+
+
+
 
     private void OnEnable()
     {
@@ -37,6 +41,8 @@ public class DispenserTrap : MonoBehaviour
 
         targetDispenserPosition = dispenser.position;
         targetDispenserPosition.y += 2.2f;
+
+         
     }
 
     private void OnTriggerEnter(Collider other)
@@ -63,6 +69,7 @@ public class DispenserTrap : MonoBehaviour
 
     private void Update()
     {
+        delta = Time.deltaTime;
         switch (trapState)
         {
             case 1:
@@ -74,9 +81,8 @@ public class DispenserTrap : MonoBehaviour
                 trapState = 3;
                 break;
         }
-
-
     }
+    
 
     private void ActivateTrap()
     {
@@ -93,7 +99,8 @@ public class DispenserTrap : MonoBehaviour
     {
         // Dispenser 위치에서 targetObj를 바라보게 Arrow 오브젝트를 생성
         GameObject arrow = Instantiate(arrowPrefab, dispenser.position + Vector3.up * 0.5f, Quaternion.LookRotation(targetObj.transform.position, Vector3.forward));
-        arrow.GetComponent<ArrowManager>().ShootToTarget(targetObj.transform.position);
+        ArrowManager ar = arrow.GetComponent<ArrowManager>();
+        ar.StartCoroutine(ar.ShootArrow(targetObj.transform.position, 5f, delta));
     }
 
     
