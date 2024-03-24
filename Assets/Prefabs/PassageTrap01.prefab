@@ -71,8 +71,9 @@ MonoBehaviour:
   arrowPrefab: {fileID: 3499695614849842371, guid: e8cc5486a17729b4491b425b54379f66,
     type: 3}
   targetObj: {fileID: 0}
-  shootingTime: 3
-  fireInterval: 0.1
+  fireCount: 500
+  fireInterval: 0.5
+  targetPlatePosY: -0.11
 --- !u!1 &7311200995234879700
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,7 +136,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 3a9eff7019544964b806748d3de816a3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -242,7 +243,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 3a9eff7019544964b806748d3de816a3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
