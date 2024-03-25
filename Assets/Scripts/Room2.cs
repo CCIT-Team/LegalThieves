@@ -6,6 +6,8 @@ public class Room2 : MonoBehaviour
 {
     [Header("Parameter")]
     [Range(1, 4)]
+    public int minDoorCount = 1;
+    [Range(1, 4)]
     public int maxDoorCount = 1;
     public ROOMTYPE roomType = ROOMTYPE.Chamber;
     [SerializeField]
