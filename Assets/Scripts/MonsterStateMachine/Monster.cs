@@ -14,8 +14,9 @@ public class Monster : MonsterBase
     public IDLE MobIdle;
     public Chase MobChase;
     public Attack MobAttack;
-
-    private Vector3 spawnPoint;
+    public Patrol MobPatrol;
+    
+    private Vector3 HomePoint;
     
     // Update is called once per frame
     private void Start()
@@ -24,10 +25,11 @@ public class Monster : MonsterBase
         MobIdle = GetComponent<IDLE>();
         MobChase = GetComponent<Chase>();
         MobAttack = GetComponent<Attack>();
+        MobPatrol = GetComponent<Patrol>();
         
         monsterMoveSM.Initialize(MobIdle);
         
-        spawnPoint = transform.position;
+        HomePoint = transform.position;
 
         attackDelay = 1;
         timer = 0;
@@ -50,14 +52,14 @@ public class Monster : MonsterBase
     //위치 돌아감
     public void BackToSpawn()
     {
-        agent.SetDestination(spawnPoint);
+        agent.SetDestination(HomePoint);
     }
     //플레이어를 향해 이동
     public void MobBaseMove() 
     { 
         // 플레이어에게 다가감
         agent.SetDestination(player.position);
-        if (Vector3.Distance(transform.position, player.position) > 7f)
+        if (Vector3.Distance(transform.position, player.position) > 7f )
         {
             monsterMoveSM.ChangeState(MobIdle);
         }

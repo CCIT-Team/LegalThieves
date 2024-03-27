@@ -14,9 +14,11 @@ namespace MonsterStateMachine
 
         void OnTriggerEnter(Collider orther)
         {
-            Monster.monsterMoveSM.ChangeState(Monster.MobAttack);
+            if (orther.CompareTag("Player"))
+            {
+                Monster.monsterMoveSM.ChangeState(Monster.MobAttack);
+            }
         }
-
         private void OnTriggerExit(Collider other)
         {
             Monster.monsterMoveSM.ChangeState(Monster.MobChase);
