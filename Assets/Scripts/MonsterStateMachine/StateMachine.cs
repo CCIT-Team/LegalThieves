@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace MonsterStateMachine
-{
+
     public class StateMachine : MonoBehaviour
     {
         public State currentState;
@@ -22,4 +21,4 @@ namespace MonsterStateMachine
             newState.Enter();
         }
     }
-}
+

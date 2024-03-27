@@ -1,10 +1,9 @@
 using UnityEngine;
 
-namespace MonsterStateMachine
-{
+
     public class State : MonoBehaviour
     {
-        protected Monster Monster;
+        public Monster Monster;
     
         // Update is called once per frame
         void Awake(){
@@ -36,4 +35,4 @@ namespace MonsterStateMachine
 
         }
     }
-}
+

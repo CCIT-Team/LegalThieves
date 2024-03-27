@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 
-namespace MonsterStateMachine
-{
+
+
     public class MobAttackArea : MonoBehaviour
     {
         private Monster Monster;
@@ -12,15 +12,17 @@ namespace MonsterStateMachine
             Monster = GetComponentInParent<Monster>();
         }
 
-        void OnTriggerEnter(Collider orther)
+        void OnTriggerEnter(Collider other)
         {
-            Monster.monsterMoveSM.ChangeState(Monster.MobAttack);
+            if (other.CompareTag("Player"))
+            {
+                Monster.monsterMoveSM.ChangeState(Monster.MobAttack);
+            }
         }
-
         private void OnTriggerExit(Collider other)
         {
             Monster.monsterMoveSM.ChangeState(Monster.MobChase);
             
         }
     }
-}
+
