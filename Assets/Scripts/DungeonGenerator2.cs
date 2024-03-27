@@ -34,14 +34,6 @@ public class DungeonGenerator2 : MonoBehaviour
         CreateDungen();
     }
 
-    void SetRoomSize()
-    {
-        foreach(Room2 room2 in ChamberPrefabs)
-        {
-            roomsizes.Add(room2.bounds.max - room2.bounds.min);
-        }
-    }
-
     void CheckFloor()
     {
         if (!multyFloor)
@@ -84,20 +76,25 @@ public class DungeonGenerator2 : MonoBehaviour
         }
     }
 
+
+
     void CreateLobby()
     {
         currentRoom = Instantiate(LobbyPrefabs[Random.Range(0, LobbyPrefabs.Count)]);
+        currentRoom.SetDoor();
     }
 
     void CreateChamber()
     {
         currentRoom = Instantiate(ChamberPrefabs[Random.Range(0, ChamberPrefabs.Count)]);
+        currentRoom.SetDoor();
         roomObjects.Add(currentRoom);
     }
 
     void CreateCorridor()
     {
         currentRoom = Instantiate(CorridorPrefabs[Random.Range(0, CorridorPrefabs.Count)]);
+        currentRoom.SetDoor();
     }
 }
 

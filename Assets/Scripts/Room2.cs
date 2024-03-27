@@ -9,6 +9,7 @@ public class Room2 : MonoBehaviour
     public int minDoorCount = 1;
     [Range(1, 4)]
     public int maxDoorCount = 1;
+    int doorCount = 0;
     public ROOMTYPE roomType = ROOMTYPE.Chamber;
     [SerializeField]
     List<GameObject> walls = new List<GameObject>();
@@ -24,13 +25,27 @@ public class Room2 : MonoBehaviour
         bounds = new BoundsInt(location, size);
     }
 
-    public void ActiveDoor(int i)
+    public void SetDoor()
     {
-        if(i >= doors.Count)
+        if (minDoorCount == maxDoorCount)
+            doorCount = minDoorCount;
+        else
+            doorCount = Random.Range(minDoorCount, maxDoorCount);
+        while (doorCount > 0 )
         {
-            return;
+            if(ActiveDoor(Random.Range(0, doors.Count)))
+                doorCount--;
+        }
+    }
+
+    public bool ActiveDoor(int i)
+    {
+        if(i >= doors.Count || doors[i].activeSelf)
+        {
+            return false;
         }
         walls[i].SetActive(false);
-        doors[i].SetActive(true); 
+        doors[i].SetActive(true);
+        return true;
     }
 }
