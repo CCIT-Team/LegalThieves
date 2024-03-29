@@ -18,14 +18,10 @@ public class Artifact : MonoBehaviour
     Vector3 moveVec;
     Vector3 dodgeVec;
 
-    Rigidbody rigid;
-    Animator anim;
 
     GameObject nearObject;
     void Awake()
     {
-        rigid = GetComponent<Rigidbody>();
-        anim = GetComponentInChildren<Animator>();
 
         GenerateArtifactLocations(); // 수정: Artifact 위치 생성
         MoveArtifactsToRandomLocations(); // Awake()에서 Artifact를 무작위 위치로 이동하는 것으로 변경
