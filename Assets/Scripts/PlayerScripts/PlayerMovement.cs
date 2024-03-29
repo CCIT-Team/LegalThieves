@@ -6,8 +6,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    InputHandler inputHandler;
-    Rigidbody rigi;
+    InputHandler _inputHandler;
+    Rigidbody _rigi;
 
     public Camera cameraObject;
     public float movementSpeed = 5f;
@@ -22,20 +22,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        rigi = GetComponent<Rigidbody>();
-        inputHandler = GetComponent<InputHandler>();
+        _rigi = GetComponent<Rigidbody>();
+        _inputHandler = GetComponent<InputHandler>();
     }
 
     public void Update()
     {
-        float delta = Time.deltaTime;
+        var delta = Time.deltaTime;
 
-        inputHandler.TickInput(delta);
+        _inputHandler.TickInput(delta);
 
         CameraRotation(delta);
 
-        moveDirection = cameraObject.transform.forward * inputHandler.vertical;
-        moveDirection += cameraObject.transform.right * inputHandler.horizontal;
+        moveDirection = cameraObject.transform.forward * _inputHandler.vertical;
+        moveDirection += cameraObject.transform.right * _inputHandler.horizontal;
         moveDirection.y = 0;
         moveDirection.Normalize();
 
@@ -43,14 +43,14 @@ public class PlayerMovement : MonoBehaviour
         moveDirection *= speed;
 
         Vector3 porjectedVelocity = Vector3.ProjectOnPlane(moveDirection, normalVector);
-        rigi.velocity = porjectedVelocity;
+        _rigi.velocity = porjectedVelocity;
         transform.rotation = Quaternion.Euler(0, mouseX, 0);
     }
 
     private void CameraRotation(float delta)
     {
-        mouseX += inputHandler.mouseX * mouseSpeed * delta;
-        mouseY -= inputHandler.mouseY * mouseSpeed * delta;
+        mouseX += _inputHandler.mouseX * mouseSpeed * delta;
+        mouseY -= _inputHandler.mouseY * mouseSpeed * delta;
 
         mouseY = Mathf.Clamp(mouseY, -90, 90);
 
