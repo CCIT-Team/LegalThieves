@@ -31,6 +31,7 @@ public class DungeonGenerator2 : MonoBehaviour
     void Start()
     {
         CheckFloor();
+        CreateLobby();
         CreateDungen();
     }
 
@@ -43,12 +44,11 @@ public class DungeonGenerator2 : MonoBehaviour
     void CreateDungen()
     {
         int corridorCount = 0;
-        CreateLobby();
         while (roomObjects.Count < roomCountMax)
         {
             if(currentRoom == null)
             {
-                CreateLobby();
+                currentRoom = currentLobby;
             }
             else
             {
@@ -77,11 +77,12 @@ public class DungeonGenerator2 : MonoBehaviour
     }
 
 
-
+    Room2 currentLobby;
+    int lobbyDoors;
     void CreateLobby()
     {
-        currentRoom = Instantiate(LobbyPrefabs[Random.Range(0, LobbyPrefabs.Count)]);
-        currentRoom.SetDoor();
+        currentLobby = Instantiate(LobbyPrefabs[Random.Range(0, LobbyPrefabs.Count)]);
+        lobbyDoors = currentLobby.SetDoor();
     }
 
     void CreateChamber()

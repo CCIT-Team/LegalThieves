@@ -25,7 +25,7 @@ public class Room2 : MonoBehaviour
         bounds = new BoundsInt(location, size);
     }
 
-    public void SetDoor()
+    public int SetDoor()
     {
         if (minDoorCount == maxDoorCount)
             doorCount = minDoorCount;
@@ -36,6 +36,7 @@ public class Room2 : MonoBehaviour
             if(ActiveDoor(Random.Range(0, doors.Count)))
                 doorCount--;
         }
+        return doorTransform.Count;
     }
 
     public bool ActiveDoor(int i)
@@ -46,6 +47,7 @@ public class Room2 : MonoBehaviour
         }
         walls[i].SetActive(false);
         doors[i].SetActive(true);
+        doorTransform.Add(doors[i].transform);
         return true;
     }
 }
