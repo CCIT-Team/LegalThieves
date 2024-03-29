@@ -52,7 +52,10 @@ public class DungeonGenerator2 : MonoBehaviour
             }
             else
             {
-                switch (currentRoom.roomType)
+                Room2 room;
+                room = Instantiate(ChamberPrefabs[Random.Range(0, ChamberPrefabs.Count)]);
+                
+                /*switch (currentRoom.roomType)
                 {
                     case ROOMTYPE.None:
                         break;
@@ -71,7 +74,7 @@ public class DungeonGenerator2 : MonoBehaviour
                     default:
                         CreateCorridor();
                         break;
-                }
+                }*/
             }
         }
     }
