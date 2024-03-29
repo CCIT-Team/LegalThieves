@@ -11,11 +11,4 @@ public class Item : MonoBehaviour
     public float price;  // 유물의 가격
     public int year;   // 유물이 발견된 년도
     public float weight;  // 유물의 무게
-
-
-
-    void Update()
-    {
-
-    }
 }
