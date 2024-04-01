@@ -39,7 +39,15 @@ using UnityEngine;
             {
                 BackToHome();
                 homePoint = Vector3.zero;
-                Monster.monsterMoveSM.ChangeState(Monster.MobPatrol);
+                switch(Monster.StayMob)
+                {
+                    case true: 
+                        Monster.monsterMoveSM.Initialize(Monster.MobIdle);
+                        break;
+                    default:
+                        Monster.monsterMoveSM.Initialize(Monster.MobPatrol);
+                        break;
+                }
             }
             else
             {

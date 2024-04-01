@@ -32,8 +32,7 @@ public class Monster : MonsterBase
                 monsterMoveSM.Initialize(MobPatrol);
                 break;
         }
-       
-        
+
         Init();
     }
 

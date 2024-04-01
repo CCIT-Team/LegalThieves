@@ -33,7 +33,7 @@ public class MobPatrol : State
             if (Monster.agent.velocity != Vector3.zero) return;
             
             timer += Time.deltaTime;
-            Debug.Log(timer);
+       
             if (timer > PatrolDelay)
             {
                 timer = 0;
