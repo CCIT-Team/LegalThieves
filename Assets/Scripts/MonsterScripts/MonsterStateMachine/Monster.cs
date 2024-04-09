@@ -6,22 +6,30 @@ using UnityEngine;
 public class Monster : MonsterBase
 {
 
-    public StateMachine monsterMoveSM;
+    private StateMachine _monsterMoveSM;
+    public StateMachine monsterMoveSM { get { return _monsterMoveSM;} }
     
-    public MobIDLE MobIdle;
-    public MobChase MobChase;
-    public MobAttack MobAttack;
-    public MobPatrol MobPatrol;
+    private MobIDLE _MobIdle;
+    private MobChase _MobChase;
+    private MobAttack _MobAttack;
+    private MobPatrol _MobPatrol;
+    
+    public MobIDLE MobIdle { get { return _MobIdle;} }
+    public MobChase MobChase { get { return _MobChase;} }
+    public MobAttack MobAttack { get { return _MobAttack;} }
+    public MobPatrol MobPatrol { get { return _MobPatrol;} }
 
-    public bool StayMob;
+    [SerializeField]
+    private bool _StayMob;
+    public bool StayMob { get { return _StayMob;} }
     // Update is called once per frame
     private void Start()
     {
-        monsterMoveSM = GetComponent<StateMachine>();
-        MobIdle = GetComponent<MobIDLE>(); // 순찰 없는 몬스터만 사용
-        MobChase = GetComponent<MobChase>();
-        MobAttack = GetComponent<MobAttack>();
-        MobPatrol = GetComponent<MobPatrol>();
+        _monsterMoveSM = GetComponent<StateMachine>();
+        _MobIdle = GetComponent<MobIDLE>(); // 순찰 없는 몬스터만 사용
+        _MobChase = GetComponent<MobChase>();
+        _MobAttack = GetComponent<MobAttack>();
+        _MobPatrol = GetComponent<MobPatrol>();
 
         switch(StayMob)
         {

@@ -36,8 +36,8 @@ public class MobAttack : State
            timer = 0;
        }
    }
-    
-   public void AttackStop()
+
+   private void AttackStop()
    {
        Monster.agent.SetDestination(transform.position);
    }

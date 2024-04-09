@@ -79,12 +79,11 @@ GameObject:
   - component: {fileID: 6153693421274542664}
   - component: {fileID: 8871634414426440083}
   - component: {fileID: 2195799402912629273}
-  - component: {fileID: 6344100608279940911}
   - component: {fileID: 5885573954001227253}
+  - component: {fileID: 6344100608279940911}
+  - component: {fileID: 8173085242085817322}
   - component: {fileID: 8440610491720290297}
   - component: {fileID: 2444532369881182096}
-  - component: {fileID: 8173085242085817322}
-  - component: {fileID: 5287892502333174309}
   - component: {fileID: 8102018015282335738}
   - component: {fileID: 4571292941698070372}
   m_Layer: 2
@@ -205,27 +204,6 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &6344100608279940911
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2720525648828804926}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f96b35c0576cb804c91d42c74f0b0073, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  monsterType: 1
-  agent: {fileID: 0}
-  monsterMoveSM: {fileID: 0}
-  MobIdle: {fileID: 0}
-  MobChase: {fileID: 0}
-  MobAttack: {fileID: 0}
-  MobPatrol: {fileID: 0}
-  StayMob: 0
 --- !u!135 &5885573954001227253
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -247,6 +225,40 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 3.4
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6344100608279940911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2720525648828804926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f96b35c0576cb804c91d42c74f0b0073, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  monsterType: 1
+  agent: {fileID: 0}
+  monsterMoveSM: {fileID: 0}
+  MobIdle: {fileID: 0}
+  MobChase: {fileID: 0}
+  MobAttack: {fileID: 0}
+  MobPatrol: {fileID: 0}
+  StayMob: 0
+--- !u!114 &8173085242085817322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2720525648828804926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ad63f78090395548934e591a18ce9b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentState: {fileID: 0}
 --- !u!114 &8440610491720290297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,32 +282,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4c5eda4a4f742754f85ca7c78c2bcbdb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Monster: {fileID: 0}
---- !u!114 &8173085242085817322
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2720525648828804926}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ad63f78090395548934e591a18ce9b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentState: {fileID: 0}
---- !u!114 &5287892502333174309
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2720525648828804926}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41e589192837283478a75ca9fb0039b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Monster: {fileID: 0}

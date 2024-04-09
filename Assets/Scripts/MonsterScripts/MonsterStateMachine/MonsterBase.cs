@@ -6,13 +6,15 @@ using UnityEngine.AI;
 public class MonsterBase : MonoBehaviour
 {
     protected Camera _camera; // 메인 카메라
-    public Transform player;
+    private Transform _player;
+    public Transform player {  get { return _player; } }
+
     enum MosterType { zombie, mira, ghost            , Boss0 } //몬스터,  보스 타입 지정
     [SerializeField] MosterType monsterType;
     
  
-    public NavMeshAgent agent;
-
+    private NavMeshAgent _agent;
+    public NavMeshAgent agent { get{ return _agent; } }
 
     Dictionary<string, float> SpeedDictionary = new()
     {
@@ -28,13 +30,13 @@ public class MonsterBase : MonoBehaviour
 
     private void Awake()
     {
-        agent = gameObject.GetComponent<NavMeshAgent>();
-        player = GameObject.FindWithTag("Player").transform;
+        _agent = gameObject.GetComponent<NavMeshAgent>();
+        _player = GameObject.FindWithTag("Player").transform;
 
     }
     // Start is called before the first frame update
-    
-    public void Init() //enum 값에 따라 초기화하는 함수
+
+    protected void Init() //enum 값에 따라 초기화하는 함수
     {
         switch (monsterType)
         {

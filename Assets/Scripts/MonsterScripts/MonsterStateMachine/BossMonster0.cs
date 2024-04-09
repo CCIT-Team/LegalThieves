@@ -10,27 +10,27 @@ public class BossMonster0 : MonsterBase
     {
 
        Init();
+       StartCoroutine(Monster0Move());
     }
 
     // Update is called once per frame
-    private void OnTriggerEnter(Collider other)
-    {
-        StartCoroutine(Monster0Move());
-       
-    }
+  
+        
+   
 
-    IEnumerator Monster0Move() // ÃÄ´Ùº¸¸é ¸ØÃß´Â ÃÊ°í¼Ó ±«¹°
+    IEnumerator Monster0Move() // ì³ë‹¤ë³´ë©´ ë©ˆì¶”ëŠ” ì´ˆê³ ì† ê´´ë¬¼
     {
         while (true)
         {
-            // ÀûÀÌ ÇÃ·¹ÀÌ¾îÀÇ È­¸é¿¡ µé¾î¿Ô´ÂÁö È®ÀÎ
+            Debug.Log("1");
+            // ì ì´ í”Œë ˆì´ì–´ì˜ í™”ë©´ì— ë“¤ì–´ì™”ëŠ”ì§€ í™•ì¸
             Vector3 screenPoint = _camera.WorldToViewportPoint(transform.position);
             
             if (screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1 && screenPoint.z > 0)
             {
-                //È­¸é¿¡ µé¾î¿À¸é ÁøÇà
+                //í™”ë©´ì— ë“¤ì–´ì˜¤ë©´ ì§„í–‰
                 Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0), player.position - transform.position, out RaycastHit hit, Mathf.Infinity);
-                //  ¸÷°ú ÇÃ·¹ÀÌ¾î »çÀÌ¿¡ º®ÀÌ ¾øÀ» °æ¿ì¿¡ ÁøÇà
+                //  ëª¹ê³¼ í”Œë ˆì´ì–´ ì‚¬ì´ì— ë²½ì´ ì—†ì„ ê²½ìš°ì— ì§„í–‰
 
                 if (hit.collider.gameObject.CompareTag("Player"))
                 {
@@ -39,13 +39,13 @@ public class BossMonster0 : MonsterBase
                 }
                 else
                 {
-                    //´Ù½Ã ¾Èº¸ÀÏ °æ¿ì ÂÑ¾Æ¿È
+                    //ë‹¤ì‹œ ì•ˆë³´ì¼ ê²½ìš° ì«“ì•„ì˜´
                     agent.SetDestination(player.position);
                 }
             }
             else
             {
-                // È­¸é¿¡ µé¾î¿ÀÁö ¾ÊÀ¸¸é ÇÃ·¹ÀÌ¾î ÂÊÀ¸·Î ÀÌµ¿
+                // í™”ë©´ì— ë“¤ì–´ì˜¤ì§€ ì•Šìœ¼ë©´ í”Œë ˆì´ì–´ ìª½ìœ¼ë¡œ ì´ë™
                 agent.SetDestination(player.position);
             }
             yield return new WaitForSeconds(.3f);

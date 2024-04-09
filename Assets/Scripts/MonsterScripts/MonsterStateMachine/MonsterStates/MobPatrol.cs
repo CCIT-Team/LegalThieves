@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 public class MobPatrol : State
     { private float timer;
         private int PatrolDelay=2;
-
+    
     
         public Transform[] patrolPoints;
 
@@ -28,7 +28,7 @@ public class MobPatrol : State
             Debug.Log("도착");
             PatrollDelay();
         }
-        public void PatrollDelay()
+        private void PatrollDelay()
         {
             if (Monster.agent.velocity != Vector3.zero) return;
             
@@ -36,12 +36,14 @@ public class MobPatrol : State
        
             if (timer > PatrolDelay)
             {
+          
                 timer = 0;
                 NearPointSet(patrolPoints,0,patrolPoints.Length-1);
                 Monster.agent.SetDestination(patrolPoints[Random.Range(2,3)].position);
             }
         }
-        public void NearPointSet(Transform[] arr, int low, int high)
+
+        private void NearPointSet(Transform[] arr, int low, int high)
         {
             if (low < high)
             {

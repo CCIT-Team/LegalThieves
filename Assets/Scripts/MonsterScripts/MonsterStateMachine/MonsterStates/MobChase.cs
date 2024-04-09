@@ -2,7 +2,7 @@ using UnityEngine;
 
     public class MobChase : State
     {
-        public MobChase():base() {}
+        
         private Vector3 homePoint;
         private bool isBack;
         public override void Enter()
@@ -27,15 +27,16 @@ using UnityEngine;
         
         }
         //위치 돌아감
-        public void BackToHome()
+        private void BackToHome()
         {
             Monster.agent.SetDestination(homePoint);
         }
         
         //플레이어를 향해 이동
-        public void Chase() 
+        private void Chase() 
         { 
-            if (Vector3.Distance(transform.position, Monster.player.position) > 7f )
+           
+            if (Monster.agent.remainingDistance > 7f )
             {
                 BackToHome();
                 homePoint = Vector3.zero;
@@ -55,7 +56,5 @@ using UnityEngine;
             }
 
         }
-        
-    
     }
 
