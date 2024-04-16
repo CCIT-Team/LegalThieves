@@ -6,8 +6,7 @@ using UnityEngine.AI;
 public class MonsterBase : MonoBehaviour
 {
     protected Camera _camera; // 메인 카메라
-    private Transform _player;
-    public Transform player {  get { return _player; } }
+    protected Transform Near;
 
     enum MosterType { zombie, mira, ghost            , Boss0 } //몬스터,  보스 타입 지정
     [SerializeField] MosterType monsterType;
@@ -31,7 +30,6 @@ public class MonsterBase : MonoBehaviour
     private void Awake()
     {
         _agent = gameObject.GetComponent<NavMeshAgent>();
-        _player = GameObject.FindWithTag("Player").transform;
 
     }
     // Start is called before the first frame update
@@ -60,5 +58,19 @@ public class MonsterBase : MonoBehaviour
                 break;
         }
     }
+    public Transform CheckNearPlayer()
+    {
+        GameObject[] players = PlayerManager.Instance.PlayerArray;
+        GameObject near = players[0];
 
+        for (int i = 1; i < 4; i++)
+        {
+            if (Vector3.Distance(transform.position, near.transform.position) >
+                Vector3.Distance(transform.position, players[i].transform.position))
+            {
+                near = players[i];
+            }
+        }
+        return near.transform;
+    }
 }

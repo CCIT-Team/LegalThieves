@@ -12,8 +12,9 @@ public class MobAttack : State
    public override void Enter()
    {
        base.Enter();
-       AttackStop();
-   }
+        Stop();
+        Near = CheckNearPlayer();
+    }
 
    public override void LogicUpdate()
    {
@@ -34,11 +35,13 @@ public class MobAttack : State
        {
            //공격
            timer = 0;
-       }
+            Monster.agent.SetDestination(Near.position);
+        }
    }
 
-   private void AttackStop()
+   private void Stop()
    {
        Monster.agent.SetDestination(transform.position);
+     
    }
 }

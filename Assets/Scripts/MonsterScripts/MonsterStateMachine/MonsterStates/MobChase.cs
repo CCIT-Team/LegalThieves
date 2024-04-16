@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
     public class MobChase : State
@@ -5,6 +6,7 @@ using UnityEngine;
         
         private Vector3 homePoint;
         private bool isBack;
+      
         public override void Enter()
         {
             if (homePoint == Vector3.zero)
@@ -12,9 +14,12 @@ using UnityEngine;
                 homePoint = transform.position;
             }
 
+            Near = CheckNearPlayer();
         }
-        
-        public override void LogicUpdate()
+
+  
+
+    public override void LogicUpdate()
         {
             base.LogicUpdate();
         
@@ -43,16 +48,16 @@ using UnityEngine;
                 switch(Monster.StayMob)
                 {
                     case true: 
-                        Monster.monsterMoveSM.Initialize(Monster.MobIdle);
+                        Monster.monsterMoveSM.ChangeState(Monster.MobIdle);
                         break;
                     default:
-                        Monster.monsterMoveSM.Initialize(Monster.MobPatrol);
+                        Monster.monsterMoveSM.ChangeState(Monster.MobPatrol);
                         break;
                 }
             }
             else
             {
-                Monster.agent.SetDestination(Monster.player.position);
+                Monster.agent.SetDestination(Near.position);
             }
 
         }
