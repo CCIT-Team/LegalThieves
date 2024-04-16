@@ -3,26 +3,30 @@ using UnityEngine;
 
 
 
-    public class MobAttackArea : MonoBehaviour
+public class MobAttackArea : MonoBehaviour
+{
+    private Monster Monster;
+    int playerCount;
+    private void Awake()
     {
-        private Monster Monster;
-
-        private void Awake()
+        Monster = GetComponentInParent<Monster>();
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
         {
-            Monster = GetComponentInParent<Monster>();
-        }
-
-        void OnTriggerEnter(Collider other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                Monster.monsterMoveSM.ChangeState(Monster.MobAttack);
-            }
-        }
-        private void OnTriggerExit(Collider other)
-        {
-            Monster.monsterMoveSM.ChangeState(Monster.MobChase);
-            
+            playerCount++;
+            Monster.ChangeState(Monster.State.Attack);
         }
     }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerCount--;
+            if(playerCount == 0)
+            Monster.ChangeState(Monster.State.Chase);
+        }
+    }
+}
 

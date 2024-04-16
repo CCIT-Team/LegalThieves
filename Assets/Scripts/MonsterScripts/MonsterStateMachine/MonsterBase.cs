@@ -63,7 +63,7 @@ public class MonsterBase : MonoBehaviour
         GameObject[] players = PlayerManager.Instance.PlayerArray;
         GameObject near = players[0];
 
-        for (int i = 1; i < 4; i++)
+        for (int i = 0; i < players.Length; i++)
         {
             if (Vector3.Distance(transform.position, near.transform.position) >
                 Vector3.Distance(transform.position, players[i].transform.position))
