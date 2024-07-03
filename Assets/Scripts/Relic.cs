@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Item : MonoBehaviour //유물이 가지는 값
+public class Relic : MonoBehaviour //유물이 가지는 값
 {
-    public enum Type { Relics, goldRelics, renowonRelics }; //유물의 종류
+    public enum Type { Relic, goldRelic, renowonRelic }; //유물의 종류
     public Type type;
     public int year;   // 유물이 발견된 년도
     public int AllPoint; // 유물의 총 포인트

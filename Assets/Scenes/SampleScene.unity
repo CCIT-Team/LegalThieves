@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -104,7 +104,7 @@ NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +117,7 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
     maxJobWorkers: 0
     preserveTilesOutsideBounds: 0
     debug:
@@ -160,13 +160,21 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -200,13 +208,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
@@ -238,9 +246,20 @@ MonoBehaviour:
   m_Dithering: 0
   m_ClearDepth: 1
   m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+  m_TaaSettings:
+    quality: 3
+    frameInfluence: 0.1
+    jitterScale: 1
+    mipBias: 0
+    varianceClampScale: 0.9
+    contrastAdaptiveSharpening: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,13 +347,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!114 &410087042
 MonoBehaviour:
@@ -348,14 +367,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Version: 1
+  m_Version: 3
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_LightLayerMask: 1
+  m_RenderingLayers: 1
   m_CustomShadowLayers: 0
   m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -397,11 +419,207 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 832575517}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1623505228
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1623505231}
+  - component: {fileID: 1623505230}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1623505230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1623505228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e996cffd3f9dc4a41a65634365019f74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RelicPrefabs:
+  - {fileID: 1597196200134186074, guid: a53558d045939a141864787f95011afd, type: 3}
+  - {fileID: 1597196200134186074, guid: 2171c86df999dba42838ebcb69306ec8, type: 3}
+  - {fileID: 1597196200134186074, guid: 380fe22ac1835c347b3f0e8d226396a1, type: 3}
+  - {fileID: 7070646703774106023, guid: 163acca98221ade42804a4ad62d1d14e, type: 3}
+  - {fileID: 7070646703774106023, guid: fe4393593218e234daf7a5651ff72df6, type: 3}
+  - {fileID: 7070646703774106023, guid: 6e1a5f6b8059f504c979798b6dbaaa8b, type: 3}
+  - {fileID: 7070646703774106023, guid: 0529fb7ac020c1a41b1c24edcd1b2b74, type: 3}
+  - {fileID: 7070646703774106023, guid: 074d26700fc2df2459f72de8e0570112, type: 3}
+  - {fileID: 7070646703774106023, guid: 280f615e97d66f749a178a60bd4814e1, type: 3}
+  - {fileID: 7070646703774106023, guid: f65f09084f2c6944d882aa0bc3901c44, type: 3}
+  - {fileID: 7070646703774106023, guid: 564aa5445b88e394498abf6feb9575b4, type: 3}
+  - {fileID: 7070646703774106023, guid: 14b78d5565e5d1746b150cc9d721ca83, type: 3}
+  - {fileID: 7070646703774106023, guid: a25c1364b77e0594481cdcd4ea94c075, type: 3}
+  - {fileID: 7070646703774106023, guid: cb80e9c861a05994aa81a91f9a8bf486, type: 3}
+  - {fileID: 7070646703774106023, guid: a9e5bc1d07541414e92c03c04581e142, type: 3}
+  - {fileID: 7070646703774106023, guid: 6c6e9fcaaedd8b94f808def394b1c479, type: 3}
+  - {fileID: 7070646703774106023, guid: d7d07976ba9291d44bb43917339adb85, type: 3}
+  - {fileID: 7070646703774106023, guid: 59bdfbea92eb49d459083f4da712ac18, type: 3}
+  - {fileID: 7070646703774106023, guid: 0e92d53eeb5b1fd4eb60d4c54c553297, type: 3}
+  - {fileID: 7070646703774106023, guid: 3fbb70e49223b8342a9fdf2d3917c427, type: 3}
+  - {fileID: 7070646703774106023, guid: 6423cf25bba7e5a4fa9c165858861614, type: 3}
+  - {fileID: 7070646703774106023, guid: 489e5fd516526254385664f7a34b6c7d, type: 3}
+  - {fileID: 7070646703774106023, guid: cba334cbe50ecac4eb677c5fb5acc3b7, type: 3}
+  - {fileID: 7070646703774106023, guid: fcbaeea0fa1345343a4d8fb291a143ec, type: 3}
+  - {fileID: 7070646703774106023, guid: 0f5181600a2023945b00971e433e2f03, type: 3}
+  - {fileID: 7070646703774106023, guid: d39e0c64ce7ef8543a19e297fc12aa1d, type: 3}
+  - {fileID: 7070646703774106023, guid: 14f5172d0a96e02499a6145b4b7618ee, type: 3}
+  RoomID: 0
+  probabilityTables:
+  - probabilities:
+    - minYear: 100
+      maxYear: 199
+      probability: 10
+    - minYear: 200
+      maxYear: 399
+      probability: 30
+    - minYear: 400
+      maxYear: 699
+      probability: 35
+    - minYear: 700
+      maxYear: 799
+      probability: 15
+    - minYear: 800
+      maxYear: 899
+      probability: 5
+    - minYear: 900
+      maxYear: 900
+      probability: 5
+  - probabilities:
+    - minYear: 100
+      maxYear: 199
+      probability: 5
+    - minYear: 200
+      maxYear: 399
+      probability: 25
+    - minYear: 400
+      maxYear: 699
+      probability: 35
+    - minYear: 700
+      maxYear: 799
+      probability: 15
+    - minYear: 800
+      maxYear: 899
+      probability: 10
+    - minYear: 900
+      maxYear: 900
+      probability: 10
+  - probabilities:
+    - minYear: 100
+      maxYear: 199
+      probability: 5
+    - minYear: 200
+      maxYear: 399
+      probability: 20
+    - minYear: 400
+      maxYear: 699
+      probability: 30
+    - minYear: 700
+      maxYear: 799
+      probability: 15
+    - minYear: 800
+      maxYear: 899
+      probability: 15
+    - minYear: 900
+      maxYear: 900
+      probability: 15
+  - probabilities:
+    - minYear: 100
+      maxYear: 199
+      probability: 5
+    - minYear: 200
+      maxYear: 399
+      probability: 15
+    - minYear: 400
+      maxYear: 699
+      probability: 20
+    - minYear: 700
+      maxYear: 799
+      probability: 20
+    - minYear: 800
+      maxYear: 899
+      probability: 20
+    - minYear: 900
+      maxYear: 900
+      probability: 20
+  - probabilities:
+    - minYear: 100
+      maxYear: 199
+      probability: 5
+    - minYear: 200
+      maxYear: 399
+      probability: 10
+    - minYear: 400
+      maxYear: 699
+      probability: 10
+    - minYear: 700
+      maxYear: 799
+      probability: 25
+    - minYear: 800
+      maxYear: 899
+      probability: 25
+    - minYear: 900
+      maxYear: 900
+      probability: 25
+  - probabilities:
+    - minYear: 100
+      maxYear: 199
+      probability: 5
+    - minYear: 200
+      maxYear: 399
+      probability: 5
+    - minYear: 400
+      maxYear: 699
+      probability: 5
+    - minYear: 700
+      maxYear: 799
+      probability: 25
+    - minYear: 800
+      maxYear: 899
+      probability: 30
+    - minYear: 900
+      maxYear: 900
+      probability: 30
+--- !u!4 &1623505231
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1623505228}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.7144958, y: 1.5926404, z: -0.40035343}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 330585546}
+  - {fileID: 410087041}
+  - {fileID: 832575519}
+  - {fileID: 1623505231}
