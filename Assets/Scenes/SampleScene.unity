@@ -437,6 +437,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1623505231}
   - component: {fileID: 1623505230}
+  - component: {fileID: 1623505233}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -456,6 +457,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e996cffd3f9dc4a41a65634365019f74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RoomID: 0
+  textAssetData: {fileID: 4900000, guid: a90e24aee0a5fc54e8603b4f22be9b5b, type: 3}
+  probabilityTableData: {fileID: 4900000, guid: 94547330503b84c4bb026a24697d5906,
+    type: 3}
+  myPlayerList:
+    players: []
+  probabilityTables: []
   RelicPrefabs:
   - {fileID: 1597196200134186074, guid: a53558d045939a141864787f95011afd, type: 3}
   - {fileID: 1597196200134186074, guid: 2171c86df999dba42838ebcb69306ec8, type: 3}
@@ -484,122 +492,6 @@ MonoBehaviour:
   - {fileID: 7070646703774106023, guid: 0f5181600a2023945b00971e433e2f03, type: 3}
   - {fileID: 7070646703774106023, guid: d39e0c64ce7ef8543a19e297fc12aa1d, type: 3}
   - {fileID: 7070646703774106023, guid: 14f5172d0a96e02499a6145b4b7618ee, type: 3}
-  RoomID: 0
-  probabilityTables:
-  - probabilities:
-    - minYear: 100
-      maxYear: 199
-      probability: 10
-    - minYear: 200
-      maxYear: 399
-      probability: 30
-    - minYear: 400
-      maxYear: 699
-      probability: 35
-    - minYear: 700
-      maxYear: 799
-      probability: 15
-    - minYear: 800
-      maxYear: 899
-      probability: 5
-    - minYear: 900
-      maxYear: 900
-      probability: 5
-  - probabilities:
-    - minYear: 100
-      maxYear: 199
-      probability: 5
-    - minYear: 200
-      maxYear: 399
-      probability: 25
-    - minYear: 400
-      maxYear: 699
-      probability: 35
-    - minYear: 700
-      maxYear: 799
-      probability: 15
-    - minYear: 800
-      maxYear: 899
-      probability: 10
-    - minYear: 900
-      maxYear: 900
-      probability: 10
-  - probabilities:
-    - minYear: 100
-      maxYear: 199
-      probability: 5
-    - minYear: 200
-      maxYear: 399
-      probability: 20
-    - minYear: 400
-      maxYear: 699
-      probability: 30
-    - minYear: 700
-      maxYear: 799
-      probability: 15
-    - minYear: 800
-      maxYear: 899
-      probability: 15
-    - minYear: 900
-      maxYear: 900
-      probability: 15
-  - probabilities:
-    - minYear: 100
-      maxYear: 199
-      probability: 5
-    - minYear: 200
-      maxYear: 399
-      probability: 15
-    - minYear: 400
-      maxYear: 699
-      probability: 20
-    - minYear: 700
-      maxYear: 799
-      probability: 20
-    - minYear: 800
-      maxYear: 899
-      probability: 20
-    - minYear: 900
-      maxYear: 900
-      probability: 20
-  - probabilities:
-    - minYear: 100
-      maxYear: 199
-      probability: 5
-    - minYear: 200
-      maxYear: 399
-      probability: 10
-    - minYear: 400
-      maxYear: 699
-      probability: 10
-    - minYear: 700
-      maxYear: 799
-      probability: 25
-    - minYear: 800
-      maxYear: 899
-      probability: 25
-    - minYear: 900
-      maxYear: 900
-      probability: 25
-  - probabilities:
-    - minYear: 100
-      maxYear: 199
-      probability: 5
-    - minYear: 200
-      maxYear: 399
-      probability: 5
-    - minYear: 400
-      maxYear: 699
-      probability: 5
-    - minYear: 700
-      maxYear: 799
-      probability: 25
-    - minYear: 800
-      maxYear: 899
-      probability: 30
-    - minYear: 900
-      maxYear: 900
-      probability: 30
 --- !u!4 &1623505231
 Transform:
   m_ObjectHideFlags: 0
@@ -615,6 +507,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1623505233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1623505228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57e79fadc495cd147a7f1d3a027de924, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RoomID: 0
+  RoomType: 0
+  RoomValue: 0
+  RelicPositions: []
+  Relic: {fileID: 1623505230}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
