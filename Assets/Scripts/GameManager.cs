@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,30 @@ public class GameManager : MonoBehaviour
     {
         StartPlay();
     }
+
+    #region 플레이 시간
+
+    [SerializeField]
+    [Range(0f, 1200f)]
+    float playTime = 300;
+    float currentTime = 0;
+    void StartPlay()
+    {
+        StartCoroutine(PlayTimeCheck());
+    }
+
+    IEnumerator PlayTimeCheck()
+    {
+        while (currentTime <= playTime)
+        {
+            yield return new WaitForFixedUpdate();
+            currentTime += Time.deltaTime;
+            Debug.Log((int)currentTime / 60 + ":" + currentTime % 60);
+        }
+        Debug.Log("GameIsEnd");
+        yield return null;
+    }
+    #endregion
 
     #region 포인트관리
 
@@ -46,26 +71,15 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region 플레이 시간
-
-    [SerializeField]
-    float playTime = 300;
-    float currentTime = 0;
-    void StartPlay()
-    {
-        StartCoroutine(PlayTimeCheck());
-    }
-
-    IEnumerator PlayTimeCheck()
-    {
-        while (currentTime <= playTime)
-        {
-            yield return new WaitForFixedUpdate();
-            currentTime += Time.deltaTime;
-            Debug.Log((int)currentTime/60+":"+currentTime%60);
-        }
-        Debug.Log("GameIsEnd");
-        yield return null;
-    }
-    #endregion
+    [Header("Dungeon")]
+    public Vector3 min;
+    public Vector3 max;
+    public int roomAmount = 10;
+    [Space(20)]
+    [Header("Relic")]
+    public int RelicAmount = 30;
+    [Tooltip("X=Gold, Y=Renown")]
+    public Vector2 ratio = new Vector2(15,15);
+    public int minValue = 100;
+    public int maxValue = 3000;
 }

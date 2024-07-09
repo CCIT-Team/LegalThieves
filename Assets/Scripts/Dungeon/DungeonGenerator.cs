@@ -3,28 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Dungeon : MonoBehaviour
+public class DungeonGenerator : MonoBehaviour
 {
     [SerializeField]
     int roomCount = 0;
     [SerializeField]
     GameObject roomPrefab;
-    [SerializeField]
-    GameObject relicPrefab;
-
-
-    public RelicRelation relicRelation;
 
     List<Room> Rooms = new();
     bool isCreated = false;
 
-    private void Start()
+    public void GenerateDungeon()
     {
-        CreateDungeon();
-    }
-
-    public void CreateDungeon()
-    {
+        #region 랜덤 방 생성_삭제예정
         if (isCreated)
             return;
         isCreated = true;
@@ -35,8 +26,7 @@ public class Dungeon : MonoBehaviour
             Room room = Instantiate(roomPrefab, roomPos, Quaternion.identity).GetComponent<Room>();
             room.roomID = i;
             Rooms.Add(room);
-            room.SpawnRelics(relicPrefab);
         }
-        relicRelation.SetStacksCount(roomCount);
+        #endregion
     }
 }

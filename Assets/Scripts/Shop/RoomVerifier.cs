@@ -7,9 +7,11 @@ public class RoomVerifier : MonoBehaviour
     class VerifyCount
     {
         int[] stack = new int[4];
+        int count = 0;
         bool isVertified = false;
         public int Set(int playerNumber)
         {
+            count++;
             if (isVertified)
             {
                 return -1;
@@ -17,7 +19,7 @@ public class RoomVerifier : MonoBehaviour
             else
             {
                 stack[playerNumber - 1] += 1;
-                if (stack[playerNumber - 1] >= 3)
+                if (count >= 3)
                 {
                     isVertified = true;
                     return playerNumber;
@@ -38,15 +40,16 @@ public class RoomVerifier : MonoBehaviour
     }
     public void SubmitStack(int roomId, int playerNumber)
     {
-        int count = verifyCounts[roomId].Set(playerNumber);
-        if (count < 0)
+        //checker :  -1 = 이미 방 규명됨,0 = 규명중,1~4 = 규명한 플레이어 반환
+        int checker = verifyCounts[roomId].Set(playerNumber);
+        if (checker < 0)
         {
             Debug.Log("Room" + roomId + " is already vertified");
         }
-        if (n > 0)
+        if (checker > 0)
         {
-            Debug.Log("Room" + roomId + " is vertified by " + n);
+            Debug.Log("Room" + roomId + " is vertified");
         }
     }
 }
-}
+

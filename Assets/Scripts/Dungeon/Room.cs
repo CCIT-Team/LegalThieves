@@ -15,6 +15,11 @@ public class Room : MonoBehaviour
     ROOMTYPE roomType = ROOMTYPE.NormalRoom;
     int roomValue = 0;
 
+    public Room()
+    {
+
+    }
+
 
     public void SpawnRelics(GameObject relic)
     {
