@@ -63,9 +63,3 @@ public class H_Player : MonoBehaviour
         SetRemain();   //남은 스코어 
     }
 }
-// 유물을 임시로 구성
-class Relic
-{
-
-    public int goldPoint, renownPoint;
-}

@@ -21,7 +21,7 @@ public class ProbabilityTable
 
 public class RelicCreation : MonoBehaviour
 {
-    public int RoomID; // 방 ID
+    public int roomID; // 방 ID
     public TextAsset textAssetData; // 유물 CSV 파일 데이터
     public TextAsset probabilityTableData; // 확률 테이블 CSV 파일 데이터
     public PlayerList myPlayerList = new PlayerList(); // 플레이어 리스트 객체
@@ -34,10 +34,10 @@ public class RelicCreation : MonoBehaviour
         public string Name; // 이름
         public PlayerType Type; // 유물 타입
         public int Year; // 년도
-        public int AllPoint; // 전체 포인트
-        public int GoldPoint; // 골드 포인트
-        public int RenownPoint; // 명성 포인트
-        public int RoomID; // 방 ID
+        public int allPoint; // 전체 포인트
+        public int goldPoint; // 골드 포인트
+        public int renownPoint; // 명성 포인트
+        public int roomID; // 방 ID
         public string PrefabName; // 프리팹 이름
 
         public enum PlayerType { Relic, GoldRelic, RenownRelic } // 유물 타입 열거형
@@ -92,10 +92,10 @@ public class RelicCreation : MonoBehaviour
             }
 
             myPlayerList.players[i - 1].Year = year;
-            myPlayerList.players[i - 1].AllPoint = allPoint;
-            myPlayerList.players[i - 1].GoldPoint = goldPoint;
-            myPlayerList.players[i - 1].RenownPoint = renownPoint;
-            myPlayerList.players[i - 1].RoomID = roomID;
+            myPlayerList.players[i - 1].allPoint = allPoint;
+            myPlayerList.players[i - 1].goldPoint = goldPoint;
+            myPlayerList.players[i - 1].renownPoint = renownPoint;
+            myPlayerList.players[i - 1].roomID = roomID;
             myPlayerList.players[i - 1].PrefabName = data[0]; // 프리팹 이름은 Name 필드와 동일
         }
     }
@@ -153,15 +153,15 @@ public class RelicCreation : MonoBehaviour
                     {
                         relicComponent = instantiatedRelic.AddComponent<Relic>();
                     }
-                    relicComponent.RoomID = roomID;
+                    relicComponent.roomID = roomID;
                     relicComponent.year = relicData.Year;
-                    relicComponent.AllPoint = relicData.AllPoint;
-                    relicComponent.GoldPoint = relicData.GoldPoint;
-                    relicComponent.RenownPoint = relicData.RenownPoint;
+                    relicComponent.allPoint = relicData.allPoint;
+                    relicComponent.goldPoint = relicData.goldPoint;
+                    relicComponent.renownPoint = relicData.renownPoint;
                     relicComponent.type = (Relic.Type)relicData.Type;
 
                     // 디버그 메시지 추가하여 유물이 올바르게 생성되었는지 확인
-                    Debug.Log("유물 생성됨: " + instantiatedRelic.name + " 위치: " + pos + " RoomID: " + roomID);
+                    Debug.Log("유물 생성됨: " + instantiatedRelic.name + " 위치: " + pos + " roomID: " + roomID);
                 }
                 else
                 {
