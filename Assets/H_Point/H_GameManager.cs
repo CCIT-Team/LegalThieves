@@ -9,7 +9,7 @@ public class H_GameManager : MonoBehaviour
 
     public static GameObject instance;
     public enum GoldOrRenown { Gold, Renown }
-    public H_Player[] playerScript; // 각 플레이어의 정보를 미리 할당
+    public H_PlayerPoint[] playerScript; // 각 플레이어의 정보를 미리 할당
 
     private void Start()
     {
@@ -23,11 +23,11 @@ public class H_GameManager : MonoBehaviour
         }
 
         // 플레이어 스크립트 담는 초식!!!
-        playerScript = new H_Player[4];
+        playerScript = new H_PlayerPoint[4];
         GameObject[] playerArray = GameObject.FindGameObjectsWithTag("Player");
 
         for(int i = 0; i< playerArray.Length; i++) { 
-            playerScript[i] = playerArray[i].GetComponent<H_Player>();
+            playerScript[i] = playerArray[i].GetComponent<H_PlayerPoint>();
         }
        
     }
