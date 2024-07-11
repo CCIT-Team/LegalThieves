@@ -4,6 +4,24 @@ using UnityEngine;
 
 public class Trader : MonoBehaviour
 {
+    int currentPlayer = -1; //-1 : ÀÌ¿כ x
+
+    public void ContectPlayer(int playerNumber)
+    {
+        currentPlayer = playerNumber;
+    }
+
+    public void DisconnectPlayer()
+    {
+        currentPlayer = -1;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.TryGetComponent<DummyRelic>(out DummyRelic relic))
+        {
+            Debug.Log(relic.gameObject.name);
+        }
+    }
     #region Relic
     void TradePoint(DummyRelic relic)
     {
