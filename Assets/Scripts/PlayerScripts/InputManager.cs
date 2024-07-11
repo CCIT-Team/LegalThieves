@@ -7,6 +7,7 @@ using Fusion.Sockets;
 using MultiClimb.Menu;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace LegalThieves
 {
@@ -14,31 +15,33 @@ namespace LegalThieves
     {
         Jump,
         Interaction,
+        ThrowItem,
         Sprint,
         Crouch,
     }
 
     public struct NetInput : INetworkInput
     {
-        public NetworkButtons Buttons;
-        public Vector2 Direction;
-        public Vector2 LookDelta;
+        public NetworkButtons   Buttons;
+        public Vector2          Direction;
+        public Vector2          LookDelta;
     }
 
     public class InputManager : SimulationBehaviour, IBeforeUpdate, INetworkRunnerCallbacks
     {
-        public Player localPlayer;
-        public Vector2 AccumulatedMouseDelta => _mouseDeltaAccumulator.AccumulatedValue;
+        public TempPlayer localTempPlayer;
+        public Vector2    AccumulatedMouseDelta => _mouseDeltaAccumulator.AccumulatedValue;
     
         private NetInput _accumulateInput;
+        private bool     _resetInput;
+        
         private readonly Vector2Accumulator _mouseDeltaAccumulator = new() { SmoothingWindow = 0.025f };
-        private bool _resetInput;
 
         void IBeforeUpdate.BeforeUpdate()
         {
             if (_resetInput)
             {
-                _resetInput = false;
+                _resetInput      = false;
                 _accumulateInput = default;
             }
         
@@ -49,12 +52,12 @@ namespace LegalThieves
                 if (Cursor.lockState == CursorLockMode.Locked)
                 {
                     Cursor.lockState = CursorLockMode.None;
-                    Cursor.visible = true;
+                    Cursor.visible   = true;
                 }
                 else
                 {
                     Cursor.lockState = CursorLockMode.Locked;
-                    Cursor.visible = false;
+                    Cursor.visible   = false;
                 }
             }
         
@@ -68,27 +71,25 @@ namespace LegalThieves
             {
                 var mouseDelta = mouse.delta.ReadValue();
                 var lookRotationDelta = new Vector2(-mouseDelta.y, mouseDelta.x);
+                
                 _mouseDeltaAccumulator.Accumulate(lookRotationDelta);
                 buttons.Set(EInputButton.Interaction, mouse.rightButton.isPressed);
             }
             if (keyboard != null)
             {
-                if (keyboard.rKey.wasPressedThisFrame && localPlayer != null)
-                    localPlayer.RPC_SetReady();
+                if (keyboard.rKey.wasPressedThisFrame && localTempPlayer != null)
+                    localTempPlayer.RPC_SetReady();
             
                 var moveDirection = Vector2.zero;
 
-                if (keyboard.wKey.isPressed)
-                    moveDirection += Vector2.up;
-                if (keyboard.sKey.isPressed)
-                    moveDirection += Vector2.down;
-                if (keyboard.aKey.isPressed)
-                    moveDirection += Vector2.left;
-                if (keyboard.dKey.isPressed)
-                    moveDirection += Vector2.right;
+                if (keyboard.wKey.isPressed) moveDirection += Vector2.up;
+                if (keyboard.sKey.isPressed) moveDirection += Vector2.down;
+                if (keyboard.aKey.isPressed) moveDirection += Vector2.left;
+                if (keyboard.dKey.isPressed) moveDirection += Vector2.right;
 
                 _accumulateInput.Direction += moveDirection;
                 buttons.Set(EInputButton.Jump, keyboard.spaceKey.isPressed);
+                buttons.Set(EInputButton.ThrowItem, keyboard.gKey.isPressed);
                 buttons.Set(EInputButton.Sprint, keyboard.leftShiftKey.isPressed);
                 buttons.Set(EInputButton.Crouch, keyboard.leftCtrlKey.isPressed);
             }
@@ -98,16 +99,20 @@ namespace LegalThieves
 
         void INetworkRunnerCallbacks.OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-            if (player != runner.LocalPlayer) return;
+            if (player != runner.LocalPlayer) 
+                return;
+            
             Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            Cursor.visible   = false;
         }
 
         void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
-            if (player != runner.LocalPlayer) return;
+            if (player != runner.LocalPlayer) 
+                return;
+            
             Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            Cursor.visible   = true;
         }
 
         void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input)
@@ -121,7 +126,7 @@ namespace LegalThieves
         async void INetworkRunnerCallbacks.OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
         {
             Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            Cursor.visible   = true;
 
             if (shutdownReason != ShutdownReason.DisconnectedByPluginLogic) return;
             await FindFirstObjectByType<MenuConnectionBehaviour>(FindObjectsInactive.Include)

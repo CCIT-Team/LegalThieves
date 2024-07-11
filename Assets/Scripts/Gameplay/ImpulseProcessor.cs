@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace LegalThieves
 {
+    // 
     public class ImpulseProcessor : KCCProcessor
     {
         public float ImpulseStrength;

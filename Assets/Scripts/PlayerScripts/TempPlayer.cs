@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.KCC;
 using UnityEngine;
 
 namespace LegalThieves
 {
-    public class Player : NetworkBehaviour
+    public class TempPlayer : NetworkBehaviour
     {
         [Header("Components")]
         [SerializeField] private SkinnedMeshRenderer[] modelParts;
@@ -24,14 +25,14 @@ namespace LegalThieves
         [SerializeField] private float                 maxStemina      = 100f;
         [field: SerializeField] public float           AbilityRange { get; private set; } = 25f;
         
-        public double  Score              => Math.Round(transform.position.y, 1);        //스코어 제거 or 변경 예정
-        public bool    isReady;                                                          //준비 기준 변경 예정 (GameLogic)
+        public double  Score => Math.Round(transform.position.y, 1);        //스코어 제거 or 변경 예정
+        public bool    isReady;                                             //준비 기준 변경 예정 (GameLogic)
     
         private bool CanSprint => kcc.FixedData.IsGrounded;
     
         private InputManager  _inputManager;
         private Vector2       _baseLookRotation;
-        private float         _sprintDrain;
+        private List<uint>    _inventoryItems = new();
         
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");
@@ -61,11 +62,11 @@ namespace LegalThieves
                     skinnedMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
 
                 _inputManager = Runner.GetComponent<InputManager>();
-                _inputManager.localPlayer = this;
+                _inputManager.localTempPlayer = this;
                 Name = PlayerPrefs.GetString("Photon.Menu.Username");
                 RPC_PlayerName(Name);
                 CameraFollow.Singleton.SetTarget(camTarget);
-                UIManager.Singleton.LocalPlayer = this;
+                UIManager.Singleton.localTempPlayer = this;
                 kcc.Settings.ForcePredictedLookRotation = true;
             }
         }
@@ -73,7 +74,7 @@ namespace LegalThieves
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             if(HasInputAuthority)
-                UIManager.Singleton.LocalPlayer = null;
+                UIManager.Singleton.localTempPlayer = null;
         }
 
         public override void FixedUpdateNetwork()
@@ -134,7 +135,7 @@ namespace LegalThieves
 
         private void CheckJump(NetInput input)
         {
-            if (!input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) || kcc.FixedData.IsGrounded) return;
+            if (!input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) || !kcc.FixedData.IsGrounded) return;
             
             kcc.Jump(jumpImpulse);
             JumpSync++;
@@ -189,12 +190,14 @@ namespace LegalThieves
             if (isCrouching)
             {
                 kcc.SetHeight(1f);
+                kcc.AddModifier(crouchProcessor);
                 camTarget.localPosition = new Vector3(0f, 1f, 0f);  //러프 적용해아됨
                 IsCrouching = true;
             }
             else
             {
                 kcc.SetHeight(1.8f);
+                kcc.RemoveModifier(crouchProcessor);
                 camTarget.localPosition = new Vector3(0, 1.65f, 0f);
                 IsCrouching = false;
             }
@@ -211,8 +214,9 @@ namespace LegalThieves
         {
             if (Physics.Raycast(camTarget.position, lookDirection, out RaycastHit hitInfo, AbilityRange))
             {
-                if (hitInfo.collider.TryGetComponent(out Relic relic))
+                if (hitInfo.collider.TryGetComponent(out TempRelic relic))
                 {
+                    _inventoryItems.Add(relic.relicNumber);
                     relic.GetRelic(this);
                 }
             }
@@ -235,17 +239,21 @@ namespace LegalThieves
 
             var velocity = kcc.Data.RealVelocity;
 
-            // We only care about X an Z directions.
-            velocity.y = 0f;
-
             if (velocity.sqrMagnitude > 1f)
             {
                 velocity.Normalize();
             }
 
-            // Transform velocity vector to local space.
             return transform.InverseTransformVector(velocity);
         }
+
+        private void CheckThrowItem(Vector3 lookDirection)
+        {
+            if(_inventoryItems.Count == 0) return;
+            
+        }
+        
+        //private Vector3
         
         #region RPC Callback
     

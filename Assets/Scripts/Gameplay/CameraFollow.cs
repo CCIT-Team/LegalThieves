@@ -1,46 +1,49 @@
 using UnityEngine;
 
-public class CameraFollow : MonoBehaviour
+namespace LegalThieves
 {
-    public static CameraFollow Singleton
+    public class CameraFollow : MonoBehaviour
     {
-        get => _singleton;
-        private set
+        public static CameraFollow Singleton
         {
-            if (value == null)
-                _singleton = null;
-            else if (_singleton == null)
-                _singleton = value;
-            else if (_singleton != value)
+            get => _singleton;
+            private set
             {
-                Destroy(value);
-                Debug.LogError($"{nameof(CameraFollow)}는(은) 단 한번만 인스턴싱되어야 합니다!");
+                if (value == null) _singleton = null;
+                else if (_singleton == null) _singleton = value;
+                else if (_singleton != value)
+                {
+                    Destroy(value);
+                    Debug.LogError($"{nameof(CameraFollow)}는(은) 단 한번만 인스턴싱되어야 합니다!");
+                }
             }
         }
-    }
-    private static CameraFollow _singleton;
 
-    private Transform _target;
+        private static CameraFollow _singleton;
 
-    private void Awake()
-    {
-        Singleton = this;
-    }
+        private Transform _target;
 
-    private void OnDestroy()
-    {
-        if (Singleton == this)
-            Singleton = null;
-    }
+        private void Awake()
+        {
+            Singleton = this;
+        }
 
-    private void LateUpdate()
-    {
-        if(_target != null)
-            transform.SetPositionAndRotation(_target.position, _target.rotation);
-    }
+        private void OnDestroy()
+        {
+            if (Singleton == this)
+                Singleton = null;
+        }
 
-    public void SetTarget(Transform newTargetTransform)
-    {
-        _target = newTargetTransform;
+        private void LateUpdate()
+        {
+            if (_target != null)
+                transform.SetPositionAndRotation(_target.position, _target.rotation);
+        }
+
+        public void SetTarget(Transform newTargetTransform)
+        {
+            if (newTargetTransform == null) return;
+            _target = newTargetTransform;
+        }
     }
 }

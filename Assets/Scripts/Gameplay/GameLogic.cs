@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Fusion;
 using UnityEngine;
@@ -16,16 +17,17 @@ namespace LegalThieves
         [SerializeField] private NetworkPrefabRef  playerPrefab;
         [SerializeField] private Transform         spawnpoint;
         [SerializeField] private Transform         spawnpointPivot;
-        [SerializeField] private Transform         relicSpawnpointsHolder;
-        [SerializeField] private Vector3[]         relicSpawnpoints;
-        [SerializeField] private NetworkPrefabRef  _relicPrefab;
-        [SerializeField] private Relic             relicPrefab;
+        [SerializeField] private Transform         relicPool;
+        [SerializeField] private TempRelic         tempRelicPrefab;
+        
+        [SerializeField] private TempRoom[]        tempRooms;
+        [SerializeField] private List<TempRelic>   tempRelics;
 
-        [Networked] private Player Winner { get; set; }
+        [Networked] private TempPlayer Winner { get; set; }
 
         [Networked, OnChangedRender(nameof(GameStateChanged))] private EGameState State { get; set; }
 
-        [Networked, Capacity(4)] private NetworkDictionary<PlayerRef, Player> Players => default;
+        [Networked, Capacity(4)] private NetworkDictionary<PlayerRef, TempPlayer> Players => default;
 
         #region Overrided user callback functions in NetworkBehaviour
         
@@ -37,11 +39,7 @@ namespace LegalThieves
             Runner.SetIsSimulated(Object, true);
 
             if (!HasStateAuthority) return;
-            var t = relicSpawnpointsHolder.GetComponentsInChildren<Transform>();
-            for (var i = 1; i < t.Length; i++)
-            {
-                Runner.Spawn(relicPrefab, t[i].position, t[i].rotation);
-            }
+            SpawnRelics();
 
         }
 
@@ -71,7 +69,7 @@ namespace LegalThieves
         private void OnTriggerEnter(Collider other)
         {
             if (Runner.IsServer && Winner == null && other.attachedRigidbody != null &&
-                other.attachedRigidbody.TryGetComponent(out Player player))
+                other.attachedRigidbody.TryGetComponent(out TempPlayer player))
             {
                 UnreadyAll();
                 Winner = player;
@@ -123,6 +121,22 @@ namespace LegalThieves
         
         // 모든 방의 규명이 완료되었는지 확인 (ExplainRoom()의 안에서 규명이 확인되었을 때 호출될 예정)
         private void CheckAllRoomExplained() { }
+
+        private void SpawnRelics()
+        {
+            for (uint i = 0; i < tempRooms.Length; i++)
+            {
+                var rRelics = tempRooms[i].tempRelicSpawnPoints;
+                for (uint j = 0; j < rRelics.Length; j++)
+                {
+                    var tempR = Runner.Spawn(tempRelicPrefab, rRelics[j].position, rRelics[j].rotation);
+                    tempR.transform.SetParent(relicPool);
+                    tempR.relicNumber = i * 3 + j;
+                    tempR.RoomNum = i;
+                    tempRelics.Add(tempR);
+                }
+            }
+        }
         
         #endregion
 
@@ -134,7 +148,7 @@ namespace LegalThieves
             {
                 GetNextSpawnpoint(90f, out Vector3 position, out Quaternion rotation);
                 NetworkObject playerObject = Runner.Spawn(playerPrefab, position, rotation, player);
-                Players.Add(player, playerObject.GetComponent<Player>());
+                Players.Add(player, playerObject.GetComponent<TempPlayer>());
             }
         }
 
@@ -143,7 +157,7 @@ namespace LegalThieves
             if (!HasStateAuthority)
                 return;
 
-            if (Players.TryGet(player, out Player playerBehaviour))
+            if (Players.TryGet(player, out TempPlayer playerBehaviour))
             {
                 Players.Remove(player);
                 Runner.Despawn(playerBehaviour.Object);
