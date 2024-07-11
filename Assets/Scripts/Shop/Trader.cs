@@ -2,14 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RelicTrader : MonoBehaviour
+public class Trader : MonoBehaviour
 {
-    void Trade(DummyRelic relic)
+    #region Relic
+    void TradePoint(DummyRelic relic)
     {
         GetComponent<RoomVerifier>().SubmitStack(relic.roomID, relic.goldPoint);
         GameManager.Instance.GetScore(0, relic.goldPoint, relic.renownPoint);
     }
+    #endregion
 
+    #region Skill
     void BuySkill()
     {
         if(GameManager.Instance.UseScore(0, 1000, 0))
@@ -21,7 +24,9 @@ public class RelicTrader : MonoBehaviour
             Debug.Log("Not Enought Point");
         }
     }
+    #endregion
 
+    #region Tools
     void BuyItem()
     {
         if (GameManager.Instance.UseScore(0, 1000, 0))
@@ -33,4 +38,5 @@ public class RelicTrader : MonoBehaviour
             Debug.Log("Not Enought Point");
         }
     }
+    #endregion
 }

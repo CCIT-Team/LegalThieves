@@ -15,9 +15,11 @@ public class Room : MonoBehaviour
     ROOMTYPE roomType = ROOMTYPE.NormalRoom;
     int roomValue = 0;
 
-    public Room()
+    public Room(int id, int roomVal, ROOMTYPE type)
     {
-
+        roomID = id;
+        roomValue = roomVal;
+        roomType = type;
     }
 
 
