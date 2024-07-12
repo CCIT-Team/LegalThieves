@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Relic : MonoBehaviour //유물이 가지는 값
 {
+    
     public enum Type { Relic, GoldRelic, RenownRelic }; //유물의 종류
     public Type type;
     public int year;   // 유물이 발견된 년도

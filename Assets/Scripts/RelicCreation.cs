@@ -4,60 +4,74 @@ using UnityEngine;
 using System.IO;
 using System;
 using UnityEditor;
+using static RelicCreation.Relices;
+using static RelicCreation;
 
 [System.Serializable]
-public struct yearProbability
+public struct YearProbability
 {
-    public int minyear;
-    public int maxyear;
+    public int minYear;
+    public int maxYear;
     public int probability;
 }
 
 [System.Serializable]
 public class ProbabilityTable
 {
-    public List<yearProbability> probabilities;
+    public List<YearProbability> probabilities;
 }
 
 public class RelicCreation : MonoBehaviour
 {
+    public int roomID; // 방 ID
     public TextAsset textAssetData; // 유물 CSV 파일 데이터
     public TextAsset probabilityTableData; // 확률 테이블 CSV 파일 데이터
-    public RelicList myRelicList = new RelicList(); // 유물 리스트 객체
+    public List<Relices> relicess = new List<Relices>(); // 직접 유물 리스트 객체
     public List<ProbabilityTable> probabilityTables = new List<ProbabilityTable>(); // 확률 테이블 리스트
     public GameObject[] RelicPrefabs; // 유물 프리팹 배열
 
     [System.Serializable]
-    public class RelicList
+    public class Relices
     {
-        public Relic[] relics; // 유물 배열
+        public string name; // 이름
+        public RelicesType type; // 유물 타입
+        public int year; // 년도
+        public int allPoint; // 전체 포인트
+        public int goldPoint; // 골드 포인트
+        public int renownPoint; // 명성 포인트
+        public int roomID; // 방 ID
+        public string prefabname; // 프리팹 이름
+
+
+        public enum RelicesType { Relic, GoldRelic, RenownRelic } // 유물 타입 열거형
+    }
+
+    [System.Serializable]
+    public class RelicesList
+    {
+        public Relices[] Relicess; // 플레이어 배열
     }
 
     void Start()
     {
         ReadCSV(); // CSV 파일 읽기
         ReadProbabilityCSV(); // 확률 테이블 CSV 파일 읽기
-        Debug.Log("CSV 데이터 로드 완료: " + myRelicList.relics.Length + "개의 유물 로드됨");
+        Debug.Log("CSV 데이터 로드 완료: " + relicess.Count + "명의 플레이어 로드됨");
 
-      
+
     }
 
     void ReadCSV()
     {
         string[] rows = textAssetData.text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-        int tableSize = rows.Length - 1; // 첫 줄은 헤더이므로 제외
-        myRelicList.relics = new Relic[tableSize];
-
-        for (int i = 1; i <= tableSize; i++)
+        for (int i = 1; i < rows.Length; i++) // 헤더를 제외하고 시작
         {
             string[] data = rows[i].Split(new char[] { ',' }, StringSplitOptions.None);
-
-            myRelicList.relics[i - 1] = new Relic();
-            myRelicList.relics[i - 1].name = data[0];
-            if (Enum.TryParse(data[1], out Relic.Type type))
+            Relices relic = new Relices();
+            relic.name = data[0];
+            if (Enum.TryParse(data[1], out Relices.RelicesType type))
             {
-                myRelicList.relics[i - 1].type = type;
+                relic.type = type;
             }
             else
             {
@@ -75,12 +89,14 @@ public class RelicCreation : MonoBehaviour
                 continue;
             }
 
-            myRelicList.relics[i - 1].year = year;
-            myRelicList.relics[i - 1].allPoint = allPoint;
-            myRelicList.relics[i - 1].goldPoint = goldPoint;
-            myRelicList.relics[i - 1].renownPoint = renownPoint;
-            myRelicList.relics[i - 1].roomID = roomID;
-            myRelicList.relics[i - 1].name = data[0]; // 프리팹 이름은 Name 필드와 동일
+            relic.year = year;
+            relic.allPoint = allPoint;
+            relic.goldPoint = goldPoint;
+            relic.renownPoint = renownPoint;
+            relic.roomID = roomID;
+            relic.prefabname = data[0]; // 프리팹 이름은 name 필드와 동일
+
+            relicess.Add(relic); // 직접 리스트에 추가
         }
     }
 
@@ -92,14 +108,14 @@ public class RelicCreation : MonoBehaviour
         {
             string[] data = rows[i].Split(new char[] { ',' }, StringSplitOptions.None);
             ProbabilityTable table = new ProbabilityTable();
-            table.probabilities = new List<yearProbability>
+            table.probabilities = new List<YearProbability>
             {
-                new yearProbability { minyear = 100, maxyear = 199, probability = int.Parse(data[1]) },
-                new yearProbability { minyear = 200, maxyear = 399, probability = int.Parse(data[2]) },
-                new yearProbability { minyear = 400, maxyear = 699, probability = int.Parse(data[3]) },
-                new yearProbability { minyear = 700, maxyear = 799, probability = int.Parse(data[4]) },
-                new yearProbability { minyear = 800, maxyear = 899, probability = int.Parse(data[5]) },
-                new yearProbability { minyear = 900, maxyear = 999, probability = int.Parse(data[6]) }
+                new YearProbability { minYear = 100, maxYear = 199, probability = int.Parse(data[1]) },
+                new YearProbability { minYear = 200, maxYear = 399, probability = int.Parse(data[2]) },
+                new YearProbability { minYear = 400, maxYear = 699, probability = int.Parse(data[3]) },
+                new YearProbability { minYear = 700, maxYear = 799, probability = int.Parse(data[4]) },
+                new YearProbability { minYear = 800, maxYear = 899, probability = int.Parse(data[5]) },
+                new YearProbability { minYear = 900, maxYear = 999, probability = int.Parse(data[6]) }
             };
             probabilityTables.Add(table);
         }
@@ -123,10 +139,10 @@ public class RelicCreation : MonoBehaviour
 
         foreach (Vector3 pos in positions)
         {
-            Relic relicData = SelectRelicByProbabilityAndType(table, roomType);
+            Relices relicData = SelectRelicByProbabilityAndType(table, roomType);
             if (relicData != null)
             {
-                GameObject relicPrefab = LoadPrefab(relicData.name);
+                GameObject relicPrefab = LoadPrefab(relicData.prefabname);
                 if (relicPrefab != null)
                 {
                     GameObject instantiatedRelic = Instantiate(relicPrefab, pos, Quaternion.identity);
@@ -149,7 +165,7 @@ public class RelicCreation : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError("프리팹을 로드할 수 없습니다: " + relicData.name);
+                    Debug.LogError("프리팹을 로드할 수 없습니다: " + relicData.prefabname);
                 }
             }
             else
@@ -158,20 +174,20 @@ public class RelicCreation : MonoBehaviour
             }
         }
     }
-    private Relic SelectRelicByProbabilityAndType(ProbabilityTable table, int roomType)// 확률표에 따른 유물 선택
+    private Relices SelectRelicByProbabilityAndType(ProbabilityTable table, int roomType)// 확률표에 따른 유물 선택
     {
         int randomPoint = UnityEngine.Random.Range(0, 100);
         int cumulativeProbability = 0;
 
-        foreach (yearProbability yearProb in table.probabilities)
+        foreach (YearProbability yearProb in table.probabilities)
         {
             cumulativeProbability += yearProb.probability;
             if (randomPoint < cumulativeProbability)
             {
-                List<Relic> filteredRelics = FilterRelicByyearAndType(yearProb.minyear, yearProb.maxyear, roomType);
+                List<Relices> filteredRelics = FilterRelicByYearAndType(yearProb.minYear, yearProb.maxYear, roomType);
                 if (filteredRelics.Count > 0)
                 {
-                    Relic selectedRelic = filteredRelics[UnityEngine.Random.Range(0, filteredRelics.Count)];
+                    Relices selectedRelic = filteredRelics[UnityEngine.Random.Range(0, filteredRelics.Count)];
                     Debug.Log("선택된 유물: " + selectedRelic.name);
                     return selectedRelic;
                 }
@@ -180,40 +196,40 @@ public class RelicCreation : MonoBehaviour
         }
         return null;
     }
-    private List<Relic> FilterRelicByyearAndType(int minyear, int maxyear, int roomType)// 유물 타입 필터
+    private List<Relices> FilterRelicByYearAndType(int minYear, int maxYear, int roomType)// 유물 타입 필터
     {
-        List<Relic> filteredRelics = new List<Relic>();
+        List<Relices> filteredRelics = new List<Relices>();
 
-        foreach (var relic in myRelicList.relics)
+        foreach (var Relices in relicess)
         {
-            if (relic.year >= minyear && relic.year <= maxyear)
+            if (Relices.year >= minYear && Relices.year <= maxYear)
             {
                 bool isMatchingType = (roomType == 1) ||
-                                      (roomType == 2 && relic.type == Relic.Type.GoldRelic) ||
-                                      (roomType == 3 && relic.type == Relic.Type.RenownRelic);
+                                      (roomType == 2 && Relices.type == Relices.RelicesType.GoldRelic) ||
+                                      (roomType == 3 && Relices.type == Relices.RelicesType.RenownRelic);
                 if (isMatchingType)
                 {
-                    filteredRelics.Add(relic);
+                    filteredRelics.Add(Relices);
                 }
             }
         }
 
         // 디버그 메시지 추가하여 필터링된 유물 리스트 확인
-        Debug.Log("필터링된 유물 개수: " + filteredRelics.Count + " (년도: " + minyear + "-" + maxyear + ", 타입: " + roomType + ")");
+        Debug.Log("필터링된 유물 개수: " + filteredRelics.Count + " (년도: " + minYear + "-" + maxYear + ", 타입: " + roomType + ")");
         return filteredRelics;
     }
 
     // 프리팹을 이름으로부터 로드하는 함수
-    private GameObject LoadPrefab(string prefabName)
+    private GameObject LoadPrefab(string prefabname)
     {
         foreach (var prefab in RelicPrefabs)
         {
-            if (prefab.name == prefabName)
+            if (prefab.name == prefabname)
             {
                 return prefab;
             }
         }
-        Debug.LogError("프리팹을 로드할 수 없습니다: " + prefabName);
+        Debug.LogError("프리팹을 로드할 수 없습니다: " + prefabname + " / 프리팹 배열 크기: " + RelicPrefabs.Length);
         return null;
     }
 }

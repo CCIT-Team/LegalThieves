@@ -4,22 +4,22 @@ using UnityEngine;
 
 public class room4869 : MonoBehaviour
 {
-    public int RoomID;
-    public int RoomType;
-    public int RoomValue;
+    public int roomID;
+    public int roomType;
+    public int roomValue;
     public List<Vector3> RelicPositions;
     public RelicCreation Relic;
     // Start is called before the first frame update
     void Start()
     {
-        RoomID = Random.Range(1, 13);
-        RoomType = Random.Range(1, 4);
-        RoomValue = Random.Range(1, 7);
+        roomID = Random.Range(1, 13);
+        roomType = Random.Range(1, 4);
+        roomValue = Random.Range(1, 7);
         RelicPositions = GenerateRelicPositions();
 
         if (Relic != null)
         {
-            Relic.PlaceRelic(RelicPositions, RoomID, RoomValue, RoomType);
+            Relic.PlaceRelic(RelicPositions, roomID, roomValue, roomType);
         }
         else
         {
