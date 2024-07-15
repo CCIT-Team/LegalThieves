@@ -14,6 +14,7 @@
   * 손전등(Flash)
   * 곡괭이(Pickaxe)
   * 횃불(Torch)
+  * 고고학 브러쉬(Brush)
 * 유물 아이템
   * Gold 유물
     * 브로치(GoldBrooch)
@@ -22,3 +23,9 @@
     * 얼굴꽃병(RenownFacevase)
     * 흙꽃병(RenownSoilvase)
     * 찻잔(Teacup)
+* 함정
+  * 바닥 톱날 함정(FloorSaw)
+  * 바닥 칼날 함정(FloorKnife)
+  * 벽 톱날 함정(WallSaw)
+  * 벽 칼날 함정(WallKnife)
+  * 길로틴 함정(Guillotine)
