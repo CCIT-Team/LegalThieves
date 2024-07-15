@@ -15,7 +15,7 @@ namespace LegalThieves
         [SerializeField] private KCCProcessor          crouchProcessor;
         [SerializeField] private Transform             camTarget;
         [SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
-        [SerializeField] private Animator              animator;
+        [SerializeField] public static Animator              animator;
 
         [Header("Setup")]
         [SerializeField] private float                 maxPitch        = 85f;                   //현재 최대 피치에서 싱크가 맞지않음
@@ -37,13 +37,13 @@ namespace LegalThieves
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");
         private static readonly int AnimIsCrouching  = Animator.StringToHash("IsCrouching");
-        
+
         [Networked] public string  Name           { get; private set; }
         [Networked] public bool    IsSprinting    { get; private set; }
         [Networked] public bool    IsCrouching    { get; private set; }
         //[Networked] public float   CurrentHealth  { get; private set; }
         //[Networked] public float   CurrentStamina { get; private set; }
-        
+
         [Networked] private NetworkButtons  PreviousButtons  { get; set; }
         
         [Networked, OnChangedRender(nameof(Jumped))] private int JumpSync { get; set; }
@@ -114,6 +114,7 @@ namespace LegalThieves
             animator.SetFloat(AnimMoveDirY, moveVelocity.z, 0.05f, Time.deltaTime);
 
             animator.SetBool(AnimIsCrouching, IsCrouching);
+
         }
 
         #endregion
@@ -162,6 +163,8 @@ namespace LegalThieves
             }
         }
 
+       
+
         private void ToggleSprint(bool isSprinting)
         {
             if (IsSprinting == isSprinting)
@@ -202,9 +205,11 @@ namespace LegalThieves
                 IsCrouching = false;
             }
         }
+
         
+
         #endregion
-        
+
         public void ResetCooldown()
         {
             

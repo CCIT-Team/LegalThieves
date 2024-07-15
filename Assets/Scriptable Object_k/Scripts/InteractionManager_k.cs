@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 using TMPro;
 using Unity.VisualScripting;
 using static UnityEngine.InputSystem.InputAction;
+using Fusion;
+using LegalThieves;
 
 public interface IInteractable
 {
@@ -12,7 +14,7 @@ public interface IInteractable
     void OnInteract();
 }
 
-public class InteractionManager_k : MonoBehaviour
+public class InteractionManager_k : NetworkBehaviour
 {
     public float checkRate = 0.05f;
     private float lastCheckTime;
@@ -21,7 +23,6 @@ public class InteractionManager_k : MonoBehaviour
 
     private GameObject curInteractGameobject;
     private IInteractable curInteractable;
-
     public TextMeshProUGUI promptText;
     private Camera camera;
 
@@ -56,11 +57,13 @@ public class InteractionManager_k : MonoBehaviour
                     curInteractable = hit.collider.GetComponent<IInteractable>();
                     if (curInteractGameobject.CompareTag("Items"))
                     {
-                        SetPromptTextItems();
+                        Debug.Log("줍기");
+                        //SetPromptTextItems();
                     }
                     else if (curInteractGameobject.CompareTag("Relics"))
                     {
-                        SetPromptTextRelics();
+                        Debug.Log("발굴");
+                        //SetPromptTextRelics();
                     }
                 }
             }
@@ -69,20 +72,20 @@ public class InteractionManager_k : MonoBehaviour
                 // 화면의 정 중앙에 상호작용 가능한 물체가 없는 경우
                 curInteractGameobject = null;
                 curInteractable = null;
-                promptText.gameObject.SetActive(false);
+                //promptText.gameObject.SetActive(false);
             }
         }
     }
 
     private void SetPromptTextItems()
     {
-        promptText.gameObject.SetActive(true);
-        promptText.text = string.Format("<b>[E]</b> {0}", curInteractable.GetInteractPrompt() + " 획득");     // <b></b> : 태그, 마크다운 형식 <b>의 경우 볼드체.
+        //promptText.gameObject.SetActive(true);
+        //promptText.text = string.Format("<b>[E]</b> {0}", curInteractable.GetInteractPrompt() + " 획득");     // <b></b> : 태그, 마크다운 형식 <b>의 경우 볼드체.
     }
     private void SetPromptTextRelics()
     {
-        promptText.gameObject.SetActive(true);
-        promptText.text = string.Format("<b>[F]</b> {0}", curInteractable.GetInteractPrompt() + " 발굴");     // <b></b> : 태그, 마크다운 형식 <b>의 경우 볼드체.
+        //promptText.gameObject.SetActive(true);
+        //promptText.text = string.Format("<b>[F]</b> {0}", curInteractable.GetInteractPrompt() + " 발굴");     // <b></b> : 태그, 마크다운 형식 <b>의 경우 볼드체.
     }
 
     public void OnInteractInput(InputAction.CallbackContext callbackContext)
@@ -96,7 +99,7 @@ public class InteractionManager_k : MonoBehaviour
             curInteractable.OnInteract();
             curInteractGameobject = null;
             curInteractable = null;
-            promptText.gameObject.SetActive(false);
+            //promptText.gameObject.SetActive(false);
         }
            
         
@@ -116,7 +119,7 @@ public class InteractionManager_k : MonoBehaviour
                 curInteractable.OnInteract();
                 curInteractGameobject = null;
                 curInteractable = null;
-                promptText.gameObject.SetActive(false);
+                //promptText.gameObject.SetActive(false);
             }
             else if(callbackContext.phase == InputActionPhase.Canceled)
             {
