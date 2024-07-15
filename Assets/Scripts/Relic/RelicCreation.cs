@@ -28,6 +28,8 @@ public class RelicCreation : MonoBehaviour
     public List<Relices> relicess = new List<Relices>(); // 직접 유물 리스트 객체
     public List<ProbabilityTable> probabilityTables = new List<ProbabilityTable>(); // 확률 테이블 리스트
     public GameObject[] RelicPrefabs; // 유물 프리팹 배열
+    public List<Relic> createdRelicList;
+   
 
     [System.Serializable]
     public class Relices
@@ -113,6 +115,8 @@ public class RelicCreation : MonoBehaviour
 
     public void PlaceRelic(List<Vector3> positions, int roomID, int roomValue, int roomType) //유물배치
     {
+
+
         if (positions == null || positions.Count == 0)
         {
             Debug.LogError("No positions provided to place Relics.");
@@ -148,7 +152,7 @@ public class RelicCreation : MonoBehaviour
                 relicComponent.renownPoint = relicData.renownPoint;
                 relicComponent.type = (Relic.Type)relicData.type;
 
-
+                createdRelicList.Add(relicComponent);
                 // 디버그 메시지 추가
                 Debug.Log("유물 생성됨: " + instantiatedRelic.name + " 위치: " + pos + " RoomID: " + roomID);
             }
@@ -172,7 +176,7 @@ public class RelicCreation : MonoBehaviour
                 if (filteredRelics.Count > 0)
                 {
                     Relices selectedRelic = filteredRelics[UnityEngine.Random.Range(0, filteredRelics.Count)];
-                   //Debug.Log("선택된 유물: " + selectedRelic.ㅑㅜ);
+                    //Debug.Log("선택된 유물: " + selectedRelic.ㅑㅜ);
                     return selectedRelic;
                 }
                 break;
@@ -199,7 +203,7 @@ public class RelicCreation : MonoBehaviour
         }
 
         // 디버그 메시지 추가하여 필터링된 유물 리스트 확인
-        Debug.Log("필터링된 유물 개수: " + filteredRelics.Count + " (티어: " + tier +", 타입: " + roomType + ")");
+        Debug.Log("필터링된 유물 개수: " + filteredRelics.Count + " (티어: " + tier + ", 타입: " + roomType + ")");
         return filteredRelics;
     }
 
@@ -216,4 +220,6 @@ public class RelicCreation : MonoBehaviour
         Debug.LogError("프리팹을 로드할 수 없습니다: " + prefabname + " / 프리팹 배열 크기: " + RelicPrefabs.Length);
         return null;
     }
+
+
 }
