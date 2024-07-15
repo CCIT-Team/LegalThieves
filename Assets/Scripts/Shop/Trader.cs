@@ -1,10 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Fusion;
+using System.Linq;
+using System;
 
-public class Trader : MonoBehaviour
+public class Trader : NetworkBehaviour
 {
     int currentPlayer = -1; //-1 : ÀÌ¿כ x
+    [Networked, Capacity(30), OnChangedRender(nameof(CallChangeRelicList))]
+    NetworkLinkedList<int> relics => default ;
+
+    void CallChangeRelicList()
+    {
+        
+    }
 
     public void ContectPlayer(int playerNumber)
     {
@@ -15,13 +25,7 @@ public class Trader : MonoBehaviour
     {
         currentPlayer = -1;
     }
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.TryGetComponent<DummyRelic>(out DummyRelic relic))
-        {
-            Debug.Log(relic.gameObject.name);
-        }
-    }
+
     #region Relic
     void TradePoint(DummyRelic relic)
     {

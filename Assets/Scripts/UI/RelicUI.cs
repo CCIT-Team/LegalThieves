@@ -6,33 +6,42 @@ using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 using Unity.VisualScripting;
 
-public class ItemUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler
+public class RelicUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler, IDropHandler
 {
-    public PlayerInventory inventory;
-
     public int inventoryIndex = -1;
+    public int relicID = -1;
     public RectTransform rectTransform { get; private set; }
     bool isSelected = false;
     public Vector3 defaultPosition = Vector3.zero;
     Vector3 clickPosition = Vector3.zero;
 
-    private void Start()
+    public delegate void Change(RelicUI relicUI1, RelicUI relicUI2);
+    public Change change;
+
+    public RelicUI(int id)
+    {
+        relicID = id;
+    }
+
+    private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
     }
 
     void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
     {
+        if (relicID < 0)
+            return;
         isSelected = true;
         defaultPosition = rectTransform.position;
+        GetComponent<RawImage>().raycastTarget = false;
         clickPosition = Input.mousePosition;
     }
 
     void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
     {
         isSelected = false;
-        inventory.SetItemPos(this, rectTransform);
-        defaultPosition = rectTransform.position;
+        GetComponent<RawImage>().raycastTarget = true;
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
@@ -50,15 +59,20 @@ public class ItemUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPo
     void IDragHandler.OnDrag(PointerEventData eventData)
     {
         rectTransform.position = (defaultPosition - clickPosition) + Input.mousePosition;
-        //Debug.Log(rectTransform.position);
     }
 
-    IEnumerator CheckOverlap()
+    void IDropHandler.OnDrop(PointerEventData eventData)
     {
-        while(isSelected)
+        if (!isSelected && eventData.pointerPress.TryGetComponent<RelicUI>(out RelicUI relicUI))
         {
-            
+            Debug.Log(this.gameObject.name);
+            Debug.Log(relicUI.gameObject.name);
+            change(relicUI,this);
         }
-        yield return null;
+    }
+
+    public void DropRelic()
+    {
+        rectTransform.position = Vector3.zero;
     }
 }

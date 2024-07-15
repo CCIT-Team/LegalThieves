@@ -71,6 +71,12 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+
+    public void CallVerify()
+    {
+
+    }
+
     [Header("Dungeon")]
     public Vector3 min;
     public Vector3 max;
