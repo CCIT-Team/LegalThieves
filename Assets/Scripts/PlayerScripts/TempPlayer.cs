@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Fusion.Addons.KCC;
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace LegalThieves
         [SerializeField] private Vector3               jumpImpulse     = new(0f, 5f, 0f);
         [SerializeField] private float                 maxHealth       = 100f;
         [SerializeField] private float                 maxStemina      = 100f;
-        [field: SerializeField] public float           AbilityRange { get; private set; } = 25f;
+        [field: SerializeField] public float           AbilityRange { get; private set; } = 5f;
         
         public double  Score => Math.Round(transform.position.y, 1);        //스코어 제거 or 변경 예정
         public bool    isReady;                                             //준비 기준 변경 예정 (GameLogic)
@@ -32,7 +33,7 @@ namespace LegalThieves
     
         private InputManager  _inputManager;
         private Vector2       _baseLookRotation;
-        private List<uint>    _inventoryItems = new();
+        private List<int>     _inventoryItems = new(10);
         
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");
@@ -43,6 +44,8 @@ namespace LegalThieves
         [Networked] public bool    IsCrouching    { get; private set; }
         //[Networked] public float   CurrentHealth  { get; private set; }
         //[Networked] public float   CurrentStamina { get; private set; }
+        
+        //fusion 홈페이지 Network Tick <<< 이거 보면됨
         
         [Networked] private NetworkButtons  PreviousButtons  { get; set; }
         
@@ -63,8 +66,10 @@ namespace LegalThieves
 
                 _inputManager = Runner.GetComponent<InputManager>();
                 _inputManager.localTempPlayer = this;
+                
                 Name = PlayerPrefs.GetString("Photon.Menu.Username");
                 RPC_PlayerName(Name);
+                
                 CameraFollow.Singleton.SetTarget(camTarget);
                 UIManager.Singleton.localTempPlayer = this;
                 kcc.Settings.ForcePredictedLookRotation = true;
@@ -84,19 +89,19 @@ namespace LegalThieves
                 CheckSprint(input);
                 CheckJump(input);
                 CheckCrouch(input);
-                kcc.AddLookRotation(input.LookDelta * lookSensitivity, -maxPitch, maxPitch);
-                UpdateCamTarget();
-            
-                if(input.Buttons.WasPressed(PreviousButtons, EInputButton.Interaction))
-                    TryInteraction(camTarget.forward);
-            
+                TryInteraction(input);
+                CheckThrowItem(input);
+                
                 if(IsSprinting && !CanSprint)
                     ToggleSprint(false);
+
+                _baseLookRotation = kcc.GetLookRotation();
+                kcc.AddLookRotation(input.LookDelta * lookSensitivity, -maxPitch, maxPitch);
+                UpdateCamTarget();
             
                 SetInputDirection(input);
             
                 PreviousButtons = input.Buttons;
-                _baseLookRotation = kcc.GetLookRotation();
             }
         }
 
@@ -210,9 +215,12 @@ namespace LegalThieves
             
         }
         
-        private void TryInteraction(Vector3 lookDirection)
+        private void TryInteraction(NetInput input)
         {
-            if (Physics.Raycast(camTarget.position, lookDirection, out RaycastHit hitInfo, AbilityRange))
+            if(!input.Buttons.WasPressed(PreviousButtons, EInputButton.Interaction))
+                return;
+            
+            if (Physics.Raycast(camTarget.position, camTarget.forward, out RaycastHit hitInfo, AbilityRange))
             {
                 if (hitInfo.collider.TryGetComponent(out TempRelic relic))
                 {
@@ -220,6 +228,15 @@ namespace LegalThieves
                     relic.GetRelic(this);
                 }
             }
+        }
+        
+        private void CheckThrowItem(NetInput input)
+        {
+            if(_inventoryItems.Count == 0 || !input.Buttons.WasPressed(PreviousButtons, EInputButton.ThrowItem)) 
+                return;
+
+            var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(_inventoryItems.Last());
+            tempRelic.SpawnRelic(camTarget.position, camTarget.rotation, camTarget.forward);
         }
 
         private void UpdateCamTarget()
@@ -245,12 +262,6 @@ namespace LegalThieves
             }
 
             return transform.InverseTransformVector(velocity);
-        }
-
-        private void CheckThrowItem(Vector3 lookDirection)
-        {
-            if(_inventoryItems.Count == 0) return;
-            
         }
         
         //private Vector3
