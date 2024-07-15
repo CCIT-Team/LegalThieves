@@ -10,10 +10,13 @@ namespace LegalThieves
         
         public Transform[]  tempRelicSpawnPoints;
         public uint         depth;
+        public int roomID;//7.15 유물생성중
+        public int roomtype;//7.15 유물생성중
 
         public override void Spawned()
         {
             if(!GetRelicSpawnPoints()) Debug.Log("유물 스폰위치를 설정하지 못했습니다.");
+            roomtype = Random.Range(1, 4);
         }
 
         private bool GetRelicSpawnPoints()

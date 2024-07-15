@@ -8,10 +8,13 @@ namespace LegalThieves
     {
         public int        relicNumber;
         public TempPlayer  owner; //필요한가?
-        public int        RoomNum { get; set; }
-        public int        GoldPoint { get; private set; }
-        public int        RenownPoint { get; private set; }
-        
+        public int        RoomNum;// { get; set; }
+        public int      GoldPoint;// { get; set; }
+        public int    RenownPoint;// { get; set; }
+        public enum Type { NormalRelic, GoldRelic, RenownRelic }; //유물의 종류
+        public Type type;
+
+
         public int        Weight => GoldPoint + RenownPoint; //무게 -> 부피 변경 가능성 있음
 
         private NetworkRigidbody3D _netRigidbody3D;
