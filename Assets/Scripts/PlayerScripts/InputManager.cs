@@ -74,12 +74,8 @@ namespace LegalThieves
                 var lookRotationDelta = new Vector2(-mouseDelta.y, mouseDelta.x);
                 
                 _mouseDeltaAccumulator.Accumulate(lookRotationDelta);
-<<<<<<< HEAD
                 //buttons.Set(EInputButton.Interaction, keyboard.eKey.isPressed);
-=======
->>>>>>> origin/Player_Interaction
             }
-            
             if (keyboard != null)
             {
                 if (keyboard.rKey.wasPressedThisFrame && localTempPlayer != null)
@@ -95,7 +91,6 @@ namespace LegalThieves
                 _accumulateInput.Direction += moveDirection;
                 buttons.Set(EInputButton.Jump, keyboard.spaceKey.isPressed);
                 buttons.Set(EInputButton.ThrowItem, keyboard.gKey.isPressed);
-                buttons.Set(EInputButton.Interaction, keyboard.fKey.isPressed);
                 buttons.Set(EInputButton.Sprint, keyboard.leftShiftKey.isPressed);
                 buttons.Set(EInputButton.Crouch, keyboard.leftCtrlKey.isPressed);
                 buttons.Set(EInputButton.Interaction, keyboard.eKey.isPressed);

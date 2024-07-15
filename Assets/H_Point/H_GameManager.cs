@@ -9,11 +9,11 @@ public class H_GameManager : MonoBehaviour
 
     public static GameObject instance;
     public enum GoldOrRenown { Gold, Renown }
-    public H_PlayerPoint[] playerScript; // ê° í”Œë ˆì´ì–´ì˜ ì •ë³´ë¥¼ ë¯¸ë¦¬ í• ë‹¹
+    public H_PlayerPoint[] playerScript; // °¢ ÇÃ·¹ÀÌ¾îÀÇ Á¤º¸¸¦ ¹Ì¸® ÇÒ´ç
 
     private void Start()
     {
-        //ê²Œì„ë§¤ë‹ˆì €
+        //°ÔÀÓ¸Å´ÏÀú
         if (instance == null) {
         instance = this.gameObject;
         DontDestroyOnLoad(instance);
@@ -22,7 +22,7 @@ public class H_GameManager : MonoBehaviour
         Destroy(instance);
         }
 
-        // í”Œë ˆì´ì–´ ìŠ¤í¬ë¦½íŠ¸ ë‹´ëŠ” ì´ˆì‹!!!
+        // ÇÃ·¹ÀÌ¾î ½ºÅ©¸³Æ® ´ã´Â ÃÊ½Ä!!!
         playerScript = new H_PlayerPoint[4];
         GameObject[] playerArray = GameObject.FindGameObjectsWithTag("Player");
 
@@ -41,12 +41,12 @@ public class H_GameManager : MonoBehaviour
         {
             RankArray[i] = playerScript[i].WinPoint;
         }
-        Array.Sort(RankArray);// ì¸ë±ìŠ¤ 0ë¶€í„° ìµœê³ ì ìˆ˜ ì¦‰, 1ë“±
+        Array.Sort(RankArray);// ÀÎµ¦½º 0ºÎÅÍ ÃÖ°íÁ¡¼ö Áï, 1µî
 
         foreach (var rank in RankArray)
         {
             Debug.Log(rank);
-            //ìˆœìœ„ ë¡œì§
+            //¼øÀ§ ·ÎÁ÷
         }
 
     }
