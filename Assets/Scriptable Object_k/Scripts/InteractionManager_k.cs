@@ -20,7 +20,7 @@ public class InteractionManager_k : NetworkBehaviour
     private float lastCheckTime;
     public float maxCheckDistance;
     public LayerMask layerMask;
-
+    public TempPlayer tempPlayer;
     private GameObject curInteractGameobject;
     private IInteractable curInteractable;
     public TextMeshProUGUI promptText;
@@ -111,10 +111,12 @@ public class InteractionManager_k : NetworkBehaviour
         {
             if (callbackContext.phase == InputActionPhase.Started)
             {
+                TempPlayer.animator.SetBool("isInteracting", true);
                 Debug.Log("유물발굴 시도중");
             }
             else if(callbackContext.phase == InputActionPhase.Performed)
             {
+                TempPlayer.animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 성공");
                 curInteractable.OnInteract();
                 curInteractGameobject = null;
@@ -123,6 +125,7 @@ public class InteractionManager_k : NetworkBehaviour
             }
             else if(callbackContext.phase == InputActionPhase.Canceled)
             {
+                TempPlayer.animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 실패");
             }
             

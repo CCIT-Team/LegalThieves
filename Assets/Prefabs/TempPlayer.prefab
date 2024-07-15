@@ -425,10 +425,10 @@ MonoBehaviour:
   crouchProcessor: {fileID: 7556963233328221503, guid: aacff19f101670d43b45a0a4a389fd90, type: 3}
   camTarget: {fileID: 7529312243237300391}
   source: {fileID: 5943668956460412166}
-  animator: {fileID: 3587260082793065115}
+  rigid: {fileID: 7180733496757539745}
   maxPitch: 85
   lookSensitivity: 0.15
-  jumpImpulse: {x: 0, y: 5, z: 0}
+  jumpImpulse: {x: 0, y: 8, z: 0}
   maxHealth: 100
   maxStemina: 100
   <AbilityRange>k__BackingField: 25
@@ -436,6 +436,7 @@ MonoBehaviour:
   _Name: 
   _IsSprinting: 0
   _IsCrouching: 0
+  _IsJumping: 0
 --- !u!114 &-3939038222902858634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -453,7 +454,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 128
-  Anim: {fileID: 0}
+  tempPlayer: {fileID: 0}
   promptText: {fileID: 0}
 --- !u!114 &1268123419817404660
 MonoBehaviour:
@@ -605,11 +606,6 @@ PrefabInstance:
 --- !u!137 &3341134727150296908 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 6071161467417485656, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
-  m_PrefabInstance: {fileID: 8799753730778381844}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &3587260082793065115 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5464981186242090127, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
   m_PrefabInstance: {fileID: 8799753730778381844}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7433383455673315553 stripped
