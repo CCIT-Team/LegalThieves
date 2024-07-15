@@ -23,7 +23,7 @@ public class ProbabilityTable
 public class RelicCreation : MonoBehaviour
 {
     public int roomID; // 방 ID
-    public TextAsset textAssetData; // 유물 CSV 파일 데이터
+    public TextAsset relicPrefabsData; // 유물 CSV 파일 데이터
     public TextAsset probabilityTableData; // 확률 테이블 CSV 파일 데이터
     public List<Relices> relicess = new List<Relices>(); // 직접 유물 리스트 객체
     public List<ProbabilityTable> probabilityTables = new List<ProbabilityTable>(); // 확률 테이블 리스트
@@ -59,7 +59,7 @@ public class RelicCreation : MonoBehaviour
 
     void ReadCSV()
     {
-        string[] rows = textAssetData.text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] rows = relicPrefabsData.text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
         for (int i = 1; i < rows.Length; i++) // 헤더를 제외하고 시작
         {
             string[] data = rows[i].Split(new char[] { ',' }, StringSplitOptions.None);
