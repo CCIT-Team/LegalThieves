@@ -1,3 +1,4 @@
+using System.Collections;
 using Fusion;
 using Fusion.Addons.Physics;
 using UnityEngine;
@@ -6,8 +7,10 @@ namespace LegalThieves
 {
     public class TempRelic : NetworkBehaviour
     {
-        public int        relicNumber;
+        public int         relicNumber;
+        public GameObject  relicVisual;
         public TempPlayer  owner; //필요한가?
+<<<<<<< HEAD
         public int        RoomNum;// { get; set; }
         public int      GoldPoint;// { get; set; }
         public int    RenownPoint;// { get; set; }
@@ -16,20 +19,31 @@ namespace LegalThieves
 
 
         public int        Weight => GoldPoint + RenownPoint; //무게 -> 부피 변경 가능성 있음
+=======
+        public int         RoomNum { get; set; }
+        public int         GoldPoint { get; private set; }
+        public int         RenownPoint { get; private set; }
+        
+        public int         Weight => GoldPoint + RenownPoint; //무게 -> 부피 변경 가능성 있음
+>>>>>>> Player_Interaction
 
-        private NetworkRigidbody3D _netRigidbody3D;
+        private NetworkRigidbody3D  _netRigidBody3D;
+        private Collider            _collider;
 
-        [Networked] private bool IsActive { get; set; }
+        [Networked, OnChangedRender(nameof(SetActiveRelic))] private bool IsActive { get; set; }
 
         public override void Spawned()
         {
             IsActive = true;
-            _netRigidbody3D = GetComponent<NetworkRigidbody3D>();
+            _netRigidBody3D = GetComponent<NetworkRigidbody3D>();
+            _collider = GetComponent<Collider>();
         }
 
-        public override void Render()
+        public void SetActiveRelic()
         {
-            gameObject.SetActive(IsActive);
+            relicVisual.SetActive(IsActive);
+            _collider.enabled = IsActive;
+            _netRigidBody3D.RBIsKinematic = !IsActive;
         }
 
         //유물을 position위치에 rotation 방향으로 이동
@@ -41,9 +55,11 @@ namespace LegalThieves
             
             owner = null;
             IsActive = true;
-            gameObject.SetActive(IsActive);
-            _netRigidbody3D.Teleport(position + force, rotation);
-            RPC_ApplyForce(force);
+            
+            _netRigidBody3D.Teleport(position + force, rotation);
+            
+            //힘 적용 안됨. 나중에 할지동?
+            //RPC_ApplyForce(force);
         }
 
         //플레이어가 유물을 획득할 때 호출
@@ -51,16 +67,21 @@ namespace LegalThieves
         {
             if (!IsActive || owner != null) return;
             
-            owner = getter;
             IsActive = false;
-            gameObject.SetActive(IsActive);
+            
+            owner = getter;
         }
-        
+
+
+        #region RPC callback
+
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void RPC_ApplyForce(Vector3 force)
         {
             // 네트워크 권한이 있는 클라이언트에서만 힘을 적용
-            _netRigidbody3D.Rigidbody.AddForce(force * 3f, ForceMode.Impulse);
+            _netRigidBody3D.Rigidbody.AddForce(force * 3f, ForceMode.Impulse);
         }
+        
+        #endregion
     }
 }
