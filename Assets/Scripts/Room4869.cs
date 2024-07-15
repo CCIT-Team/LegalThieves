@@ -14,7 +14,7 @@ public class room4869 : MonoBehaviour
     {
         roomID = Random.Range(1, 13);
         roomType = Random.Range(1, 4);
-        roomValue = Random.Range(1, 7);
+        roomValue = Random.Range(1, 5);
         RelicPositions = GenerateRelicPositions();
 
         if (Relic != null)
