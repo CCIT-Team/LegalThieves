@@ -17,11 +17,6 @@ namespace LegalThieves
         [SerializeField] private NetworkPrefabRef  playerPrefab;
         [SerializeField] private Transform         spawnpoint;
         [SerializeField] private Transform         spawnpointPivot;
-        [SerializeField] private Transform         relicPool;
-        [SerializeField] private TempRelic         tempRelicPrefab;
-        
-        [SerializeField] private TempRoom[]        tempRooms;
-        [SerializeField] private List<TempRelic>   tempRelics;
 
         [Networked] private TempPlayer Winner { get; set; }
 
@@ -39,8 +34,6 @@ namespace LegalThieves
             Runner.SetIsSimulated(Object, true);
 
             if (!HasStateAuthority) return;
-            SpawnRelics();
-
         }
 
         public override void FixedUpdateNetwork()
@@ -121,22 +114,6 @@ namespace LegalThieves
         
         // 모든 방의 규명이 완료되었는지 확인 (ExplainRoom()의 안에서 규명이 확인되었을 때 호출될 예정)
         private void CheckAllRoomExplained() { }
-
-        private void SpawnRelics()
-        {
-            for (uint i = 0; i < tempRooms.Length; i++)
-            {
-                var rRelics = tempRooms[i].tempRelicSpawnPoints;
-                for (uint j = 0; j < rRelics.Length; j++)
-                {
-                    var tempR = Runner.Spawn(tempRelicPrefab, rRelics[j].position, rRelics[j].rotation);
-                    tempR.transform.SetParent(relicPool);
-                    tempR.relicNumber = i * 3 + j;
-                    tempR.RoomNum = i;
-                    tempRelics.Add(tempR);
-                }
-            }
-        }
         
         #endregion
 
