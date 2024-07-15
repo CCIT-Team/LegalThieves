@@ -19,7 +19,7 @@ public class RoomVerifier : MonoBehaviour
             else
             {
                 stack[playerNumber - 1] += 1;
-                if (count >= 3)
+                if (stack[playerNumber - 1] >= 3)
                 {
                     isVertified = true;
                     return playerNumber;
@@ -49,6 +49,7 @@ public class RoomVerifier : MonoBehaviour
         if (checker > 0)
         {
             Debug.Log("Room" + roomId + " is vertified");
+            GameManager.Instance.CallVerify();
         }
     }
 }
