@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -16,6 +16,7 @@ namespace LegalThieves
         [Header("Setup")]
         [SerializeField] private float depthMuliple = 1f;
 
+        //스폰된 유물이 담기는 네트워크배열. 네트워크배열에 관해서는 포톤 doc 참고.
         [Networked, Capacity(200)] private NetworkArray<TempRelic> SpawnedRelics { get; }
 
         public static RelicManager Singleton
@@ -53,6 +54,9 @@ namespace LegalThieves
             SpawnRelics();
         }
 
+        //모든 유물을 스폰하는 함수. 이후에 게임 state 구현되면 게임 준비 혹은 게임 시작 state에 호출되어 유물을 생성할 예정.
+        //지금은 게임이 시작되면(호스트가 접속하면) 생성됨.
+        //라운드 개념이 구현될 때 생성된 유물을 전부 디스폰하고 리스트를 초기화하는 작업이 구현될 필요가 있어보임.
         private void SpawnRelics()
         {
             var relicCount = 0;
@@ -69,9 +73,9 @@ namespace LegalThieves
                     
                     tempRelic.relicNumber = relicCount;
                     tempRelic.RoomNum = i;
-                    
-                    
-                    
+
+
+
                     SpawnedRelics.Set(relicCount, tempRelic);
                     relicCount++;
                 }
@@ -79,10 +83,11 @@ namespace LegalThieves
             
         }
 
+        //
         public TempRelic GetTempRelicWithIndex(int index)
         {
-            var networkObject = SpawnedRelics.Get(index);
-            return networkObject;
+            var tempRelic = SpawnedRelics[index];
+            return tempRelic == null ? null : tempRelic;
         }
     }
 }

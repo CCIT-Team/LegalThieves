@@ -61,6 +61,7 @@ namespace LegalThieves
         
             if(HasInputAuthority)
             {
+                //입력된 스킨드메쉬를 안보이게 하는 부분.
                 foreach (var skinnedMeshRenderer in modelParts)
                     skinnedMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
 
@@ -215,6 +216,7 @@ namespace LegalThieves
             
         }
         
+        //플레이어 상호작용 확인. NetInput Interaction F키를 눌러 호출됨.
         private void TryInteraction(NetInput input)
         {
             if(!input.Buttons.WasPressed(PreviousButtons, EInputButton.Interaction))
@@ -230,12 +232,15 @@ namespace LegalThieves
             }
         }
         
+        //아이템 버리기 체크 현재 G키를 눌러 _inventoryItems배열 마지막 요소를 버리게 되어있음.
+        //NetInput의 ThrowItem을 통해 TempPlayer의 FixedUpdateNetwork함수에서 호출됨.
         private void CheckThrowItem(NetInput input)
         {
             if(_inventoryItems.Count == 0 || !input.Buttons.WasPressed(PreviousButtons, EInputButton.ThrowItem)) 
                 return;
-
+            
             var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(_inventoryItems.Last());
+            
             tempRelic.SpawnRelic(camTarget.position, camTarget.rotation, camTarget.forward);
         }
 
@@ -263,8 +268,6 @@ namespace LegalThieves
 
             return transform.InverseTransformVector(velocity);
         }
-        
-        //private Vector3
         
         #region RPC Callback
     
