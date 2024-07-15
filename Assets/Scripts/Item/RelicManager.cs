@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 using System;
 using System.Collections.Generic;
-=======
-using System.Linq;
->>>>>>> Player_Interaction
 using Fusion;
 using UnityEngine;
 using static RelicCreation;
@@ -22,7 +18,6 @@ namespace LegalThieves
         [Header("Setup")]
         [SerializeField] private float depthMuliple = 1f;
 
-        //스폰된 유물이 담기는 네트워크배열. 네트워크배열에 관해서는 포톤 doc 참고.
         [Networked, Capacity(200)] private NetworkArray<TempRelic> SpawnedRelics { get; }
 
         [System.Serializable]//7.15일 유물생성 추가 중
@@ -107,14 +102,7 @@ namespace LegalThieves
             SpawnRelics();
         }
 
-<<<<<<< HEAD
         private void SpawnRelics()//7.15 유물 생성 추가 중
-=======
-        //모든 유물을 스폰하는 함수. 이후에 게임 state 구현되면 게임 준비 혹은 게임 시작 state에 호출되어 유물을 생성할 예정.
-        //지금은 게임이 시작되면(호스트가 접속하면) 생성됨.
-        //라운드 개념이 구현될 때 생성된 유물을 전부 디스폰하고 리스트를 초기화하는 작업이 구현될 필요가 있어보임.
-        private void SpawnRelics()
->>>>>>> Player_Interaction
         {
             var relicCount = 0;
             for (var i = 0; i < tempRooms.Length; i++)
@@ -127,7 +115,6 @@ namespace LegalThieves
                     var tempRelic = networkObjRelic.GetComponent<TempRelic>();
 
                     networkObjRelic.transform.SetParent(relicPool);
-<<<<<<< HEAD
 
                     // 유물 정보 설정
                     var selectedRelicInfo = SelectRelicByProbabilityAndType(probabilityTables[Random.Range(0, probabilityTables.Count)], tempRooms[i].roomtype);// 추가한 부분
@@ -140,13 +127,6 @@ namespace LegalThieves
                         tempRelic.relicNumber = relicCount;
                         tempRelic.type = (TempRelic.Type)selectedRelicInfo.type;
                     }
-=======
-                    
-                    tempRelic.relicNumber = relicCount;
-                    tempRelic.RoomNum = i;
-
-
->>>>>>> Player_Interaction
 
                     SpawnedRelics.Set(relicCount, tempRelic);
                     relicCount++;
@@ -154,7 +134,6 @@ namespace LegalThieves
             }
         }
 
-<<<<<<< HEAD
         private Relices SelectRelicByProbabilityAndType(ProbabilityTable table, int roomType)//7.15 유물 생성 추가 중
         {
             int randomPoint = UnityEngine.Random.Range(0, 100);
@@ -191,13 +170,10 @@ namespace LegalThieves
                    (roomType == 2 && relic.type == Relices.RelicesType.GoldRelic) ||
                    (roomType == 3 && relic.type == Relices.RelicesType.RenownRelic);
         }
-=======
-        //
->>>>>>> Player_Interaction
         public TempRelic GetTempRelicWithIndex(int index)
         {
-            var tempRelic = SpawnedRelics[index];
-            return tempRelic == null ? null : tempRelic;
+            var networkObject = SpawnedRelics.Get(index);
+            return networkObject;
         }
 
         void ReadCSV()//7.15 유물 생성 추가 중
