@@ -238,9 +238,10 @@ namespace LegalThieves
         {
             if(_inventoryItems.Count == 0 || !input.Buttons.WasPressed(PreviousButtons, EInputButton.ThrowItem)) 
                 return;
-            
-            var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(_inventoryItems.Last());
-            
+
+            var selectedItemIndex = _inventoryItems.Last();
+            var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(selectedItemIndex);
+            _inventoryItems.Remove(selectedItemIndex);
             tempRelic.SpawnRelic(camTarget.position, camTarget.rotation, camTarget.forward);
         }
 
