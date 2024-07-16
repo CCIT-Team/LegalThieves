@@ -1,23 +1,30 @@
 using Fusion;
+using Fusion.Addons.Physics;
 using UnityEngine;
 
 namespace LegalThieves
 {
     public class TempRelic : NetworkBehaviour
     {
-        public uint        relicNumber;
+        public int        relicNumber;
         public TempPlayer  owner; //필요한가?
-        public uint        RoomNum { get; set; }
-        public uint        GoldPoint { get; private set; }
-        public uint        RenownPoint { get; private set; }
-        
-        public uint        Weight => GoldPoint + RenownPoint; //무게 -> 부피 변경 가능성 있음
+        public int        RoomNum;// { get; set; }
+        public int      GoldPoint;// { get; set; }
+        public int    RenownPoint;// { get; set; }
+        public enum Type { NormalRelic, GoldRelic, RenownRelic }; //유물의 종류
+        public Type type;
+
+
+        public int        Weight => GoldPoint + RenownPoint; //무게 -> 부피 변경 가능성 있음
+
+        private NetworkRigidbody3D _netRigidbody3D;
 
         [Networked] private bool IsActive { get; set; }
 
         public override void Spawned()
         {
             IsActive = true;
+            _netRigidbody3D = GetComponent<NetworkRigidbody3D>();
         }
 
         public override void Render()
@@ -31,16 +38,29 @@ namespace LegalThieves
         public void SpawnRelic(Vector3 position, Quaternion rotation, Vector3 force)
         {
             if (IsActive || owner == null) return;
+            
             owner = null;
             IsActive = true;
+            gameObject.SetActive(IsActive);
+            _netRigidbody3D.Teleport(position + force, rotation);
+            RPC_ApplyForce(force);
         }
 
         //플레이어가 유물을 획득할 때 호출
         public void GetRelic(TempPlayer getter)
         {
             if (!IsActive || owner != null) return;
+            
             owner = getter;
             IsActive = false;
+            gameObject.SetActive(IsActive);
+        }
+        
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_ApplyForce(Vector3 force)
+        {
+            // 네트워크 권한이 있는 클라이언트에서만 힘을 적용
+            _netRigidbody3D.Rigidbody.AddForce(force * 3f, ForceMode.Impulse);
         }
     }
 }

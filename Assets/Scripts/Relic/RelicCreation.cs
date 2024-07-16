@@ -164,7 +164,7 @@ public class RelicCreation : MonoBehaviour
             }
         }
     }
-    private Relices SelectRelicByProbabilityAndType(ProbabilityTable table, int roomType)// 확률표에 따른 유물 선택
+    private Relices SelectRelicByProbabilityAndType(ProbabilityTable table, int roomType) // 확률표에 따른 유물 선택
     {
         int randomPoint = UnityEngine.Random.Range(0, 100);
         int cumulativeProbability = 0;
@@ -174,39 +174,37 @@ public class RelicCreation : MonoBehaviour
             cumulativeProbability += yearProb.probability;
             if (randomPoint < cumulativeProbability)
             {
-                List<Relices> filteredRelics = FilterRelicByYearAndType(yearProb.relictier, roomType);
+                List<Relices> filteredRelics = new List<Relices>();
+
+                // 유물 타입 필터링을 직접 처리
+                foreach (var relic in relicess)
+                {
+                    if (relic.tier == yearProb.relictier)
+                    {
+                        bool isMatchingType = (roomType == 1 && relic.type == Relices.RelicesType.NormalRelic) ||
+                                              (roomType == 2 && relic.type == Relices.RelicesType.GoldRelic) ||
+                                              (roomType == 3 && relic.type == Relices.RelicesType.RenownRelic);
+                        if (isMatchingType)
+                        {
+                            filteredRelics.Add(relic);
+                        }
+                    }
+                }
+
+                Debug.Log("필터링된 유물 개수: " + filteredRelics.Count + " (티어: " + yearProb.relictier + ", 타입: " + roomType + ")");
+
+                // 필터링된 유물 중에서 무작위로 하나 선택
                 if (filteredRelics.Count > 0)
                 {
                     Relices selectedRelic = filteredRelics[UnityEngine.Random.Range(0, filteredRelics.Count)];
-                    //Debug.Log("선택된 유물: " + selectedRelic.ㅑㅜ);
                     return selectedRelic;
                 }
+
                 break;
             }
         }
-        return null;
-    }
-    private List<Relices> FilterRelicByYearAndType(int tier, int roomType)// 유물 타입 필터
-    {
-        List<Relices> filteredRelics = new List<Relices>();
 
-        foreach (var Relices in relicess)
-        {
-            if (Relices.tier == tier)
-            {
-                bool isMatchingType = (roomType == 1) ||
-                                      (roomType == 2 && Relices.type == Relices.RelicesType.GoldRelic) ||
-                                      (roomType == 3 && Relices.type == Relices.RelicesType.RenownRelic);
-                if (isMatchingType)
-                {
-                    filteredRelics.Add(Relices);
-                }
-            }
-        }
-
-        // 디버그 메시지 추가하여 필터링된 유물 리스트 확인
-        Debug.Log("필터링된 유물 개수: " + filteredRelics.Count + " (티어: " + tier + ", 타입: " + roomType + ")");
-        return filteredRelics;
+        return null; // 적합한 유물을 찾지 못한 경우
     }
 
     // 프리팹을 이름으로부터 로드하는 함수
