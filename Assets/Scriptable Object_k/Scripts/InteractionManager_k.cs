@@ -21,10 +21,14 @@ public class InteractionManager_k : NetworkBehaviour
     public float maxCheckDistance;
     public LayerMask layerMask;
     public TempPlayer tempPlayer;
+    [SerializeField] private Item_Torch_Temp Torch;
     private GameObject curInteractGameobject;
     private IInteractable curInteractable;
     public TextMeshProUGUI promptText;
     private Camera camera;
+    private bool isPicked = false;
+    private bool PickTorch = false;
+    [SerializeField] private GameObject[] EquipItems;
 
     // Start is called before the first frame update
     void Start()
@@ -35,7 +39,6 @@ public class InteractionManager_k : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-
         // 마지막으로 체크한 시간이 checkRate를 넘겼다면
         if (Time.time - lastCheckTime > checkRate)
         {
@@ -134,5 +137,57 @@ public class InteractionManager_k : NetworkBehaviour
         
     }
 
-    
+    public void OnAttack(InputAction.CallbackContext callbackContext)
+    {
+        if(isPicked ==  true && PickTorch == true && callbackContext.phase == InputActionPhase.Started)
+        {
+            TempPlayer.animator.SetTrigger("Attack");
+        }
+    }
+    public void OnTorch(InputAction.CallbackContext callbackContext)
+    {
+        if(isPicked == false)
+        {
+            StartCoroutine(WaitOn());      
+        }
+        else
+        {
+            StartCoroutine(WaitOff());          
+        }
+    }
+
+    public void OnBandage(InputAction.CallbackContext callbackContext)
+    {        
+        if (isPicked == false && callbackContext.phase == InputActionPhase.Started)
+        {
+            StartCoroutine(useBandage());
+        }
+
+    }
+
+    private IEnumerator WaitOn()
+    {
+        TempPlayer.animator.SetBool("pickTorch", true);
+        yield return new WaitForSeconds(1f);
+        EquipItems[2].SetActive(true);
+        Torch.TurnOnLight();
+        isPicked = true;
+        PickTorch = true;
+    }
+    private IEnumerator WaitOff()
+    {
+        Torch.TurnOffLight();
+        yield return new WaitForSeconds(1.0f);
+        TempPlayer.animator.SetBool("pickTorch", false);
+        EquipItems[2].SetActive(false);
+        isPicked = false;
+        PickTorch = false;
+    }
+    private IEnumerator useBandage()
+    {
+        EquipItems[0].SetActive(true);
+        TempPlayer.animator.SetTrigger("useBandage");
+        yield return new WaitForSeconds(5.967f);
+        EquipItems[0].SetActive(false);
+    }
 }
