@@ -1,6 +1,6 @@
 using Fusion.Menu;
 
-namespace MultiClimb.Menu
+namespace LegalThieves.Menu
 {
     public class MenuUIController : FusionMenuUIController<FusionMenuConnectArgs> { }
 }

@@ -4,7 +4,7 @@ using Fusion;
 using Fusion.Addons.KCC;
 using Fusion.Menu;
 using Fusion.Sockets;
-using MultiClimb.Menu;
+using LegalThieves.Menu;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
