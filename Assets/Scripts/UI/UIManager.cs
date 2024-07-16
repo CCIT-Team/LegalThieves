@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Fusion;
 using TMPro;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace LegalThieves
@@ -26,16 +28,21 @@ namespace LegalThieves
 
         private static UIManager _singleton;
 
+        [SerializeField] private Image[]            inventorySlotImages;
+        [SerializeField] private GameObject[]       selectToggles;
+        [Space]
         [SerializeField] private TextMeshProUGUI    gameStateText;
         [SerializeField] private TextMeshProUGUI    instructionText;
         [SerializeField] private Image              sprintActive;
         [SerializeField] private LeaderboardItem[]  leaderboardItems;
 
-        public TempPlayer localTempPlayer;
+        public TempPlayer  localTempPlayer;
+        public int         currentSlotIndex;
 
         private void Awake()
         {
             Singleton = this;
+            Init();
         }
 
         private void Update()
@@ -43,13 +50,18 @@ namespace LegalThieves
             if (localTempPlayer == null)
                 return;
 
-            sprintActive.enabled = localTempPlayer.IsSprinting;
+            //sprintActive.enabled = localTempPlayer.IsSprinting;
         }
 
         private void OnDestroy()
         {
             if (Singleton == this)
                 Singleton = null;
+        }
+
+        private void Init()
+        {
+            selectToggles[currentSlotIndex].SetActive(true);
         }
 
         public void DidSetReady()
@@ -77,6 +89,35 @@ namespace LegalThieves
             instructionText.enabled = newState == EGameState.Waiting;
         }
 
+        public void SetSlotImage(bool isActive, Sprite sprite = null)
+        {
+            inventorySlotImages[currentSlotIndex].sprite = sprite;
+            inventorySlotImages[currentSlotIndex].enabled = isActive;
+        }
+
+        public void SetSlotImageDisable()
+        {
+            inventorySlotImages[currentSlotIndex].sprite = null;
+            inventorySlotImages[currentSlotIndex].enabled = false;
+        }
+
+        public void MoveCurrentSlot(bool isLeft)
+        {
+            switch (isLeft)
+            {
+                case true when currentSlotIndex > 0:
+                    selectToggles[currentSlotIndex].SetActive(false);
+                    currentSlotIndex -= 1;
+                    selectToggles[currentSlotIndex].SetActive(true);
+                    break;
+                case false when currentSlotIndex < 9:
+                    selectToggles[currentSlotIndex].SetActive(false);
+                    currentSlotIndex += 1;
+                    selectToggles[currentSlotIndex].SetActive(true);
+                    break;
+            }
+        }
+        
         public void UpdateLeaderboard(KeyValuePair<PlayerRef, TempPlayer>[] players)
         {
             for (var i = 0; i < leaderboardItems.Length; i++)
@@ -85,6 +126,10 @@ namespace LegalThieves
 
                 if (i < players.Length)
                 {
+                    if (players[i].Key == localTempPlayer.Runner.LocalPlayer)
+                    {
+                        
+                    }
                     item.nameText.text = players[i].Value.Name;
                     item.heightText.text = $"{players[i].Value.Score}m";
                 }

@@ -14,8 +14,8 @@ namespace LegalThieves
         [SerializeField] private KCC                   kcc;
         [SerializeField] private KCCProcessor          sprintProcessor;
         [SerializeField] private KCCProcessor          crouchProcessor;
-        [SerializeField] private Transform             camTarget;
-        [SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
+            [SerializeField] private Transform             camTarget;
+            [SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
         [SerializeField] public static Animator              animator;
 
         [Header("Setup")]
@@ -28,12 +28,14 @@ namespace LegalThieves
         
         public double  Score => Math.Round(transform.position.y, 1);        //스코어 제거 or 변경 예정
         public bool    isReady;                                             //준비 기준 변경 예정 (GameLogic)
-    
+        //[HideInInspector]
+        public int[]   playerBoxItems = Enumerable.Repeat(-1, 30).ToArray();
+        
         private bool CanSprint => kcc.FixedData.IsGrounded;
     
         private InputManager  _inputManager;
         private Vector2       _baseLookRotation;
-        private List<int>     _inventoryItems = new(10);
+        private int[]         _inventoryItems = Enumerable.Repeat(-1, 10).ToArray();
         
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");
@@ -48,9 +50,7 @@ namespace LegalThieves
         //fusion 홈페이지 Network Tick <<< 이거 보면됨
         
         [Networked] private NetworkButtons  PreviousButtons  { get; set; }
-        
         [Networked, OnChangedRender(nameof(Jumped))] private int JumpSync { get; set; }
-        
     
         #region Overrided user callback functions in NetworkBehaviour
 
@@ -64,7 +64,7 @@ namespace LegalThieves
                 //입력된 스킨드메쉬를 안보이게 하는 부분.
                 foreach (var skinnedMeshRenderer in modelParts)
                     skinnedMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-
+                
                 _inputManager = Runner.GetComponent<InputManager>();
                 _inputManager.localTempPlayer = this;
                 
@@ -233,30 +233,28 @@ namespace LegalThieves
             if(!input.Buttons.WasPressed(PreviousButtons, EInputButton.Interaction))
                 return;
 
+            if (_inventoryItems[UIManager.Singleton.currentSlotIndex] != -1) return;
             if (!Physics.Raycast(camTarget.position, camTarget.forward, out var hitInfo, AbilityRange)) return;
             if (!hitInfo.collider.TryGetComponent(out TempRelic relic)) return;
-            if(_inventoryItems.Count < 10)
-            {
-                _inventoryItems.Add(relic.relicNumber);
-                relic.GetRelic(this);
-            }
-            else
-            {
-                relic.SpawnRelic(camTarget.position, camTarget.rotation, camTarget.forward);
-            }
             
+            _inventoryItems[UIManager.Singleton.currentSlotIndex] = relic.relicNumber;
+            UIManager.Singleton.SetSlotImage(true, relic.relicSprite);
+            relic.GetRelic(this);
+
         }
         
         //아이템 버리기 체크 현재 G키를 눌러 _inventoryItems배열 마지막 요소를 버리게 되어있음.
         //NetInput의 ThrowItem을 통해 TempPlayer의 FixedUpdateNetwork함수에서 호출됨.
         private void CheckThrowItem(NetInput input)
         {
-            if(_inventoryItems.Count == 0 || !input.Buttons.WasPressed(PreviousButtons, EInputButton.ThrowItem)) 
+            if(!input.Buttons.WasPressed(PreviousButtons, EInputButton.ThrowItem) ||
+               _inventoryItems[UIManager.Singleton.currentSlotIndex] == -1) 
                 return;
 
-            var selectedItemIndex = _inventoryItems.Last();
+            var selectedItemIndex = _inventoryItems[UIManager.Singleton.currentSlotIndex];
             var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(selectedItemIndex);
-            _inventoryItems.Remove(selectedItemIndex);
+            _inventoryItems[UIManager.Singleton.currentSlotIndex] = -1;
+            UIManager.Singleton.SetSlotImage(false);
             tempRelic.SpawnRelic(camTarget.position, camTarget.rotation, camTarget.forward);
         }
 

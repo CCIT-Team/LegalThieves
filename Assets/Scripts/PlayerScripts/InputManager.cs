@@ -75,6 +75,11 @@ namespace LegalThieves
                 
                 _mouseDeltaAccumulator.Accumulate(lookRotationDelta);
                 //buttons.Set(EInputButton.Interaction, keyboard.eKey.isPressed);
+                
+                if(mouse.scroll.up.IsPressed()) 
+                    UIManager.Singleton.MoveCurrentSlot(true);
+                if(mouse.scroll.down.IsPressed())
+                    UIManager.Singleton.MoveCurrentSlot(false);
             }
             if (keyboard != null)
             {

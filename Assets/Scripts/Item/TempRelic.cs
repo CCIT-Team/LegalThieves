@@ -6,18 +6,22 @@ namespace LegalThieves
 {
     public class TempRelic : NetworkBehaviour
     {
-        public int        relicNumber;
+        [SerializeField] private GameObject visual;
+        
+        public int         relicNumber;
+        public Sprite      relicSprite;
         public TempPlayer  owner; //필요한가?
-        public int        RoomNum;// { get; set; }
-        public int      GoldPoint;// { get; set; }
-        public int    RenownPoint;// { get; set; }
+        public int         RoomNum;
+        public int         GoldPoint;
+        public int         RenownPoint;
         public enum Type { NormalRelic, GoldRelic, RenownRelic }; //유물의 종류
         public Type type;
 
 
         public int        Weight => GoldPoint + RenownPoint; //무게 -> 부피 변경 가능성 있음
 
-        private NetworkRigidbody3D _netRigidbody3D;
+        private NetworkRigidbody3D  _netRigidbody3D;
+        private Collider            _collider;
 
         [Networked] private bool IsActive { get; set; }
 
@@ -25,11 +29,12 @@ namespace LegalThieves
         {
             IsActive = true;
             _netRigidbody3D = GetComponent<NetworkRigidbody3D>();
+            _collider = GetComponent<Collider>();
         }
 
         public override void Render()
         {
-            gameObject.SetActive(IsActive);
+            visual.SetActive(IsActive);
         }
 
         //유물을 position위치에 rotation 방향으로 이동
@@ -41,7 +46,9 @@ namespace LegalThieves
             
             owner = null;
             IsActive = true;
-            gameObject.SetActive(IsActive);
+            
+            _collider.enabled = true;
+            _netRigidbody3D.RBIsKinematic = false;
             _netRigidbody3D.Teleport(position + force, rotation);
             RPC_ApplyForce(force);
         }
@@ -53,7 +60,9 @@ namespace LegalThieves
             
             owner = getter;
             IsActive = false;
-            gameObject.SetActive(IsActive);
+
+            _collider.enabled = false;
+            _netRigidbody3D.RBIsKinematic = true;
         }
         
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]

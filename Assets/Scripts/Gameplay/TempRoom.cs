@@ -9,7 +9,7 @@ namespace LegalThieves
         [SerializeField] private bool       isFixedFirstRoom;
         
         public Transform[]  tempRelicSpawnPoints;
-        public int         depth;
+        public uint         depth;
         public int roomID;//7.15 유물생성중
         public int roomtype;//7.15 유물생성중
 
