@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using ExitGames.Client.Photon.StructWrapping;
+using System;
 
 public class RelicDisplayer : NetworkBehaviour
 {
@@ -13,7 +14,7 @@ public class RelicDisplayer : NetworkBehaviour
 
     void CallChangeRelicList()
     {
-        //UI 즉각 변경 넣을 예정
+        //UI 변경 넣을 예정
     }
 
     public int AddRelics(int relicID)
@@ -23,7 +24,7 @@ public class RelicDisplayer : NetworkBehaviour
         int playerID = currentPlayer; //진행 도중 값 변경 방지
         for (int i = 0; i < 30;i++)
         {
-            if(DisplayedRelics.Get(i) != -1)
+            if(DisplayedRelics.Get(i + playerID) == -1)
             {
                 DisplayedRelics.Set(i + playerID, relicID);
                 return -1;

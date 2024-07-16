@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
-using Unity.VisualScripting;
 
-public class RelicUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler, IDropHandler
+public class RelicUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IDropHandler
 {
     public int inventoryIndex = -1;
     public int relicID = -1;
     public RectTransform rectTransform { get; private set; }
     bool isSelected = false;
     public Vector3 defaultPosition = Vector3.zero;
-    Vector3 clickPosition = Vector3.zero;
+    private Vector3 clickPosition = Vector3.zero;
 
-    public delegate void Change(RelicUI relicUI1, RelicUI relicUI2);
-    public Change change;
+    public delegate void Swap(RelicUI relicUI1, RelicUI relicUI2);
+    public Swap swap;
+    public delegate void Select(int ID);
+    public Select select;
 
     public RelicUI(int id)
     {
@@ -26,6 +26,7 @@ public class RelicUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IP
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
+        defaultPosition = rectTransform.position;
     }
 
     void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
@@ -33,27 +34,16 @@ public class RelicUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IP
         if (relicID < 0)
             return;
         isSelected = true;
-        defaultPosition = rectTransform.position;
-        GetComponent<RawImage>().raycastTarget = false;
+        select(relicID);
+        GetComponent<Image>().raycastTarget = false;
         clickPosition = Input.mousePosition;
     }
 
     void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
     {
         isSelected = false;
-        GetComponent<RawImage>().raycastTarget = true;
-    }
-
-    void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
-    {
-        if (isSelected)
-            return;
-    }
-
-    void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
-    {
-        if (isSelected)
-            return;
+        GetComponent<Image>().raycastTarget = true;
+        rectTransform.position = defaultPosition;
     }
 
     void IDragHandler.OnDrag(PointerEventData eventData)
@@ -67,7 +57,7 @@ public class RelicUI : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IP
         {
             Debug.Log(this.gameObject.name);
             Debug.Log(relicUI.gameObject.name);
-            change(relicUI,this);
+            swap(this,relicUI);
         }
     }
 
