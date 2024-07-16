@@ -80,8 +80,8 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 0.72033405, b: 0.40566027, a: 1}
-  m_Intensity: 1
-  m_Range: 10
+  m_Intensity: 0
+  m_Range: 30
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -225,6 +225,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 19876116, guid: 85ad5e1b2103b0c4f8a3fb33bb5d873f, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -307,6 +311,26 @@ PrefabInstance:
     - target: {fileID: 449316, guid: d3a220809e23aef44a41807b2a5d18ec, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 19832852, guid: d3a220809e23aef44a41807b2a5d18ec, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19832852, guid: d3a220809e23aef44a41807b2a5d18ec, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19832852, guid: d3a220809e23aef44a41807b2a5d18ec, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19832852, guid: d3a220809e23aef44a41807b2a5d18ec, type: 3}
+      propertyPath: InitialModule.startRotationX.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19832852, guid: d3a220809e23aef44a41807b2a5d18ec, type: 3}
+      propertyPath: InitialModule.startRotationY.minMaxState
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -391,6 +415,26 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 19832756, guid: 870ab9cf0ee811442a350fe653f10555, type: 3}
+      propertyPath: EmissionModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19832756, guid: 870ab9cf0ee811442a350fe653f10555, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19832756, guid: 870ab9cf0ee811442a350fe653f10555, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19832756, guid: 870ab9cf0ee811442a350fe653f10555, type: 3}
+      propertyPath: InitialModule.startRotationX.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19832756, guid: 870ab9cf0ee811442a350fe653f10555, type: 3}
+      propertyPath: InitialModule.startRotationY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -472,8 +516,32 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4655781200651298253}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c73b11a0eb18ded48b5b3d6af65bd064,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8506065384447623118}
   m_SourcePrefab: {fileID: 100100000, guid: c73b11a0eb18ded48b5b3d6af65bd064, type: 3}
+--- !u!1 &8178257883455289534 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c73b11a0eb18ded48b5b3d6af65bd064,
+    type: 3}
+  m_PrefabInstance: {fileID: 9060798140683044335}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8506065384447623118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8178257883455289534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2ebd57370d41184d8bfbe2d012014d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lightIntensity: 1
+  changingTime: 3
 --- !u!4 &8805894731932606980 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c73b11a0eb18ded48b5b3d6af65bd064,
