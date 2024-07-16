@@ -221,15 +221,19 @@ namespace LegalThieves
         {
             if(!input.Buttons.WasPressed(PreviousButtons, EInputButton.Interaction))
                 return;
-            
-            if (Physics.Raycast(camTarget.position, camTarget.forward, out RaycastHit hitInfo, AbilityRange))
+
+            if (!Physics.Raycast(camTarget.position, camTarget.forward, out var hitInfo, AbilityRange)) return;
+            if (!hitInfo.collider.TryGetComponent(out TempRelic relic)) return;
+            if(_inventoryItems.Count < 10)
             {
-                if (hitInfo.collider.TryGetComponent(out TempRelic relic))
-                {
-                    _inventoryItems.Add(relic.relicNumber);
-                    relic.GetRelic(this);
-                }
+                _inventoryItems.Add(relic.relicNumber);
+                relic.GetRelic(this);
             }
+            else
+            {
+                relic.SpawnRelic(camTarget.position, camTarget.rotation, camTarget.forward);
+            }
+            
         }
         
         //아이템 버리기 체크 현재 G키를 눌러 _inventoryItems배열 마지막 요소를 버리게 되어있음.

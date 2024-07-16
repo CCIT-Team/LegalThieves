@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Fusion;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace LegalThieves

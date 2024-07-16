@@ -1,4 +1,3 @@
-using System.Collections;
 using Fusion;
 using Fusion.Addons.Physics;
 using UnityEngine;
