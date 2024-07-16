@@ -14,9 +14,9 @@ namespace LegalThieves
         [SerializeField] private KCC                   kcc;
         [SerializeField] private KCCProcessor          sprintProcessor;
         [SerializeField] private KCCProcessor          crouchProcessor;
-        [SerializeField] private Transform             camTarget;
-        //[SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
-        [SerializeField] private Animator              animator;
+            [SerializeField] private Transform             camTarget;
+            [SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
+        [SerializeField] public static Animator              animator;
 
         [Header("Setup")]
         [SerializeField] private float                 maxPitch        = 85f;                   //현재 최대 피치에서 싱크가 맞지않음
@@ -28,17 +28,19 @@ namespace LegalThieves
         
         public double  Score => Math.Round(transform.position.y, 1);        //스코어 제거 or 변경 예정
         public bool    isReady;                                             //준비 기준 변경 예정 (GameLogic)
-    
+        //[HideInInspector]
+        public int[]   playerBoxItems = Enumerable.Repeat(-1, 30).ToArray();
+        
         private bool CanSprint => kcc.FixedData.IsGrounded;
     
         private InputManager  _inputManager;
         private Vector2       _baseLookRotation;
-        private List<int>     _inventoryItems = new(10);
+        private int[]         _inventoryItems = Enumerable.Repeat(-1, 10).ToArray();
         
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");
         private static readonly int AnimIsCrouching  = Animator.StringToHash("IsCrouching");
-        
+        RaycastHit hit;
         [Networked] public string  Name           { get; private set; }
         [Networked] public bool    IsSprinting    { get; private set; }
         [Networked] public bool    IsCrouching    { get; private set; }
@@ -48,9 +50,7 @@ namespace LegalThieves
         //fusion 홈페이지 Network Tick <<< 이거 보면됨
         
         [Networked] private NetworkButtons  PreviousButtons  { get; set; }
-        
         [Networked, OnChangedRender(nameof(Jumped))] private int JumpSync { get; set; }
-        
     
         #region Overrided user callback functions in NetworkBehaviour
 
@@ -61,9 +61,10 @@ namespace LegalThieves
         
             if(HasInputAuthority)
             {
+                //입력된 스킨드메쉬를 안보이게 하는 부분.
                 foreach (var skinnedMeshRenderer in modelParts)
                     skinnedMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-
+                
                 _inputManager = Runner.GetComponent<InputManager>();
                 _inputManager.localTempPlayer = this;
                 
@@ -140,10 +141,21 @@ namespace LegalThieves
 
         private void CheckJump(NetInput input)
         {
-            if (!input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) || !kcc.FixedData.IsGrounded) return;
-            
-            kcc.Jump(jumpImpulse);
-            JumpSync++;
+                
+            if (input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) && kcc.FixedData.IsGrounded)
+            {
+                kcc.Jump(jumpImpulse);
+                JumpSync++;
+                animator.SetBool("isJump", true);
+            }          
+            else if (GetAnimationMoveVelocity().y < 0)
+            {
+                Physics.Raycast(transform.position, Vector3.down, out hit, 5.5f);
+                if (hit.collider != null)
+                {
+                    animator.SetBool("isJump", false); ;
+                }
+            }           
         }
 
         private void CheckSprint(NetInput input)
@@ -215,27 +227,34 @@ namespace LegalThieves
             
         }
         
+        //플레이어 상호작용 확인. NetInput Interaction F키를 눌러 호출됨.
         private void TryInteraction(NetInput input)
         {
             if(!input.Buttons.WasPressed(PreviousButtons, EInputButton.Interaction))
                 return;
+
+            if (_inventoryItems[UIManager.Singleton.currentSlotIndex] != -1) return;
+            if (!Physics.Raycast(camTarget.position, camTarget.forward, out var hitInfo, AbilityRange)) return;
+            if (!hitInfo.collider.TryGetComponent(out TempRelic relic)) return;
             
-            if (Physics.Raycast(camTarget.position, camTarget.forward, out RaycastHit hitInfo, AbilityRange))
-            {
-                if (hitInfo.collider.TryGetComponent(out TempRelic relic))
-                {
-                    _inventoryItems.Add(relic.relicNumber);
-                    relic.GetRelic(this);
-                }
-            }
+            _inventoryItems[UIManager.Singleton.currentSlotIndex] = relic.relicNumber;
+            UIManager.Singleton.SetSlotImage(true, relic.relicSprite);
+            relic.GetRelic(this);
+
         }
         
+        //아이템 버리기 체크 현재 G키를 눌러 _inventoryItems배열 마지막 요소를 버리게 되어있음.
+        //NetInput의 ThrowItem을 통해 TempPlayer의 FixedUpdateNetwork함수에서 호출됨.
         private void CheckThrowItem(NetInput input)
         {
-            if(_inventoryItems.Count == 0 || !input.Buttons.WasPressed(PreviousButtons, EInputButton.ThrowItem)) 
+            if(!input.Buttons.WasPressed(PreviousButtons, EInputButton.ThrowItem) ||
+               _inventoryItems[UIManager.Singleton.currentSlotIndex] == -1) 
                 return;
 
-            var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(_inventoryItems.Last());
+            var selectedItemIndex = _inventoryItems[UIManager.Singleton.currentSlotIndex];
+            var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(selectedItemIndex);
+            _inventoryItems[UIManager.Singleton.currentSlotIndex] = -1;
+            UIManager.Singleton.SetSlotImage(false);
             tempRelic.SpawnRelic(camTarget.position, camTarget.rotation, camTarget.forward);
         }
 
@@ -246,8 +265,7 @@ namespace LegalThieves
 
         private void Jumped()
         {
-            //source.Play();
-            AudioManager.instance.PlaySfx(AudioManager.Sfx.JUMP_01);
+            source.Play();
         }
         
         private Vector3 GetAnimationMoveVelocity()
@@ -264,8 +282,6 @@ namespace LegalThieves
 
             return transform.InverseTransformVector(velocity);
         }
-        
-        //private Vector3
         
         #region RPC Callback
     

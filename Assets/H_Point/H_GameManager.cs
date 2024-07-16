@@ -1,53 +1,79 @@
+using Fusion;
+using LegalThieves;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
 
-public class H_GameManager : MonoBehaviour
+using UnityEngine;
+using static H_PlayerPoint;
+
+
+public class H_GameManager : NetworkBehaviour
 {
 
-    public static GameObject instance;
-    public enum GoldOrRenown { Gold, Renown }
-    public H_PlayerPoint[] playerScript; // ê° í”Œë ˆì´ì–´ì˜ ì •ë³´ë¥¼ ë¯¸ë¦¬ í• ë‹¹
 
-    private void Start()
-    {
-        //ê²Œì„ë§¤ë‹ˆì €
-        if (instance == null) {
-        instance = this.gameObject;
-        DontDestroyOnLoad(instance);
-        }
-        else { 
-        Destroy(instance);
-        }
+    //GameLogic¿¡ ³Ö¾î¾ßÇÏ´Â°Í
+    //public RelicCreation relicCreationScript;
+    //public TempPlayer[] tempPlayer;
 
-        // í”Œë ˆì´ì–´ ìŠ¤í¬ë¦½íŠ¸ ë‹´ëŠ” ì´ˆì‹!!!
-        playerScript = new H_PlayerPoint[4];
-        GameObject[] playerArray = GameObject.FindGameObjectsWithTag("Player");
+    //public override void Spawned()
+    //{
+    //    tempPlayer = GameObject.FindObjectsOfType<TempPlayer>();
+    //}
 
-        for(int i = 0; i< playerArray.Length; i++) { 
-            playerScript[i] = playerArray[i].GetComponent<H_PlayerPoint>();
-        }
-       
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.V)){
+    //        EndRoundSumPoint();
+    //        SetRank();
+    //    }
+    //}
+    //public void SetRank()
+    //{
+    //    int i = 0;
+    //    int[] RankArray = new int[4];
 
+    //    foreach (TempPlayer player in playerScript)
+    //    {
+            
+    //        switch (player.EPlayerWinPoint)
+    //        {
+    //            case GoldOrRenown.Gold:
+    //                RankArray[i++] = player.goldPoint;
+    //                break;
 
-    public void SetRank()
-    {
-      
-        int[] RankArray = new int[4];
-        for (int i = 0; i< playerScript.Length;)
-        {
-            RankArray[i] = playerScript[i].WinPoint;
-        }
-        Array.Sort(RankArray);// ì¸ë±ìŠ¤ 0ë¶€í„° ìµœê³ ì ìˆ˜ ì¦‰, 1ë“±
+    //            case GoldOrRenown.Renown:
+    //                RankArray[i++] = player.renownPoint;
+    //                break;
+    //        }
+          
+    //    }
+    //    Array.Sort(RankArray);
+    //    Array.Reverse(RankArray);// ÀÎµ¦½º 0ºÎÅÍ ÃÖ°íÁ¡¼ö Áï, 1µî
+    //    foreach (var rank in RankArray)
+    //    {
+    //        Debug.Log(rank);
+    //        //¼øÀ§ ·ÎÁ÷
+    //    }
+    //}
 
-        foreach (var rank in RankArray)
-        {
-            Debug.Log(rank);
-            //ìˆœìœ„ ë¡œì§
-        }
+    //void EndRoundSumPoint()
+    //{
+    //    foreach (TempPlayer player in playerScript)
+    //    {
+    //        foreach (int invNum in player.inventory)
+    //        {
+               
+    //            if (invNum == 0) continue;  // 0ÀÌ¸é ±âº»°ªÀÌ¹Ç·Î ¾Æ¹«°Íµµ ¾ø´Â Ä­ÀÌ¶ó ´ÙÀ½ Ä­À¸·Î
+    //            player.goldPoint += relicCreationScript.createdRelicList[invNum].goldPoint;
+    //            player.renownPoint += relicCreationScript.createdRelicList[invNum].renownPoint;
+               
+    //        }
 
-    }
+    //    }
+    //}
+
 }
+
+
+
+
+

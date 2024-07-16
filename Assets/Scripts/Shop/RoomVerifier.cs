@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Fusion;
+using LegalThieves;
 
-public class RoomVerifier : MonoBehaviour
+public class RoomVerifier : NetworkBehaviour
 {
     class VerifyCount
     {
@@ -19,7 +21,7 @@ public class RoomVerifier : MonoBehaviour
             else
             {
                 stack[playerNumber - 1] += 1;
-                if (count >= 3)
+                if (stack[playerNumber - 1] >= 3)
                 {
                     isVertified = true;
                     return playerNumber;
@@ -31,12 +33,13 @@ public class RoomVerifier : MonoBehaviour
     }
 
 
-    List<VerifyCount> verifyCounts = new List<VerifyCount>();
+    VerifyCount[] verifyCounts;
+    [Networked] int explainCount {  get; set; }
 
-    public void SetStacksCount(int max)
+    public void SetStacksCount(int max) //방 수만큼 규명확인 설정, 방 생성 후 호출 필요
     {
-        for (int i = 0; i < max; i++)
-            verifyCounts.Add(new VerifyCount());
+        verifyCounts = new VerifyCount[max];
+        explainCount = 0;
     }
     public void SubmitStack(int roomId, int playerNumber)
     {
@@ -49,6 +52,8 @@ public class RoomVerifier : MonoBehaviour
         if (checker > 0)
         {
             Debug.Log("Room" + roomId + " is vertified");
+            //GameLogic.ExplainRoom();
+            GameManager.Instance.CallVerify();
         }
     }
 }

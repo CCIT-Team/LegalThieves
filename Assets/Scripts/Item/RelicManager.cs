@@ -113,9 +113,9 @@ namespace LegalThieves
                     var randomTempRelic = tempRelicPrefab[Random.Range(0, tempRelicPrefab.Length)];
                     var networkObjRelic = Runner.Spawn(randomTempRelic, t.position);
                     var tempRelic = networkObjRelic.GetComponent<TempRelic>();
-
+                    
                     networkObjRelic.transform.SetParent(relicPool);
-
+                    
                     // 유물 정보 설정
                     var selectedRelicInfo = SelectRelicByProbabilityAndType(probabilityTables[Random.Range(0, probabilityTables.Count)], tempRooms[i].roomtype);// 추가한 부분
                     if (selectedRelicInfo != null)// 추가한 부분
@@ -124,7 +124,7 @@ namespace LegalThieves
                         tempRelic.GoldPoint = selectedRelicInfo.goldPoint;// 추가한 부분
                         tempRelic.RenownPoint = selectedRelicInfo.renownPoint;// 추가한 부분
                         tempRelic.RoomNum = i;
-                        tempRelic.relicNumber = relicCount;
+                    tempRelic.relicNumber = relicCount;
                         tempRelic.type = (TempRelic.Type)selectedRelicInfo.type;
                     }
 
@@ -151,9 +151,9 @@ namespace LegalThieves
                         if (relic.tier == yearProb.relictier && IsMatchingType(relic, roomType))
                         {
                             filteredRelics.Add(relic);
-                        }
-                    }
-
+                }
+            }
+            
                     if (filteredRelics.Count > 0)
                     {
                         return filteredRelics[UnityEngine.Random.Range(0, filteredRelics.Count)];

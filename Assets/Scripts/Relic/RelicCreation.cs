@@ -131,6 +131,7 @@ public class RelicCreation : MonoBehaviour
 
         ProbabilityTable table = probabilityTables[roomValue - 1];
 
+        int id = 0;
         foreach (Vector3 pos in positions)
         {
             Relices relicData = SelectRelicByProbabilityAndType(table, roomType);
@@ -146,12 +147,13 @@ public class RelicCreation : MonoBehaviour
                 {
                     relicComponent = instantiatedRelic.AddComponent<Relic>();
                 }
+                relicComponent.ID = id++; // 임시 추가
                 relicComponent.roomID = roomID;
                 relicComponent.tier = relicData.tier;
                 relicComponent.goldPoint = relicData.goldPoint;
                 relicComponent.renownPoint = relicData.renownPoint;
                 relicComponent.type = (Relic.Type)relicData.type;
-
+                
                 createdRelicList.Add(relicComponent);
                 // 디버그 메시지 추가
                 Debug.Log("유물 생성됨: " + instantiatedRelic.name + " 위치: " + pos + " RoomID: " + roomID);

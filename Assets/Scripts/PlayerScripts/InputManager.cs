@@ -4,7 +4,7 @@ using Fusion;
 using Fusion.Addons.KCC;
 using Fusion.Menu;
 using Fusion.Sockets;
-using MultiClimb.Menu;
+using LegalThieves.Menu;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -18,6 +18,7 @@ namespace LegalThieves
         ThrowItem,
         Sprint,
         Crouch,
+        Excavate
     }
 
     public struct NetInput : INetworkInput
@@ -73,8 +74,13 @@ namespace LegalThieves
                 var lookRotationDelta = new Vector2(-mouseDelta.y, mouseDelta.x);
                 
                 _mouseDeltaAccumulator.Accumulate(lookRotationDelta);
+                //buttons.Set(EInputButton.Interaction, keyboard.eKey.isPressed);
+                
+                if(mouse.scroll.up.IsPressed()) 
+                    UIManager.Singleton.MoveCurrentSlot(true);
+                if(mouse.scroll.down.IsPressed())
+                    UIManager.Singleton.MoveCurrentSlot(false);
             }
-            
             if (keyboard != null)
             {
                 if (keyboard.rKey.wasPressedThisFrame && localTempPlayer != null)
@@ -90,9 +96,10 @@ namespace LegalThieves
                 _accumulateInput.Direction += moveDirection;
                 buttons.Set(EInputButton.Jump, keyboard.spaceKey.isPressed);
                 buttons.Set(EInputButton.ThrowItem, keyboard.gKey.isPressed);
-                buttons.Set(EInputButton.Interaction, keyboard.fKey.isPressed);
                 buttons.Set(EInputButton.Sprint, keyboard.leftShiftKey.isPressed);
                 buttons.Set(EInputButton.Crouch, keyboard.leftCtrlKey.isPressed);
+                buttons.Set(EInputButton.Interaction, keyboard.eKey.isPressed);
+                buttons.Set(EInputButton.Excavate, keyboard.fKey.isPressed);
             }
 
             _accumulateInput.Buttons = new NetworkButtons(_accumulateInput.Buttons.Bits | buttons.Bits);

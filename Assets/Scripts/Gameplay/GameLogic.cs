@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Fusion;
 using UnityEngine;
@@ -18,7 +17,7 @@ namespace LegalThieves
         [SerializeField] private Transform         spawnpoint;
         [SerializeField] private Transform         spawnpointPivot;
 
-        [Networked] private TempPlayer Winner { get; set; }
+        [Networked] private TempPlayer Winner { get; set; }     //삭제 혹은 변경 예정
 
         [Networked, OnChangedRender(nameof(GameStateChanged))] private EGameState State { get; set; }
 
@@ -33,9 +32,8 @@ namespace LegalThieves
             UIManager.Singleton.SetWaitUI(State, Winner);
             Runner.SetIsSimulated(Object, true);
 
-            if (!HasStateAuthority) return;
-            AudioManager.instance.PlayJungleBgm(true);
-            
+            if (!HasStateAuthority) 
+                return;
         }
 
         public override void FixedUpdateNetwork()
@@ -63,13 +61,13 @@ namespace LegalThieves
 
         private void OnTriggerEnter(Collider other)
         {
-            if (Runner.IsServer && Winner == null && other.attachedRigidbody != null &&
-                other.attachedRigidbody.TryGetComponent(out TempPlayer player))
-            {
-                UnreadyAll();
-                Winner = player;
-                State = EGameState.Waiting;
-            }
+            if (!Runner.IsServer || Winner != null || other.attachedRigidbody == null ||
+                !other.attachedRigidbody.TryGetComponent(out TempPlayer player)) 
+                return;
+            
+            UnreadyAll();
+            Winner = player;
+            State = EGameState.Waiting;
         }
 
         #endregion
@@ -123,24 +121,20 @@ namespace LegalThieves
 
         public void PlayerJoined(PlayerRef player)
         {
-            if (HasStateAuthority)
-            {
-                GetNextSpawnpoint(90f, out Vector3 position, out Quaternion rotation);
-                NetworkObject playerObject = Runner.Spawn(playerPrefab, position, rotation, player);
-                Players.Add(player, playerObject.GetComponent<TempPlayer>());
-            }
+            if (!HasStateAuthority) 
+                return;
+            GetNextSpawnpoint(90f, out var position, out var rotation);
+            var playerObject = Runner.Spawn(playerPrefab, position, rotation, player);
+            Players.Add(player, playerObject.GetComponent<TempPlayer>());
         }
 
         public void PlayerLeft(PlayerRef player)
         {
-            if (!HasStateAuthority)
+            if (!HasStateAuthority || !Players.TryGet(player, out var playerBehaviour))
                 return;
 
-            if (Players.TryGet(player, out TempPlayer playerBehaviour))
-            {
-                Players.Remove(player);
-                Runner.Despawn(playerBehaviour.Object);
-            }
+            Players.Remove(player);
+            Runner.Despawn(playerBehaviour.Object);
         }
 
         #endregion
