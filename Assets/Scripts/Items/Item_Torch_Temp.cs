@@ -7,13 +7,13 @@ public class Item_Torch_Temp : MonoBehaviour
     [SerializeField] private float lightIntensity = 1f;
     [SerializeField] private float changingTime = 3f;
 
-    [SerializeField] private ParticleSystem[] torchParticleSystems;
-    [SerializeField] private Light torchLight;
+    private ParticleSystem[] torchParticleSystems;
+    private Light torchLight;
 
     void Start()
     {
-        //torchLight = this.GetComponentInChildren<Light>();
-        //torchParticleSystems = this.GetComponentsInChildren<ParticleSystem>();
+        torchLight = this.GetComponentInChildren<Light>();
+        torchParticleSystems = this.GetComponentsInChildren<ParticleSystem>();
     }
 
     public void TurnOnLight()
@@ -54,6 +54,4 @@ public class Item_Torch_Temp : MonoBehaviour
         }
         else StopCoroutine(ChangeLightIntensity(delta));
     }
-
-
 }
