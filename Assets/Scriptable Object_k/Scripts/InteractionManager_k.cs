@@ -111,12 +111,12 @@ public class InteractionManager_k : NetworkBehaviour
         {
             if (callbackContext.phase == InputActionPhase.Started)
             {
-                TempPlayer.animator.SetBool("isInteracting", true);
+                //TempPlayer.animator.SetBool("isInteracting", true);
                 Debug.Log("유물발굴 시도중");
             }
             else if(callbackContext.phase == InputActionPhase.Performed)
             {
-                TempPlayer.animator.SetBool("isInteracting", false);
+                //TempPlayer.animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 성공");
                 curInteractable.OnInteract();
                 curInteractGameobject = null;
@@ -125,7 +125,7 @@ public class InteractionManager_k : NetworkBehaviour
             }
             else if(callbackContext.phase == InputActionPhase.Canceled)
             {
-                TempPlayer.animator.SetBool("isInteracting", false);
+                //TempPlayer.animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 실패");
             }
             
