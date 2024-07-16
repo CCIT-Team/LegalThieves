@@ -1,62 +1,71 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using Fusion;
+using LegalThieves;
+using System;
+
 using UnityEngine;
 
-public class H_PlayerPoint : MonoBehaviour
+public class H_PlayerPoint : NetworkBehaviour
 {
-    private void Start()
+    //player가 가지고 있어야할것
+    public enum GoldOrRenown { Gold, Renown }
+    public GoldOrRenown EPlayerWinPoint;
+
+    
+
+    //임시로 유물 리스트 구현
+
+    public override void Spawned()
     {
-        _remainPoint = _sumPoint;
+        //인벤토리 설정
+        //inventory = new int[10]; 테스트를 위해 주석처리
+      
+        remainPoint = maxPoint;
     }
 
-    Relic relic;
-    H_GameManager.GoldOrRenown PlayerWinPoint;
+    [Networked] public int goldPoint { get; set; }
+    [Networked] public int renownPoint { get; set; }
+    [Networked] public int buyPoint { get; set; }
+    [Networked] public int remainPoint { get; set; }
+    [Networked] public int maxPoint { get; set; }
+    [Networked] public int winPoint { get; set; }
 
-    [SerializeField]
-    int _goldPoint, _renownPoint, _sumPoint, _remainPoint, maxPoint, _winPoint;
-
-    //속성
-
-    public int SumPoint
-    {
-        get { return _sumPoint; }
-
-    }
-    public int RemainPoint { get { return _remainPoint; } }
-    public int GoldPoint { get { return _goldPoint; } }
-    public int RenownPoint { get { return _renownPoint; } }
-    public int WinPoint { get { return _winPoint; } }
-
-
-
+    //public int GoldPoint { get { return goldPoint; } }
+    //public int RenownPoint { get { return renownPoint; } }
+    //public int BuyPoint { get { return buyPoint; } }
+    //public int RemainPoint { get { return remainPoint; } }
+    //public int MaxPoint { get { return maxPoint; } }
+    //public int WinPoint { get { return winPoint; } }
     void SetRemain()// 주울수 있는 양을 설정
     {
-        _remainPoint = _sumPoint - (_goldPoint + _renownPoint);
+        remainPoint = remainPoint - (goldPoint + renownPoint);
         //UI에 바로 표현
     }
 
     void GetRelic(Relic relic) // 렐릭을 주웠을 때
     {
-        if (_remainPoint - relic.goldPoint - relic.renownPoint < 0) // 못주울 때
+        if (remainPoint - relic.goldPoint - relic.renownPoint < 0) // 못주울 때
         { PointOver(); return; }
 
-        _goldPoint += relic.goldPoint;
-
-        _renownPoint += relic.renownPoint;
+        goldPoint += relic.goldPoint;
+        renownPoint += relic.renownPoint;
 
         SetRemain();
     }
 
+    void ThrowRelic(Relic relic)
+    {
+        goldPoint -= relic.goldPoint;
+        renownPoint -= relic.renownPoint;
+
+        SetRemain();
+    }
 
     void PointOver() // 더 못주울 때
     {
         Debug.Log("더이상 주울 수 없습니다");
     }
 
-    void EndRound()
-    {
-        _sumPoint += _goldPoint + _renownPoint; //총점수 += 현재점수 
-        SetRemain();   //남은 스코어 
-    }
+   
+
+
 }
