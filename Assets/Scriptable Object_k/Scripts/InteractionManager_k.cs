@@ -95,6 +95,7 @@ public class InteractionManager_k : NetworkBehaviour
         {
            
             Debug.Log("아이템 획득");
+            TempPlayer.animator.SetTrigger("isPickUp");
             // 아이템과 획득하면 아이템과의 상호작용을 진행하고 초기화 해준다.
             curInteractable.OnInteract();
             curInteractGameobject = null;
@@ -111,12 +112,12 @@ public class InteractionManager_k : NetworkBehaviour
         {
             if (callbackContext.phase == InputActionPhase.Started)
             {
-                //TempPlayer.animator.SetBool("isInteracting", true);
+                TempPlayer.animator.SetBool("isInteracting", true);
                 Debug.Log("유물발굴 시도중");
             }
             else if(callbackContext.phase == InputActionPhase.Performed)
             {
-                //TempPlayer.animator.SetBool("isInteracting", false);
+                TempPlayer.animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 성공");
                 curInteractable.OnInteract();
                 curInteractGameobject = null;
@@ -125,7 +126,7 @@ public class InteractionManager_k : NetworkBehaviour
             }
             else if(callbackContext.phase == InputActionPhase.Canceled)
             {
-                //TempPlayer.animator.SetBool("isInteracting", false);
+                TempPlayer.animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 실패");
             }
             

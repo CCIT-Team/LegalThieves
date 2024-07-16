@@ -16,7 +16,7 @@ namespace LegalThieves
         [SerializeField] private KCCProcessor          crouchProcessor;
         [SerializeField] private Transform             camTarget;
         [SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
-        [SerializeField] private Animator              animator;
+        [SerializeField] public static Animator              animator;
 
         [Header("Setup")]
         [SerializeField] private float                 maxPitch        = 85f;                   //현재 최대 피치에서 싱크가 맞지않음
@@ -38,7 +38,7 @@ namespace LegalThieves
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");
         private static readonly int AnimIsCrouching  = Animator.StringToHash("IsCrouching");
-        
+        RaycastHit hit;
         [Networked] public string  Name           { get; private set; }
         [Networked] public bool    IsSprinting    { get; private set; }
         [Networked] public bool    IsCrouching    { get; private set; }
@@ -141,10 +141,21 @@ namespace LegalThieves
 
         private void CheckJump(NetInput input)
         {
-            if (!input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) || !kcc.FixedData.IsGrounded) return;
-            
-            kcc.Jump(jumpImpulse);
-            JumpSync++;
+                
+            if (input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) && kcc.FixedData.IsGrounded)
+            {
+                kcc.Jump(jumpImpulse);
+                JumpSync++;
+                animator.SetBool("isJump", true);
+            }          
+            else if (GetAnimationMoveVelocity().y < 0)
+            {
+                Physics.Raycast(transform.position, Vector3.down, out hit, 5.5f);
+                if (hit.collider != null)
+                {
+                    animator.SetBool("isJump", false); ;
+                }
+            }           
         }
 
         private void CheckSprint(NetInput input)

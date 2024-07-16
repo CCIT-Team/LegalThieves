@@ -425,7 +425,6 @@ MonoBehaviour:
   crouchProcessor: {fileID: 7556963233328221503, guid: aacff19f101670d43b45a0a4a389fd90, type: 3}
   camTarget: {fileID: 7529312243237300391}
   source: {fileID: 5943668956460412166}
-  animator: {fileID: 3131572723461260165}
   maxPitch: 85
   lookSensitivity: 0.15
   jumpImpulse: {x: 0, y: 8, z: 0}
@@ -589,6 +588,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: AcademicArchaeologist
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 581c169c0685ee940a373c376ad88f31, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 581c169c0685ee940a373c376ad88f31, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 24f640f091191fc4eb654dac11f77f29, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 581c169c0685ee940a373c376ad88f31, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5464981186242090127, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
       propertyPath: m_Controller
       value: 
@@ -602,11 +613,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 581c169c0685ee940a373c376ad88f31, type: 3}
---- !u!95 &3131572723461260165 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 581c169c0685ee940a373c376ad88f31, type: 3}
-  m_PrefabInstance: {fileID: 8799753730778381844}
-  m_PrefabAsset: {fileID: 0}
 --- !u!137 &3810905737755129426 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: -3531930454459234234, guid: 581c169c0685ee940a373c376ad88f31, type: 3}
