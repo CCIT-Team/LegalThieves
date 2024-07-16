@@ -23,6 +23,10 @@ namespace LegalThieves
 
         [Networked, Capacity(4)] private NetworkDictionary<PlayerRef, TempPlayer> Players => default;
 
+        [Networked, Capacity(4)] public NetworkArray<RelicDisplayer> RelicBox => default;
+
+        [Networked, Capacity(120)] private NetworkArray<int> Relics { get; }
+
         #region Overrided user callback functions in NetworkBehaviour
         
         public override void Spawned()
@@ -126,6 +130,7 @@ namespace LegalThieves
             GetNextSpawnpoint(90f, out var position, out var rotation);
             var playerObject = Runner.Spawn(playerPrefab, position, rotation, player);
             Players.Add(player, playerObject.GetComponent<TempPlayer>());
+            RelicBox[Players.Count-1].SetOwner(playerObject.GetComponent<TempPlayer>());
         }
 
         public void PlayerLeft(PlayerRef player)
