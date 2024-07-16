@@ -111,7 +111,7 @@ namespace LegalThieves
                 foreach (var t in relicSpawnPoint)
                 {
                     var randomTempRelic = tempRelicPrefab[Random.Range(0, tempRelicPrefab.Length)];
-                    var networkObjRelic = Runner.Spawn(randomTempRelic, t.position, t.rotation);
+                    var networkObjRelic = Runner.Spawn(randomTempRelic, t.position);
                     var tempRelic = networkObjRelic.GetComponent<TempRelic>();
 
                     networkObjRelic.transform.SetParent(relicPool);
