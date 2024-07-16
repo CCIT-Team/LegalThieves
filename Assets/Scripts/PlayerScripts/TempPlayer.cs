@@ -15,7 +15,7 @@ namespace LegalThieves
         [SerializeField] private KCCProcessor          sprintProcessor;
         [SerializeField] private KCCProcessor          crouchProcessor;
         [SerializeField] private Transform             camTarget;
-        [SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
+        //[SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
         [SerializeField] private Animator              animator;
 
         [Header("Setup")]
@@ -246,7 +246,8 @@ namespace LegalThieves
 
         private void Jumped()
         {
-            source.Play();
+            //source.Play();
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.JUMP_01);
         }
         
         private Vector3 GetAnimationMoveVelocity()

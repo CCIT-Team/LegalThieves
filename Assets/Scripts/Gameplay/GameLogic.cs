@@ -34,6 +34,8 @@ namespace LegalThieves
             Runner.SetIsSimulated(Object, true);
 
             if (!HasStateAuthority) return;
+            AudioManager.instance.PlayJungleBgm(true);
+            
         }
 
         public override void FixedUpdateNetwork()
