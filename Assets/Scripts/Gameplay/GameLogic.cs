@@ -31,6 +31,8 @@ namespace LegalThieves
             State = EGameState.Waiting;
             UIManager.Singleton.SetWaitUI(State, Winner);
             Runner.SetIsSimulated(Object, true);
+           
+            AudioManager.instance.PlayJungleBgm(true);
 
             if (!HasStateAuthority) 
                 return;
