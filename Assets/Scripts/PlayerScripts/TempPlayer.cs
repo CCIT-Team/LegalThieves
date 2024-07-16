@@ -239,23 +239,25 @@ namespace LegalThieves
             if(!input.Buttons.WasPressed(PreviousButtons, EInputButton.Interaction))
                 return;
 
-            //if (_inventoryItems[UIManager.Singleton.currentSlotIndex] != -1) return;
+            
             if (!Physics.Raycast(camTarget.position, camTarget.forward, out var hitInfo, AbilityRange)) return;
-            if (hitInfo.collider.TryGetComponent(out TempRelic relic))
+            if (hitInfo.collider.TryGetComponent(out RelicDisplayer Table))
             {
-                _inventoryItems[UIManager.Singleton.currentSlotIndex] = relic.relicNumber;
-                UIManager.Singleton.SetSlotImage(true, relic.relicSprite);
-                relic.GetRelic(this);
-            }
-            else if(hitInfo.collider.TryGetComponent(out RelicDisplayer Table))
-            {
-                var index = Table.AddRelics(_inventoryItems[UIManager.Singleton.currentSlotIndex],this);
+                var index = Table.AddRelics(_inventoryItems[UIManager.Singleton.currentSlotIndex], this);
                 if (index == -1) return;
                 var selectedItemIndex = _inventoryItems[UIManager.Singleton.currentSlotIndex];
                 var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(selectedItemIndex);
                 _inventoryItems[UIManager.Singleton.currentSlotIndex] = -1;
                 UIManager.Singleton.SetSlotImage(false);
                 tempRelic.SpawnRelic(Table.GetRelicPosition(index), Quaternion.Euler(Vector3.zero), Vector3.zero);
+                return;
+            }
+            if (_inventoryItems[UIManager.Singleton.currentSlotIndex] != -1) return;
+            if (hitInfo.collider.TryGetComponent(out TempRelic relic))
+            {
+                _inventoryItems[UIManager.Singleton.currentSlotIndex] = relic.relicNumber;
+                UIManager.Singleton.SetSlotImage(true, relic.relicSprite);
+                relic.GetRelic(this);
             }
         }
         
