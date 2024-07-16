@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1687598984}
-  m_IndirectSpecularColor: {r: 0.55939966, g: 0.5518544, b: 0.47362155, a: 1}
+  m_IndirectSpecularColor: {r: 0.5593993, g: 0.551854, b: 0.4736204, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -528,29 +528,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tempRelicPrefab:
   - RawGuidValue: 4d75d288647eaea45a42ec3a3f5f31f9
-  tempRooms:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  tempRooms: []
   relicPool: {fileID: 2000352154}
   depthMuliple: 1
   roomID: 0
@@ -598,7 +576,7 @@ Transform:
   m_GameObject: {fileID: 1546954703}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.87, y: 0, z: -44.04}
+  m_LocalPosition: {x: -7.87, y: 4.6, z: -14.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -887,6 +865,10 @@ PrefabInstance:
       value: 361.1
       objectReference: {fileID: 0}
     - target: {fileID: 5559795227811434647, guid: 176917ede3b3e0341a171aa743bb326c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 5559795227811434647, guid: 176917ede3b3e0341a171aa743bb326c, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.3
       objectReference: {fileID: 0}
@@ -914,8 +896,38 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: 5010243419017916721, guid: 176917ede3b3e0341a171aa743bb326c, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7983846594823984465, guid: 176917ede3b3e0341a171aa743bb326c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1987509755}
   m_SourcePrefab: {fileID: 100100000, guid: 176917ede3b3e0341a171aa743bb326c, type: 3}
+--- !u!1 &1987509754 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7983846594823984465, guid: 176917ede3b3e0341a171aa743bb326c, type: 3}
+  m_PrefabInstance: {fileID: 1987509753}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &1987509755
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987509754}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &2000352153
 GameObject:
   m_ObjectHideFlags: 0
