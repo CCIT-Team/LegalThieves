@@ -27,6 +27,13 @@ namespace LegalThieves
         [field: SerializeField] public float           AbilityRange { get; private set; } = 5f;
         
         public double  Score => Math.Round(transform.position.y, 1);        //스코어 제거 or 변경 예정
+
+        public GoldOrRenown EPlayerWinPoint;
+        [Networked] public int goldPoint { get; set; }
+        [Networked] public int renownPoint { get; set; }
+        [Networked] public int remainPoint { get; set; }
+        [Networked] public int maxPoint { get; set; }
+
         public bool    isReady;                                             //준비 기준 변경 예정 (GameLogic)
         public int[]   playerBoxItems = Enumerable.Repeat(-1, 30).ToArray();
         

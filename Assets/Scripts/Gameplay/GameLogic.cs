@@ -10,6 +10,11 @@ namespace LegalThieves
         Waiting,
         Playing
     }
+    public enum GoldOrRenown
+    {
+        Gold,
+        Renown
+    }
 
     public class GameLogic : NetworkBehaviour, IPlayerJoined, IPlayerLeft
     {
