@@ -21,6 +21,8 @@ namespace LegalThieves
         [SerializeField] private NetworkPrefabRef  playerPrefab;
         [SerializeField] private Transform         spawnpoint;
         [SerializeField] private Transform         spawnpointPivot;
+        [Networked] private float startTime { get; set; }
+        [Networked] public float remainTime { get; set; }
 
         [Networked] private TempPlayer Winner { get; set; }     //삭제 혹은 변경 예정
 
@@ -40,6 +42,7 @@ namespace LegalThieves
             State = EGameState.Waiting;
             UIManager.Singleton.SetWaitUI(State, Winner);
             Runner.SetIsSimulated(Object, true);
+            startTime = Time.time;
 
             if (!HasStateAuthority) 
                 return;
@@ -66,6 +69,8 @@ namespace LegalThieves
             {
                 UIManager.Singleton.UpdateLeaderboard(Players.OrderByDescending(p => p.Value.Score).ToArray());
             }
+            remainTime = 900- (Time.time - startTime);
+            UIManager.Singleton.timer.text = (remainTime / 60 < 10 ? "0" + (int)remainTime / 60 : (int)remainTime / 60) + ":" + (remainTime % 60 < 10 ? "0" + (int)remainTime % 60 : (int)remainTime % 60);
         }
 
         private void OnTriggerEnter(Collider other)

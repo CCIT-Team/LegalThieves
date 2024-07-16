@@ -33,6 +33,7 @@ public class RelicDisplayer : NetworkBehaviour
             {
                 Debug.Log(i);
                 DisplayedRelics.Set(i, relicID);
+                player.playerBoxItems[i] = relicID;
                 return i; //유물 넣은 인덱스 반환
             }
         }
