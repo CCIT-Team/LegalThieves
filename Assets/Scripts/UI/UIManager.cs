@@ -31,6 +31,9 @@ namespace LegalThieves
         [SerializeField] private Image[]            inventorySlotImages;
         [SerializeField] private GameObject[]       selectToggles;
         [Space]
+        [SerializeField] private RectTransform compass;
+        [SerializeField] public  TMP_Text timer;
+        [Space]
         [SerializeField] private TextMeshProUGUI    gameStateText;
         [SerializeField] private TextMeshProUGUI    instructionText;
         [SerializeField] private Image              sprintActive;
@@ -49,7 +52,7 @@ namespace LegalThieves
         {
             if (localTempPlayer == null)
                 return;
-
+            compass.eulerAngles = new Vector3(0, 0, localTempPlayer.transform.eulerAngles.y);
             //sprintActive.enabled = localTempPlayer.IsSprinting;
         }
 

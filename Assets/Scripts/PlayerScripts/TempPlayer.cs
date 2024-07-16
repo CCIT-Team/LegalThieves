@@ -27,8 +27,14 @@ namespace LegalThieves
         [field: SerializeField] public float           AbilityRange { get; private set; } = 5f;
         
         public double  Score => Math.Round(transform.position.y, 1);        //스코어 제거 or 변경 예정
+
+        public GoldOrRenown EPlayerWinPoint;
+        [Networked] public int goldPoint { get; set; }
+        [Networked] public int renownPoint { get; set; }
+        [Networked] public int remainPoint { get; set; }
+        [Networked] public int maxPoint { get; set; }
+
         public bool    isReady;                                             //준비 기준 변경 예정 (GameLogic)
-        //[HideInInspector]
         public int[]   playerBoxItems = Enumerable.Repeat(-1, 30).ToArray();
         
         private bool CanSprint => kcc.FixedData.IsGrounded;
@@ -242,14 +248,26 @@ namespace LegalThieves
             if(!input.Buttons.WasPressed(PreviousButtons, EInputButton.Interaction))
                 return;
 
-            if (_inventoryItems[UIManager.Singleton.currentSlotIndex] != -1) return;
-            if (!Physics.Raycast(camTarget.position, camTarget.forward, out var hitInfo, AbilityRange)) return;
-            if (!hitInfo.collider.TryGetComponent(out TempRelic relic)) return;
             
-            _inventoryItems[UIManager.Singleton.currentSlotIndex] = relic.relicNumber;
-            UIManager.Singleton.SetSlotImage(true, relic.relicSprite);
-            relic.GetRelic(this);
-
+            if (!Physics.Raycast(camTarget.position, camTarget.forward, out var hitInfo, AbilityRange)) return;
+            if (hitInfo.collider.TryGetComponent(out RelicDisplayer Table))
+            {
+                var index = Table.AddRelics(_inventoryItems[UIManager.Singleton.currentSlotIndex], this);
+                if (index == -1) return;
+                var selectedItemIndex = _inventoryItems[UIManager.Singleton.currentSlotIndex];
+                var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(selectedItemIndex);
+                _inventoryItems[UIManager.Singleton.currentSlotIndex] = -1;
+                UIManager.Singleton.SetSlotImage(false);
+                tempRelic.SpawnRelic(Table.GetRelicPosition(index), Quaternion.Euler(Vector3.zero), Vector3.zero);
+                return;
+            }
+            if (_inventoryItems[UIManager.Singleton.currentSlotIndex] != -1) return;
+            if (hitInfo.collider.TryGetComponent(out TempRelic relic))
+            {
+                _inventoryItems[UIManager.Singleton.currentSlotIndex] = relic.relicNumber;
+                UIManager.Singleton.SetSlotImage(true, relic.relicSprite);
+                relic.GetRelic(this);
+            }
         }
         
         //아이템 버리기 체크 현재 G키를 눌러 _inventoryItems배열 마지막 요소를 버리게 되어있음.

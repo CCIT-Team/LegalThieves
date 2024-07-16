@@ -10,18 +10,29 @@ namespace LegalThieves
         Waiting,
         Playing
     }
+    public enum GoldOrRenown
+    {
+        Gold,
+        Renown
+    }
 
     public class GameLogic : NetworkBehaviour, IPlayerJoined, IPlayerLeft
     {
         [SerializeField] private NetworkPrefabRef  playerPrefab;
         [SerializeField] private Transform         spawnpoint;
         [SerializeField] private Transform         spawnpointPivot;
+        [Networked] private float startTime { get; set; }
+        [Networked] public float remainTime { get; set; }
 
         [Networked] private TempPlayer Winner { get; set; }     //삭제 혹은 변경 예정
 
         [Networked, OnChangedRender(nameof(GameStateChanged))] private EGameState State { get; set; }
 
         [Networked, Capacity(4)] private NetworkDictionary<PlayerRef, TempPlayer> Players => default;
+
+        [Networked, Capacity(4)] public NetworkArray<RelicDisplayer> RelicBox => default;
+
+        [Networked, Capacity(120)] private NetworkArray<int> Relics { get; }
 
         #region Overrided user callback functions in NetworkBehaviour
         
@@ -31,8 +42,7 @@ namespace LegalThieves
             State = EGameState.Waiting;
             UIManager.Singleton.SetWaitUI(State, Winner);
             Runner.SetIsSimulated(Object, true);
-           
-            AudioManager.instance.PlayJungleBgm(true);
+            startTime = Time.time;
 
             if (!HasStateAuthority) 
                 return;
@@ -59,6 +69,8 @@ namespace LegalThieves
             {
                 UIManager.Singleton.UpdateLeaderboard(Players.OrderByDescending(p => p.Value.Score).ToArray());
             }
+            remainTime = 900- (Time.time - startTime);
+            UIManager.Singleton.timer.text = (remainTime / 60 < 10 ? "0" + (int)remainTime / 60 : (int)remainTime / 60) + ":" + (remainTime % 60 < 10 ? "0" + (int)remainTime % 60 : (int)remainTime % 60);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -128,6 +140,7 @@ namespace LegalThieves
             GetNextSpawnpoint(90f, out var position, out var rotation);
             var playerObject = Runner.Spawn(playerPrefab, position, rotation, player);
             Players.Add(player, playerObject.GetComponent<TempPlayer>());
+            RelicBox[Players.Count-1].SetOwner(playerObject.GetComponent<TempPlayer>());
         }
 
         public void PlayerLeft(PlayerRef player)
