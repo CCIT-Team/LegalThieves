@@ -15,8 +15,8 @@ namespace LegalThieves
         [SerializeField] private KCCProcessor          crouchProcessor;
         [SerializeField] private Transform             camTarget;
         [SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
-        [SerializeField] private Animator              animator;
-
+        [SerializeField] public static Animator              animator;
+        [SerializeField] private Rigidbody  rigid;
         [Header("Setup")]
         [SerializeField] private float                 maxPitch        = 85f;                   //현재 최대 피치에서 싱크가 맞지않음
         [SerializeField] private float                 lookSensitivity = 0.15f;
@@ -27,23 +27,25 @@ namespace LegalThieves
         
         public double  Score => Math.Round(transform.position.y, 1);        //스코어 제거 or 변경 예정
         public bool    isReady;                                             //준비 기준 변경 예정 (GameLogic)
-    
         private bool CanSprint => kcc.FixedData.IsGrounded;
-    
+        private Vector3 MoveVelocity;
         private InputManager  _inputManager;
         private Vector2       _baseLookRotation;
         private List<uint>    _inventoryItems = new();
         
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");
+
+        private static readonly int AnimIsJumping = Animator.StringToHash("IsJumping");
         private static readonly int AnimIsCrouching  = Animator.StringToHash("IsCrouching");
-        
+
         [Networked] public string  Name           { get; private set; }
         [Networked] public bool    IsSprinting    { get; private set; }
         [Networked] public bool    IsCrouching    { get; private set; }
+        [Networked] public bool IsJumping { get; private set; }
         //[Networked] public float   CurrentHealth  { get; private set; }
         //[Networked] public float   CurrentStamina { get; private set; }
-        
+
         [Networked] private NetworkButtons  PreviousButtons  { get; set; }
         
         [Networked, OnChangedRender(nameof(Jumped))] private int JumpSync { get; set; }
@@ -89,9 +91,13 @@ namespace LegalThieves
             
                 if(input.Buttons.WasPressed(PreviousButtons, EInputButton.Interaction))
                     TryInteraction(camTarget.forward);
-            
-                if(IsSprinting && !CanSprint)
-                    ToggleSprint(false);
+
+                if (!CanSprint)
+                {
+                    if(IsSprinting)
+                        ToggleSprint(false);
+                }
+                    
             
                 SetInputDirection(input);
             
@@ -108,12 +114,14 @@ namespace LegalThieves
                 kcc.SetLookRotation(predictedLookRotation);
             }
             UpdateCamTarget();
+            
+            MoveVelocity = GetAnimationMoveVelocity();            
+            animator.SetFloat(AnimMoveDirX, MoveVelocity.x, 0.05f, Time.deltaTime);
+            animator.SetFloat(AnimMoveDirY, MoveVelocity.z, 0.05f, Time.deltaTime);
 
-            var moveVelocity = GetAnimationMoveVelocity();
-            animator.SetFloat(AnimMoveDirX, moveVelocity.x, 0.05f, Time.deltaTime);
-            animator.SetFloat(AnimMoveDirY, moveVelocity.z, 0.05f, Time.deltaTime);
-
+            animator.SetBool(AnimIsJumping, IsJumping);
             animator.SetBool(AnimIsCrouching, IsCrouching);
+            
         }
 
         #endregion
@@ -135,10 +143,19 @@ namespace LegalThieves
 
         private void CheckJump(NetInput input)
         {
-            if (!input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) || !kcc.FixedData.IsGrounded) return;
-            
-            kcc.Jump(jumpImpulse);
-            JumpSync++;
+            if (input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) && kcc.Data.IsGrounded)
+            {
+                kcc.Jump(jumpImpulse);
+                JumpSync++;
+                animator.SetBool("isJump", true);
+
+            }
+            else if (MoveVelocity.y < 0.5f)
+            {
+                animator.SetBool("isJump", false);
+            }
+
+
         }
 
         private void CheckSprint(NetInput input)
@@ -161,7 +178,8 @@ namespace LegalThieves
                 ToggleCrouch(false);
             }
         }
-
+     
+        
         private void ToggleSprint(bool isSprinting)
         {
             if (IsSprinting == isSprinting)
@@ -202,9 +220,11 @@ namespace LegalThieves
                 IsCrouching = false;
             }
         }
+
         
+
         #endregion
-        
+
         public void ResetCooldown()
         {
             

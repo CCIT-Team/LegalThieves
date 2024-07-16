@@ -18,6 +18,7 @@ namespace LegalThieves
         ThrowItem,
         Sprint,
         Crouch,
+        Excavate
     }
 
     public struct NetInput : INetworkInput
@@ -73,7 +74,7 @@ namespace LegalThieves
                 var lookRotationDelta = new Vector2(-mouseDelta.y, mouseDelta.x);
                 
                 _mouseDeltaAccumulator.Accumulate(lookRotationDelta);
-                buttons.Set(EInputButton.Interaction, mouse.rightButton.isPressed);
+                //buttons.Set(EInputButton.Interaction, keyboard.eKey.isPressed);
             }
             if (keyboard != null)
             {
@@ -92,6 +93,8 @@ namespace LegalThieves
                 buttons.Set(EInputButton.ThrowItem, keyboard.gKey.isPressed);
                 buttons.Set(EInputButton.Sprint, keyboard.leftShiftKey.isPressed);
                 buttons.Set(EInputButton.Crouch, keyboard.leftCtrlKey.isPressed);
+                buttons.Set(EInputButton.Interaction, keyboard.eKey.isPressed);
+                buttons.Set(EInputButton.Excavate, keyboard.fKey.isPressed);
             }
 
             _accumulateInput.Buttons = new NetworkButtons(_accumulateInput.Buttons.Bits | buttons.Bits);
