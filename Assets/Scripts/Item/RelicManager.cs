@@ -108,6 +108,14 @@ namespace LegalThieves
             for (var i = 0; i < tempRooms.Length; i++)
             {
                 var relicSpawnPoint = tempRooms[i].tempRelicSpawnPoints;
+                int depth = tempRooms[i].depth;
+                if (depth < 1 || depth > probabilityTables.Count)
+                {
+                    Debug.LogError("Invalid depth value provided.");
+                    continue;
+                }
+
+                ProbabilityTable table = probabilityTables[depth - 1];
                 foreach (var t in relicSpawnPoint)
                 {
                     var randomTempRelic = tempRelicPrefab[Random.Range(0, tempRelicPrefab.Length)];
@@ -115,9 +123,9 @@ namespace LegalThieves
                     var tempRelic = networkObjRelic.GetComponent<TempRelic>();
                     
                     networkObjRelic.transform.SetParent(relicPool);
-                    
+
                     // 유물 정보 설정
-                    var selectedRelicInfo = SelectRelicByProbabilityAndType(probabilityTables[Random.Range(0, probabilityTables.Count)], tempRooms[i].roomtype);// 추가한 부분
+                    var selectedRelicInfo = SelectRelicByProbabilityAndType(table, tempRooms[i].roomtype);// 추가한 부분
                     if (selectedRelicInfo != null)// 추가한 부분
                     {
                         // TempRelic 스크립트의 속성을 설정
@@ -151,8 +159,8 @@ namespace LegalThieves
                         if (relic.tier == yearProb.relictier && IsMatchingType(relic, roomType))
                         {
                             filteredRelics.Add(relic);
-                }
-            }
+                        }
+                    }
             
                     if (filteredRelics.Count > 0)
                     {
@@ -166,7 +174,7 @@ namespace LegalThieves
 
         private bool IsMatchingType(Relices relic, int roomType)//7.15 유물 생성 추가 중
         {
-            return (roomType == 1 && relic.type == Relices.RelicesType.NormalRelic) ||
+            return (roomType == 1 ) ||
                    (roomType == 2 && relic.type == Relices.RelicesType.GoldRelic) ||
                    (roomType == 3 && relic.type == Relices.RelicesType.RenownRelic);
         }
