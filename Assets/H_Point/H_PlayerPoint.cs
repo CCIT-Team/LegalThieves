@@ -7,7 +7,6 @@ using UnityEngine;
 public class H_PlayerPoint : NetworkBehaviour
 {
     //player가 가지고 있어야할것
-    public enum GoldOrRenown { Gold, Renown }
     public GoldOrRenown EPlayerWinPoint;
 
 
