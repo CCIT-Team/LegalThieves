@@ -115,12 +115,12 @@ public class InteractionManager_k : NetworkBehaviour
         {
             if (callbackContext.phase == InputActionPhase.Started)
             {
-                TempPlayer.animator.SetBool("isInteracting", true);
+                TempPlayer.animator.Animator.SetBool("isInteracting", true);
                 Debug.Log("유물발굴 시도중");
             }
             else if(callbackContext.phase == InputActionPhase.Performed)
             {
-                TempPlayer.animator.SetBool("isInteracting", false);
+                TempPlayer.animator.Animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 성공");
                 curInteractable.OnInteract();
                 curInteractGameobject = null;
@@ -129,7 +129,7 @@ public class InteractionManager_k : NetworkBehaviour
             }
             else if(callbackContext.phase == InputActionPhase.Canceled)
             {
-                TempPlayer.animator.SetBool("isInteracting", false);
+                TempPlayer.animator.Animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 실패");
             }
             
@@ -168,7 +168,7 @@ public class InteractionManager_k : NetworkBehaviour
 
     private IEnumerator WaitOn()
     {
-        TempPlayer.animator.SetBool("pickTorch", true);
+        TempPlayer.animator.Animator.SetBool("pickTorch", true);
         yield return new WaitForSeconds(1f);
         EquipItems[2].SetActive(true);
         Torch.TurnOnLight();
@@ -179,7 +179,7 @@ public class InteractionManager_k : NetworkBehaviour
     {
         Torch.TurnOffLight();
         yield return new WaitForSeconds(1.0f);
-        TempPlayer.animator.SetBool("pickTorch", false);
+        TempPlayer.animator.Animator.SetBool("pickTorch", false);
         EquipItems[2].SetActive(false);
         isPicked = false;
         PickTorch = false;

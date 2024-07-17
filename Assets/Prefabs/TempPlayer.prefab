@@ -295,7 +295,7 @@ GameObject:
   - component: {fileID: 5247977335843116981}
   - component: {fileID: -3939038222902858634}
   - component: {fileID: 1268123419817404660}
-  - component: {fileID: 6333048120004739663}
+  - component: {fileID: 3350122550624142934}
   m_Layer: 0
   m_Name: TempPlayer
   m_TagString: Untagged
@@ -366,7 +366,7 @@ MonoBehaviour:
   - {fileID: -6779440455557013643}
   - {fileID: 5247977335843116981}
   - {fileID: -3939038222902858634}
-  - {fileID: 6333048120004739663}
+  - {fileID: 3350122550624142934}
 --- !u!114 &-6779440455557013643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,14 +426,20 @@ MonoBehaviour:
   sprintProcessor: {fileID: 7556963233328221503, guid: b7147414adb9e7244be871ed37d39173, type: 3}
   crouchProcessor: {fileID: 7556963233328221503, guid: aacff19f101670d43b45a0a4a389fd90, type: 3}
   camTarget: {fileID: 7529312243237300391}
-  source: {fileID: 5943668956460412166}
   maxPitch: 85
   lookSensitivity: 0.15
   jumpImpulse: {x: 0, y: 8, z: 0}
   maxHealth: 100
   maxStemina: 100
   <AbilityRange>k__BackingField: 5
+  EPlayerWinPoint: 0
+  _goldPoint: 0
+  _renownPoint: 0
+  _remainPoint: 0
+  _maxPoint: 0
   isReady: 0
+  playerBoxItems: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+  _inventoryItems: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
   _Name: 
   _IsSprinting: 0
   _IsCrouching: 0
@@ -603,7 +609,7 @@ MonoBehaviour:
   m_DefaultActionMap: PlayerActions
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &6333048120004739663
+--- !u!114 &3350122550624142934
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -618,7 +624,7 @@ MonoBehaviour:
   Animator: {fileID: 6633118894765043042}
   TotalWords: 6
   ApplyTiming: 2
-  SyncSettings: 79
+  SyncSettings: 111
   StateHashes: 0000000052824073f2f813bd31001b6d844598e3702be21236ef67a916eb40993a7f13df47ce4ef0010acb4bb45938cc2cb3efd2c7df733b729af0b57a51832c0d6e1d1e9d188e2f3d62dde1958cc202077cdad404ffea649c153d7ad15bd7b35207ae0992df1204f6220623a53abee62784bfe5ecb186cf
   TriggerHashes: 00000000851772150d286c4012afc47e
 --- !u!1001 &6599315047129645769
@@ -629,6 +635,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2225587582110800740}
     m_Modifications:
+    - target: {fileID: 547442921023696811, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: 3a2eb2a2dd4a74e408d76796cdaccf36, type: 3}
     - target: {fileID: 547442921023696811, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
       propertyPath: m_Controller
       value: 

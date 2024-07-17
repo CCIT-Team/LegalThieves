@@ -16,7 +16,7 @@ namespace LegalThieves
         [SerializeField] private KCCProcessor          crouchProcessor;
             [SerializeField] private Transform             camTarget;
             //[SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
-        [SerializeField] public static Animator              animator;
+        [SerializeField] public static NetworkMecanimAnimator   animator;
 
         [Header("Setup")]
         [SerializeField] private float                 maxPitch        = 85f;                   //현재 최대 피치에서 싱크가 맞지않음
@@ -41,7 +41,7 @@ namespace LegalThieves
     
         private InputManager  _inputManager;
         private Vector2       _baseLookRotation;
-        private int[]         _inventoryItems = Enumerable.Repeat(-1, 10).ToArray();
+        public int[]         _inventoryItems = Enumerable.Repeat(-1, 10).ToArray();
         
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");
@@ -64,7 +64,7 @@ namespace LegalThieves
         public override void Spawned()
         {
 
-            animator ??= GetComponentInChildren<Animator>();
+            animator = GetComponentInChildren<NetworkMecanimAnimator>();
         
             if(HasInputAuthority)
             {
@@ -183,10 +183,10 @@ namespace LegalThieves
             UpdateCamTarget();
 
             var moveVelocity = GetAnimationMoveVelocity();
-            animator.SetFloat(AnimMoveDirX, moveVelocity.x, 0.05f, Time.deltaTime);
-            animator.SetFloat(AnimMoveDirY, moveVelocity.z, 0.05f, Time.deltaTime);
+            animator.Animator.SetFloat(AnimMoveDirX, moveVelocity.x, 0.05f, Time.deltaTime);
+            animator.Animator.SetFloat(AnimMoveDirY, moveVelocity.z, 0.05f, Time.deltaTime);
 
-            animator.SetBool(AnimIsCrouching, IsCrouching);
+            animator.Animator.SetBool(AnimIsCrouching, IsCrouching);
         }
 
         #endregion
@@ -214,14 +214,14 @@ namespace LegalThieves
             {
                 kcc.Jump(jumpImpulse);
                 JumpSync++;
-                animator.SetBool("isJump", true);
+                animator.Animator.SetBool("isJump", true);
             }          
             else if (GetAnimationMoveVelocity().y < 0)
             {
                 Physics.Raycast(transform.position, Vector3.down, out hit, 5.5f);
                 if (hit.collider != null)
                 {
-                    animator.SetBool("isJump", false); ;
+                    animator.Animator.SetBool("isJump", false); ;
                 }
             }           
         }

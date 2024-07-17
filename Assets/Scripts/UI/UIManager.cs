@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using Fusion;
 using TMPro;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace LegalThieves
@@ -32,7 +30,7 @@ namespace LegalThieves
         [SerializeField] private GameObject[]       selectToggles;
         [Space]
         [SerializeField] private RectTransform compass;
-        [SerializeField] public  TMP_Text timer;
+        [SerializeField] private TMP_Text timer;
         [Space]
         [SerializeField] private TextMeshProUGUI    gameStateText;
         [SerializeField] private TextMeshProUGUI    instructionText;
@@ -53,7 +51,6 @@ namespace LegalThieves
             if (localTempPlayer == null)
                 return;
             compass.eulerAngles = new Vector3(0, 0, localTempPlayer.transform.eulerAngles.y);
-            //sprintActive.enabled = localTempPlayer.IsSprinting;
         }
 
         private void OnDestroy()
@@ -98,12 +95,6 @@ namespace LegalThieves
             inventorySlotImages[currentSlotIndex].enabled = isActive;
         }
 
-        public void SetSlotImageDisable()
-        {
-            inventorySlotImages[currentSlotIndex].sprite = null;
-            inventorySlotImages[currentSlotIndex].enabled = false;
-        }
-
         public void MoveCurrentSlot(bool isLeft)
         {
             switch (isLeft)
@@ -142,6 +133,16 @@ namespace LegalThieves
                     item.heightText.text = "";
                 }
             }
+        }
+
+        public void SetTimer(string text)
+        {
+            timer.text = text;
+        }
+        
+        public void SetTimer(int time)
+        {
+            timer.text = (time / 60 < 10 ? "0" + time / 60 : time / 60) + " : " + (time % 60 < 10 ? "0" + time % 60 : time % 60);
         }
 
         [Serializable]
