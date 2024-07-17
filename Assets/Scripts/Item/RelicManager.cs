@@ -43,7 +43,6 @@ namespace LegalThieves
             public int renownPoint; // 명성 포인트
             public int RoomNum; // 방 ID
 
-
             public enum RelicesType { NormalRelic, GoldRelic, RenownRelic } // 유물 타입 열거형
         }
 
@@ -87,8 +86,6 @@ namespace LegalThieves
 
         }
 
-
-
         private void OnDestroy()
         {
             if (Singleton == this)
@@ -125,41 +122,40 @@ namespace LegalThieves
                         tempRelic.GoldPoint = selectedRelicInfo.goldPoint;// 추가한 부분
                         tempRelic.RenownPoint = selectedRelicInfo.renownPoint;// 추가한 부분
                         tempRelic.RoomNum = i;
-                    tempRelic.relicNumber = relicCount;
+                        tempRelic.relicNumber = relicCount;
                         tempRelic.RelicType = (TempRelic.Type)selectedRelicInfo.type; //->7.18
                     }
+                    // 시각적 인덱스 설정 및 동기화->7.18
                     Transform visualTransform = tempRelic.visual.transform;
-                    if (visualTransform.childCount > 0)
+                    int chosenIndex = GetChosenVisualIndex(tempRelic, visualTransform.childCount);
+                    tempRelic.ChosenVisualIndex = chosenIndex; // 네트워크를 통해 동기화
+                                                               // 모든 플레이어에게 시각적 인덱스를 적용
+                    for (int childIndex = 0; childIndex < visualTransform.childCount; childIndex++)
                     {
-                        int startIndex = 0;
-                        int endIndex = visualTransform.childCount;
-
-                        // 유물 타입에 따라 범위 설정
-                        if (tempRelic.RelicType == TempRelic.Type.GoldRelic)//->7.18
-                        {
-                            startIndex = 0;
-                            endIndex = 2;  // 0과 1 중 하나 선택
-                        }
-                        else if (tempRelic.RelicType == TempRelic.Type.RenownRelic)//->7.18
-                        {
-                            startIndex = 2;
-                            endIndex = 5;  // 2, 3, 4 중 하나 선택
-                        }
-
-                        int chosenIndex = Random.Range(startIndex, endIndex);
-
-                        // 모든 자식을 비활성화하고 선택된 인덱스만 활성화
-                        for (int childIndex = 0; childIndex < visualTransform.childCount; childIndex++)
-                        {
-                            visualTransform.GetChild(childIndex).gameObject.SetActive(childIndex == chosenIndex);
-                           
-                        }
+                        visualTransform.GetChild(childIndex).gameObject.SetActive(childIndex == chosenIndex);
                     }
-
                     SpawnedRelics.Set(relicCount, tempRelic);
                     relicCount++;
                 }
             }
+        }
+        // 시각적 인덱스를 결정하는 로직을 별도의 메서드로 분리 ->7.18
+        private int GetChosenVisualIndex(TempRelic relic, int childCount)
+        {
+            int startIndex = 0;
+            int endIndex = childCount;
+
+            if (relic.RelicType == TempRelic.Type.GoldRelic)
+            {
+                startIndex = 0;
+                endIndex = 2;
+            }
+            else if (relic.RelicType == TempRelic.Type.RenownRelic)
+            {
+                startIndex = 2;
+                endIndex = 5;
+            }
+            return Random.Range(startIndex, endIndex);
         }
 
         private Relices SelectRelicByProbabilityAndType(ProbabilityTable table, int roomType)//7.15 유물 생성 추가 중
@@ -179,8 +175,8 @@ namespace LegalThieves
                         if (relic.depth == yearProb.relicdepth && IsMatchingType(relic, roomType))
                         {
                             filteredRelics.Add(relic);
-                }
-            }
+                        }
+                    }
             
                     if (filteredRelics.Count > 0)
                     {

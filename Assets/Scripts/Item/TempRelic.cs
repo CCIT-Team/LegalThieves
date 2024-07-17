@@ -18,7 +18,7 @@ namespace LegalThieves
 
         public enum Type { Normal, GoldRelic, RenownRelic } // 유물 타입->7.18
         [Networked] public Type RelicType { get; set; }     // 네트워크로 동기화할 유물 타입->7.18
-        
+        [Networked] public int ChosenVisualIndex { get; set; }//>7.18
 
 
         public int        Weight => GoldPoint + RenownPoint; //무게 -> 부피 변경 가능성 있음
