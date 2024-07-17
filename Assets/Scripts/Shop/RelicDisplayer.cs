@@ -9,13 +9,15 @@ using System.Linq;
 
 public class RelicDisplayer : NetworkBehaviour
 {
-    TempPlayer owner;
+    public TempPlayer owner { get; private set; }
     [Networked, Capacity(30), OnChangedRender(nameof(CallChangeRelicList))]
     NetworkArray<int> DisplayedRelics { get; } = MakeInitializer(Enumerable.Repeat(-1, 30).ToArray());
     int lastrelic;
 
     [Networked]
     NetworkLinkedList<int> SoldRelics => default;
+
+    int[] explainCount = new int[30];
 
     CampPointUI campUI;
 
@@ -39,9 +41,18 @@ public class RelicDisplayer : NetworkBehaviour
         {
             if(DisplayedRelics.Get(i) == -1)
             {
-                Debug.Log(i);
                 DisplayedRelics.Set(i, relicID);
                 player.playerBoxItems[i] = relicID;
+
+                int roomID = RelicManager.Singleton.GetTempRelicWithIndex(relicID).RoomNum;
+                if (explainCount.Length < roomID)
+                    Array.Resize(ref explainCount, roomID);
+                explainCount[roomID] += 1;
+                if(explainCount[roomID] >= 3)
+                {
+                    GameLogic gameLogic = (GameLogic)FindObjectOfType(typeof(GameLogic));
+                    gameLogic.ExplainRoom(roomID,this);
+                }
                 return i; //유물 넣은 인덱스 반환
             }
         }
@@ -66,5 +77,19 @@ public class RelicDisplayer : NetworkBehaviour
         int x = (int)MathF.Floor(index / 3);
         int y = index % 3;
         return transform.TransformPoint(new Vector3(0.45f -0.1f*x, 0.5f, 0.35f - 0.35f*y));
+    }
+
+    public List<int> GetAllRelics()
+    {
+        List<int> relicList = new List<int>();
+        foreach(int id in DisplayedRelics)
+        {
+            relicList.Add(id);
+        }
+        foreach (int id in SoldRelics)
+        {
+            relicList.Add(id);
+        }
+        return relicList;
     }
 }

@@ -15,13 +15,16 @@ public class CampPointUI : NetworkBehaviour
     [SerializeField]
     TMP_Text[] playerpoint;
 
-    [Networked]
+    [Networked,Capacity(4)]
     NetworkLinkedList<TempPlayer> players { get;}
+    GameLogic gameLogic;
 
     public void Addplayer(TempPlayer player)
     {
         players.Add(player);
         playername[players.IndexOf(player)].text = player.Name;
+        if(gameLogic == null)
+            gameLogic = FindObjectOfType<GameLogic>();
     }
 
     public void UpdatePlayerInfo(TempPlayer player, NetworkArray<int> DisplayedRelics, NetworkLinkedList<int> Soldrelics)
@@ -42,6 +45,7 @@ public class CampPointUI : NetworkBehaviour
                 renownPoint += RelicManager.Singleton.GetTempRelicWithIndex(relicID).RenownPoint;
             }
         }
+        renownPoint += gameLogic.ExplainPlayer.Count(a => a == players.IndexOf(player)) * 50;
         playerpoint[players.IndexOf(player)].text = goldPoint + " / " + renownPoint;
     }
 }
