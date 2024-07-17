@@ -44,6 +44,7 @@ namespace LegalThieves
             Runner.SetIsSimulated(Object, true);
             startTime = Time.time;
 
+            AudioManager.instance.PlayJungleBgm(true);
             if (!HasStateAuthority) 
                 return;
         }

@@ -6,7 +6,7 @@ namespace LegalThieves
 {
     public class TempRelic : NetworkBehaviour
     {
-        [SerializeField] private GameObject visual;
+        [SerializeField] public GameObject visual;
         
         public int         relicNumber;
         public Sprite      relicSprite;

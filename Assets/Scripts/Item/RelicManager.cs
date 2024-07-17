@@ -127,6 +127,19 @@ namespace LegalThieves
                     tempRelic.relicNumber = relicCount;
                         tempRelic.type = (TempRelic.Type)selectedRelicInfo.type;
                     }
+                    Transform visualTransform = tempRelic.visual.transform;  // visual의 Transform 접근
+
+                    if (visualTransform.childCount > 0)
+                    {
+                        // 무작위 인덱스를 생성합니다.
+                        int randomIndex = Random.Range(0, visualTransform.childCount);
+
+                        // 모든 자식을 비활성화한 다음, 무작위로 선택된 인덱스의 자식만 활성화합니다.
+                        for (int childIndex = 0; childIndex < visualTransform.childCount; childIndex++)
+                        {
+                            visualTransform.GetChild(childIndex).gameObject.SetActive(childIndex == randomIndex);
+                        }
+                    }
 
                     SpawnedRelics.Set(relicCount, tempRelic);
                     relicCount++;

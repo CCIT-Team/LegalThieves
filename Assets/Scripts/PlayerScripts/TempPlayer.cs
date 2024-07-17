@@ -15,7 +15,7 @@ namespace LegalThieves
         [SerializeField] private KCCProcessor          sprintProcessor;
         [SerializeField] private KCCProcessor          crouchProcessor;
             [SerializeField] private Transform             camTarget;
-            [SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
+            //[SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
         [SerializeField] public static Animator              animator;
 
         [Header("Setup")]
@@ -196,10 +196,30 @@ namespace LegalThieves
                 var velocity = kcc.Data.DynamicVelocity;
                 velocity.y *= 0.25f;
                 kcc.SetDynamicVelocity(velocity);
+                if (CaveJungleBGM.cavein == 1)
+                {
+                    AudioManager.instance.PlayBreathSfx(true);
+                    AudioManager.instance.PlayHRGFSfx(true);
+                    AudioManager.instance.PlayHRDFSfx(false);
+                    AudioManager.instance.PlayDFSfx(false);
+                    AudioManager.instance.PlayGFSfx(false);
+                }
+                else
+                {
+                    AudioManager.instance.PlayBreathSfx(true);
+                    AudioManager.instance.PlayHRGFSfx(false);
+                    AudioManager.instance.PlayHRDFSfx(true);
+                    AudioManager.instance.PlayDFSfx(false);
+                    AudioManager.instance.PlayGFSfx(false);
+                }
             }
             else
             {
                 kcc.RemoveModifier(sprintProcessor);
+                AudioManager.instance.PlayBreathSfx(false);
+                AudioManager.instance.PlayHRDFSfx(false);
+                AudioManager.instance.PlayHRGFSfx(false);
+               
             }
 
             IsSprinting = isSprinting;
@@ -283,7 +303,8 @@ namespace LegalThieves
 
         private void Jumped()
         {
-            source.Play();
+            //source.Play();
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.JUMP_01);
         }
         
         private Vector3 GetAnimationMoveVelocity()

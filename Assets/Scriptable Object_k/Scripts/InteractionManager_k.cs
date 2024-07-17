@@ -143,6 +143,7 @@ public class InteractionManager_k : NetworkBehaviour
         {
             TempPlayer.animator.SetTrigger("Attack");
         }
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.TorchSwing4);
     }
     public void OnTorch(InputAction.CallbackContext callbackContext)
     {
@@ -162,7 +163,7 @@ public class InteractionManager_k : NetworkBehaviour
         {
             StartCoroutine(useBandage());
         }
-
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.BandageSound1);
     }
 
     private IEnumerator WaitOn()
