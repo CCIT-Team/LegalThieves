@@ -34,11 +34,11 @@ public class H_GameManager : NetworkBehaviour
         {
             switch (player.EPlayerWinPoint)
             {
-                case TempPlayer.GoldOrRenown.Gold:
+                case GoldOrRenown.Gold:
                     RankArray[i++] = player.goldPoint;
                     break;
 
-                case TempPlayer.GoldOrRenown.Renown:
+                case GoldOrRenown.Renown:
                     RankArray[i++] = player.renownPoint;
                     break;
             }
@@ -65,11 +65,11 @@ public class H_GameManager : NetworkBehaviour
                     //roomID에 따른 용도 규명 텍스트가 필요합니다.
                     switch (player.EPlayerWinPoint)
                     {
-                        case TempPlayer.GoldOrRenown.Gold:
+                        case GoldOrRenown.Gold:
                             player.goldPoint += bonuspoint;
                             break;
 
-                        case TempPlayer.GoldOrRenown.Renown:
+                        case GoldOrRenown.Renown:
                             player.renownPoint += bonuspoint;
                             break;
                     }

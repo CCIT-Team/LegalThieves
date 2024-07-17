@@ -41,7 +41,7 @@ namespace LegalThieves
     
         private InputManager  _inputManager;
         private Vector2       _baseLookRotation;
-        private int[]         _inventoryItems = Enumerable.Repeat(-1, 10).ToArray();
+        public int[]         _inventoryItems = Enumerable.Repeat(-1, 10).ToArray();
         
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");

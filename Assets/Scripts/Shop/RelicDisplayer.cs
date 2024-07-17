@@ -12,15 +12,23 @@ public class RelicDisplayer : NetworkBehaviour
     TempPlayer owner;
     [Networked, Capacity(30), OnChangedRender(nameof(CallChangeRelicList))]
     NetworkArray<int> DisplayedRelics { get; } = MakeInitializer(Enumerable.Repeat(-1, 30).ToArray());
+    int lastrelic;
+
+    [Networked]
+    NetworkLinkedList<int> SoldRelics => default;
+
+    CampPointUI campUI;
 
     void CallChangeRelicList()
     {
-        //UI 변경 넣을 예정
+        campUI.UpdatePlayerInfo(owner, DisplayedRelics, SoldRelics);
     }
 
     public void SetOwner(TempPlayer player)
     {
         owner = player;
+        campUI = FindObjectOfType<CampPointUI>();
+        campUI.Addplayer(player);
     }
 
     public int AddRelics(int relicID , TempPlayer player)
@@ -40,18 +48,17 @@ public class RelicDisplayer : NetworkBehaviour
         return -1; //진열대 초과 시 반환
     }
 
-    public List<int> SellRelics()
+    public void SellRelics(TempPlayer player)
     {
-        List<int> relicList = new List<int>();
+        if (player != owner)
+            return;
         for (int i = 0; i < 30; i++)
         {
             if (DisplayedRelics.Get(i) == -1)
-                return relicList;
-            relicList.Add(DisplayedRelics.Get(i));
+                return;
+            SoldRelics.Add(DisplayedRelics.Get(i));
             DisplayedRelics.Set(i, -1);
         }
-
-        return relicList;
     }
 
     public Vector3 GetRelicPosition(int index)
