@@ -20,6 +20,7 @@ namespace LegalThieves
 
         [Networked, Capacity(200)] private NetworkArray<TempRelic> SpawnedRelics { get; }
 
+
         [System.Serializable]//7.15일 유물생성 추가 중
         public struct YearProbability
         {
@@ -57,8 +58,6 @@ namespace LegalThieves
         public TextAsset probabilityTableData; // 확률 테이블 CSV 파일 데이터 7.15일 유물생성 추가 중
         public List<Relices> relicess = new List<Relices>(); // 직접 유물 리스트 객체 7.15일 유물생성 추가 중
         public List<ProbabilityTable> probabilityTables = new List<ProbabilityTable>(); // 확률 테이블 리스트 
-        
-
 
         public static RelicManager Singleton
         {
@@ -87,6 +86,8 @@ namespace LegalThieves
             Debug.Log("CSV 데이터 로드 완료: " + relicess.Count + "명의 플레이어 로드됨");
 
         }
+
+
 
         private void OnDestroy()
         {
@@ -127,17 +128,31 @@ namespace LegalThieves
                     tempRelic.relicNumber = relicCount;
                         tempRelic.type = (TempRelic.Type)selectedRelicInfo.type;
                     }
-                    Transform visualTransform = tempRelic.visual.transform;  // visual의 Transform 접근
-
+                    Transform visualTransform = tempRelic.visual.transform;
                     if (visualTransform.childCount > 0)
                     {
-                        // 무작위 인덱스를 생성합니다.
-                        int randomIndex = Random.Range(0, visualTransform.childCount);
+                        int startIndex = 0;
+                        int endIndex = visualTransform.childCount;
 
-                        // 모든 자식을 비활성화한 다음, 무작위로 선택된 인덱스의 자식만 활성화합니다.
+                        // 유물 타입에 따라 범위 설정
+                        if (tempRelic.type == TempRelic.Type.GoldRelic)
+                        {
+                            startIndex = 0;
+                            endIndex = 2;  // 0과 1 중 하나 선택
+                        }
+                        else if (tempRelic.type == TempRelic.Type.RenownRelic)
+                        {
+                            startIndex = 2;
+                            endIndex = 5;  // 2, 3, 4 중 하나 선택
+                        }
+
+                        int chosenIndex = Random.Range(startIndex, endIndex);
+
+                        // 모든 자식을 비활성화하고 선택된 인덱스만 활성화
                         for (int childIndex = 0; childIndex < visualTransform.childCount; childIndex++)
                         {
-                            visualTransform.GetChild(childIndex).gameObject.SetActive(childIndex == randomIndex);
+                            visualTransform.GetChild(childIndex).gameObject.SetActive(childIndex == chosenIndex);
+                           
                         }
                     }
 

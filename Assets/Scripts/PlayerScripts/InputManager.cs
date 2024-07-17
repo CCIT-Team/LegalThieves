@@ -37,7 +37,7 @@ namespace LegalThieves
         private bool     _resetInput;
         
         private readonly Vector2Accumulator _mouseDeltaAccumulator = new() { SmoothingWindow = 0.025f };
-
+        
         void IBeforeUpdate.BeforeUpdate()
         {
             if (_resetInput)
@@ -47,7 +47,7 @@ namespace LegalThieves
             }
         
             var keyboard = Keyboard.current;
-        
+          
             if (keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame || keyboard.escapeKey.wasPressedThisFrame))
             {
                 if (Cursor.lockState == CursorLockMode.Locked)
@@ -92,7 +92,7 @@ namespace LegalThieves
                 if (keyboard.sKey.isPressed) moveDirection += Vector2.down;
                 if (keyboard.aKey.isPressed) moveDirection += Vector2.left;
                 if (keyboard.dKey.isPressed) moveDirection += Vector2.right;
-
+                   
                 _accumulateInput.Direction += moveDirection;
                 buttons.Set(EInputButton.Jump, keyboard.spaceKey.isPressed);
                 buttons.Set(EInputButton.ThrowItem, keyboard.gKey.isPressed);
