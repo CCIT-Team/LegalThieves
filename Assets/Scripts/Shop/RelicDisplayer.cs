@@ -65,6 +65,6 @@ public class RelicDisplayer : NetworkBehaviour
     {
         int x = (int)MathF.Floor(index / 3);
         int y = index % 3;
-        return transform.TransformPoint(new Vector3(0.45f -0.1f*x, 0.35f, 0.35f - 0.35f*y));
+        return transform.TransformPoint(new Vector3(0.45f -0.1f*x, 0.5f, 0.35f - 0.35f*y));
     }
 }
