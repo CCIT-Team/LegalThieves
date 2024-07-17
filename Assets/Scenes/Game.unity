@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1687598984}
-  m_IndirectSpecularColor: {r: 0.5593993, g: 0.551854, b: 0.4736204, a: 1}
+  m_IndirectSpecularColor: {r: 0.55939895, g: 0.55185336, b: 0.47362018, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -898,6 +898,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80ba3c5020546784fa4081d657465ad7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _owner: {fileID: 0}
 --- !u!65 &616023097
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1163,6 +1164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80ba3c5020546784fa4081d657465ad7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _owner: {fileID: 0}
 --- !u!65 &728921939
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1441,6 +1443,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80ba3c5020546784fa4081d657465ad7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _owner: {fileID: 0}
 --- !u!65 &1095456877
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1579,7 +1582,7 @@ MonoBehaviour:
   - {fileID: 1987509754}
   relicPool: {fileID: 2000352154}
   depthMuliple: 1
-  roomID: 0
+  RoomNum: 0
   relicPrefabsData: {fileID: 4900000, guid: 1f63acca68bc8ee4a918e640134298c7, type: 3}
   probabilityTableData: {fileID: 4900000, guid: 310b629b8b6dec844a6dda3a7386c82d, type: 3}
   relicess: []
@@ -2564,6 +2567,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80ba3c5020546784fa4081d657465ad7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _owner: {fileID: 0}
 --- !u!114 &1731207490
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,11 +11,14 @@ namespace LegalThieves
         public int         relicNumber;
         public Sprite      relicSprite;
         public TempPlayer  owner; //필요한가?
-        public int         RoomNum;
-        public int         GoldPoint;
-        public int         RenownPoint;
-        public enum Type { NormalRelic, GoldRelic, RenownRelic }; //유물의 종류
-        public Type type;
+        [Networked] public int GoldPoint { get; set; }      // 금 포인트->7.18
+        [Networked] public int RenownPoint { get; set; }    // 명성 포인트->7.18
+        [Networked] public int RoomNum { get; set; }        // 방 번호->7.18
+        [Networked] public int RelicNumber { get; set; }    // 유물 번호->7.18
+
+        public enum Type { Normal, GoldRelic, RenownRelic } // 유물 타입->7.18
+        [Networked] public Type RelicType { get; set; }     // 네트워크로 동기화할 유물 타입->7.18
+        
 
 
         public int        Weight => GoldPoint + RenownPoint; //무게 -> 부피 변경 가능성 있음

@@ -24,7 +24,7 @@ namespace LegalThieves
         [System.Serializable]//7.15일 유물생성 추가 중
         public struct YearProbability
         {
-            public int relictier;
+            public int relicdepth;
             public int probability;
         }
 
@@ -38,10 +38,10 @@ namespace LegalThieves
         public class Relices
         {
             public RelicesType type; // 유물 타입
-            public int tier; // 티어
+            public int depth; // 티어
             public int goldPoint; // 골드 포인트
             public int renownPoint; // 명성 포인트
-            public int roomID; // 방 ID
+            public int RoomNum; // 방 ID
 
 
             public enum RelicesType { NormalRelic, GoldRelic, RenownRelic } // 유물 타입 열거형
@@ -53,7 +53,7 @@ namespace LegalThieves
             public Relices[] Relicess; // csv파일읽고 생성된 유물 배열
         }
 
-        public int roomID; // 방 ID 7.15일 유물생성 추가 중
+        public int RoomNum; // 방 ID 7.15일 유물생성 추가 중
         public TextAsset relicPrefabsData; // 유물 CSV 파일 데이터 7.15일 유물생성 추가 중
         public TextAsset probabilityTableData; // 확률 테이블 CSV 파일 데이터 7.15일 유물생성 추가 중
         public List<Relices> relicess = new List<Relices>(); // 직접 유물 리스트 객체 7.15일 유물생성 추가 중
@@ -126,7 +126,7 @@ namespace LegalThieves
                         tempRelic.RenownPoint = selectedRelicInfo.renownPoint;// 추가한 부분
                         tempRelic.RoomNum = i;
                     tempRelic.relicNumber = relicCount;
-                        tempRelic.type = (TempRelic.Type)selectedRelicInfo.type;
+                        tempRelic.RelicType = (TempRelic.Type)selectedRelicInfo.type; //->7.18
                     }
                     Transform visualTransform = tempRelic.visual.transform;
                     if (visualTransform.childCount > 0)
@@ -135,12 +135,12 @@ namespace LegalThieves
                         int endIndex = visualTransform.childCount;
 
                         // 유물 타입에 따라 범위 설정
-                        if (tempRelic.type == TempRelic.Type.GoldRelic)
+                        if (tempRelic.RelicType == TempRelic.Type.GoldRelic)//->7.18
                         {
                             startIndex = 0;
                             endIndex = 2;  // 0과 1 중 하나 선택
                         }
-                        else if (tempRelic.type == TempRelic.Type.RenownRelic)
+                        else if (tempRelic.RelicType == TempRelic.Type.RenownRelic)//->7.18
                         {
                             startIndex = 2;
                             endIndex = 5;  // 2, 3, 4 중 하나 선택
@@ -176,7 +176,7 @@ namespace LegalThieves
 
                     foreach (var relic in relicess)
                     {
-                        if (relic.tier == yearProb.relictier && IsMatchingType(relic, roomType))
+                        if (relic.depth == yearProb.relicdepth && IsMatchingType(relic, roomType))
                         {
                             filteredRelics.Add(relic);
                 }
@@ -223,17 +223,17 @@ namespace LegalThieves
 
                 if (!int.TryParse(data[1], out int goldPoint) ||
                     !int.TryParse(data[2], out int renownPoint) ||
-                    !int.TryParse(data[3], out int tier) ||
-                    !int.TryParse(data[4], out int roomID))
+                    !int.TryParse(data[3], out int depth) ||
+                    !int.TryParse(data[4], out int RoomNum))
                 {
                     Debug.LogError($"Data format error on line {i + 1}");
                     continue;
                 }
 
-                relic.tier = tier;
+                relic.depth = depth;
                 relic.goldPoint = goldPoint;
                 relic.renownPoint = renownPoint;
-                relic.roomID = roomID;
+                relic.RoomNum = RoomNum;
 
                 relicess.Add(relic); // 직접 리스트에 추가
             }
@@ -249,10 +249,10 @@ namespace LegalThieves
                 ProbabilityTable table = new ProbabilityTable();
                 table.probabilities = new List<YearProbability>
             {
-                new YearProbability { relictier = 1, probability = int.Parse(data[1]) },
-                new YearProbability { relictier = 2, probability = int.Parse(data[2]) },
-                new YearProbability { relictier = 3, probability = int.Parse(data[3]) },
-                new YearProbability { relictier = 4, probability = int.Parse(data[4]) }
+                new YearProbability { relicdepth = 1, probability = int.Parse(data[1]) },
+                new YearProbability { relicdepth = 2, probability = int.Parse(data[2]) },
+                new YearProbability { relicdepth = 3, probability = int.Parse(data[3]) },
+                new YearProbability { relicdepth = 4, probability = int.Parse(data[4]) }
             };
                 probabilityTables.Add(table);
             }
