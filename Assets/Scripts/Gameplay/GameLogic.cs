@@ -35,7 +35,7 @@ namespace LegalThieves
 
         [Networked, Capacity(120)] private NetworkArray<int> Relics { get; }
 
-        [Networked, Capacity(40)] public NetworkArray<int> ExplainPlayer { get; } = MakeInitializer(Enumerable.Repeat(-1, 40).ToArray());
+        [Networked, Capacity(40), OnChangedRender(nameof(CheckAllRoomExplained))] public NetworkArray<int> ExplainPlayer { get; } = MakeInitializer(Enumerable.Repeat(-1, 40).ToArray());
 
         #region Overrided user callback functions in NetworkBehaviour
 
@@ -175,7 +175,6 @@ namespace LegalThieves
                 }
                 playerindex++;
             }
-            CheckAllRoomExplained();
         }
         
         // 모든 방의 규명이 완료되었는지 확인 (ExplainRoom()의 안에서 규명이 확인되었을 때 호출될 예정)
@@ -183,7 +182,6 @@ namespace LegalThieves
         {
             if (ExplainPlayer.Contains(-1))
                 return;
-
         }
         
         #endregion
@@ -197,7 +195,7 @@ namespace LegalThieves
             GetNextSpawnpoint(90f, out var position, out var rotation);
             var playerObject = Runner.Spawn(playerPrefab, position, rotation, player);
             Players.Add(player, playerObject.GetComponent<TempPlayer>());
-            RelicBox[Players.Count-1].SetOwner(playerObject.GetComponent<TempPlayer>());
+            RelicBox[Players.Count - 1].owner = playerObject.GetComponent<TempPlayer>();
         }
 
         public void PlayerLeft(PlayerRef player)
