@@ -6,6 +6,7 @@ using UnityEngine;
 public class CaveJungleBGM : MonoBehaviour
 {
     private bool isInCave = true;
+    public static int cavein;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -21,6 +22,7 @@ public class CaveJungleBGM : MonoBehaviour
                 AudioManager.instance.PlayJungleBgm(false);
                 AudioManager.instance.PlayCaveBgm(true);
                 Debug.Log("소리좀 바뀌자2");
+                cavein = 1;
             }
             else
             {
@@ -29,6 +31,7 @@ public class CaveJungleBGM : MonoBehaviour
                 AudioManager.instance.PlayCaveBgm(false);
                 AudioManager.instance.PlayJungleBgm(true);
                 Debug.Log("소리좀 바뀌자4");
+                cavein = 0;
             }
             Debug.Log("소리좀 바뀌자5");
             isInCave = !isInCave;
