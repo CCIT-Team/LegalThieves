@@ -21,8 +21,9 @@ namespace LegalThieves
         [SerializeField] private NetworkPrefabRef  playerPrefab;
         [SerializeField] private Transform         spawnpoint;
         [SerializeField] private Transform         spawnpointPivot;
-        [Networked] private float startTime { get; set; }
-        [Networked] public float remainTime { get; set; }
+        [SerializeField] private float             gametime;
+        
+        [Networked] private TickTimer RemainTime { get; set; }
 
         [Networked] private TempPlayer Winner { get; set; }     //삭제 혹은 변경 예정
 
@@ -44,7 +45,6 @@ namespace LegalThieves
             State = EGameState.Waiting;
             UIManager.Singleton.SetWaitUI(State, Winner);
             Runner.SetIsSimulated(Object, true);
-            startTime = Time.time;
 
             AudioManager.instance.PlayJungleBgm(true);
             if (!HasStateAuthority) 
@@ -56,24 +56,20 @@ namespace LegalThieves
             if (Players.Count < 1)
                 return;
 
+            if(State == EGameState.Playing)
+                UIManager.Singleton.SetTimer((int)RemainTime.RemainingTime(Runner).GetValueOrDefault());
+
+            if (!HasStateAuthority) 
+                return;
+            
             if (Runner.IsServer && State == EGameState.Waiting)
             {
-                var areAllReady = Players.All(player => player.Value.isReady);
-
-                if (areAllReady)
-                {
-                    Winner = null;
-                    State = EGameState.Playing;
-                    PreparePlayers();
-                }
+                WaitingUpdate();
             }
-
             if (State == EGameState.Playing && !Runner.IsResimulation)
             {
-                UIManager.Singleton.UpdateLeaderboard(Players.OrderByDescending(p => p.Value.Score).ToArray());
+                PlayingUpdate();
             }
-            remainTime = 900- (Time.time - startTime);
-            UIManager.Singleton.timer.text = (remainTime / 60 < 10 ? "0" + (int)remainTime / 60 : (int)remainTime / 60) + ":" + (remainTime % 60 < 10 ? "0" + (int)remainTime % 60 : (int)remainTime % 60);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -121,6 +117,32 @@ namespace LegalThieves
             position = spawnpoint.position;
             rotation = spawnpoint.rotation;
             spawnpointPivot.Rotate(0f, spacingAngle, 0f);
+        }
+        
+        //게임 상태가 Waiting일 때 FixedUpdateNetwork에서 돌아감
+        private void WaitingUpdate()
+        {
+            //모든 플레이어 준비 상태 확인
+            if (Players.All(player => player.Value.isReady))
+            {
+                State = EGameState.Playing;
+                //플레이어 위치 스폰 포인트로 초기화
+                PreparePlayers();
+                RemainTime = TickTimer.CreateFromSeconds(Runner, gametime);
+            }
+            
+        }
+        
+        //게임 상태가 Playing일 때 FixedUpdateNetwork에서 돌아감
+        private void PlayingUpdate()
+        {
+            UIManager.Singleton.UpdateLeaderboard(Players.OrderByDescending(p => p.Value.Score).ToArray());
+            
+            if (!RemainTime.Expired(Runner)) 
+                return;
+            
+            State = EGameState.Waiting;
+            UnreadyAll();
         }
 
         // 라운드 종료 후 플레이어의 포인트를 계산
