@@ -9,7 +9,7 @@ using Fusion;
 using LegalThieves;
 using ExitGames.Client.Photon.StructWrapping;
 using System;
-
+/*
 public interface IInteractable
 {
     string GetInteractPrompt();
@@ -206,3 +206,4 @@ public class InteractionManager_k : NetworkBehaviour
     }
 
 }
+*/

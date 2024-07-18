@@ -18,7 +18,8 @@ namespace LegalThieves
         ThrowItem,
         Sprint,
         Crouch,
-        Excavate
+        Excavate,
+        Attack
     }
 
     public struct NetInput : INetworkInput
@@ -74,7 +75,7 @@ namespace LegalThieves
                 var lookRotationDelta = new Vector2(-mouseDelta.y, mouseDelta.x);
                 
                 _mouseDeltaAccumulator.Accumulate(lookRotationDelta);
-                //buttons.Set(EInputButton.Interaction, keyboard.eKey.isPressed);
+                buttons.Set(EInputButton.Attack, mouse.leftButton.isPressed);
                 
                 if(mouse.scroll.up.IsPressed()) 
                     UIManager.Singleton.MoveCurrentSlot(true);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using Fusion;
 using Fusion.Addons.KCC;
 using UnityEngine;
@@ -14,9 +15,8 @@ namespace LegalThieves
         [SerializeField] private KCC                   kcc;
         [SerializeField] private KCCProcessor          sprintProcessor;
         [SerializeField] private KCCProcessor          crouchProcessor;
-            [SerializeField] private Transform             camTarget;
-            //[SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
-        [SerializeField] public static NetworkMecanimAnimator   animator;
+        [SerializeField] private Transform             camTarget;
+        [SerializeField] private Animator              _animator;
 
         [Header("Setup")]
         [SerializeField] private float                 maxPitch        = 85f;                   //현재 최대 피치에서 싱크가 맞지않음
@@ -45,12 +45,18 @@ namespace LegalThieves
         
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");
-        private static readonly int AnimIsCrouching  = Animator.StringToHash("IsCrouching");
+        private static readonly int AnimIsCrouching  = Animator.StringToHash("IsCrouchSync");
+        private static readonly int LookPit          = Animator.StringToHash("LookPit");
+        private static readonly int Jump             = Animator.StringToHash("Jump");
+        private static readonly int PickTorch        = Animator.StringToHash("pickTorch");
+        private static readonly int Attack           = Animator.StringToHash("Attack");
+        
         RaycastHit hit;
         [Networked] public string  Name           { get; private set; }
         [Networked] public bool    IsSprinting    { get; private set; }
-        [Networked] public bool    IsCrouching    { get; private set; }
-        [Networked] public bool WalkingSounds { get; set; }
+        [Networked] private bool   IsCrouching    { get; set; }
+        [Networked] public bool    IsHoldingItem  { get; private set; }
+        
         //[Networked] public float   CurrentHealth  { get; private set; }
         //[Networked] public float   CurrentStamina { get; private set; }
 
@@ -58,14 +64,18 @@ namespace LegalThieves
 
         [Networked] private NetworkButtons  PreviousButtons  { get; set; }
         [Networked, OnChangedRender(nameof(Jumped))] private int JumpSync { get; set; }
+        [Networked, OnChangedRender(nameof(Attacked))] private int AttackSync { get; set; }
+        [Networked] private float CrouchSync { get; set; }
     
         #region Overrided user callback functions in NetworkBehaviour
 
         public override void Spawned()
         {
 
-            animator = GetComponentInChildren<NetworkMecanimAnimator>();
+            _animator ??= GetComponentInChildren<Animator>();
+            
             UIManager.Singleton.ResetHUD();
+            
             if(HasInputAuthority)
             {
                 //입력된 스킨드메쉬를 안보이게 하는 부분.
@@ -99,6 +109,8 @@ namespace LegalThieves
                 CheckCrouch(input);
                 TryInteraction(input);
                 CheckThrowItem(input);
+                CheckHoldingItem(input);
+                CheckAttack(input);
                 
                 if(IsSprinting && !CanSprint)
                     ToggleSprint(false);
@@ -115,6 +127,8 @@ namespace LegalThieves
             }
         }
         bool walkingSounds = false; // 클래스 멤버로 선언
+        
+
 
         private void PlayWalkingSounds(NetInput input)
         {
@@ -191,6 +205,8 @@ namespace LegalThieves
         //    AudioManager.instance.PlayDFSfx(true);
         //    AudioManager.instance.PlayGFSfx(false);
         //}
+        
+        
         public override void Render()
         {
             if (kcc.Settings.ForcePredictedLookRotation)
@@ -199,12 +215,34 @@ namespace LegalThieves
                 kcc.SetLookRotation(predictedLookRotation);
             }
             UpdateCamTarget();
+            
+            
+            
+            var tempCamLocalPosY = camTarget.localPosition.y;
+            if (IsCrouching)
+            {
+                if(tempCamLocalPosY > 1f)
+                    camTarget.localPosition = new Vector3(0f, tempCamLocalPosY - 5f * Runner.DeltaTime, 0f);
+            }
+            else
+            {
+                if(tempCamLocalPosY < 1.6f)
+                    camTarget.localPosition = new Vector3(0f, tempCamLocalPosY + 5f * Runner.DeltaTime, 0f);
+            }
+
+            CrouchSync = (tempCamLocalPosY - 1) * 1.53f;
 
             var moveVelocity = GetAnimationMoveVelocity();
-            animator.Animator.SetFloat(AnimMoveDirX, moveVelocity.x, 0.05f, Time.deltaTime);
-            animator.Animator.SetFloat(AnimMoveDirY, moveVelocity.z, 0.05f, Time.deltaTime);
+            moveVelocity = IsSprinting ? moveVelocity * 2f : moveVelocity;
+            _animator.SetFloat(AnimMoveDirX, moveVelocity.x, 0.05f, Time.deltaTime);
+            _animator.SetFloat(AnimMoveDirY, moveVelocity.z, 0.05f, Time.deltaTime);
+            _animator.SetFloat(AnimIsCrouching, CrouchSync);
+            _animator.SetFloat(LookPit, -kcc.GetLookRotation(true, false).x / 90f);
+            _animator.SetBool(PickTorch, IsHoldingItem);
 
-            animator.Animator.SetBool(AnimIsCrouching, IsCrouching);
+            //animator.Animator.SetFloat(AnimMoveDirX, moveVelocity.x, 0.05f, Time.deltaTime);
+            //animator.Animator.SetFloat(AnimMoveDirY, moveVelocity.z, 0.05f, Time.deltaTime);
+            //animator.Animator.SetBool(AnimIsCrouching, IsCrouching);
         }
 
         #endregion
@@ -227,21 +265,9 @@ namespace LegalThieves
 
         private void CheckJump(NetInput input)
         {
-                
-            if (input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) && kcc.FixedData.IsGrounded)
-            {
-                kcc.Jump(jumpImpulse);
-                JumpSync++;
-                animator.Animator.SetBool("isJump", true);
-            }          
-            else if (GetAnimationMoveVelocity().y < 0)
-            {
-                Physics.Raycast(transform.position, Vector3.down, out hit, 5.5f);
-                if (hit.collider != null)
-                {
-                    animator.Animator.SetBool("isJump", false); ;
-                }
-            }           
+            if (!input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) || !kcc.FixedData.IsGrounded) return;
+            kcc.Jump(jumpImpulse);
+            JumpSync++;
         }
 
         private void CheckSprint(NetInput input)
@@ -263,6 +289,21 @@ namespace LegalThieves
             {
                 ToggleCrouch(false);
             }
+        }
+
+        private void CheckHoldingItem(NetInput input)
+        {
+            if (input.Buttons.WasPressed(PreviousButtons, EInputButton.Excavate))
+            {
+                IsHoldingItem = !IsHoldingItem;
+            }
+        }
+
+        private void CheckAttack(NetInput input)
+        {
+            if(!IsHoldingItem || !input.Buttons.WasPressed(PreviousButtons, EInputButton.Attack))
+                return;
+            AttackSync++;
         }
 
         private void ToggleSprint(bool isSprinting)
@@ -314,14 +355,12 @@ namespace LegalThieves
             {
                 kcc.SetHeight(1f);
                 kcc.AddModifier(crouchProcessor);
-                camTarget.localPosition = new Vector3(0f, 1f, 0f);  //러프 적용해아됨
                 IsCrouching = true;
             }
             else
             {
-                kcc.SetHeight(1.8f);
+                kcc.SetHeight(1.6f);
                 kcc.RemoveModifier(crouchProcessor);
-                camTarget.localPosition = new Vector3(0, 1.65f, 0f);
                 IsCrouching = false;
             }
         }
@@ -383,8 +422,19 @@ namespace LegalThieves
 
         private void Jumped()
         {
+            _animator.SetTrigger(Jump);
             //source.Play();
             AudioManager.instance.PlaySfx(AudioManager.Sfx.JUMP_01);
+        }
+
+        private void Attacked()
+        {
+            _animator.SetTrigger(Attack);
+        }
+
+        private void Crouched()
+        {
+            CrouchSync = IsCrouching ? 1 : 0;
         }
         
         private Vector3 GetAnimationMoveVelocity()
@@ -393,6 +443,8 @@ namespace LegalThieves
                 return default;
 
             var velocity = kcc.Data.RealVelocity;
+
+            velocity.y = 0f;
 
             if (velocity.sqrMagnitude > 1f)
             {
