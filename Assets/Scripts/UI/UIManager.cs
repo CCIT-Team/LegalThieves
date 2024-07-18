@@ -145,6 +145,37 @@ namespace LegalThieves
             timer.text = (time / 60 < 10 ? "0" + time / 60 : time / 60) + " : " + (time % 60 < 10 ? "0" + time % 60 : time % 60);
         }
 
+        public void ResetHUD()
+        {
+            ResetSlotToggle();
+            ResetSlotImages();
+            ResetTimerText();
+        }
+
+        private void ResetSlotImages()
+        {
+            foreach (var img in inventorySlotImages)
+            {
+                img.sprite = null;
+                img.enabled = false;
+            }
+        }
+
+        private void ResetSlotToggle()
+        {
+            foreach (var obj in selectToggles)
+            {
+                obj.SetActive(false);
+            }
+            currentSlotIndex = 0;
+            selectToggles[0].SetActive(true);
+        }
+
+        private void ResetTimerText()
+        {
+            SetTimer("Waiting");
+        }
+
         [Serializable]
         private struct LeaderboardItem
         {
