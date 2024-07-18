@@ -44,10 +44,12 @@ public class RelicDisplayer : NetworkBehaviour
                 if (explainCount.Length < roomID)
                     Array.Resize(ref explainCount, roomID);
                 explainCount[roomID] += 1;
-                if(explainCount[roomID] >= 3)
+                AudioManager.instance.PlaySfx(AudioManager.Sfx.BodyDrop5);
+                if (explainCount[roomID] >= 3)
                 {
                     GameLogic gameLogic = (GameLogic)FindObjectOfType(typeof(GameLogic));
                     gameLogic.ExplainRoom(roomID,this);
+
                 }
                 return i; //유물 넣은 인덱스 반환
             }
@@ -65,6 +67,7 @@ public class RelicDisplayer : NetworkBehaviour
                 return;
             SoldRelics.Add(DisplayedRelics.Get(i));
             DisplayedRelics.Set(i, -1);
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.Coins10);
         }
     }
 
