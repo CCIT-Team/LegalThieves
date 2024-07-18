@@ -27,7 +27,7 @@ namespace LegalThieves
             public int relicdepth;
             public int probability;
         }
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
         [System.Serializable]//7.15일 유물생성 추가 중
         public class ProbabilityTable
         {
@@ -148,12 +148,12 @@ namespace LegalThieves
             if (relic.RelicType == TempRelic.Type.GoldRelic)
             {
                 startIndex = 0;
-                endIndex = 2;
+                endIndex = 3;
             }
             else if (relic.RelicType == TempRelic.Type.RenownRelic)
             {
-                startIndex = 2;
-                endIndex = 5;
+                startIndex = 3;
+                endIndex = 6;
             }
             return Random.Range(startIndex, endIndex);
         }
