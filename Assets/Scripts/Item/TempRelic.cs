@@ -18,36 +18,11 @@ namespace LegalThieves
 
         public enum Type { Normal, GoldRelic, RenownRelic } // 유물 타입->7.18
         [Networked] public Type RelicType { get; set; }     // 네트워크로 동기화할 유물 타입->7.18
-        //[Networked] public int ChosenVisualIndex { get; set; }//>7.18
+        [Networked] public int ChosenVisualIndex { get; set; }//>7.18
 
-        //[Networked, OnChangedRender(nameof(TempRelic))] public int ChosenVisualIndex { get; set; }
+       // [Networked, OnChangedRender(nameof(TempRelic))] public int ChosenVisualIndex { get; set; }
 
-        [Networked]
-        public int ChosenVisualIndex
-        {
-            get => _chosenVisualIndex;
-            set
-            {
-                if (_chosenVisualIndex != value)
-                {
-                    _chosenVisualIndex = value;
-                    UpdateVisual(); // 네트워크 동기화 후 시각적 업데이트
-                }
-            }
-        }
-        private int _chosenVisualIndex;
-
-        private void UpdateVisual()
-        {
-            if (visual != null)
-            {
-                int childCount = visual.transform.childCount;
-                for (int i = 0; i < childCount; i++)
-                {
-                    visual.transform.GetChild(i).gameObject.SetActive(i == ChosenVisualIndex);
-                }
-            }
-        }
+        
 
         public int        Weight => GoldPoint + RenownPoint; //무게 -> 부피 변경 가능성 있음
 
@@ -56,34 +31,14 @@ namespace LegalThieves
 
         [Networked] private bool IsActive { get; set; }
 
-        //public override void Spawned()
-        //{
-        //    IsActive = true;
-        //    _netRigidbody3D = GetComponent<NetworkRigidbody3D>();
-        //    _collider = GetComponent<Collider>();
-        //}
-
         public override void Spawned()
         {
-            base.Spawned();
             IsActive = true;
             _netRigidbody3D = GetComponent<NetworkRigidbody3D>();
             _collider = GetComponent<Collider>();
-            SetInitialVisualIndex();
+            UpdateVisuals(); // 활성 상태에서 시각적 요소 업데이트
         }
 
-        private void SetInitialVisualIndex()
-        {
-            Transform visualTransform = visual.transform;
-            ChosenVisualIndex = GetChosenVisualIndex(this, visualTransform.childCount); // 네트워크 변수 설정
-        }
-
-        private int GetChosenVisualIndex(TempRelic relic, int childCount)
-        {
-            // 시각적 인덱스 결정 로직 구현
-            // 예시: 무작위로 인덱스 선택
-            return Random.Range(0, childCount);
-        }
         public override void Render()
         {
             visual.SetActive(IsActive);
@@ -122,6 +77,15 @@ namespace LegalThieves
         {
             // 네트워크 권한이 있는 클라이언트에서만 힘을 적용
             _netRigidbody3D.Rigidbody.AddForce(force * 3f, ForceMode.Impulse);
+        }
+        // 시각적 인덱스에 따라 자식 오브젝트의 활성화 상태를 업데이트
+        private void UpdateVisuals()
+        {
+            int childCount = visual.transform.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                visual.transform.GetChild(i).gameObject.SetActive(i == ChosenVisualIndex);
+            }
         }
     }
 }
