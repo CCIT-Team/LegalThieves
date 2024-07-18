@@ -2,7 +2,7 @@ using Fusion;
 using Fusion.Menu;
 using UnityEngine;
 
-namespace MultiClimb.Menu
+namespace LegalThieves.Menu
 {
     public class MenuConnectionBehaviour : FusionMenuConnectionBehaviour
     {

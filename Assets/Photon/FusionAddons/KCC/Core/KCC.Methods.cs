@@ -176,7 +176,7 @@ namespace Fusion.Addons.KCC
 			{
 				_fixedData.ExternalVelocity += velocity;
 			}
-		}
+        }
 
 		/// <summary>
 		/// Set velocity from external sources. Should propagate in processors to <c>KCCData.DynamicVelocity</c>.

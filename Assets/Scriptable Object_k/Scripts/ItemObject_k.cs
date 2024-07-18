@@ -1,9 +1,10 @@
+using Fusion;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemObject_k : MonoBehaviour, IInteractable
+public class ItemObject_k : NetworkBehaviour, IInteractable
 {
     public itemData_k item;
 

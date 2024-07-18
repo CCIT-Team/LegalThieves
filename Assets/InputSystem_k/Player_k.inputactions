@@ -67,6 +67,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Equip1",
+                    "type": "Button",
+                    "id": "32823e3a-8577-4965-9475-31100403f43b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Equip2",
+                    "type": "Button",
+                    "id": "26b2f533-11fa-4797-8e3d-c0ad6f5685dc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Heal",
+                    "type": "Button",
+                    "id": "15ace82a-899e-4935-a317-50a504ae5315",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -243,6 +270,39 @@
                     "processors": "",
                     "groups": "PC",
                     "action": "Excavate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4450cdf9-fa80-499b-8c36-2a36ff9b1dd1",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Equip1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a396a1c1-c3a4-4576-8b56-2c4b23cbc2f4",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Equip2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c3d946e2-fa65-4ef2-894c-b2ffa82be81b",
+                    "path": "<Keyboard>/h",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "PC",
+                    "action": "Heal",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

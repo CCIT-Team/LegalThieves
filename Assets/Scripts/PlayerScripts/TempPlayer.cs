@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Fusion.Addons.KCC;
 using UnityEngine;
@@ -13,9 +14,9 @@ namespace LegalThieves
         [SerializeField] private KCC                   kcc;
         [SerializeField] private KCCProcessor          sprintProcessor;
         [SerializeField] private KCCProcessor          crouchProcessor;
-        [SerializeField] private Transform             camTarget;
-        [SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
-        [SerializeField] private Animator              animator;
+            [SerializeField] private Transform             camTarget;
+            //[SerializeField] private AudioSource           source;                            //점프 사운드 - 제거 or 변경 예정
+        [SerializeField] public static NetworkMecanimAnimator   animator;
 
         [Header("Setup")]
         [SerializeField] private float                 maxPitch        = 85f;                   //현재 최대 피치에서 싱크가 맞지않음
@@ -23,48 +24,59 @@ namespace LegalThieves
         [SerializeField] private Vector3               jumpImpulse     = new(0f, 5f, 0f);
         [SerializeField] private float                 maxHealth       = 100f;
         [SerializeField] private float                 maxStemina      = 100f;
-        [field: SerializeField] public float           AbilityRange { get; private set; } = 25f;
+        [field: SerializeField] public float           AbilityRange { get; private set; } = 5f;
         
         public double  Score => Math.Round(transform.position.y, 1);        //스코어 제거 or 변경 예정
+
+        public GoldOrRenown EPlayerWinPoint;
+        [Networked] public int goldPoint { get; set; }
+        [Networked] public int renownPoint { get; set; }
+        [Networked] public int remainPoint { get; set; }
+        [Networked] public int maxPoint { get; set; }
+
         public bool    isReady;                                             //준비 기준 변경 예정 (GameLogic)
-    
+        public int[]   playerBoxItems = Enumerable.Repeat(-1, 30).ToArray();
+        
         private bool CanSprint => kcc.FixedData.IsGrounded;
     
         private InputManager  _inputManager;
         private Vector2       _baseLookRotation;
-        private List<uint>    _inventoryItems = new();
+        public int[]         _inventoryItems = Enumerable.Repeat(-1, 10).ToArray();
         
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");
         private static readonly int AnimIsCrouching  = Animator.StringToHash("IsCrouching");
-        
+        RaycastHit hit;
         [Networked] public string  Name           { get; private set; }
         [Networked] public bool    IsSprinting    { get; private set; }
         [Networked] public bool    IsCrouching    { get; private set; }
         //[Networked] public float   CurrentHealth  { get; private set; }
         //[Networked] public float   CurrentStamina { get; private set; }
         
+        //fusion 홈페이지 Network Tick <<< 이거 보면됨
+        
         [Networked] private NetworkButtons  PreviousButtons  { get; set; }
-        
         [Networked, OnChangedRender(nameof(Jumped))] private int JumpSync { get; set; }
-        
     
         #region Overrided user callback functions in NetworkBehaviour
 
         public override void Spawned()
         {
 
-            animator ??= GetComponentInChildren<Animator>();
+            animator = GetComponentInChildren<NetworkMecanimAnimator>();
         
             if(HasInputAuthority)
             {
+                //입력된 스킨드메쉬를 안보이게 하는 부분.
                 foreach (var skinnedMeshRenderer in modelParts)
                     skinnedMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-
+                
                 _inputManager = Runner.GetComponent<InputManager>();
                 _inputManager.localTempPlayer = this;
+                
                 Name = PlayerPrefs.GetString("Photon.Menu.Username");
                 RPC_PlayerName(Name);
+                
                 CameraFollow.Singleton.SetTarget(camTarget);
                 UIManager.Singleton.localTempPlayer = this;
                 kcc.Settings.ForcePredictedLookRotation = true;
@@ -84,19 +96,19 @@ namespace LegalThieves
                 CheckSprint(input);
                 CheckJump(input);
                 CheckCrouch(input);
-                kcc.AddLookRotation(input.LookDelta * lookSensitivity, -maxPitch, maxPitch);
-                UpdateCamTarget();
-            
-                if(input.Buttons.WasPressed(PreviousButtons, EInputButton.Interaction))
-                    TryInteraction(camTarget.forward);
-            
+                TryInteraction(input);
+                CheckThrowItem(input);
+                
                 if(IsSprinting && !CanSprint)
                     ToggleSprint(false);
+
+                _baseLookRotation = kcc.GetLookRotation();
+                kcc.AddLookRotation(input.LookDelta * lookSensitivity, -maxPitch, maxPitch);
+                UpdateCamTarget();
             
                 SetInputDirection(input);
             
                 PreviousButtons = input.Buttons;
-                _baseLookRotation = kcc.GetLookRotation();
             }
         }
 
@@ -110,10 +122,10 @@ namespace LegalThieves
             UpdateCamTarget();
 
             var moveVelocity = GetAnimationMoveVelocity();
-            animator.SetFloat(AnimMoveDirX, moveVelocity.x, 0.05f, Time.deltaTime);
-            animator.SetFloat(AnimMoveDirY, moveVelocity.z, 0.05f, Time.deltaTime);
+            animator.Animator.SetFloat(AnimMoveDirX, moveVelocity.x, 0.05f, Time.deltaTime);
+            animator.Animator.SetFloat(AnimMoveDirY, moveVelocity.z, 0.05f, Time.deltaTime);
 
-            animator.SetBool(AnimIsCrouching, IsCrouching);
+            animator.Animator.SetBool(AnimIsCrouching, IsCrouching);
         }
 
         #endregion
@@ -135,10 +147,21 @@ namespace LegalThieves
 
         private void CheckJump(NetInput input)
         {
-            if (!input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) || !kcc.FixedData.IsGrounded) return;
-            
-            kcc.Jump(jumpImpulse);
-            JumpSync++;
+                
+            if (input.Buttons.WasPressed(PreviousButtons, EInputButton.Jump) && kcc.FixedData.IsGrounded)
+            {
+                kcc.Jump(jumpImpulse);
+                JumpSync++;
+                animator.Animator.SetBool("isJump", true);
+            }          
+            else if (GetAnimationMoveVelocity().y < 0)
+            {
+                Physics.Raycast(transform.position, Vector3.down, out hit, 5.5f);
+                if (hit.collider != null)
+                {
+                    animator.Animator.SetBool("isJump", false); ;
+                }
+            }           
         }
 
         private void CheckSprint(NetInput input)
@@ -173,10 +196,30 @@ namespace LegalThieves
                 var velocity = kcc.Data.DynamicVelocity;
                 velocity.y *= 0.25f;
                 kcc.SetDynamicVelocity(velocity);
+                if (CaveJungleBGM.cavein == 1)
+                {
+                    AudioManager.instance.PlayBreathSfx(true);
+                    AudioManager.instance.PlayHRGFSfx(true);
+                    AudioManager.instance.PlayHRDFSfx(false);
+                    AudioManager.instance.PlayDFSfx(false);
+                    AudioManager.instance.PlayGFSfx(false);
+                }
+                else
+                {
+                    AudioManager.instance.PlayBreathSfx(true);
+                    AudioManager.instance.PlayHRGFSfx(false);
+                    AudioManager.instance.PlayHRDFSfx(true);
+                    AudioManager.instance.PlayDFSfx(false);
+                    AudioManager.instance.PlayGFSfx(false);
+                }
             }
             else
             {
                 kcc.RemoveModifier(sprintProcessor);
+                AudioManager.instance.PlayBreathSfx(false);
+                AudioManager.instance.PlayHRDFSfx(false);
+                AudioManager.instance.PlayHRGFSfx(false);
+               
             }
 
             IsSprinting = isSprinting;
@@ -210,16 +253,47 @@ namespace LegalThieves
             
         }
         
-        private void TryInteraction(Vector3 lookDirection)
+        //플레이어 상호작용 확인. NetInput Interaction F키를 눌러 호출됨.
+        private void TryInteraction(NetInput input)
         {
-            if (Physics.Raycast(camTarget.position, lookDirection, out RaycastHit hitInfo, AbilityRange))
+            if(!input.Buttons.WasPressed(PreviousButtons, EInputButton.Interaction))
+                return;
+
+            
+            if (!Physics.Raycast(camTarget.position, camTarget.forward, out var hitInfo, AbilityRange)) return;
+            if (hitInfo.collider.TryGetComponent(out RelicDisplayer Table))
             {
-                if (hitInfo.collider.TryGetComponent(out TempRelic relic))
-                {
-                    _inventoryItems.Add(relic.relicNumber);
-                    relic.GetRelic(this);
-                }
+                var index = Table.AddRelics(_inventoryItems[UIManager.Singleton.currentSlotIndex], this);
+                if (index == -1) return;
+                var selectedItemIndex = _inventoryItems[UIManager.Singleton.currentSlotIndex];
+                var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(selectedItemIndex);
+                _inventoryItems[UIManager.Singleton.currentSlotIndex] = -1;
+                UIManager.Singleton.SetSlotImage(false);
+                tempRelic.SpawnRelic(Table.GetRelicPosition(index), Quaternion.Euler(Vector3.zero), Vector3.zero);
+                return;
             }
+            if (_inventoryItems[UIManager.Singleton.currentSlotIndex] != -1) return;
+            if (hitInfo.collider.TryGetComponent(out TempRelic relic))
+            {
+                _inventoryItems[UIManager.Singleton.currentSlotIndex] = relic.relicNumber;
+                UIManager.Singleton.SetSlotImage(true, relic.relicSprite);
+                relic.GetRelic(this);
+            }
+        }
+        
+        //아이템 버리기 체크 현재 G키를 눌러 _inventoryItems배열 마지막 요소를 버리게 되어있음.
+        //NetInput의 ThrowItem을 통해 TempPlayer의 FixedUpdateNetwork함수에서 호출됨.
+        private void CheckThrowItem(NetInput input)
+        {
+            if(!input.Buttons.WasPressed(PreviousButtons, EInputButton.ThrowItem) ||
+               _inventoryItems[UIManager.Singleton.currentSlotIndex] == -1) 
+                return;
+
+            var selectedItemIndex = _inventoryItems[UIManager.Singleton.currentSlotIndex];
+            var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(selectedItemIndex);
+            _inventoryItems[UIManager.Singleton.currentSlotIndex] = -1;
+            UIManager.Singleton.SetSlotImage(false);
+            tempRelic.SpawnRelic(camTarget.position, camTarget.rotation, camTarget.forward);
         }
 
         private void UpdateCamTarget()
@@ -229,7 +303,8 @@ namespace LegalThieves
 
         private void Jumped()
         {
-            source.Play();
+            //source.Play();
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.JUMP_01);
         }
         
         private Vector3 GetAnimationMoveVelocity()
@@ -246,14 +321,6 @@ namespace LegalThieves
 
             return transform.InverseTransformVector(velocity);
         }
-
-        private void CheckThrowItem(Vector3 lookDirection)
-        {
-            if(_inventoryItems.Count == 0) return;
-            
-        }
-        
-        //private Vector3
         
         #region RPC Callback
     

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace MultiClimb.Menu
+namespace LegalThieves.Menu
 {
     public class MenuConnection : IFusionMenuConnection
     {

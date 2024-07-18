@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 using TMPro;
 using Unity.VisualScripting;
 using static UnityEngine.InputSystem.InputAction;
+using Fusion;
+using LegalThieves;
 
 public interface IInteractable
 {
@@ -12,18 +14,21 @@ public interface IInteractable
     void OnInteract();
 }
 
-public class InteractionManager_k : MonoBehaviour
+public class InteractionManager_k : NetworkBehaviour
 {
     public float checkRate = 0.05f;
     private float lastCheckTime;
     public float maxCheckDistance;
     public LayerMask layerMask;
-
+    public TempPlayer tempPlayer;
+    [SerializeField] private Item_Torch_Temp Torch;
     private GameObject curInteractGameobject;
     private IInteractable curInteractable;
-
     public TextMeshProUGUI promptText;
     private Camera camera;
+    private bool isPicked = false;
+    private bool PickTorch = false;
+    [SerializeField] private GameObject[] EquipItems;
 
     // Start is called before the first frame update
     void Start()
@@ -34,7 +39,6 @@ public class InteractionManager_k : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         // 마지막으로 체크한 시간이 checkRate를 넘겼다면
         if (Time.time - lastCheckTime > checkRate)
         {
@@ -56,11 +60,13 @@ public class InteractionManager_k : MonoBehaviour
                     curInteractable = hit.collider.GetComponent<IInteractable>();
                     if (curInteractGameobject.CompareTag("Items"))
                     {
-                        SetPromptTextItems();
+                        Debug.Log("줍기");
+                        //SetPromptTextItems();
                     }
                     else if (curInteractGameobject.CompareTag("Relics"))
                     {
-                        SetPromptTextRelics();
+                        Debug.Log("발굴");
+                        //SetPromptTextRelics();
                     }
                 }
             }
@@ -69,20 +75,20 @@ public class InteractionManager_k : MonoBehaviour
                 // 화면의 정 중앙에 상호작용 가능한 물체가 없는 경우
                 curInteractGameobject = null;
                 curInteractable = null;
-                promptText.gameObject.SetActive(false);
+                //promptText.gameObject.SetActive(false);
             }
         }
     }
 
     private void SetPromptTextItems()
     {
-        promptText.gameObject.SetActive(true);
-        promptText.text = string.Format("<b>[E]</b> {0}", curInteractable.GetInteractPrompt() + " 획득");     // <b></b> : 태그, 마크다운 형식 <b>의 경우 볼드체.
+        //promptText.gameObject.SetActive(true);
+        //promptText.text = string.Format("<b>[E]</b> {0}", curInteractable.GetInteractPrompt() + " 획득");     // <b></b> : 태그, 마크다운 형식 <b>의 경우 볼드체.
     }
     private void SetPromptTextRelics()
     {
-        promptText.gameObject.SetActive(true);
-        promptText.text = string.Format("<b>[F]</b> {0}", curInteractable.GetInteractPrompt() + " 발굴");     // <b></b> : 태그, 마크다운 형식 <b>의 경우 볼드체.
+        //promptText.gameObject.SetActive(true);
+        //promptText.text = string.Format("<b>[F]</b> {0}", curInteractable.GetInteractPrompt() + " 발굴");     // <b></b> : 태그, 마크다운 형식 <b>의 경우 볼드체.
     }
 
     public void OnInteractInput(InputAction.CallbackContext callbackContext)
@@ -92,11 +98,12 @@ public class InteractionManager_k : MonoBehaviour
         {
            
             Debug.Log("아이템 획득");
+            TempPlayer.animator.SetTrigger("isPickUp");
             // 아이템과 획득하면 아이템과의 상호작용을 진행하고 초기화 해준다.
             curInteractable.OnInteract();
             curInteractGameobject = null;
             curInteractable = null;
-            promptText.gameObject.SetActive(false);
+            //promptText.gameObject.SetActive(false);
         }
            
         
@@ -108,18 +115,21 @@ public class InteractionManager_k : MonoBehaviour
         {
             if (callbackContext.phase == InputActionPhase.Started)
             {
+                TempPlayer.animator.Animator.SetBool("isInteracting", true);
                 Debug.Log("유물발굴 시도중");
             }
             else if(callbackContext.phase == InputActionPhase.Performed)
             {
+                TempPlayer.animator.Animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 성공");
                 curInteractable.OnInteract();
                 curInteractGameobject = null;
                 curInteractable = null;
-                promptText.gameObject.SetActive(false);
+                //promptText.gameObject.SetActive(false);
             }
             else if(callbackContext.phase == InputActionPhase.Canceled)
             {
+                TempPlayer.animator.Animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 실패");
             }
             
@@ -127,5 +137,58 @@ public class InteractionManager_k : MonoBehaviour
         
     }
 
-    
+    public void OnAttack(InputAction.CallbackContext callbackContext)
+    {
+        if(isPicked ==  true && PickTorch == true && callbackContext.phase == InputActionPhase.Started)
+        {
+            TempPlayer.animator.SetTrigger("Attack");
+        }
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.TorchSwing4);
+    }
+    public void OnTorch(InputAction.CallbackContext callbackContext)
+    {
+        if(isPicked == false)
+        {
+            StartCoroutine(WaitOn());      
+        }
+        else
+        {
+            StartCoroutine(WaitOff());          
+        }
+    }
+
+    public void OnBandage(InputAction.CallbackContext callbackContext)
+    {        
+        if (isPicked == false && callbackContext.phase == InputActionPhase.Started)
+        {
+            StartCoroutine(useBandage());
+        }
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.BandageSound1);
+    }
+
+    private IEnumerator WaitOn()
+    {
+        TempPlayer.animator.Animator.SetBool("pickTorch", true);
+        yield return new WaitForSeconds(1f);
+        EquipItems[2].SetActive(true);
+        Torch.TurnOnLight();
+        isPicked = true;
+        PickTorch = true;
+    }
+    private IEnumerator WaitOff()
+    {
+        Torch.TurnOffLight();
+        yield return new WaitForSeconds(1.0f);
+        TempPlayer.animator.Animator.SetBool("pickTorch", false);
+        EquipItems[2].SetActive(false);
+        isPicked = false;
+        PickTorch = false;
+    }
+    private IEnumerator useBandage()
+    {
+        EquipItems[0].SetActive(true);
+        TempPlayer.animator.SetTrigger("useBandage");
+        yield return new WaitForSeconds(5.967f);
+        EquipItems[0].SetActive(false);
+    }
 }

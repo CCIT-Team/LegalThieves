@@ -89,6 +89,33 @@ public partial class @Player_k: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Equip1"",
+                    ""type"": ""Button"",
+                    ""id"": ""32823e3a-8577-4965-9475-31100403f43b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Equip2"",
+                    ""type"": ""Button"",
+                    ""id"": ""26b2f533-11fa-4797-8e3d-c0ad6f5685dc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Heal"",
+                    ""type"": ""Button"",
+                    ""id"": ""15ace82a-899e-4935-a317-50a504ae5315"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -267,6 +294,39 @@ public partial class @Player_k: IInputActionCollection2, IDisposable
                     ""action"": ""Excavate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4450cdf9-fa80-499b-8c36-2a36ff9b1dd1"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""Equip1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a396a1c1-c3a4-4576-8b56-2c4b23cbc2f4"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""Equip2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c3d946e2-fa65-4ef2-894c-b2ffa82be81b"",
+                    ""path"": ""<Keyboard>/h"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""Heal"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -299,6 +359,9 @@ public partial class @Player_k: IInputActionCollection2, IDisposable
         m_PlayerActions_Attack = m_PlayerActions.FindAction("Attack", throwIfNotFound: true);
         m_PlayerActions_Inventory = m_PlayerActions.FindAction("Inventory", throwIfNotFound: true);
         m_PlayerActions_Excavate = m_PlayerActions.FindAction("Excavate", throwIfNotFound: true);
+        m_PlayerActions_Equip1 = m_PlayerActions.FindAction("Equip1", throwIfNotFound: true);
+        m_PlayerActions_Equip2 = m_PlayerActions.FindAction("Equip2", throwIfNotFound: true);
+        m_PlayerActions_Heal = m_PlayerActions.FindAction("Heal", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -367,6 +430,9 @@ public partial class @Player_k: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_Attack;
     private readonly InputAction m_PlayerActions_Inventory;
     private readonly InputAction m_PlayerActions_Excavate;
+    private readonly InputAction m_PlayerActions_Equip1;
+    private readonly InputAction m_PlayerActions_Equip2;
+    private readonly InputAction m_PlayerActions_Heal;
     public struct PlayerActionsActions
     {
         private @Player_k m_Wrapper;
@@ -378,6 +444,9 @@ public partial class @Player_k: IInputActionCollection2, IDisposable
         public InputAction @Attack => m_Wrapper.m_PlayerActions_Attack;
         public InputAction @Inventory => m_Wrapper.m_PlayerActions_Inventory;
         public InputAction @Excavate => m_Wrapper.m_PlayerActions_Excavate;
+        public InputAction @Equip1 => m_Wrapper.m_PlayerActions_Equip1;
+        public InputAction @Equip2 => m_Wrapper.m_PlayerActions_Equip2;
+        public InputAction @Heal => m_Wrapper.m_PlayerActions_Heal;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActions; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -408,6 +477,15 @@ public partial class @Player_k: IInputActionCollection2, IDisposable
             @Excavate.started += instance.OnExcavate;
             @Excavate.performed += instance.OnExcavate;
             @Excavate.canceled += instance.OnExcavate;
+            @Equip1.started += instance.OnEquip1;
+            @Equip1.performed += instance.OnEquip1;
+            @Equip1.canceled += instance.OnEquip1;
+            @Equip2.started += instance.OnEquip2;
+            @Equip2.performed += instance.OnEquip2;
+            @Equip2.canceled += instance.OnEquip2;
+            @Heal.started += instance.OnHeal;
+            @Heal.performed += instance.OnHeal;
+            @Heal.canceled += instance.OnHeal;
         }
 
         private void UnregisterCallbacks(IPlayerActionsActions instance)
@@ -433,6 +511,15 @@ public partial class @Player_k: IInputActionCollection2, IDisposable
             @Excavate.started -= instance.OnExcavate;
             @Excavate.performed -= instance.OnExcavate;
             @Excavate.canceled -= instance.OnExcavate;
+            @Equip1.started -= instance.OnEquip1;
+            @Equip1.performed -= instance.OnEquip1;
+            @Equip1.canceled -= instance.OnEquip1;
+            @Equip2.started -= instance.OnEquip2;
+            @Equip2.performed -= instance.OnEquip2;
+            @Equip2.canceled -= instance.OnEquip2;
+            @Heal.started -= instance.OnHeal;
+            @Heal.performed -= instance.OnHeal;
+            @Heal.canceled -= instance.OnHeal;
         }
 
         public void RemoveCallbacks(IPlayerActionsActions instance)
@@ -468,5 +555,8 @@ public partial class @Player_k: IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnInventory(InputAction.CallbackContext context);
         void OnExcavate(InputAction.CallbackContext context);
+        void OnEquip1(InputAction.CallbackContext context);
+        void OnEquip2(InputAction.CallbackContext context);
+        void OnHeal(InputAction.CallbackContext context);
     }
 }
