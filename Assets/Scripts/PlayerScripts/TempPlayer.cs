@@ -338,7 +338,7 @@ namespace LegalThieves
             if (hitInfo.collider.TryGetComponent(out TempRelic relic))
             {
                 _inventoryItems[UIManager.Singleton.currentSlotIndex] = relic.relicNumber;
-                UIManager.Singleton.SetSlotImage(true, relic.relicSprite);
+                UIManager.Singleton.SetSlotImage(true, relic.relicSprites[relic.ChosenVisualIndex]);
                 relic.GetRelic(this);
             }
         }

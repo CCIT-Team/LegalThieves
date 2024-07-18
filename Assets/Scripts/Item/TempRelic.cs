@@ -9,7 +9,7 @@ namespace LegalThieves
         [SerializeField] public GameObject visual;
         
         public int         relicNumber;
-        public Sprite      relicSprite;
+        public Sprite[]      relicSprites;
         public TempPlayer  owner; //필요한가?
         [Networked] public int GoldPoint { get; set; }      // 금 포인트->7.18
         [Networked] public int RenownPoint { get; set; }    // 명성 포인트->7.18
