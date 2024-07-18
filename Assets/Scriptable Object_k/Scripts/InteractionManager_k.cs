@@ -7,6 +7,8 @@ using Unity.VisualScripting;
 using static UnityEngine.InputSystem.InputAction;
 using Fusion;
 using LegalThieves;
+using ExitGames.Client.Photon.StructWrapping;
+using System;
 
 public interface IInteractable
 {
@@ -28,6 +30,7 @@ public class InteractionManager_k : NetworkBehaviour
     private Camera camera;
     private bool isPicked = false;
     private bool PickTorch = false;
+    private bool isAttacking = false;
     [SerializeField] private GameObject[] EquipItems;
 
     // Start is called before the first frame update
@@ -96,7 +99,7 @@ public class InteractionManager_k : NetworkBehaviour
         // E 키를 누른 시점에 현재 바라보는 Interactable 오브젝트가 있다면
         if (callbackContext.phase == InputActionPhase.Started && curInteractable != null && curInteractGameobject.CompareTag("Items"))
         {
-           
+
             Debug.Log("아이템 획득");
             TempPlayer.animator.SetTrigger("isPickUp");
             // 아이템과 획득하면 아이템과의 상호작용을 진행하고 초기화 해준다.
@@ -105,20 +108,20 @@ public class InteractionManager_k : NetworkBehaviour
             curInteractable = null;
             //promptText.gameObject.SetActive(false);
         }
-           
-        
+
+
     }
     public void OnExcavate(InputAction.CallbackContext callbackContext)
     {
         // 현재 바라보는 Interactable 오브젝트가 있다면
-        if (curInteractable != null && curInteractGameobject.CompareTag("Relics") )
+        if (curInteractable != null && curInteractGameobject.CompareTag("Relics"))
         {
             if (callbackContext.phase == InputActionPhase.Started)
             {
                 TempPlayer.animator.Animator.SetBool("isInteracting", true);
                 Debug.Log("유물발굴 시도중");
             }
-            else if(callbackContext.phase == InputActionPhase.Performed)
+            else if (callbackContext.phase == InputActionPhase.Performed)
             {
                 TempPlayer.animator.Animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 성공");
@@ -127,38 +130,48 @@ public class InteractionManager_k : NetworkBehaviour
                 curInteractable = null;
                 //promptText.gameObject.SetActive(false);
             }
-            else if(callbackContext.phase == InputActionPhase.Canceled)
+            else if (callbackContext.phase == InputActionPhase.Canceled)
             {
                 TempPlayer.animator.Animator.SetBool("isInteracting", false);
                 Debug.Log("유물발굴 실패");
             }
-            
+
         }
-        
+
     }
 
     public void OnAttack(InputAction.CallbackContext callbackContext)
     {
-        if(isPicked ==  true && PickTorch == true && callbackContext.phase == InputActionPhase.Started)
+        if (!isAttacking && isPicked && PickTorch && callbackContext.phase == InputActionPhase.Started)
         {
-            TempPlayer.animator.SetTrigger("Attack");
+            StartCoroutine(Attack());
         }
-        AudioManager.instance.PlaySfx(AudioManager.Sfx.TorchSwing4);
+
     }
+
+    private IEnumerator Attack()
+    {
+        isAttacking = true;
+        TempPlayer.animator.SetTrigger("Attack");
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.TorchSwing4);
+        yield return new WaitForSeconds(1.20f);
+        isAttacking = false;
+    }
+
     public void OnTorch(InputAction.CallbackContext callbackContext)
     {
-        if(isPicked == false)
+        if (isPicked == false)
         {
-            StartCoroutine(WaitOn());      
+            StartCoroutine(WaitOn());
         }
         else
         {
-            StartCoroutine(WaitOff());          
+            StartCoroutine(WaitOff());
         }
     }
 
     public void OnBandage(InputAction.CallbackContext callbackContext)
-    {        
+    {
         if (isPicked == false && callbackContext.phase == InputActionPhase.Started)
         {
             StartCoroutine(useBandage());
@@ -191,4 +204,5 @@ public class InteractionManager_k : NetworkBehaviour
         yield return new WaitForSeconds(5.967f);
         EquipItems[0].SetActive(false);
     }
+
 }
