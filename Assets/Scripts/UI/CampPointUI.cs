@@ -10,24 +10,34 @@ using System;
 
 public class CampPointUI : NetworkBehaviour
 {
-    [SerializeField]
-    TMP_Text[] playername;
-    [SerializeField]
-    TMP_Text[] playerpoint;
+    [SerializeField] TMP_Text[] playerNames;
+    [SerializeField] TMP_Text[] goldPoints;
+    [SerializeField] TMP_Text[] remownPoints;
+    [SerializeField] GameLogic gameLogic;
 
-    [Networked,Capacity(4)]
-    NetworkLinkedList<TempPlayer> players { get;}
-    GameLogic gameLogic;
+    [Networked,Capacity(4)] public NetworkLinkedList<TempPlayer> players { get;}
 
-    public void Addplayer(TempPlayer player)
+    
+
+    public void AddPlayer(TempPlayer player)
     {
         players.Add(player);
-        playername[players.IndexOf(player)].text = player.Name;
-        if(gameLogic == null)
-            gameLogic = FindObjectOfType<GameLogic>();
+        playerNames[players.IndexOf(player)].text = player.Name;
+        UpdatePlayerName();
     }
 
-    public void UpdatePlayerInfo(TempPlayer player, NetworkArray<int> DisplayedRelics, NetworkLinkedList<int> Soldrelics)
+    private void UpdatePlayerName()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (players[i].Name == "")
+                playerNames[i].text = "Player"+ i;
+            else
+                playerNames[i].text = players[i].Name;
+        }
+    }
+
+    public void UpdatePlayerPoint(TempPlayer player, NetworkArray<int> DisplayedRelics, NetworkLinkedList<int> Soldrelics)
     {
         float goldPoint = 0;
         float renownPoint = 0;
@@ -45,7 +55,8 @@ public class CampPointUI : NetworkBehaviour
                 renownPoint += RelicManager.Singleton.GetTempRelicWithIndex(relicID).RenownPoint;
             }
         }
-        renownPoint += gameLogic.ExplainPlayer.Count(a => a == players.IndexOf(player)) * 50;
-        playerpoint[players.IndexOf(player)].text = goldPoint + " / " + renownPoint;
+        renownPoint += gameLogic.ExplainedRooms.Count(a => a == players.IndexOf(player)) * 50;
+        goldPoints[players.IndexOf(player)].text = goldPoint.ToString();
+        remownPoints[players.IndexOf(player)].text = renownPoint.ToString();
     }
 }
