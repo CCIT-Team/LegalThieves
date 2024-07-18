@@ -31,11 +31,13 @@ namespace LegalThieves
 
         [Networked, Capacity(4)] private NetworkDictionary<PlayerRef, TempPlayer> Players => default;
 
-        [Networked, Capacity(4)] public NetworkArray<RelicDisplayer> RelicBox => default;
+        [SerializeField] RelicDisplayer[] RelicBox = new RelicDisplayer[4];
+
+        [SerializeField] CampPointUI campPointUI;
 
         [Networked, Capacity(120)] private NetworkArray<int> Relics { get; }
 
-        [Networked, Capacity(40), OnChangedRender(nameof(CheckAllRoomExplained))] public NetworkArray<int> ExplainPlayer { get; } = MakeInitializer(Enumerable.Repeat(-1, 40).ToArray());
+        [Networked, Capacity(40), OnChangedRender(nameof(CheckAllRoomExplained))] public NetworkArray<int> ExplainedRooms { get; } = MakeInitializer(Enumerable.Repeat(-1, 40).ToArray());
 
         #region Overrided user callback functions in NetworkBehaviour
 
@@ -162,7 +164,7 @@ namespace LegalThieves
         // 방의 규명 확인 (플레이어가 유물을 캠프에 등록했을 때 호출될 예정)
         public void ExplainRoom(int roomID, RelicDisplayer relicDisplayer)
         {
-            if (ExplainPlayer[roomID] != -1)
+            if (ExplainedRooms[roomID] != -1)
                 return;
             int playerindex = 0;
             RelicBox.Count(a => a = relicDisplayer);
@@ -170,7 +172,7 @@ namespace LegalThieves
             {
                 if(box == relicDisplayer)
                 {
-                    ExplainPlayer.Set(roomID, playerindex);
+                    ExplainedRooms.Set(roomID, playerindex);
                     return;
                 }
                 playerindex++;
@@ -180,7 +182,7 @@ namespace LegalThieves
         // 모든 방의 규명이 완료되었는지 확인 (ExplainRoom()의 안에서 규명이 확인되었을 때 호출될 예정)
         private void CheckAllRoomExplained()
         {
-            if (ExplainPlayer.Contains(-1))
+            if (ExplainedRooms.Contains(-1))
                 return;
         }
         
@@ -196,6 +198,7 @@ namespace LegalThieves
             var playerObject = Runner.Spawn(playerPrefab, position, rotation, player);
             Players.Add(player, playerObject.GetComponent<TempPlayer>());
             RelicBox[Players.Count - 1].owner = playerObject.GetComponent<TempPlayer>();
+            campPointUI.AddPlayer(playerObject.GetComponent<TempPlayer>());
         }
 
         public void PlayerLeft(PlayerRef player)

@@ -9,8 +9,9 @@ using System.Linq;
 
 public class RelicDisplayer : NetworkBehaviour
 {
-    [Networked, OnChangedRender(nameof(SetOwner))]
-    public TempPlayer owner { get; set; }
+    [SerializeField] CampPointUI campUI;
+
+    [Networked] public TempPlayer owner { get; set; }
 
     [Networked, Capacity(30), OnChangedRender(nameof(CallChangeRelicList))]
     NetworkArray<int> DisplayedRelics { get; } = MakeInitializer(Enumerable.Repeat(-1, 30).ToArray());
@@ -21,19 +22,11 @@ public class RelicDisplayer : NetworkBehaviour
 
     int[] explainCount = new int[30];
 
-    CampPointUI campUI;
+    
 
     void CallChangeRelicList()
     {
-        campUI.UpdatePlayerInfo(owner, DisplayedRelics, SoldRelics);
-    }
-
-    public void SetOwner()
-    {
-        if (owner != null)
-            return;
-        campUI = FindObjectOfType<CampPointUI>();
-        campUI.Addplayer(owner);
+        campUI.UpdatePlayerPoint(owner, DisplayedRelics, SoldRelics);
     }
 
     public int AddRelics(int relicID , TempPlayer player)
