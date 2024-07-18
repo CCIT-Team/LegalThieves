@@ -89,7 +89,7 @@ namespace LegalThieves
 
         private void GameStateChanged()
         {
-            UIManager.Singleton.SetWaitUI(State, Winner);
+            
         }
 
         private void PreparePlayers()

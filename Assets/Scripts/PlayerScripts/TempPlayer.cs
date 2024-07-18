@@ -64,7 +64,7 @@ namespace LegalThieves
         {
 
             animator = GetComponentInChildren<NetworkMecanimAnimator>();
-        
+            UIManager.Singleton.ResetHUD();
             if(HasInputAuthority)
             {
                 //입력된 스킨드메쉬를 안보이게 하는 부분.
