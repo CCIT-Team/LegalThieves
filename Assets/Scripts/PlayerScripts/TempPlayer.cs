@@ -50,11 +50,12 @@ namespace LegalThieves
         [Networked] public string  Name           { get; private set; }
         [Networked] public bool    IsSprinting    { get; private set; }
         [Networked] public bool    IsCrouching    { get; private set; }
+        [Networked] public bool WalkingSounds { get; private set; }
         //[Networked] public float   CurrentHealth  { get; private set; }
         //[Networked] public float   CurrentStamina { get; private set; }
-        
+
         //fusion 홈페이지 Network Tick <<< 이거 보면됨
-        
+
         [Networked] private NetworkButtons  PreviousButtons  { get; set; }
         [Networked, OnChangedRender(nameof(Jumped))] private int JumpSync { get; set; }
     
@@ -107,11 +108,71 @@ namespace LegalThieves
                 UpdateCamTarget();
             
                 SetInputDirection(input);
-            
+
+                PlayWalkingSounds(input);
+
                 PreviousButtons = input.Buttons;
             }
         }
+        bool walkingSounds = false; // 클래스 멤버로 선언
 
+        private void PlayWalkingSounds(NetInput input)
+        {
+            if (IsSprinting)
+                return;
+
+            // 걷는 소리가 이미 재생 중이고, 아무 키도 눌리지 않았을 경우 소리 중지
+            if (!walkingSounds && input.Direction.sqrMagnitude == 0)
+            {
+                StopWalkingSounds();
+                return;
+            }
+
+            // WASD 키 입력이 있는지 확인하고 소리를 재생
+            if (input.Direction.sqrMagnitude > 0 && !walkingSounds)
+            {
+                walkingSounds = true; // 소리 재생 상태로 설정
+                if (CaveJungleBGM.cavein == 1)
+                {
+                    // 동굴 안에서의 사운드
+                    PlayCaveSounds();
+                }
+                else
+                {
+                    // 동굴 밖에서의 사운드
+                    PlayJungleSounds();
+                }
+            }
+        }
+
+        private void StopWalkingSounds()
+        {
+            // 모든 소리 중지
+            AudioManager.instance.PlayBreathSfx(false);
+            AudioManager.instance.PlayHRGFSfx(false);
+            AudioManager.instance.PlayHRDFSfx(false);
+            AudioManager.instance.PlayDFSfx(false);
+            AudioManager.instance.PlayGFSfx(false);
+            walkingSounds = false; // 소리 재생 상태 해제
+        }
+
+        private void PlayCaveSounds()
+        {
+            AudioManager.instance.PlayBreathSfx(true);
+            AudioManager.instance.PlayHRGFSfx(false);
+            AudioManager.instance.PlayHRDFSfx(false);
+            AudioManager.instance.PlayDFSfx(false);
+            AudioManager.instance.PlayGFSfx(true);
+        }
+
+        private void PlayJungleSounds()
+        {
+            AudioManager.instance.PlayBreathSfx(true);
+            AudioManager.instance.PlayHRGFSfx(false);
+            AudioManager.instance.PlayHRDFSfx(false);
+            AudioManager.instance.PlayDFSfx(true);
+            AudioManager.instance.PlayGFSfx(false);
+        }
         public override void Render()
         {
             if (kcc.Settings.ForcePredictedLookRotation)
@@ -143,6 +204,7 @@ namespace LegalThieves
             var worldDirection = kcc.FixedData.TransformRotation * input.Direction.X0Y();
         
             kcc.SetInputDirection(worldDirection);
+            
         }
 
         private void CheckJump(NetInput input)
