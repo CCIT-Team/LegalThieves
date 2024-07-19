@@ -1,10 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 using Fusion;
 using Fusion.Addons.KCC;
 using UnityEngine;
+using UnityEngine.InputSystem.EnhancedTouch;
 
 namespace LegalThieves
 {
@@ -42,20 +45,25 @@ namespace LegalThieves
         private InputManager  _inputManager;
         private Vector2       _baseLookRotation;
         public int[]         _inventoryItems = Enumerable.Repeat(-1, 10).ToArray();
-        
+        [SerializeField] private Item_Torch_Temp Torch;
+     
+
         private static readonly int AnimMoveDirX     = Animator.StringToHash("MoveDirX");
         private static readonly int AnimMoveDirY     = Animator.StringToHash("MoveDirY");
         private static readonly int AnimIsCrouching  = Animator.StringToHash("IsCrouchSync");
         private static readonly int LookPit          = Animator.StringToHash("LookPit");
         private static readonly int Jump             = Animator.StringToHash("Jump");
-        private static readonly int PickTorch        = Animator.StringToHash("pickTorch");
+        private static readonly int pickTorch        = Animator.StringToHash("pickTorch");
         private static readonly int Attack           = Animator.StringToHash("Attack");
-        
+        private static readonly int Victory = Animator.StringToHash("Victory");
+        private static readonly int Defeat = Animator.StringToHash("Defeat");
+
         RaycastHit hit;
         [Networked] public string  Name           { get; private set; }
         [Networked] public bool    IsSprinting    { get; private set; }
         [Networked] private bool   IsCrouching    { get; set; }
         [Networked] public bool    IsHoldingItem  { get; private set; }
+        [Networked] public bool    PickTorch  { get; private set; }
         
         //[Networked] public float   CurrentHealth  { get; private set; }
         //[Networked] public float   CurrentStamina { get; private set; }
@@ -66,7 +74,8 @@ namespace LegalThieves
         [Networked, OnChangedRender(nameof(Jumped))] private int JumpSync { get; set; }
         [Networked, OnChangedRender(nameof(Attacked))] private int AttackSync { get; set; }
         [Networked] private float CrouchSync { get; set; }
-    
+
+        [SerializeField] private GameObject ItemTorch;
         #region Overrided user callback functions in NetworkBehaviour
 
         public override void Spawned()
@@ -75,7 +84,7 @@ namespace LegalThieves
             _animator ??= GetComponentInChildren<Animator>();
             
             UIManager.Singleton.ResetHUD();
-            
+            IsHoldingItem = false;
             if(HasInputAuthority)
             {
                 //입력된 스킨드메쉬를 안보이게 하는 부분.
@@ -111,6 +120,9 @@ namespace LegalThieves
                 CheckThrowItem(input);
                 CheckHoldingItem(input);
                 CheckAttack(input);
+                CheckVictory(input);
+                CheckDefeat(input);
+                //CheckTorch(input);
                 
                 if(IsSprinting && !CanSprint)
                     ToggleSprint(false);
@@ -238,7 +250,7 @@ namespace LegalThieves
             _animator.SetFloat(AnimMoveDirY, moveVelocity.z, 0.05f, Time.deltaTime);
             _animator.SetFloat(AnimIsCrouching, CrouchSync);
             _animator.SetFloat(LookPit, -kcc.GetLookRotation(true, false).x / 90f);
-            _animator.SetBool(PickTorch, IsHoldingItem);
+           //_animator.SetBool(pickTorch, IsHoldingItem);
 
             //animator.Animator.SetFloat(AnimMoveDirX, moveVelocity.x, 0.05f, Time.deltaTime);
             //animator.Animator.SetFloat(AnimMoveDirY, moveVelocity.z, 0.05f, Time.deltaTime);
@@ -305,6 +317,57 @@ namespace LegalThieves
                 return;
             AttackSync++;
         }
+
+        private void CheckVictory(NetInput input)
+        {
+            if (input.Buttons.WasPressed(PreviousButtons, EInputButton.Victory))             
+                _animator.SetTrigger("Victory");
+        }
+
+        private void CheckDefeat(NetInput input)
+        {
+            if (input.Buttons.WasPressed(PreviousButtons, EInputButton.Defeat)) 
+                _animator.SetTrigger("Defeat");
+        }
+
+        private void CheckTorch(NetInput input)
+        {
+            if (input.Buttons.WasPressed(PreviousButtons, EInputButton.Torch) && !IsHoldingItem)
+            {
+                StartCoroutine(WaitOn());
+            }
+            else
+            {
+                StartCoroutine(WaitOff());
+            }
+        }
+        private IEnumerator WaitOn()
+        {
+            Debug.Log("횃불 ON");
+            _animator.SetBool("pickTorch", true);
+            yield return new WaitForSeconds(1f);
+            ItemTorch.SetActive(true);
+            Torch.TurnOnLight();
+            IsHoldingItem = true;
+            PickTorch = true;
+        }
+        private IEnumerator WaitOff()
+        {
+            Torch.TurnOffLight();
+            yield return new WaitForSeconds(1.0f);
+            _animator.SetBool("pickTorch", false);
+            ItemTorch.SetActive(false);
+            IsHoldingItem = false;
+            PickTorch = false;
+        }
+        /*private IEnumerator useBandage()
+        {
+            ItemTorch.SetActive(true);
+            _animator.SetTrigger("useBandage");
+            yield return new WaitForSeconds(5.967f);
+            ItemTorch.SetActive(false);
+        }*/
+
 
         private void ToggleSprint(bool isSprinting)
         {

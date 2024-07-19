@@ -19,7 +19,10 @@ namespace LegalThieves
         Sprint,
         Crouch,
         Excavate,
-        Attack
+        Attack,
+        Victory, 
+        Defeat,
+        Torch
     }
 
     public struct NetInput : INetworkInput
@@ -101,6 +104,9 @@ namespace LegalThieves
                 buttons.Set(EInputButton.Crouch, keyboard.leftCtrlKey.isPressed);
                 buttons.Set(EInputButton.Interaction, keyboard.eKey.isPressed);
                 buttons.Set(EInputButton.Excavate, keyboard.fKey.isPressed);
+                buttons.Set(EInputButton.Victory, keyboard.oKey.isPressed);
+                buttons.Set(EInputButton.Defeat, keyboard.pKey.isPressed);
+                buttons.Set(EInputButton.Torch, keyboard.tKey.isPressed);
             }
 
             _accumulateInput.Buttons = new NetworkButtons(_accumulateInput.Buttons.Bits | buttons.Bits);
