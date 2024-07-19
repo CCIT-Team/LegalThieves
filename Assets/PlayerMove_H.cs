@@ -6,23 +6,22 @@ using UnityEngine;
 public class PlayerMove_H : MonoBehaviour
 {
     RaycastHit hit;
-    public float speed = 5f; // ÀÌµ¿ ¼Óµµ
-    public float mouseSensitivity = 100f; // ¸¶¿ì½º °¨µµ ¼³Á¤
-    public Transform head; // ¸Ó¸® ºÎºĞ
+    public float speed = 5f; // ì´ë™ ì†ë„
+    public float mouseSensitivity = 100f; // ë§ˆìš°ìŠ¤ ê°ë„ ì„¤ì •
+    public Transform head; // ë¨¸ë¦¬ ë¶€ë¶„
     private Rigidbody rb;
     bool canJump = true;
     float jummpPower = 4;
-    private float xRotation = 0f; // xÃà È¸Àü °ª
+    private float xRotation = 0f; // xì¶• íšŒì „ ê°’
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked; // Ä¿¼­ °íÁ¤ ¹× ¼û±è
+        Cursor.lockState = CursorLockMode.Locked; // ì»¤ì„œ ê³ ì • ë° ìˆ¨ê¹€
         rb = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
-
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         Vector3 moveDir = new Vector3(h, 0, v).normalized;
@@ -33,7 +32,7 @@ public class PlayerMove_H : MonoBehaviour
         rb.MovePosition(transform.position + moveDir * Time.deltaTime * speed);
        
 
-        //Ä«¸Ş¶ó
+        //ì¹´ë©”ë¼
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
@@ -44,7 +43,7 @@ public class PlayerMove_H : MonoBehaviour
 
         transform.Rotate(Vector3.up * mouseX);
        
-        //Á¡ÇÁ
+        //ì í”„
         if (canJump && Input.GetKeyDown(KeyCode.Space))
         {
             rb.AddForce(Vector3.up * jummpPower, ForceMode.Impulse);
