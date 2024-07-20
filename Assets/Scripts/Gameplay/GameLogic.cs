@@ -198,7 +198,7 @@ namespace LegalThieves
             var playerObject = Runner.Spawn(playerPrefab, position, rotation, player);
             Players.Add(player, playerObject.GetComponent<TempPlayer>());
             RelicBox[Players.Count - 1].owner = playerObject.GetComponent<TempPlayer>();
-            //campPointUI.AddPlayer(playerObject.GetComponent<TempPlayer>());
+            campPointUI.AddPlayer(playerObject.GetComponent<TempPlayer>());
         }
 
         public void PlayerLeft(PlayerRef player)
