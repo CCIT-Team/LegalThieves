@@ -29,7 +29,7 @@ namespace LegalThieves
         }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
         [System.Serializable]//7.15일 유물생성 추가 중
-        public class ProbabilityTable
+        public struct ProbabilityTable
         {
             public List<YearProbability> probabilities;
         }
