@@ -1,4 +1,5 @@
 using System.Linq;
+using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -22,6 +23,7 @@ namespace LegalThieves
         [SerializeField] private Transform         spawnpoint;
         [SerializeField] private Transform         spawnpointPivot;
         [SerializeField] private float             gametime;
+        private int playerindex = 0;//마테리얼 적용용, 나중에 삭제
         
         [Networked] private TickTimer RemainTime { get; set; }
 
@@ -199,6 +201,12 @@ namespace LegalThieves
             Players.Add(player, playerObject.GetComponent<TempPlayer>());
             RelicBox[Players.Count - 1].owner = playerObject.GetComponent<TempPlayer>();
             campPointUI.AddPlayer(playerObject.GetComponent<TempPlayer>());
+            if (playerindex >= 4)
+                playerindex = 0;
+            Debug.Log(playerindex);
+            playerObject.GetComponent<TempPlayer>().SetClothMaterial(playerindex);
+
+            playerindex++;
         }
 
         public void PlayerLeft(PlayerRef player)

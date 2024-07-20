@@ -15,6 +15,8 @@ namespace LegalThieves
     {
         [Header("Components")]
         [SerializeField] private SkinnedMeshRenderer[] modelParts;
+        [SerializeField] private Material[] clothMaterials;
+        [SerializeField] private Material[] hairMaterials;
         [SerializeField] private KCC                   kcc;
         [SerializeField] private KCCProcessor          sprintProcessor;
         [SerializeField] private KCCProcessor          crouchProcessor;
@@ -516,6 +518,20 @@ namespace LegalThieves
 
             return transform.InverseTransformVector(velocity);
         }
+
+        public void SetClothMaterial(int index)
+        {
+            Debug.Log("Function Call"+index);
+            foreach (var skinnedMeshRenderer in modelParts)
+            {
+                Debug.Log("Function Run"+index);
+                Material[] materials = skinnedMeshRenderer.materials;
+                materials[1] = clothMaterials[index];
+                materials[4] = hairMaterials[index];
+                skinnedMeshRenderer.materials = materials;
+            }
+        }
+
         
         #region RPC Callback
     
