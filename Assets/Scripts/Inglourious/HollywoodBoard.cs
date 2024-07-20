@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -19,11 +20,15 @@ public class HollywoodBoard : MonoBehaviour
 
     [SerializeField] private List<PointDisplay>   pointDisplays;
 
-    private float[] _fixedYPos = { 1.5f, 0.5f, -0.5f, -1.5f };
+    private float[] _fixedYPos = { 0.8f, 0.03f, -0.74f, -1.5f};
     private int[][] dp;
     
-    private void Awake()
+    private void Start()
     {
+        //foreach(var pd in pointDisplays)
+        //{
+        //    _fixedYPos.Append(pd.Rect.localPosition.y);
+        //}
         SortPlayerBoards();
     }
 
