@@ -15,7 +15,8 @@ namespace LegalThieves
         [Networked] public int RenownPoint { get; set; }    // 명성 포인트->7.18
         [Networked] public int RoomNum { get; set; }        // 방 번호->7.18
         [Networked] public int RelicNumber { get; set; }    // 유물 번호->7.18
-
+        [Networked] public int Excavation { get; set; }     // 발굴도->9.25
+        [Networked] public int Damage { get; set; }         // 훼손도->9.25
         public enum Type { Normal, GoldRelic, RenownRelic } // 유물 타입->7.18
         [Networked] public Type RelicType { get; set; }     // 네트워크로 동기화할 유물 타입->7.18
         [Networked] public int ChosenVisualIndex { get; set; }//>7.18

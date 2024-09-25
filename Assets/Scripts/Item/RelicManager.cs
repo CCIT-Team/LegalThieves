@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 using static RelicCreation;
 using Random = UnityEngine.Random;
 
@@ -42,6 +43,8 @@ namespace LegalThieves
             public int goldPoint; // 골드 포인트
             public int renownPoint; // 명성 포인트
             public int RoomNum; // 방 ID
+            public int excavation; // 발굴도->9.25
+            public int damage; // 훼손도->9.25
 
             public enum RelicesType { NormalRelic, GoldRelic, RenownRelic } // 유물 타입 열거형
         }
@@ -124,6 +127,8 @@ namespace LegalThieves
                         tempRelic.RoomNum = i;
                         tempRelic.relicNumber = relicCount;
                         tempRelic.RelicType = (TempRelic.Type)selectedRelicInfo.type; //->7.18
+                        tempRelic.Excavation = selectedRelicInfo.excavation;// 추가한 부분->9.25
+                        tempRelic.Damage = selectedRelicInfo.damage;// 추가한 부분->9.25
                     }
                     // 시각적 인덱스 설정 및 동기화->7.18
                     Transform visualTransform = tempRelic.visual.transform;
@@ -220,7 +225,9 @@ namespace LegalThieves
                 if (!int.TryParse(data[1], out int goldPoint) ||
                     !int.TryParse(data[2], out int renownPoint) ||
                     !int.TryParse(data[3], out int depth) ||
-                    !int.TryParse(data[4], out int RoomNum))
+                    !int.TryParse(data[4], out int RoomNum) ||
+                    !int.TryParse(data[5], out int excavation) ||//->9.25
+                    !int.TryParse(data[6], out int damage))//->9.25
                 {
                     Debug.LogError($"Data format error on line {i + 1}");
                     continue;
@@ -230,6 +237,8 @@ namespace LegalThieves
                 relic.goldPoint = goldPoint;
                 relic.renownPoint = renownPoint;
                 relic.RoomNum = RoomNum;
+                relic.excavation = excavation; //->9.25
+                relic.damage = damage; //->9.25
 
                 relicess.Add(relic); // 직접 리스트에 추가
             }
