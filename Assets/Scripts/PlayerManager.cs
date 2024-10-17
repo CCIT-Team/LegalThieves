@@ -1,9 +1,17 @@
+using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : NetworkBehaviour
 {
+    [Networked, Capacity(4)] public NetworkArray<NetworkObject> PlayerList => default;
+
+
+    [SerializeField]
+    private GameObject playerPrefab;
+    private int playerIndex = 0;
     private static PlayerManager instance;
     public static PlayerManager Instance
     {
@@ -17,26 +25,30 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    [SerializeField]
-    GameObject[] playerArray;
-
-    public GameObject[] PlayerArray
+    public void SpawnPlayer()
     {
-        get { return playerArray;  }
+       
+            // 서버에서 몬스터를 스폰하고 모든 클라이언트에 동기화
+       
+            PlayerList.Set(playerIndex++, Runner.Spawn(playerPrefab, new Vector3(0, 5, 0), Quaternion.identity));
+        
     }
 
-    private void Awake()
-    {
-        if(null == instance)
-        {
-            instance = this;
-            DontDestroyOnLoad(this.gameObject);
-        }
-        else
-        {
-            Destroy(this.gameObject);
-        }
+   
 
-        playerArray = GameObject.FindGameObjectsWithTag("Player");
+    public void CreatePlayerManager()
+    {
+     
+        
+            if (null == instance)
+            {
+                instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
+            else
+            {
+                Destroy(this.gameObject);
+            }
+        
     }
 }

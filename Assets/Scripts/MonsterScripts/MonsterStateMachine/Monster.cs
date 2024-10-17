@@ -1,3 +1,4 @@
+using Fusion;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -8,19 +9,17 @@ using UnityEngine.XR;
 public class Monster : MonsterBase
 {
  
+    [Networked] public State MonsterState { get; set; } // 몬스터 상태 동기화
+    [SerializeField]
+  
     public enum State { IDLE, Chase, Patrol, Attack };
 
-    State state;
-    public State getState
-    {
-        get { return state; }
-    }
 
-    bool isFirst = true;
+
     //Patrol property
     private float timer;
     private int PatrolDelay = 2;
-    public Transform[] patrolPoints;
+
     //---------Patrol End
 
     //Chase property
@@ -38,69 +37,79 @@ public class Monster : MonsterBase
     private bool _StayMob;
     public bool StayMob { get { return _StayMob;} }
 
-  
 
-    // Update is called once per frame
     private void Start()
     {
-        patrolPoints = GameObject.FindWithTag("MobPatrollParent").GetComponentsInChildren<Transform>();
-        switch (StayMob)
+        if (Object.HasStateAuthority)
         {
-            case true:
-                state = State.IDLE;
-                break;
-            case false:
-                state = State.Patrol;
-                break;
+            switch (StayMob)
+            {
+                case true:
+                    MonsterState = State.IDLE;
+                    break;
+                case false:
+                    MonsterState = State.Patrol;
+                    break;
+            }
+            // 서버만 몬스터를 제어하도록 설정
+            Init();
         }
-
-        Init();
     }
+   
+
+
+    // 서버가 위치 업데이트를 처리하고, 이를 모든 클라이언트에 동기화
 
     private void Update()
     {
-        switch(state)
+        // 상태에 따른 행동을 업데이트 (서버에서만 실행)
+        if (Object.HasStateAuthority)
         {
-            case State.IDLE:
-                IDLE();
-                break;
-
-            case State.Patrol:
-                Patrol();
-                break;
-
-            case State.Chase:
-                
-                Chase();
-                break;
-
-            case State.Attack:
-                Stop();
-                Attack();
-                break;
-
+            
+            switch (MonsterState)
+            {
+                case State.IDLE:
+                    IDLE();
+                    break;
+                case State.Patrol:
+                    Patrol();
+                    break;
+                case State.Chase:
+                    Chase();
+                    break;
+                case State.Attack:
+                    Attack();
+                    break;
+            }
+          
         }
-     
+
+        // 클라이언트에서도 동기화된 위치를 적용
+        transform.position = Position;
+      
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        switch (state)
+        if (Object.HasStateAuthority)
         {
-            case State.IDLE:
-                Near = CheckNearPlayer();
-                state = State.Chase;
-               
-                break;
-            case State.Patrol:
-                Near = CheckNearPlayer();
-                state = State.Chase;
+            switch (MonsterState)
+            {
+                case State.IDLE:
+                    Near = CheckNearPlayer();
+                    MonsterState = State.Chase;
 
-                break;
-           
-            case State.Attack:
-                break;
+                    break;
+                case State.Patrol:
+                    Near = CheckNearPlayer();
+                    MonsterState = State.Chase;
 
+                    break;
+
+                case State.Attack:
+                    break;
+
+            }
         }
     
     }
@@ -115,19 +124,19 @@ public class Monster : MonsterBase
 
     private void Patrol()
     {
-        if (agent.velocity != Vector3.zero) return;
+        if (agentVelocity != Vector3.zero) return;
         Debug.Log("실행");
         timer += Time.deltaTime;
 
         if (timer > PatrolDelay)
         {
             timer = 0;
-            NearPointSet(patrolPoints, 0, patrolPoints.Length - 1);
-            agent.SetDestination(patrolPoints[Random.Range(2, 3)].position);
+            NearPointSet(patrolPoints, 0, patrolPoints.Count - 1);
+            MoveTo(patrolPoints[Random.Range(2, patrolPoints.Count-1)].position);
         }
     }
 
-    private void NearPointSet(Transform[] arr, int low, int high)
+    private void NearPointSet(List<Transform> arr, int low, int high)
     {
         if (low < high)
         {
@@ -137,7 +146,7 @@ public class Monster : MonsterBase
         }
     }
 
-    private int Partition(Transform[] arr, int low, int high)
+    private int Partition(List<Transform> arr, int low, int high)
     {
         Transform pivot = arr[high];
         int i = low - 1;
@@ -155,7 +164,7 @@ public class Monster : MonsterBase
         return i + 1;
     }
 
-    private void Swap(Transform[] arr, int a, int b)
+    private void Swap(List<Transform> arr, int a, int b)
     {
         (arr[a], arr[b]) = (arr[b], arr[a]);
     }
@@ -165,28 +174,28 @@ public class Monster : MonsterBase
     private void Chase()
     {
 
-        if (agent.remainingDistance > 7f)
+        if (agentRemainingDistance > 7f)
         {
             BackToHome();
             homePoint = Vector3.zero;
             switch (StayMob)
             {
                 case true:
-                    state = State.IDLE;
+                    MonsterState = State.IDLE;
                     break;
                 default:
-                    state = State.Patrol;
+                    MonsterState = State.Patrol;
                     break;
             }
         }
         else
         {
-            agent.SetDestination(Near.position);
+            MoveTo(Near.position);
         }
     }
     private void BackToHome()
     {
-        agent.SetDestination(homePoint);
+        MoveTo(homePoint);
     }
 
 
@@ -201,17 +210,17 @@ public class Monster : MonsterBase
         {
             //공격
             attacktimer = 0;
-           agent.SetDestination(Near.position);
+            MoveTo(Near.position);
         }
     }
 
     private void Stop()
     {
-        agent.SetDestination(transform.position);
+        MoveTo(transform.position);
     }
     public void ChangeState(State _state)
     {
-        state = _state;
+        MonsterState = _state;
     }
     //Attack 끝------------
 

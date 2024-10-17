@@ -1,9 +1,11 @@
+using Fusion;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : NetworkBehaviour
 {
+    [Networked] public Vector3 Position { get; set; } // 몬스터의 위치 동기화
     [SerializeField] float speed = 5f;
     [SerializeField] float mouseSpeed = 8f;
     private float gravity;
