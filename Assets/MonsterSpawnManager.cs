@@ -16,10 +16,10 @@ public class MonsterSpawnManager : NetworkBehaviour
     }
     public void SpawnMonster()
     {
-        if (Object.HasStateAuthority) // 서버에서만 몬스터 스폰
+        if (Runner.IsServer) // 서버에서만 몬스터 스폰
         {
             // 서버에서 몬스터를 스폰하고 모든 클라이언트에 동기화
-            NetworkObject monster = Runner.Spawn(monsterPrefab, worldPatrolPoints[1].position, Quaternion.identity);
+            NetworkObject monster = Runner.Spawn(monsterPrefab, worldPatrolPoints[Random.Range(1, worldPatrolPoints.Count-1)].position, Quaternion.identity);
             monster.GetComponent<Monster>().patrolPoints = worldPatrolPoints;
         }
     }

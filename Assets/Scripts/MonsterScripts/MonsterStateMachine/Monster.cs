@@ -40,7 +40,7 @@ public class Monster : MonsterBase
 
     private void Start()
     {
-        if (Object.HasStateAuthority)
+        if (HasStateAuthority)
         {
             switch (StayMob)
             {
@@ -63,7 +63,7 @@ public class Monster : MonsterBase
     private void Update()
     {
         // 상태에 따른 행동을 업데이트 (서버에서만 실행)
-        if (Object.HasStateAuthority)
+        if (HasStateAuthority)
         {
             
             switch (MonsterState)
@@ -91,17 +91,14 @@ public class Monster : MonsterBase
 
     private void OnTriggerEnter(Collider other)
     {
-        if (Object.HasStateAuthority)
+        if (HasStateAuthority)
         {
             switch (MonsterState)
             {
                 case State.IDLE:
-                    Near = CheckNearPlayer();
-                    MonsterState = State.Chase;
-
-                    break;
                 case State.Patrol:
                     Near = CheckNearPlayer();
+                    homePoint = transform.position;
                     MonsterState = State.Chase;
 
                     break;
@@ -177,7 +174,7 @@ public class Monster : MonsterBase
         if (agentRemainingDistance > 7f)
         {
             BackToHome();
-            homePoint = Vector3.zero;
+            
             switch (StayMob)
             {
                 case true:
@@ -190,7 +187,7 @@ public class Monster : MonsterBase
         }
         else
         {
-            MoveTo(Near.position);
+            MoveTo(Near);
         }
     }
     private void BackToHome()
@@ -210,7 +207,7 @@ public class Monster : MonsterBase
         {
             //공격
             attacktimer = 0;
-            MoveTo(Near.position);
+            MoveTo(Near);
         }
     }
 

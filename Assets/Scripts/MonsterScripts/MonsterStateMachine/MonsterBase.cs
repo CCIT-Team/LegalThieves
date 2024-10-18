@@ -7,11 +7,13 @@ using UnityEngine.AI;
 public class MonsterBase : NetworkBehaviour
 {
     //protected Camera _camera; // 메인 카메라
-    protected Transform Near;
+    [Networked] public Vector3 Near { get; set; }
        [Networked] public Vector3 Position { get; set; } // 몬스터의 위치 동기화
     [Networked] public Vector3 Rotation {  get; set; }
     enum MosterType { zombie, mira, ghost            , Boss0 } //몬스터,  보스 타입 지정
     [SerializeField] MosterType monsterType;
+
+
     public List<Transform> patrolPoints = new List<Transform>();
 
     [Networked] public Vector3 agentVelocity { get { return _agent.velocity; } set { } }
@@ -36,10 +38,9 @@ public class MonsterBase : NetworkBehaviour
 
     private void Update()
     {
-        if (Object.HasStateAuthority)
-        {
-            Position = _agent.nextPosition;
-        }
+   
+            Position = transform.position;
+        
     }
     // Start is called before the first frame update
 
@@ -69,7 +70,7 @@ public class MonsterBase : NetworkBehaviour
             //    break;
         }
     }
-    public Transform CheckNearPlayer()
+    public Vector3 CheckNearPlayer()
     {
         NetworkObject[] players = new NetworkObject[PlayerManager.Instance.PlayerList.Length];
 
@@ -88,13 +89,13 @@ public class MonsterBase : NetworkBehaviour
                 near = players[i];
             }
         }
-        return near.transform;
+        return near.transform.position;
     }
 
   
     protected void MoveTo(Vector3 newPosition)
     {
-        if (Object.HasStateAuthority)
+        if (HasStateAuthority)
         {
             _agent.SetDestination(newPosition);
         }

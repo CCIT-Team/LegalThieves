@@ -43,7 +43,7 @@ public class PlayerManager : NetworkBehaviour
             if (null == instance)
             {
                 instance = this;
-                DontDestroyOnLoad(this.gameObject);
+             
             }
             else
             {
