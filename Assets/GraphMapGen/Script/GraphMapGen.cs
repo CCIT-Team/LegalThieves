@@ -6,8 +6,9 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 public class GraphMapGen : MonoBehaviour
 {
-    [SerializeField] DelaunayTriangulation DelaunayTriangulation;
-
+  //  [SerializeField] DelaunayTriangulation1 DelaunayTriangulation;
+    [SerializeField]
+    TriangulationTest TriangulationTest;
     [SerializeField] Vector2Int area = new Vector2Int(20,20);
     [SerializeField] int cellSize = 1;
     [SerializeField] int cellCount = 10;
@@ -15,7 +16,8 @@ public class GraphMapGen : MonoBehaviour
     [SerializeField] float minDistance = 4.0f; // 방 사이 최소 거리
     [SerializeField] Transform Map;
     [SerializeField] GameObject mainRoom;
-   
+    [SerializeField] Transform startPoint;
+    [SerializeField] int addEdgeCount;
     Transform parent;
 
     // Start is called before the first frame update
@@ -30,11 +32,24 @@ public class GraphMapGen : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             RoomDetectionList = new List<Vector3>();
+            RoomDetectionList.Add(startPoint.position);
             Destroy(parent.gameObject);
             parent = Instantiate(Map);
             SetRoom(RoomDetectionList);
-            DelaunayTriangulation.Triangulation(RoomDetectionList);
+            // DelaunayTriangulation.Triangulation(RoomDetectionList);
+            TriangulationTest.StartTriangulation(RoomDetectionList);
+         
         }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            TriangulationTest.CreateMST();
+        }
+    
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            TriangulationTest.AddRandomEdgesToCreateCycle(addEdgeCount);
+        }
+
     }
 
     private void SetRoom(List<Vector3> list)
@@ -42,8 +57,8 @@ public class GraphMapGen : MonoBehaviour
         float halfSize = cellSize / 2;
             while (list.Count < cellCount)
             {
-                float location_x = Random.Range(parent.transform.position.x - area.x + halfSize, parent.transform.position.x + area.x - halfSize);
-                float location_z = Random.Range(parent.transform.position.y - area.y + halfSize, parent.transform.position.y + area.y - halfSize);
+                float location_x = Random.Range(parent.transform.position.x + halfSize, parent.transform.position.x + area.x - halfSize);
+                float location_z = Random.Range(parent.transform.position.y + halfSize, parent.transform.position.y + area.y - halfSize);
 
                 Vector3 randomPos = new Vector3(location_x, 0, location_z);
 
