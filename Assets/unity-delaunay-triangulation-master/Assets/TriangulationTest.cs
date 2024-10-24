@@ -9,7 +9,7 @@ public class TriangulationTest : MonoBehaviour
     int gizmosCount = 0;
 
     // 삼각형을 그리기 위한 데이터
-    private List<Vector3> meshData;
+    private List<Vector3> roomVectors;
     private List<int> indices;
     private List<Edge> edges; // 모든 삼각형의 변을 저장
     private List<Edge> mstEdges; // 최소 신장 트리의 변을 저장
@@ -21,7 +21,7 @@ public class TriangulationTest : MonoBehaviour
     {
         gizmosCount = 0;
         points = list;
-        meshData = new List<Vector3>();
+        roomVectors = new List<Vector3>();
         indices = new List<int>();
         edges = new List<Edge>();
         mstEdges = new List<Edge>();
@@ -33,7 +33,7 @@ public class TriangulationTest : MonoBehaviour
         for (int i = 0; i < points.Count; ++i)
         {
             Vector3 position = points[i];
-            meshData.Add(position);
+            roomVectors.Add(position);
             triangulationData.Add(new Vertex(new Vector2(position.x, position.z), i));
         }
 
@@ -74,7 +74,7 @@ public class TriangulationTest : MonoBehaviour
             }
             else
             {
-                // 사이클을 방지하기 위해 MST에서 제외된 엣지 저장
+                // MST에서 제외된 엣지 저장
                 excludedEdges.Add(edge);
             }
 
@@ -143,7 +143,7 @@ public class TriangulationTest : MonoBehaviour
     // 기즈모로 삼각형 및 MST 시각화
     private void OnDrawGizmos()
     {
-        if (meshData == null)
+        if (roomVectors == null)
         {
             return;
         }
@@ -155,9 +155,9 @@ public class TriangulationTest : MonoBehaviour
             case 0:
                 for (int i = 0; i < indices.Count && indices != null; i += 3)
                 {
-                    Vector3 vertex0 = meshData[indices[i]];
-                    Vector3 vertex1 = meshData[indices[i + 1]];
-                    Vector3 vertex2 = meshData[indices[i + 2]];
+                    Vector3 vertex0 = roomVectors[indices[i]];
+                    Vector3 vertex1 = roomVectors[indices[i + 1]];
+                    Vector3 vertex2 = roomVectors[indices[i + 2]];
 
                     Gizmos.DrawLine(vertex0, vertex1);
                     Gizmos.DrawLine(vertex1, vertex2);
@@ -170,8 +170,8 @@ public class TriangulationTest : MonoBehaviour
                 if (mstEdges == null) return;
                 foreach (Edge edge in mstEdges)
                 {
-                    Vector3 vertex0 = meshData[edge.point0.index];
-                    Vector3 vertex1 = meshData[edge.point1.index];
+                    Vector3 vertex0 = roomVectors[edge.point0.index];
+                    Vector3 vertex1 = roomVectors[edge.point1.index];
                     Gizmos.DrawLine(vertex0, vertex1);
                 }
 
@@ -179,7 +179,7 @@ public class TriangulationTest : MonoBehaviour
                 Gizmos.color = Color.blue;
                 foreach (int leafRoomIndex in leafRooms)
                 {
-                    Vector3 leafPosition = meshData[leafRoomIndex];
+                    Vector3 leafPosition = roomVectors[leafRoomIndex];
                     Gizmos.DrawSphere(leafPosition, 0.3f); // 리프 노드의 위치에 파란색 구 표시
                 }
                 break;
@@ -189,8 +189,8 @@ public class TriangulationTest : MonoBehaviour
                 if (mstEdges == null) return;
                 foreach (Edge edge in mstEdges)
                 {
-                    Vector3 vertex0 = meshData[edge.point0.index];
-                    Vector3 vertex1 = meshData[edge.point1.index];
+                    Vector3 vertex0 = roomVectors[edge.point0.index];
+                    Vector3 vertex1 = roomVectors[edge.point1.index];
                     Gizmos.DrawLine(vertex0, vertex1);
                 }
 
@@ -198,7 +198,7 @@ public class TriangulationTest : MonoBehaviour
                 Gizmos.color = Color.blue;
                 foreach (int leafRoomIndex in leafRooms)
                 {
-                    Vector3 leafPosition = meshData[leafRoomIndex];
+                    Vector3 leafPosition = roomVectors[leafRoomIndex];
                     Gizmos.DrawSphere(leafPosition, 0.3f); // 리프 노드의 위치에 파란색 구 표시
                 }
                 break;

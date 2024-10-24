@@ -54,11 +54,11 @@ public class GraphMapGen : MonoBehaviour
 
     private void SetRoom(List<Vector3> list)
     {
-        float halfSize = cellSize / 2;
+        
             while (list.Count < cellCount)
             {
-                float location_x = Random.Range(parent.transform.position.x + halfSize, parent.transform.position.x + area.x - halfSize);
-                float location_z = Random.Range(parent.transform.position.y + halfSize, parent.transform.position.y + area.y - halfSize);
+                int location_x = Random.Range((int)parent.transform.position.x , (int)parent.transform.position.x + area.x );
+                int location_z = Random.Range((int)parent.transform.position.y , (int)parent.transform.position.y + area.y );
 
                 Vector3 randomPos = new Vector3(location_x, 0, location_z);
 
