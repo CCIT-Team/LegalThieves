@@ -36,7 +36,7 @@ public class GraphMapGen : MonoBehaviour
             Destroy(parent.gameObject);
             parent = Instantiate(Map);
             SetRoom(RoomDetectionList);
-            // DelaunayTriangulation.Triangulation(RoomDetectionList);
+           
             TriangulationTest.StartTriangulation(RoomDetectionList);
          
         }
@@ -48,8 +48,16 @@ public class GraphMapGen : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             TriangulationTest.AddRandomEdgesToCreateCycle(addEdgeCount);
+     
         }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            TriangulationTest.Create(Map);
 
+        }
+ 
+   
+      
     }
 
     private void SetRoom(List<Vector3> list)
