@@ -15,6 +15,7 @@ public class TriangulationTest : MonoBehaviour
     private List<Edge> mstEdges; // 최소 신장 트리의 변을 저장
     private List<Edge> excludedEdges; // MST에 제외된 엣지 저장
     private List<int> leafRooms; // 끝부분 방 저장 (리프 노드)
+    private Transform roadParentTransform;
     List<Vector3> roadDetectionList;
     [SerializeField] GameObject road;
     [SerializeField] GameObject crossRoad;
@@ -26,9 +27,9 @@ public class TriangulationTest : MonoBehaviour
         roomVectors = new List<Vector3>();
         indices = new List<int>();
         edges = new List<Edge>();
-        mstEdges = new List<Edge>();
+      
         excludedEdges = new List<Edge>();
-        leafRooms = new List<int>();
+        
 
         List<Vertex> triangulationData = new List<Vertex>();
 
@@ -58,6 +59,7 @@ public class TriangulationTest : MonoBehaviour
     // 최소 신장 트리 생성 함수 (크루스칼 알고리즘)
     public void CreateMST()
     {
+        mstEdges = new List<Edge>();
         gizmosCount = 1;
         edges.Sort((e1, e2) => e1.Length().CompareTo(e2.Length()));
 
@@ -88,7 +90,7 @@ public class TriangulationTest : MonoBehaviour
        
     }
 
-    // 랜덤으로 제외된 엣지를 추가하여 사이클을 생성
+    // 랜덤으로 제외된 엣지를 추가하여 그래프로 만듦
     public void AddRandomEdgesToCreateCycle(int cycleEdgeCount)
     {
         gizmosCount = 2;
@@ -113,6 +115,7 @@ public class TriangulationTest : MonoBehaviour
     // 끝부분 방(리프 노드) 탐색
     public void FindLeafRooms()
     {
+        leafRooms = new List<int>();
         Dictionary<int, int> connectionCounts = new Dictionary<int, int>();
 
         // 각 방이 몇 개의 간선에 연결되어 있는지 계산
@@ -143,11 +146,20 @@ public class TriangulationTest : MonoBehaviour
         }
     }
 
-    public void Create(Transform parent)
+    public void CreateRoad(Transform parent)
     {
+        if (roadParentTransform != null)
+        {
+            Destroy(roadParentTransform.gameObject);
+        }
         roadDetectionList = new List<Vector3>();
+
+        GameObject roadParent = new GameObject("RoadParent");
+        roadParentTransform = roadParent.transform;
+        roadParentTransform.SetParent(parent); 
+
         // 도로 배치
-        for (int i = 0; i < mstEdges.Count - 1; i++)
+        for (int i = 0; i < mstEdges.Count; i++)
         {
             Vector3 start = new Vector3(mstEdges[i].point0.position.x,0, mstEdges[i].point0.position.y);
             Vector3 end = new Vector3(mstEdges[i].point1.position.x, 0, mstEdges[i].point1.position.y);
@@ -163,14 +175,14 @@ public class TriangulationTest : MonoBehaviour
                 if (!roadDetectionList.Contains(roadPosition))
                 {
                     roadDetectionList.Add(roadPosition);
-                    Instantiate(road, parent.position + roadPosition, Quaternion.identity, parent);
+                    Instantiate(road, roadParentTransform.position + roadPosition, Quaternion.identity, roadParentTransform);
                 }
             }
             Vector3 lastPosition = new Vector3(start.x + Mathf.Sign(end.x - start.x) * disX, 0, start.z);
             if (!roadDetectionList.Contains(lastPosition) )
             {
                 roadDetectionList.Add(lastPosition);
-                Instantiate(crossRoad, parent.position + lastPosition, Quaternion.identity, parent);
+                Instantiate(crossRoad, roadParentTransform.position + lastPosition, Quaternion.identity, roadParentTransform);
             }
 
         
@@ -183,7 +195,7 @@ public class TriangulationTest : MonoBehaviour
                 if (!roadDetectionList.Contains(roadPosition))
                 {
                     roadDetectionList.Add(roadPosition);
-                    Instantiate(road, parent.position + roadPosition, Quaternion.AngleAxis(90, Vector3.up), parent);
+                    Instantiate(road, roadParentTransform.position + roadPosition, Quaternion.AngleAxis(90, Vector3.up), roadParentTransform);
                 }
             }
 
@@ -191,7 +203,7 @@ public class TriangulationTest : MonoBehaviour
             if (!roadDetectionList.Contains(lastPosition))
             {
                 roadDetectionList.Add(lastPosition);
-                Instantiate(crossRoad, parent.position + lastPosition, Quaternion.identity, parent);
+                Instantiate(crossRoad, roadParentTransform.position + lastPosition, Quaternion.identity, roadParentTransform);
             }
             
 
@@ -225,22 +237,26 @@ public class TriangulationTest : MonoBehaviour
             case 1:
                 // 최소 신장 트리 그리기
                 Gizmos.color = Color.yellow;
-                if (mstEdges == null) return;
-                foreach (Edge edge in mstEdges)
+                if (mstEdges != null )
                 {
-                    Vector3 vertex0 = roomVectors[edge.point0.index];
-                    Vector3 vertex1 = roomVectors[edge.point1.index];
-                    Gizmos.DrawLine(vertex0, vertex1);
+                    foreach (Edge edge in mstEdges)
+                    {
+                        Vector3 vertex0 = roomVectors[edge.point0.index];
+                        Vector3 vertex1 = roomVectors[edge.point1.index];
+                        Gizmos.DrawLine(vertex0, vertex1);
+                    }
+                    // 리프 노드 시각화
                 }
-
-                // 리프 노드 시각화
-                Gizmos.color = Color.blue;
-                foreach (int leafRoomIndex in leafRooms)
-                {
-                    Vector3 leafPosition = roomVectors[leafRoomIndex];
-                    Gizmos.DrawSphere(leafPosition, 0.3f); // 리프 노드의 위치에 파란색 구 표시
+                if(leafRooms != null){ 
+                    Gizmos.color = Color.blue;
+                    foreach (int leafRoomIndex in leafRooms)
+                    {
+                        Vector3 leafPosition = roomVectors[leafRoomIndex];
+                        Gizmos.DrawSphere(leafPosition, 0.3f); // 리프 노드의 위치에 파란색 구 표시
+                    }
                 }
                 break;
+               
             case 2:
                 // 사이클 포함된 MST 그리기
                 Gizmos.color = Color.magenta; // 사이클을 포함하는 간선을 다른 색으로 표시

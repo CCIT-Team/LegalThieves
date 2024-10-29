@@ -123,18 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &850664512 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9178948672408635567, guid: 04edaf0be396fb7418679a16e867c3fb,
-    type: 3}
-  m_PrefabInstance: {fileID: 5946496555705097391}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7cb59ef22db74045a7a570fc15e9bd5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &850664513 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4271631538805425699, guid: 04edaf0be396fb7418679a16e867c3fb,
@@ -151,6 +139,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1570969015}
   - component: {fileID: 1570969018}
+  - component: {fileID: 1570969019}
   m_Layer: 0
   m_Name: Gen
   m_TagString: Untagged
@@ -185,17 +174,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79aa9c4c1b5a49d49a84905660c2002c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TriangulationTest: {fileID: 850664512}
-  area: {x: 20, y: 20}
-  cellSize: 3
-  cellCount: 10
+  TriangulationTest: {fileID: 1570969019}
+  area: {x: 70, y: 70}
+  cellSize: 1
+  cellCount: 30
   RoomDetectionList: []
-  minDistance: 4
+  minDistance: 10
   Map: {fileID: 6209649310835861358, guid: d6e07ba104634164d9cc0fe72af90040, type: 3}
   mainRoom: {fileID: 2048494603374544191, guid: 785e82129ac1862429cbe2261c5d6254,
     type: 3}
   startPoint: {fileID: 850664513}
-  addEdgeCount: 10
+  addEdgeCount: 3
+--- !u!114 &1570969019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570969014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7cb59ef22db74045a7a570fc15e9bd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  points: []
+  road: {fileID: 3907143439005403614, guid: 96b6746ac8afb7b4294d37112f48364f, type: 3}
+  crossRoad: {fileID: 3907143439005403614, guid: 55a351ff4fd1aeb4bb87962637ce0ab0,
+    type: 3}
 --- !u!1 &1896051801
 GameObject:
   m_ObjectHideFlags: 0
@@ -514,7 +519,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9178948672408635567, guid: 04edaf0be396fb7418679a16e867c3fb, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

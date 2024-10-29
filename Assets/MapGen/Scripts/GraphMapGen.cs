@@ -54,7 +54,7 @@ public class GraphMapGen : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            TriangulationTest.Create(parent);
+            TriangulationTest.CreateRoad(parent);
 
         }
  

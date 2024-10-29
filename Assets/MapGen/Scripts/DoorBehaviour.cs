@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoomBehaviour : MonoBehaviour
+public class DoorBehaviour : MonoBehaviour
 {
     //    public GameObject[] walls; // 0 - Up 1 -Down 2 - Right 3- Left
     //    public GameObject[] doors;
@@ -16,7 +16,7 @@ public class RoomBehaviour : MonoBehaviour
     //    }
     //}
     // Start is called before the first frame update
-    void Start()
+    void Update()
     {
         Collider[] colliders = Physics.OverlapSphere(transform.position, 0.1f);
 
@@ -28,5 +28,7 @@ public class RoomBehaviour : MonoBehaviour
                 return;
             }
         }
+
+     
     }
 }
