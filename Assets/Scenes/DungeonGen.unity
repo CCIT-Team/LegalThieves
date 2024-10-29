@@ -141,50 +141,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5946496555705097391}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1334941682
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1334941684}
-  - component: {fileID: 1334941683}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1334941683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1334941682}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b99845905cb054346b117937e3afc01d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &1334941684
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1334941682}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.180427, y: -15.880667, z: 9.900552}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1570969014
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,7 +187,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TriangulationTest: {fileID: 850664512}
   area: {x: 20, y: 20}
-  cellSize: 1
+  cellSize: 3
   cellCount: 10
   RoomDetectionList: []
   minDistance: 4
@@ -511,7 +467,7 @@ PrefabInstance:
     - target: {fileID: 4271631538805425699, guid: 04edaf0be396fb7418679a16e867c3fb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.6
+      value: -6
       objectReference: {fileID: 0}
     - target: {fileID: 4271631538805425699, guid: 04edaf0be396fb7418679a16e867c3fb,
         type: 3}
@@ -521,7 +477,7 @@ PrefabInstance:
     - target: {fileID: 4271631538805425699, guid: 04edaf0be396fb7418679a16e867c3fb,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 11.59
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 4271631538805425699, guid: 04edaf0be396fb7418679a16e867c3fb,
         type: 3}
@@ -570,5 +526,4 @@ SceneRoots:
   - {fileID: 1896051804}
   - {fileID: 1942350720}
   - {fileID: 1570969015}
-  - {fileID: 1334941684}
   - {fileID: 5946496555705097391}

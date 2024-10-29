@@ -15,7 +15,7 @@ public class TriangulationTest : MonoBehaviour
     private List<Edge> mstEdges; // 최소 신장 트리의 변을 저장
     private List<Edge> excludedEdges; // MST에 제외된 엣지 저장
     private List<int> leafRooms; // 끝부분 방 저장 (리프 노드)
- 
+    List<Vector3> roadDetectionList;
     [SerializeField] GameObject road;
     [SerializeField] GameObject crossRoad;
     // 삼각분할 및 기즈모 그리기 호출 함수
@@ -145,12 +145,13 @@ public class TriangulationTest : MonoBehaviour
 
     public void Create(Transform parent)
     {
-
+        roadDetectionList = new List<Vector3>();
         // 도로 배치
         for (int i = 0; i < mstEdges.Count - 1; i++)
         {
             Vector3 start = new Vector3(mstEdges[i].point0.position.x,0, mstEdges[i].point0.position.y);
-            Vector3 end = new Vector3(mstEdges[i + 1].point0.position.x, 0, mstEdges[i + 1].point0.position.y);
+            Vector3 end = new Vector3(mstEdges[i].point1.position.x, 0, mstEdges[i].point1.position.y);
+
 
             float disX = Mathf.Abs(start.x - end.x);
             float disZ = Mathf.Abs(start.z - end.z);
@@ -159,22 +160,40 @@ public class TriangulationTest : MonoBehaviour
             for (int x = 1; x < disX; x++)
             {
                 Vector3 roadPosition = new Vector3(start.x + Mathf.Sign(end.x - start.x) * x, 0, start.z);
-                Instantiate(road, transform.position + roadPosition, Quaternion.identity, parent);
+                if (!roadDetectionList.Contains(roadPosition))
+                {
+                    roadDetectionList.Add(roadPosition);
+                    Instantiate(road, parent.position + roadPosition, Quaternion.identity, parent);
+                }
+            }
+            Vector3 lastPosition = new Vector3(start.x + Mathf.Sign(end.x - start.x) * disX, 0, start.z);
+            if (!roadDetectionList.Contains(lastPosition) )
+            {
+                roadDetectionList.Add(lastPosition);
+                Instantiate(crossRoad, parent.position + lastPosition, Quaternion.identity, parent);
             }
 
-            Vector3 lastPosition = new Vector3(start.x + Mathf.Sign(end.x - start.x) * disX, 0, start.z);
-            Instantiate(crossRoad, transform.position + lastPosition, Quaternion.identity, parent);
+        
+           
 
             // Z축 도로 생성
             for (int z = 1; z < disZ; z++)
             {
                 Vector3 roadPosition = new Vector3(end.x, 0, start.z + Mathf.Sign(end.z - start.z) * z);
-
-                Instantiate(road, transform.position + roadPosition, Quaternion.AngleAxis(90, Vector3.up), parent);
+                if (!roadDetectionList.Contains(roadPosition))
+                {
+                    roadDetectionList.Add(roadPosition);
+                    Instantiate(road, parent.position + roadPosition, Quaternion.AngleAxis(90, Vector3.up), parent);
+                }
             }
 
             lastPosition = new Vector3(end.x, 0, start.z + Mathf.Sign(end.z - start.z) * disZ);
-            Instantiate(crossRoad, transform.position + lastPosition, Quaternion.identity, parent);
+            if (!roadDetectionList.Contains(lastPosition))
+            {
+                roadDetectionList.Add(lastPosition);
+                Instantiate(crossRoad, parent.position + lastPosition, Quaternion.identity, parent);
+            }
+            
 
         }
 

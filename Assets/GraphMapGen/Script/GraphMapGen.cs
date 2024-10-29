@@ -13,7 +13,7 @@ public class GraphMapGen : MonoBehaviour
     [SerializeField] int cellSize = 1;
     [SerializeField] int cellCount = 10;
     [SerializeField] List<Vector3>  RoomDetectionList ;
-    [SerializeField] float minDistance = 4.0f; // 방 사이 최소 거리
+    [SerializeField] int minDistance = 4; // 방 사이 최소 거리
     [SerializeField] Transform Map;
     [SerializeField] GameObject mainRoom;
     [SerializeField] Transform startPoint;
@@ -31,10 +31,12 @@ public class GraphMapGen : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            RoomDetectionList = new List<Vector3>();
-            RoomDetectionList.Add(startPoint.position);
             Destroy(parent.gameObject);
             parent = Instantiate(Map);
+            RoomDetectionList = new List<Vector3>();
+            RoomDetectionList.Add(startPoint.position);
+      
+            
             SetRoom(RoomDetectionList);
            
             TriangulationTest.StartTriangulation(RoomDetectionList);
@@ -52,11 +54,10 @@ public class GraphMapGen : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
-            TriangulationTest.Create(Map);
+            TriangulationTest.Create(parent);
 
         }
  
-   
       
     }
 
