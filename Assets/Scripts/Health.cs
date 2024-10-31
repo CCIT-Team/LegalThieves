@@ -12,26 +12,37 @@ public class Health : NetworkBehaviour
     [Networked]
     public float CurrentHealth { get; private set; }
 
-    private void Start()
+    public override void Spawned()
     {
-        
-        CurrentHealth = MaxHealth;
-    }
-
-
-
-    public void HealZone(float heal)
-    {
-        if(CurrentHealth < MaxHealth)
+        if (HasStateAuthority)
         {
-            CurrentHealth += heal;
+            CurrentHealth = MaxHealth;
         }
     }
-    public void PoisonZone(float damage)
+
+    public bool ApplyDamage(PlayerRef playerRef, float damage)
     {
-        if(CurrentHealth > 0)
+        if(CurrentHealth <= 0f)
         {
-            CurrentHealth -= damage;
+            return false;
         }
+        CurrentHealth -= damage;
+        if(CurrentHealth <= 0f)
+        {
+            CurrentHealth = 0f;
+            Debug.Log("Dead");
+        }
+        return true;
+    }
+    public bool AddHealth(float health)
+    {
+        if(CurrentHealth <= 0f)
+            return false;
+        if(CurrentHealth >= MaxHealth)
+            return false;
+
+        CurrentHealth = Mathf.Min(CurrentHealth + health, MaxHealth);   
+
+        return true;
     }
 }

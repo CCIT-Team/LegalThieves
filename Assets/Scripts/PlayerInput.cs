@@ -11,6 +11,9 @@ public struct InputData : INetworkInput
 
     public const int JUMP_BUTTON = 0;
     public const int SPRINT_BUTTON = 1;
+    public const int HEAL_BUTTON = 2;
+    public const int DAMAGE_BUTTON = 3;
+    public const int INTERACT_BUTTON = 4;
 }
 public sealed class PlayerInput : NetworkBehaviour, IBeforeUpdate, IBeforeTick
 {
@@ -169,6 +172,9 @@ public sealed class PlayerInput : NetworkBehaviour, IBeforeUpdate, IBeforeTick
 
             _accumulatedInput.Actions.Set(InputData.JUMP_BUTTON, keyboard.spaceKey.isPressed);
             _accumulatedInput.Actions.Set(InputData.SPRINT_BUTTON, keyboard.leftShiftKey.isPressed);
+            _accumulatedInput.Actions.Set(InputData.HEAL_BUTTON, keyboard.hKey.isPressed);
+            _accumulatedInput.Actions.Set(InputData.DAMAGE_BUTTON, keyboard.jKey.isPressed);
+            _accumulatedInput.Actions.Set(InputData.INTERACT_BUTTON, keyboard.eKey.isPressed);
         }
     }
 }

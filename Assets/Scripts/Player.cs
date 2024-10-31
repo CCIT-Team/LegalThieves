@@ -4,6 +4,7 @@ using Fusion.Addons.KCC;
 using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
+using Unity.VisualScripting;
 
 /// <summary>
 /// player implementation. Shows advanced approach of processing input and controlling KCC.
@@ -15,14 +16,18 @@ public sealed class Player : NetworkBehaviour
     public PlayerInput Input;
     public Transform CameraPivot;
     public Transform CameraHandle;
-    public NetworkId PlayerId;
     public NetworkObject PlayerObject;
+    public InteractionManager interactionManager;
     public Health health;
     public TextMeshPro Name;
-
+   
+    public void Update()
+    {
+        Name.text = PlayerObject.Id.ToString() + health.CurrentHealth;
+    }
     public override void FixedUpdateNetwork()
     {
-        Name.text = PlayerObject.Id.ToString(); // + health.CurrentHealth;
+
         // Apply look rotation delta. This propagates to Transform component immediately.
         KCC.AddLookRotation(Input.CurrentInput.LookRotationDelta);
 
@@ -46,6 +51,21 @@ public sealed class Player : NetworkBehaviour
             // Sprint is a "user" feature. It is not a default KCC feature.
             // Please check SprintProcessor for more details.
             KCC.SetSprint(Input.CurrentInput.Actions.IsSet(InputData.SPRINT_BUTTON));
+        }
+        if (Input.CurrentInput.Actions.WasPressed(Input.PreviousInput.Actions, InputData.HEAL_BUTTON) == true)
+        {
+            health.AddHealth(10f); 
+        }
+        if (Input.CurrentInput.Actions.WasPressed(Input.PreviousInput.Actions, InputData.DAMAGE_BUTTON) == true)
+        {
+            health.ApplyDamage(Object.InputAuthority,10f);
+        }
+        if (interactionManager.curInteractable != null && Input.CurrentInput.Actions.WasPressed(Input.PreviousInput.Actions, InputData.INTERACT_BUTTON) == true)
+        {        
+            interactionManager.curInteractable.OnInteract(Runner);
+            interactionManager.curInteractGameobject = null;
+            interactionManager.curInteractable = null;
+           
         }
     }
 
