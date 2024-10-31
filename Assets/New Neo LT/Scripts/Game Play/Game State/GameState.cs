@@ -6,10 +6,10 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 {
     public enum EGameState
     {
-        Waiting = 0,
-        Playing,
-        Finish,
-        GameStateCount
+        Waiting        = 0,
+        Playing        = 1,
+        Finish         = 2,
+        GameStateCount = 3
     }
     
     public interface IState

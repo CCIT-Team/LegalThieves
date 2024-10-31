@@ -6,19 +6,21 @@ namespace New_Neo_LT.Scripts.Game_Play
 {
     public struct PlayerInfo : INetworkStruct
     {
-        [Networked, Capacity(24)]
-        public string PlayerName { get => default; set {} }
-        public int Gold;
-        public int Renown;
+        [Networked, Capacity(24)] public string             PlayerName => default;
+        [Networked, Capacity(10)] public NetworkArray<int>  Relics       => default;
+
+        [Networked] public bool                             IsWinByGold  { get; set; }
+        [Networked] public int                              GoldPoint    { get; set; }
+        [Networked] public int                              RenownPoint  { get; set; }
     }
     
     public class NewGameManager : NetworkBehaviour, IPlayerJoined, IPlayerLeft
     {
-        [SerializeField] private NetworkPrefabRef playerPrefab;
-        [SerializeField] private Transform        spawnPoint;
+        [Header("Components & References")]
+        [SerializeField] private NetworkPrefabRef    playerPrefab;
+        [SerializeField] private Transform           spawnPoint;
         
         [Networked, Capacity(4)] public NetworkDictionary<PlayerRef, PlayerInfo> Players => default;
-        [Networked] private EGameState State { get; set; }
         
         private GameStateMachine _stateMachine;
         
@@ -45,6 +47,8 @@ namespace New_Neo_LT.Scripts.Game_Play
         
         public override void Spawned()
         {
+            if(!HasStateAuthority)
+                return;
             Runner.SetIsSimulated(Object, true);
         }
         
@@ -83,8 +87,8 @@ namespace New_Neo_LT.Scripts.Game_Play
                 Players.Add(player, new PlayerInfo
                 {
                     PlayerName = PlayerPrefs.GetString("Photon.Menu.Username"),
-                    Gold = 0,
-                    Renown = 0
+                    GoldPoint = 0,
+                    RenownPoint = 0
                 });
             }
         }

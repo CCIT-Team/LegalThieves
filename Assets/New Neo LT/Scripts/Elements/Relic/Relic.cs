@@ -29,10 +29,10 @@ namespace New_Neo_LT.Scripts.Elements.Relic
 
         public bool TryInteraction(Character character)
         {
-            var index = character.gameObject.GetComponent<PlayerInventory>().TryInsert(this);
-            if (index == -1)
-                return false;
-            IsActivated = false;
+            // var index = character.gameObject.GetComponent<PlayerInventory>().TryInsert(this);
+            // if (index == -1)
+            //     return false;
+            // IsActivated = false;
             return true;
         }
     }
