@@ -20,6 +20,7 @@ namespace Fusion.Addons.KCC
 		[SerializeField][Tooltip("Force extra update of collision hits if the snapping is active and moves the KCC.")]
 		private bool  _forceUpdateHits = false;
 
+		private KCCData        _overlapData = new KCCData();
 		private KCCOverlapInfo _overlapInfo = new KCCOverlapInfo();
 
 		// KCCProcessor INTERFACE
@@ -53,23 +54,22 @@ namespace Fusion.Addons.KCC
 			if (_overlapInfo.ColliderHitCount == 0)
 				return;
 
-			Vector3 targetGroundedPosition   = data.TargetPosition;
-			Vector3 penetrationPositionDelta = new Vector3(0.0f, -penetrationDelta, 0.0f);
+			_overlapData.CopyFromOther(data);
 
 			// Checking collisions with full snap distance could lead to incorrect collision type (ground/slope/wall) detection.
 			// So we split the downward movenent into more steps and move by 1/4 of radius at max in single step.
 			for (int i = 0; i < penetrationSteps; ++i)
 			{
-				// Resolve penetration on new candidate position.
-				targetGroundedPosition = kcc.ResolvePenetration(_overlapInfo, data, targetGroundedPosition, targetGroundedPosition + penetrationPositionDelta, false, 0, 0, false);
+				_overlapData.TargetPosition.y -= penetrationDelta;
 
-				if (data.IsGrounded == true)
+				// Resolve penetration on new candidate position.
+				kcc.ResolvePenetration(_overlapInfo, _overlapData, 1, false, false);
+
+				if (_overlapData.IsGrounded == true)
 				{
 					// We found the ground, now move the KCC towards the grounded position.
 
-					float   maxSnapDelta   = _snapSpeed * data.UpdateDeltaTime;
-					Vector3 positionOffset = targetGroundedPosition - data.TargetPosition;
-					Vector3 targetSnappedPosition;
+					float maxSnapDelta = _snapSpeed * data.UpdateDeltaTime;
 
 					if (data.WasSnappingToGround == false)
 					{
@@ -77,20 +77,25 @@ namespace Fusion.Addons.KCC
 						maxSnapDelta *= 0.5f;
 					}
 
-					if (positionOffset.sqrMagnitude <= maxSnapDelta * maxSnapDelta)
-					{
-						targetSnappedPosition = targetGroundedPosition;
-					}
-					else
-					{
-						targetSnappedPosition = data.TargetPosition + positionOffset.normalized * maxSnapDelta;
-					}
+					Vector3 targetGroundedPosition = _overlapData.TargetPosition;
+					Vector3 targetSnappedPosition  = targetGroundedPosition;
 
-					kcc.Debug.DrawGroundSnapping(data.TargetPosition, targetGroundedPosition, targetSnappedPosition, kcc.IsInFixedUpdate);
+					Vector3 snapPositionOffset = targetSnappedPosition - data.TargetPosition;
+					if (snapPositionOffset.sqrMagnitude > maxSnapDelta * maxSnapDelta)
+					{
+						targetSnappedPosition = data.TargetPosition + snapPositionOffset.normalized * maxSnapDelta;
+					}
 
 					data.TargetPosition     = targetSnappedPosition;
-					data.GroundDistance     = Mathf.Max(0.0f, targetSnappedPosition.y - targetGroundedPosition.y);
+					data.IsGrounded         = _overlapData.IsGrounded;
+					data.GroundNormal       = _overlapData.GroundNormal;
+					data.GroundTangent      = _overlapData.GroundTangent;
+					data.GroundPosition     = _overlapData.GroundPosition;
+					data.GroundDistance     = Mathf.Max(0.0f, Vector3.Distance(targetSnappedPosition, targetGroundedPosition) - kcc.Settings.Radius);
+					data.GroundAngle        = _overlapData.GroundAngle;
 					data.IsSnappingToGround = true;
+
+					kcc.Debug.DrawGroundSnapping(data.TargetPosition, targetGroundedPosition, targetSnappedPosition, kcc.IsInFixedUpdate);
 
 					if (_forceUpdateHits == true)
 					{

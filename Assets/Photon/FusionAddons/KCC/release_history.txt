@@ -1,6 +1,59 @@
 Photon Fusion Advanced KCC Addon - Release History
 
-Last tested with Fusion SDK 2.0.0 RC3 Build 807
+Last tested with Fusion SDK 2.0.2 Stable 851
+
+2.0.17
+- KCC editor scripts compatibility with Fusion SDK 2.0.2.
+
+2.0.16
+- Improved teleport - the information is now reliably synchronized over the network.
+- Removed TeleportThreshold from KCC Settings.
+- Max prediction error and anti-jitter distance check is now set to 1 meter.
+- Data is not restored from network buffer for simulated objects with RenderTimeframe.Remote.
+- Fixed KCCData.HasTeleported and KCCData.HasJumped for proxy objects (reliable implementation based on counters).
+- Fixed KCCData.HasTeleported and KCCData.HasJumped in render interpolated movement - they are now set only once in first Render after FUN in which teleport/jump happened.
+- KCC.SetPosition() now accepts optional parameters 'teleport' and 'allowAntiJitter'.
+- KCC resets position and look rotation to values from FUN in render interpolated movement.
+
+2.0.15
+- Increased range of CCD radius multiplier from 25-75% to 10-90%.
+- Improved precision of collision resolver for specific cases (corridors, 3 collisions with almost perpendicular penetration vectors).
+- Refactoring of penetration correction algorithm, improved performance scalability.
+- Ground snap processor now uses a copy of main KCCData for ground detection to prevent side effects.
+- KCCPhysicsUtility.CheckGround() now returns also ground position.
+- Added PenetrationSolver utility for debugging depenetration algorithm.
+- Fixed proxy collider being destroyed on clients when KCC.IsActive is false.
+
+2.0.14
+- Fixed synchronization of processor prefabs with non-initialized network type id.
+
+2.0.13
+- Improved multi-collider penetration correction.
+- Fixes for StepUpProcessor. Now it requires horizontal movement push-back to activate.
+- Fixed KCC.IsPredictingLookRotation property return value for simulated proxies.
+- Fixed KCC inspector values (using RenderData for non-simulated proxies).
+
+2.0.12
+- KCCSettings.ForcePredictedLookRotation is now synchronized over network by default and affects input authority only.
+- Fixed teleport detection in network transform only interpolation.
+- Look rotation is now snapped when teleport is detected.
+- Removed temporary fix for incorrect interpolation data - fixed in 2.0.0 Stable 834.
+
+2.0.11
+- Added TerrainTreeProcessor which resolves collisions with terrain tree colliders by running extra capsule-cast after move step. This removes the need to bake tree colliders.
+
+2.0.10
+- KCC collider is now also controlled by KCC.IsActive. If the flag is set to false, the collider will be despawned.
+- Added KCC.SetLookRotation() and KCCData.SetLookRotation() with min/max pitch look rotation.
+- Removed KCC.GetInterpolationTimeframe(), Object.RenderTimeframe is used instead.
+- Removed RenderTimeframe override on proxy interpolation.
+- Removed KCC.Interpolate() methods, interpolation is now handled exclusively by render update.
+- Fixed PlatformProcessor to not use RenderTimeframe of the KCC.
+- PlatformProcessor is no longer force simulated - removed SetIsSimulated(true) and replaced by PlatformProcessorUpdater callbacks.
+- PlatformProcessor simulation state (Object.IsInSimulation) is now synchronized with KCC object.
+
+2.0.9
+- Compatibility with Fusion SDK 2.0.0 RC5.
 
 2.0.8
 - Added `bool trackInitialOverlaps` to KCC.SphereCast() and KCC.CapsuleCast(). This parameter controls if the shape-cast result contains initially overlapping colliders.

@@ -6,11 +6,10 @@ namespace Fusion.Addons.KCC.Editor
 	using System.Collections.ObjectModel;
 	using UnityEngine;
 	using UnityEditor;
-	using Fusion.Editor;
 
 	[InitializeOnLoad]
 	[CustomEditor(typeof(KCC), true)]
-	public class KCCEditor : Editor
+	public class KCCEditor : Fusion.Editor.BehaviourEditor
 	{
 		// CONSTANTS
 
@@ -115,9 +114,9 @@ namespace Fusion.Addons.KCC.Editor
 
 		public override void OnInspectorGUI()
 		{
-			FusionEditorGUI.InjectScriptHeaderDrawer(serializedObject);
-
+			PrepareOnInspectorGUI();
 			DrawPropertiesExcluding(serializedObject, _excludedProperties);
+			DrawEditorButtons();
 
 			SerializedProperty settingsProperty = serializedObject.FindProperty(SETTINGS_PROPERTY_NAME);
 			IEnumerator innerSettingsProperties = settingsProperty.GetEnumerator();
@@ -206,8 +205,9 @@ namespace Fusion.Addons.KCC.Editor
 
 			DrawLine(Color.gray);
 
-			KCCData data = kcc.FixedData;
+			KCCData data = kcc.Object.IsInSimulation == true ? kcc.FixedData : kcc.RenderData;
 
+			EditorGUILayout.Toggle("Is In Simulation", kcc.Object.IsInSimulation);
 			EditorGUILayout.LabelField("Word Count", kcc.DynamicWordCount.Value.ToString());
 			EditorGUILayout.LabelField("Shape", kcc.Settings.Shape.ToString());
 			EditorGUILayout.Toggle("Is Active", data.IsActive);

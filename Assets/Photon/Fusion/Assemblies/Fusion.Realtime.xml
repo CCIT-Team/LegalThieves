@@ -4,6 +4,21 @@
         <name>Fusion.Realtime</name>
     </assembly>
     <members>
+        <member name="T:Fusion.RegionInfo">
+            <summary>
+            Wrapper for realtime region information.
+            </summary>
+        </member>
+        <member name="T:Fusion.FusionRealtimeProxy">
+            <summary>
+            Class to provide access to some realtime operations and API.
+            </summary>
+        </member>
+        <member name="F:Fusion.FusionRealtimeProxy.REGION_INFO_CACHE_TIME">
+            <summary>
+            Time the cache will be available in seconds since the last request.
+            </summary>
+        </member>
         <member name="T:Fusion.Photon.Realtime.FusionRelayClient">
             <summary>
             Responsible for running a thread that will keep the LoadBalancingClient connected to the Cloud
@@ -92,6 +107,11 @@
             Set if the Client should use the Default or Alternative Photon Cloud Ports
             </summary>
         </member>
+        <member name="P:Fusion.Photon.Realtime.FusionRelayClient.DisconnectTimeout">
+            <summary>
+            <inheritdoc cref="P:ExitGames.Client.Photon.PhotonPeer.DisconnectTimeout"/>
+            </summary>
+        </member>
         <member name="M:Fusion.Photon.Realtime.FusionRelayClient.LoadPhotonEncryptorType">
             <summary>
             Try to load the first implementation of <see cref="T:ExitGames.Client.Photon.Encryption.IPhotonEncryptor"/> found in the current AppDomain
@@ -124,7 +144,7 @@
             Used to keep the client communication
             </summary>
         </member>
-        <member name="M:Fusion.Photon.Realtime.FusionRelayClient.BuildEnterRoomParams(Fusion.Photon.Realtime.TypedLobby,System.String,System.Int32,System.Collections.Generic.Dictionary{System.String,Fusion.SessionProperty},System.Boolean,System.Boolean,System.Boolean)">
+        <member name="M:Fusion.Photon.Realtime.FusionRelayClient.BuildEnterRoomParams(Fusion.Photon.Realtime.TypedLobby,System.String,System.Int32,System.Collections.Generic.Dictionary{System.String,Fusion.SessionProperty},System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
             Build a new EnterRoomParams ref using the default configs and optional Room Name
             </summary>
@@ -135,6 +155,7 @@
             <param name="isOpen">Signal if the Session should be Open/Closed</param>
             <param name="isVisible">Signal if the Session should Visible/Invisible</param>
             <param name="useDefaultEmptyRoomTtl">Signal fi the Default EmptyRoomTTL (0) should be used or a custom one</param>
+            <param name="extendedTtl">Signal if the Session should have an extended Time To Live</param>
             <returns>EnterRoomParams reference.</returns>
         </member>
         <member name="M:Fusion.Photon.Realtime.FusionRelayClient.BuildJoinParams(Fusion.Photon.Realtime.TypedLobby,System.Collections.Generic.Dictionary{System.String,Fusion.SessionProperty},Fusion.Photon.Realtime.MatchmakingMode)">
@@ -154,6 +175,16 @@
             <param name="customProperties">Dictionary to be converted</param>
             <param name="sessionCustomProperties">Hashtable with all allowed Custom Properties</param>
             <param name="publicSessionProperties">String array with all public key names</param>
+        </member>
+        <member name="M:Fusion.Photon.Realtime.Async.LoadBalancingClientAsyncExtensions.GetRegionsAsync(Fusion.Photon.Realtime.LoadBalancingClient,System.Boolean,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously retrieves the list of regions from the NameServer.
+            </summary>
+            <param name="client">The LoadBalancingClient instance.</param>
+            <param name="throwOnError">Indicates whether to throw an exception on error. Defaults to true.</param>
+            <param name="createServiceTask">Indicates whether to run the client's service during the operation. Defaults to true.</param>
+            <param name="externalCancelationToken">An optional cancellation token that can be used to cancel the operation. Defaults to an empty cancellation token.</param>
+            <returns>A task that represents the asynchronous operation. The task result the region handler after pinging the regions.</returns>
         </member>
         <member name="M:Fusion.Photon.Realtime.Async.LoadBalancingClientAsyncExtensions.ConnectUsingSettingsAsync(Fusion.Photon.Realtime.LoadBalancingClient,Fusion.Photon.Realtime.AppSettings,System.Boolean,System.Threading.CancellationToken)">
             <summary>
@@ -464,6 +495,18 @@
         <member name="F:Fusion.Photon.Realtime.ConnectionHandler.AppQuits">
             <summary>Indicates that the app is closing. Set in OnApplicationQuit().</summary>
         </member>
+        <member name="F:Fusion.Photon.Realtime.ConnectionHandler.AppPause">
+            <summary>Indicates that the (Unity) app is Paused. This means the main thread is not running.</summary>
+        </member>
+        <member name="F:Fusion.Photon.Realtime.ConnectionHandler.AppPauseRecent">
+            <summary>Indicates that the app was paused within the last 5 seconds.</summary>
+        </member>
+        <member name="F:Fusion.Photon.Realtime.ConnectionHandler.AppOutOfFocus">
+            <summary>Indicates that the app is not in focus.</summary>
+        </member>
+        <member name="F:Fusion.Photon.Realtime.ConnectionHandler.AppOutOfFocusRecent">
+            <summary>Indicates that the app was out of focus within the last 5 seconds.</summary>
+        </member>
         <member name="M:Fusion.Photon.Realtime.ConnectionHandler.StaticReset">
             <summary>
             Resets statics for Domain Reload
@@ -490,8 +533,17 @@
             </summary>
             <returns>Application.internetReachability != NetworkReachability.NotReachable</returns>
         </member>
-        <member name="M:Fusion.Photon.Realtime.ConnectionHandler.RealtimeFallbackThread">
-            <summary>A thread which runs independent from the Update() calls. Keeps connections online while loading or in background. See <see cref="F:Fusion.Photon.Realtime.ConnectionHandler.KeepAliveInBackground"/>.</summary>
+        <member name="M:Fusion.Photon.Realtime.ConnectionHandler.StartFallbackSendAckThread">
+            <summary>Starts periodic calls of RealtimeFallbackThread.</summary>
+        </member>
+        <member name="M:Fusion.Photon.Realtime.ConnectionHandler.StopFallbackSendAckThread">
+            <summary>Stops the periodic calls of RealtimeFallbackThread.</summary>
+        </member>
+        <member name="M:Fusion.Photon.Realtime.ConnectionHandler.RealtimeFallbackInvoke">
+            <summary>Used in WebGL builds which can't call RealtimeFallback(object state = null) with the state context parameter.</summary>
+        </member>
+        <member name="M:Fusion.Photon.Realtime.ConnectionHandler.RealtimeFallback(System.Object)">
+            <summary>A thread which runs independently of the Update() calls. Keeps connections online while loading or in background. See <see cref="F:Fusion.Photon.Realtime.ConnectionHandler.KeepAliveInBackground"/>.</summary>
         </member>
         <member name="T:Fusion.Photon.Realtime.CustomTypesUnity">
             <summary>
@@ -1192,6 +1244,10 @@
             </summary>
             <returns>NameServer Address (with prefix and port).</returns>
         </member>
+        <member name="M:Fusion.Photon.Realtime.LoadBalancingClient.ToProtocolAddress(System.String,System.Int32,ExitGames.Client.Photon.ConnectionProtocol)">
+            <summary>Build URI from address, use Scheme, Host and Path but set the port as defined by port-field or default port.</summary>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
         <member name="M:Fusion.Photon.Realtime.LoadBalancingClient.ConnectUsingSettings(Fusion.Photon.Realtime.AppSettings)">
             <summary>Starts the "process" to connect as defined by the appSettings (AppId, AppVersion, Transport Protocol, Port and more).</summary>
             <remarks>
@@ -1441,6 +1497,9 @@
             
              There are separate parameters for joining and creating a room.
             
+             Tickets: Both parameter types have a Ticket value. It is enough to set the opJoinRandomRoomParams.Ticket.
+             The createRoomParams.Ticket will not be used.
+            
              This method can only be called while connected to a Master Server.
              This client's State is set to ClientState.Joining immediately.
             
@@ -1570,7 +1629,7 @@
              <param name="enterRoomParams">Definition of properties for the room to join.</param>
              <returns>If the operation could be sent currently (requires connection to Master Server).</returns>
         </member>
-        <member name="M:Fusion.Photon.Realtime.LoadBalancingClient.OpRejoinRoom(System.String)">
+        <member name="M:Fusion.Photon.Realtime.LoadBalancingClient.OpRejoinRoom(System.String,System.Object)">
              <summary>
              Rejoins a room by roomName (using the userID internally to return).  Will callback: OnJoinedRoom or OnJoinRoomFailed.
              </summary>
@@ -1587,6 +1646,9 @@
             
              Rejoining room will not send any player properties. Instead client will receive up-to-date ones from server.
              If you want to set new player properties, do it once rejoined.
+            
+             Tickets: If the server requires use of Tickets or if the room was entered with a Ticket initially,
+             you will have to provide a ticket as argument.
              </remarks>
         </member>
         <member name="M:Fusion.Photon.Realtime.LoadBalancingClient.OpLeaveRoom(System.Boolean,System.Boolean)">
@@ -2732,6 +2794,9 @@
         </member>
         <member name="F:Fusion.Photon.Realtime.EnterRoomParams.ExpectedUsers">
             <summary>A list of users who are expected to join the room along with this client. Reserves slots for rooms with MaxPlayers value.</summary>
+        </member>
+        <member name="F:Fusion.Photon.Realtime.EnterRoomParams.Ticket">
+            <summary>Ticket for matchmaking. Provided by a plugin / server and contains a list of party members who should join the same room (among other things).</summary>
         </member>
         <member name="T:Fusion.Photon.Realtime.ErrorCode">
             <summary>
@@ -4007,6 +4072,9 @@
              Otherwise, returns if this operation could be sent to the server.
              </returns>
         </member>
+        <member name="M:Fusion.Photon.Realtime.Player.UpdateNickNameOnJoined">
+            <summary>If there is a nickname in the room props, but it's not the current (local) one, update the room when joining/joined.</summary>
+        </member>
         <member name="M:Fusion.Photon.Realtime.Player.SetPlayerNameProperty">
             <summary>Uses OpSetPropertiesOfActor to sync this player's NickName (server is being updated with this.NickName).</summary>
         </member>
@@ -4738,7 +4806,7 @@
         </member>
         <member name="F:Fusion.Photon.Realtime.FusionAppSettings.emptyRoomTtl">
             <summary>
-            Photon Session EmptyRoomTTL. Valid only in Shared Mode.  
+            Photon Session EmptyRoomTTL in milliseconds. Valid only in Shared Mode.
             </summary>
         </member>
         <member name="T:Fusion.Photon.Realtime.PhotonAppSettings">

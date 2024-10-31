@@ -29,7 +29,7 @@ namespace Fusion.Editor {
     [InitializeOnLoadMethod]
     static void RegisterAddressableEventListeners() {
       AssetDatabaseUtils.AddAddressableAssetsWithLabelMonitor(FusionPrefabTag, (hash) => {
-        AssetDatabase.RegisterCustomDependency(AddressablesDependencyName, hash);
+        AssetDatabaseUtils.RegisterCustomDependencyWithMppmWorkaround(AddressablesDependencyName, hash);
       });
     }
 #endif
@@ -89,7 +89,7 @@ namespace Fusion.Editor {
         }
 
 #if FUSION_EDITOR_TRACE
-        detailsLog.AppendLine($"{assetPath} -> {((INetworkPrefabSource)prefabSource).EditorSummary}");
+        detailsLog.AppendLine($"{prefabPath} -> {((INetworkPrefabSource)source).Description}");
 #endif
         
         var index = paths.BinarySearch(prefabPath, StringComparer.Ordinal);
@@ -192,7 +192,7 @@ namespace Fusion.Editor {
       private static void RefreshScriptOrderDependencyHash() {
         var hash = CalculateScriptOrderDependencyHash();
         FusionEditorLog.TraceImport($"Refreshing {ScriptOrderDependencyName} dependency hash: {hash}");
-        AssetDatabase.RegisterCustomDependency(ScriptOrderDependencyName, hash);
+        AssetDatabaseUtils.RegisterCustomDependencyWithMppmWorkaround(ScriptOrderDependencyName, hash);
         AssetDatabase.Refresh();
       }
 
@@ -208,6 +208,11 @@ namespace Fusion.Editor {
           }
 
           var executionOrder = MonoImporter.GetExecutionOrder(monoScript);
+          if (executionOrder == 0) {
+            continue;
+          }
+
+          hash.Append(scriptType.FullName);
           hash.Append(executionOrder);
         }
 
@@ -223,7 +228,7 @@ namespace Fusion.Editor {
       }
       
       FusionEditorLog.TraceImport($"Refreshing {PrefabsDependencyName} dependency hash: {hash}");
-      AssetDatabase.RegisterCustomDependency(PrefabsDependencyName, hash);
+      AssetDatabaseUtils.RegisterCustomDependencyWithMppmWorkaround(PrefabsDependencyName, hash);
       AssetDatabase.Refresh();
     }
   }

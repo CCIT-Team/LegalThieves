@@ -1,6 +1,5 @@
 namespace Fusion.Addons.KCC
 {
-	using System;
 	using System.Collections.Generic;
 	using UnityEngine;
 
@@ -9,6 +8,9 @@ namespace Fusion.Addons.KCC
 		public KCC         KCC;
 		public KCCData     Data;
 		public KCCSettings Settings;
+
+		public int LastInterpolationJumpCounter     = -1;
+		public int LastInterpolationTeleportCounter = -1;
 	}
 
 	// This file contains implementation related to network synchronization and interpolation based on network buffers.
@@ -18,8 +20,6 @@ namespace Fusion.Addons.KCC
 
 		private KCCNetworkContext     _networkContext;
 		private IKCCNetworkProperty[] _networkProperties;
-		private int                   _interpolationTick;
-		private int                   _interpolationAttempts;
 
 		// PUBLIC METHODS
 
@@ -41,17 +41,7 @@ namespace Fusion.Addons.KCC
 		{
 			interpolatedPosition = default;
 
-			RenderSource    defaultSource    = Object.RenderSource;
-			RenderTimeframe defaultTimeframe = Object.RenderTimeframe;
-
-			Object.RenderSource    = RenderSource.Interpolated;
-			Object.RenderTimeframe = GetInterpolationTimeframe();
-
 			bool buffersValid = TryGetSnapshotsBuffers(out NetworkBehaviourBuffer fromBuffer, out NetworkBehaviourBuffer toBuffer, out float alpha);
-
-			Object.RenderSource    = defaultSource;
-			Object.RenderTimeframe = defaultTimeframe;
-
 			if (buffersValid == false)
 				return false;
 
@@ -113,28 +103,11 @@ namespace Fusion.Addons.KCC
 			}
 		}
 
-		private void InterpolateNetworkData(RenderSource renderSource, RenderTimeframe renderTimeframe, float interpolationAlpha = -1.0f)
+		private void InterpolateNetworkData()
 		{
-			RenderSource    defaultSource    = Object.RenderSource;
-			RenderTimeframe defaultTimeframe = Object.RenderTimeframe;
-
-			Object.RenderSource    = renderSource;
-			Object.RenderTimeframe = renderTimeframe;
-
 			bool buffersValid = TryGetSnapshotsBuffers(out NetworkBehaviourBuffer fromBuffer, out NetworkBehaviourBuffer toBuffer, out float alpha);
-
-			Object.RenderSource    = defaultSource;
-			Object.RenderTimeframe = defaultTimeframe;
-
 			if (buffersValid == false)
 				return;
-			if (UpdateInterpolationTick(fromBuffer.Tick, toBuffer.Tick) == false)
-				return;
-
-			if (interpolationAlpha >= 0.0f && interpolationAlpha <= 1.0f)
-			{
-				alpha = interpolationAlpha;
-			}
 
 			float deltaTime  = Runner.DeltaTime;
 			float renderTick = fromBuffer.Tick + alpha * (toBuffer.Tick - fromBuffer.Tick);
@@ -168,64 +141,42 @@ namespace Fusion.Addons.KCC
 
 		private void InterpolateNetworkTransform()
 		{
-			RenderSource    defaultSource    = Object.RenderSource;
-			RenderTimeframe defaultTimeframe = Object.RenderTimeframe;
-
-			Object.RenderSource    = RenderSource.Interpolated;
-			Object.RenderTimeframe = RenderTimeframe.Remote;
-
 			bool buffersValid = TryGetSnapshotsBuffers(out NetworkBehaviourBuffer fromBuffer, out NetworkBehaviourBuffer toBuffer, out float alpha);
-
-			Object.RenderSource    = defaultSource;
-			Object.RenderTimeframe = defaultTimeframe;
-
 			if (buffersValid == false)
-				return;
-			if (UpdateInterpolationTick(fromBuffer.Tick, toBuffer.Tick) == false)
 				return;
 
 			KCCNetworkProperties.ReadTransforms(fromBuffer, toBuffer, out Vector3 fromPosition, out Vector3 toPosition, out float fromLookPitch, out float toLookPitch, out float fromLookYaw, out float toLookYaw);
 
-			_fixedData.BasePosition    = fromPosition;
-			_fixedData.DesiredPosition = toPosition;
-			_fixedData.TargetPosition  = Vector3.Lerp(fromPosition, toPosition, alpha);
-			_fixedData.LookPitch       = Mathf.Lerp(fromLookPitch, toLookPitch, alpha);
-			_fixedData.LookYaw         = KCCUtility.InterpolateRange(fromLookYaw, toLookYaw, -180.0f, 180.0f, alpha);
+			Vector3 targetPosition = Vector3.Lerp(fromPosition, toPosition, alpha);
+			float   lookPitch      = Mathf.Lerp(fromLookPitch, toLookPitch, alpha);
+			float   lookYaw        = KCCUtility.InterpolateRange(fromLookYaw, toLookYaw, -180.0f, 180.0f, alpha);
+			Vector3 realVelocity   = default;
+			float   realSpeed      = default;
 
-			_renderData.BasePosition    = _fixedData.BasePosition;
-			_renderData.DesiredPosition = _fixedData.DesiredPosition;
-			_renderData.TargetPosition  = _fixedData.TargetPosition;
-			_renderData.LookPitch       = _fixedData.LookPitch;
-			_renderData.LookYaw         = _fixedData.LookYaw;
+			int ticks = toBuffer.Tick - fromBuffer.Tick;
+			if (ticks > 0)
+			{
+				realVelocity = (toPosition - fromPosition) / (Runner.DeltaTime * ticks);
+				realSpeed    = realVelocity.magnitude;
+			}
+
+			_renderData.BasePosition    = fromPosition;
+			_renderData.DesiredPosition = toPosition;
+			_renderData.TargetPosition  = targetPosition;
+			_renderData.LookPitch       = lookPitch;
+			_renderData.LookYaw         = lookYaw;
+			_renderData.RealVelocity    = realVelocity;
+			_renderData.RealSpeed       = realSpeed;
+
+			_fixedData.BasePosition    = _renderData.BasePosition;
+			_fixedData.DesiredPosition = _renderData.DesiredPosition;
+			_fixedData.TargetPosition  = _renderData.TargetPosition;
+			_fixedData.LookPitch       = _renderData.LookPitch;
+			_fixedData.LookYaw         = _renderData.LookYaw;
+			_fixedData.RealVelocity    = _renderData.RealVelocity;
+			_fixedData.RealSpeed       = _renderData.RealSpeed;
 
 			_transform.SetPositionAndRotation(_renderData.TargetPosition, _renderData.TransformRotation);
-		}
-
-		private bool UpdateInterpolationTick(int fromTick, int toTick)
-		{
-			int ticks = toTick - fromTick;
-			if (ticks <= 0 && _interpolationTick == fromTick)
-			{
-				// There's no new data for interpolation.
-				_interpolationAttempts = 30;
-				return false;
-			}
-
-			if (_interpolationAttempts > 0)
-			{
-				// We have new data for remote snapshot interpolation, however the buffer has invalid tick equal to Runner.Tick.
-				// Just ignore this case, the tick should be corrected within several frames.
-				if (toTick == Runner.Tick)
-				{
-					--_interpolationAttempts;
-					return false;
-				}
-
-				_interpolationAttempts = 0;
-			}
-
-			_interpolationTick = fromTick;
-			return true;
 		}
 
 		private void RestoreHistoryData(KCCData historyData)

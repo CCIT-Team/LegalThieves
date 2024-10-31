@@ -48,11 +48,21 @@ namespace Fusion.Addons.KCC
 
 		public void Execute(AfterMoveStep stage, KCC kcc, KCCData data)
 		{
-			if (_stepHeight <= 0.0f)
+			if (_stepHeight <= 0.0f || _stepDepth <= 0.0f || _stepSpeed <= 0.0f)
 				return;
 
 			// Ignore step-up after jump and teleport.
 			if (data.JumpFrames > 0 || data.HasTeleported == true)
+			{
+				ProcessStepUpResult(kcc, data, false);
+				return;
+			}
+
+			Vector3 checkDesiredDeltaXZ    = (data.DesiredPosition - data.BasePosition).OnlyXZ();
+			float   checkDesiredDistanceXZ = checkDesiredDeltaXZ.magnitude;
+
+			// No horizontal movement, stopping step-up.
+			if (checkDesiredDistanceXZ < 0.001f)
 			{
 				ProcessStepUpResult(kcc, data, false);
 				return;
@@ -66,21 +76,15 @@ namespace Fusion.Addons.KCC
 			}
 			else
 			{
-				// Following check desired distance with real distance traveled by KCC and triggers step-up
-				// if something is pushing KCC back, lowering the distance traveled by more than 50%.
+				// Following check compares desired distance with real distance traveled by KCC and triggers step-up
+				// if something is pushing KCC back on horizontal plane, lowering the distance traveled by more than min push back.
 
-				Vector3 checkDesiredDelta    = data.DesiredPosition - data.BasePosition;
-				float   checkDesiredDistance = checkDesiredDelta.magnitude;
+				Vector3 targetDeltaXZ    = (data.TargetPosition - data.BasePosition).OnlyXZ();
+				float   targetDistanceXZ = targetDeltaXZ.magnitude;
 
-				if (checkDesiredDistance > 0.001f)
+				if (targetDistanceXZ / checkDesiredDistanceXZ < _minPushBack)
 				{
-					Vector3 targetDelta    = data.TargetPosition - data.BasePosition;
-					float   targetDistance = targetDelta.magnitude;
-
-					if (targetDistance / checkDesiredDistance < _minPushBack)
-					{
-						tryStepUp = true;
-					}
+					tryStepUp = true;
 				}
 			}
 
@@ -104,8 +108,9 @@ namespace Fusion.Addons.KCC
 				return;
 			}
 
-			// Ignore step-up while moving downwards (with ~25° deviation).
-			if (Vector3.Dot(desiredDirection, Vector3.down) >= 0.9f)
+			// Ignore step-up while moving upwards or downwards (with ~25° deviation).
+			float desiredDirectionUpDot = Vector3.Dot(desiredDirection, Vector3.up);
+			if (Mathf.Abs(desiredDirectionUpDot) >= 0.9f)
 			{
 				ProcessStepUpResult(kcc, data, false);
 				return;

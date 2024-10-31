@@ -43,7 +43,7 @@ namespace Fusion.Addons.KCC
 
 		public bool HasCollider(Collider collider)
 		{
-			return Find(collider, out int index) != null;
+            return Find(collider, out int index) != null;
 		}
 
 		public bool HasProcessor<T>() where T : class
@@ -95,12 +95,12 @@ namespace Fusion.Addons.KCC
 			}
 		}
 
-		public KCCCollision Add(NetworkObject networkObject, IKCCInteractionProvider provider, Collider collider)
+		public KCCCollision Add(NetworkRunner networkRunner, NetworkObject networkObject, IKCCInteractionProvider provider, Collider collider)
 		{
 			KCCCollision collision = GetFromPool();
 			collision.Collider  = collider;
 			collision.Processor = provider is IKCCProcessorProvider processorProvider ? processorProvider.GetProcessor() : null;
-			AddInternal(collision, networkObject, provider, false);
+			AddInternal(collision, networkRunner, networkObject, provider, false);
 
 			return collision;
 		}

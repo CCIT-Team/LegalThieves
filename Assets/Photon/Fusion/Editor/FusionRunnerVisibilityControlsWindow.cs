@@ -1,6 +1,7 @@
 namespace Fusion.Editor {
   using System;
   using System.Collections.Generic;
+  using Statistics;
   using UnityEngine;
   using UnityEditor;
 
@@ -47,7 +48,7 @@ namespace Fusion.Editor {
       public const string InputTooltip =
         "This button toggles NetworkRunner.ProvideInput for this NetworkRunner. If [Shift] is held while clicking all other active runners will have NetworkRunner.ProvideInput set to false, soloing this runner.";
 
-      public const string StatsTooltip = "Clicking this button at runtime will create a FusionStats overlay associated with this NetworkRunner. ";
+      public const string StatsTooltip = "Clicking this button at runtime will create a Fusion Statistics panel associated with this NetworkRunner.";
       public const string RunnerTooltip = "The name of the NetworkRunner this row controls. Clicking this button will ping the NetworkRunner GameObject in the hierarchy.";
 
       public const string PlayerObjTooltip =
@@ -106,7 +107,6 @@ namespace Fusion.Editor {
     private static Lazy<GUIContent> s_noVisibilityWarn = new Lazy<GUIContent>(() => new GUIContent(FusionEditorSkin.WarningIcon, Labels.NoVisibilityWarn));
 
     private static Lazy<GUIContent> s_statsGC = new Lazy<GUIContent>(() => new GUIContent(string.Empty, Labels.StatsTooltip));
-
     private GUIStyle _toolbarButtonStyle;
 
     /// <summary>
@@ -116,8 +116,8 @@ namespace Fusion.Editor {
 
     private Vector2 _scrollPosition;
     private double _lastRepaintTime;
-    private readonly Dictionary<NetworkRunner, FusionStats> _stats = new Dictionary<NetworkRunner, FusionStats>();
 
+    private readonly Dictionary<NetworkRunner, FusionStatistics> _stats = new Dictionary<NetworkRunner, FusionStatistics>();
     /// <summary>
     /// Create window instance.
     /// </summary>
@@ -284,7 +284,7 @@ namespace Fusion.Editor {
               }
             }
           }
-
+          
           // Draw runtime stats creation buttons. Reflection used since this namespace can't see FusionStats.
           if (currentViewWidth >= WINDOW_MIN_W + 10) {
             var statsLeftRect  = EditorGUILayout.GetControlRect(GUILayout.Width(isWide ? STATS_BTTN_WIDE : STATS_BTTN_SLIM));
@@ -292,12 +292,12 @@ namespace Fusion.Editor {
             var statsGC        = s_statsGC.Value;
             statsGC.text = isWide ? Labels.StatsLeft : Labels.ArrowsLeft;
             if (GUI.Button(statsLeftRect, statsGC, s_buttonStyle.Value)) {
-              CreateOrUpdateFusionStats(runner, FusionStats.DefaultLayouts.Left);
+              CreateOrUpdateFusionStats(runner, CanvasAnchor.TopLeft);
             }
 
             statsGC.text = isWide ? Labels.StatsRight : Labels.ArrowsRight;
             if (GUI.Button(statsRightRect, statsGC, s_buttonStyle.Value)) {
-              CreateOrUpdateFusionStats(runner, FusionStats.DefaultLayouts.Right);
+              CreateOrUpdateFusionStats(runner, CanvasAnchor.TopRight);
             }
           }
 
@@ -314,17 +314,21 @@ namespace Fusion.Editor {
         EditorGUILayout.EndHorizontal();
       }
     }
-
-    private void CreateOrUpdateFusionStats(NetworkRunner runner, FusionStats.DefaultLayouts layouts) {
+    
+    private void CreateOrUpdateFusionStats(NetworkRunner runner, CanvasAnchor anchor) {
       if (_stats.TryGetValue(runner, out var stats) == false) {
-        stats = FusionStats.Create(runner: runner, screenLayout: layouts);
+        stats = runner.gameObject.AddComponent<FusionStatistics>();
         EditorGUIUtility.PingObject(stats.gameObject);
         Selection.activeObject = stats.gameObject;
 
         _stats.Add(runner, stats);
+        stats.SetupStatisticsPanel();
       }
-
-      stats.ResetLayout(screenLayout: layouts);
+      
+      stats.SetCanvasAnchor(anchor);
+      if (stats.IsPanelActive == false) {
+        stats.SetupStatisticsPanel();
+      }
     }
 
     /// <summary>

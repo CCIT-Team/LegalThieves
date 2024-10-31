@@ -29,17 +29,16 @@ namespace Fusion.Addons.KCC
 
 	/// <summary>
 	/// This processor tracks overlapping platforms (KCC processors implementing <c>IPlatform</c>) and propagates their position and rotation changes to <c>KCC</c>.
-	/// Make sure the script that moves with the <c>IPlatform</c> object has lower execution order => it must be executed before <c>PlatformProcessor</c>.
+	/// Make sure the script that moves with the <c>IPlatform</c> object has lower execution order => it must be executed before <c>PlatformProcessor</c> and <c>PlatformProcessorUpdater</c>.
 	/// When <c>PlatformProcessor</c> propagates all platform changes, it notifies <c>IPlatformListener</c> processors with absolute transform deltas.
-	/// The <c>PlatformProcessor</c> requires to be simulated on all clients and calls Runner.SetIsSimulated(Object, true);
 	/// </summary>
-	[DefaultExecutionOrder(-400)]
-	[RequireComponent(typeof(NetworkObject))]
+	[DefaultExecutionOrder(PlatformProcessor.EXECUTION_ORDER)]
     public unsafe class PlatformProcessor : NetworkKCCProcessor, IKCCProcessor, IBeginMove, IEndMove
     {
 		// CONSTANTS
 
-		private const int MAX_PLATFORMS = 3;
+		public const int EXECUTION_ORDER = -400;
+		public const int MAX_PLATFORMS   = 3;
 
 		// PRIVATE MEMBERS
 
@@ -68,23 +67,21 @@ namespace Fusion.Addons.KCC
 			return _state.IsActive;
 		}
 
-		// NetworkBehaviour INTERFACE
-
-		public override void Spawned()
-		{
-			if (Runner.GameMode != GameMode.Shared)
-			{
-				// Enable simulation on this object. Proxies will get all Fusion callbacks.
-				Runner.SetIsSimulated(Object, true);
-			}
-		}
-
-		public override void FixedUpdateNetwork()
+		/// <summary>
+		/// Called by <c>PlatformProcessorUpdater</c>. Do not use from user code.
+		/// </summary>
+		public void ProcessFixedUpdate()
 		{
 			if (ReferenceEquals(_kcc, null) == true)
 				return;
 
-			if (_kcc.Object.IsInSimulation == true)
+			if (Object.IsInSimulation != _kcc.Object.IsInSimulation)
+			{
+				// Synchronize simulation state of the processor with KCC.
+				Runner.SetIsSimulated(Object, _kcc.Object.IsInSimulation);
+			}
+
+			if (Object.IsInSimulation == true)
 			{
 				// Update state of platforms, track new, cleanup old.
 				UpdatePlatforms(_kcc);
@@ -109,7 +106,10 @@ namespace Fusion.Addons.KCC
 			}
 		}
 
-		public override void Render()
+		/// <summary>
+		/// Called by <c>PlatformProcessorUpdater</c>. Do not use from user code.
+		/// </summary>
+		public void ProcessRender()
 		{
 			if (ReferenceEquals(_kcc, null) == true)
 				return;
@@ -131,6 +131,29 @@ namespace Fusion.Addons.KCC
 					_kcc.SynchronizeTransform(true, false, false);
 				}
 			}
+		}
+
+		// PlatformProcessor INTERFACE
+
+		protected virtual void OnSpawned()                                      {}
+		protected virtual void OnDespawned(NetworkRunner runner, bool hasState) {}
+
+		// NetworkBehaviour INTERFACE
+
+		public override sealed void Spawned()
+		{
+			Runner.GetSingleton<PlatformProcessorUpdater>().Register(this);
+
+			OnSpawned();
+		}
+
+		public override sealed void Despawned(NetworkRunner runner, bool hasState)
+		{
+			OnDespawned(runner, hasState);
+
+			runner.GetSingleton<PlatformProcessorUpdater>().Unregister(this);
+
+			_kcc = null;
 		}
 
 		// NetworkKCCProcessor INTERFACE
@@ -413,22 +436,11 @@ namespace Fusion.Addons.KCC
 			// This method calculates interpolated position of the KCC by taking local platform positions + interpolated Position => KCC offsets.
 			// Calculations below result in smooth transition between world and multiple platform spaces.
 
-			RenderSource    defaultSource    = Object.RenderSource;
-			RenderTimeframe defaultTimeframe = Object.RenderTimeframe;
-
-			// Timeframe of PlatformProcessor is locked to timeframe of KCC, both use same prediction/interpolation strategy.
-			Object.RenderSource    = RenderSource.Interpolated;
-			Object.RenderTimeframe = kcc.GetInterpolationTimeframe();
-
 			bool buffersValid = TryGetSnapshotsBuffers(out NetworkBehaviourBuffer fromBuffer, out NetworkBehaviourBuffer toBuffer, out float alpha);
-
-			Object.RenderSource    = defaultSource;
-			Object.RenderTimeframe = defaultTimeframe;
-
 			if (buffersValid == false)
 				return false;
 
-			bool isInSimulation = kcc.Object.IsInSimulation;
+			bool isInSimulation = Object.IsInSimulation;
 
 			Vector3 averagePosition = default;
 			float   averageAlpha    = default;

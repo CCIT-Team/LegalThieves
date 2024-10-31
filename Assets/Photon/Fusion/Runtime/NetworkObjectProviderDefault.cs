@@ -31,7 +31,7 @@ namespace Fusion {
       if (!prefab) {
         // this is ok, as long as Fusion does not require the prefab to be loaded immediately;
         // if an instance for this prefab is still needed, this method will be called again next update
-        return context.IsSynchronous ? NetworkObjectAcquireResult.Failed : NetworkObjectAcquireResult.Retry;
+        return NetworkObjectAcquireResult.Retry;
       }
 
       instance = InstantiatePrefab(runner, prefab);

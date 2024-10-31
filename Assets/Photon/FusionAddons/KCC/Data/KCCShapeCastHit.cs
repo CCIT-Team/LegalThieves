@@ -75,10 +75,12 @@ namespace Fusion.Addons.KCC
 
 		public void Reset()
 		{
-			Type       = EColliderType.None;
-			Collider   = default;
-			Transform  = default;
-			RaycastHit = default;
+			Type        = EColliderType.None;
+			Collider    = default;
+			Transform   = default;
+			IsTrigger   = default;
+			IsPrimitive = default;
+			RaycastHit  = default;
 		}
 
 		public void CopyFromOther(KCCShapeCastHit other)

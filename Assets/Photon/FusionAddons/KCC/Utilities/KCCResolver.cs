@@ -15,20 +15,12 @@ namespace Fusion.Addons.KCC
 		// PUBLIC MEMBERS
 
 		/// <summary>Count of input corrections.</summary>
-		public int Size => _size;
-		/// <summary>Number of iterations in last calculation.</summary>
-		public int Iterations => _iterations;
-		/// <summary>Correction calculated from input corrections.</summary>
-		public Vector3 TargetCorrection => _targetCorrection;
+		public int Count => _count;
 
 		// PRIVATE MEMBERS
 
-		private int          _size;
-		private int          _iterations;
+		private int          _count;
 		private Correction[] _corrections;
-		private Vector3      _minCorrection;
-		private Vector3      _maxCorrection;
-		private Vector3      _targetCorrection;
 
 		// CONSTRUCTORS
 
@@ -48,11 +40,7 @@ namespace Fusion.Addons.KCC
 		/// </summary>
 		public void Reset()
 		{
-			_size             = default;
-			_iterations       = default;
-			_minCorrection    = default;
-			_maxCorrection    = default;
-			_targetCorrection = default;
+			_count = default;
 		}
 
 		/// <summary>
@@ -60,16 +48,14 @@ namespace Fusion.Addons.KCC
 		/// </summary>
 		public void AddCorrection(Vector3 direction, float distance)
 		{
-			Correction correction = _corrections[_size];
+			Correction correction = _corrections[_count];
 
 			correction.Amount    = direction * distance;
 			correction.Direction = direction;
 			correction.Distance  = distance;
+			correction.Error     = default;
 
-			_minCorrection = Vector3.Min(_minCorrection, correction.Amount);
-			_maxCorrection = Vector3.Max(_maxCorrection, correction.Amount);
-
-			++_size;
+			++_count;
 		}
 
 		/// <summary>
@@ -104,12 +90,85 @@ namespace Fusion.Addons.KCC
 		/// <summary>
 		/// Calculates target correction vector based on added corrections.
 		/// </summary>
+		public Vector3 CalculateBest(int maxIterations, float maxError)
+		{
+			if (_count <= 0)
+				return default;
+			if (_count == 1)
+				return _corrections[0].Amount;
+
+			if (_count == 2)
+			{
+				Correction correction0 = _corrections[0];
+				Correction correction1 = _corrections[1];
+
+				if (Vector3.Dot(correction0.Direction, correction1.Direction) < 0.0f)
+				{
+					return CalculateBinary(correction0, correction1);
+				}
+			}
+
+			if (_count == 3)
+			{
+				Correction correction0 = _corrections[0];
+				Correction correction1 = _corrections[1];
+				Correction correction2 = _corrections[2];
+
+				float absUpDot0 = Mathf.Abs(Vector3.Dot(correction0.Direction, Vector3.up));
+				float absUpDot1 = Mathf.Abs(Vector3.Dot(correction1.Direction, Vector3.up));
+				float absUpDot2 = Mathf.Abs(Vector3.Dot(correction2.Direction, Vector3.up));
+
+				const float wallThreshold  = 0.025f;
+				const float floorThreshold = 0.9995f;
+
+				if (absUpDot0 > floorThreshold)
+				{
+					if (absUpDot1 < wallThreshold && absUpDot2 < wallThreshold && Vector3.Dot(correction1.Direction, correction2.Direction) < 0.0f)
+					{
+						return CalculateMinMax(correction0.Amount, CalculateBinary(correction1, correction2));
+					}
+				}
+				else if (absUpDot1 > floorThreshold)
+				{
+					if (absUpDot0 < wallThreshold && absUpDot2 < wallThreshold && Vector3.Dot(correction0.Direction, correction2.Direction) < 0.0f)
+					{
+						return CalculateMinMax(correction1.Amount, CalculateBinary(correction0, correction2));
+					}
+				}
+				else if (absUpDot2 > floorThreshold)
+				{
+					if (absUpDot0 < wallThreshold && absUpDot1 < wallThreshold && Vector3.Dot(correction0.Direction, correction1.Direction) < 0.0f)
+					{
+						return CalculateMinMax(correction2.Amount, CalculateBinary(correction0, correction1));
+					}
+				}
+			}
+
+			return CalculateErrorDescent(maxIterations, maxError);
+		}
+
+		/// <summary>
+		/// Calculates target correction vector based on added corrections.
+		/// </summary>
 		public Vector3 CalculateMinMax()
 		{
-			_iterations       = default;
-			_targetCorrection = _minCorrection + _maxCorrection;
+			if (_count <= 0)
+				return default;
+			if (_count == 1)
+				return _corrections[0].Amount;
 
-			return _targetCorrection;
+			Vector3 minCorrection = default;
+			Vector3 maxCorrection = default;
+
+			for (int i = 0; i < _count; ++i)
+			{
+				Correction correction = _corrections[i];
+
+				minCorrection = Vector3.Min(minCorrection, correction.Amount);
+				maxCorrection = Vector3.Max(maxCorrection, correction.Amount);
+			}
+
+			return minCorrection + maxCorrection;
 		}
 
 		/// <summary>
@@ -117,15 +176,32 @@ namespace Fusion.Addons.KCC
 		/// </summary>
 		public Vector3 CalculateSum()
 		{
-			_iterations       = default;
-			_targetCorrection = default;
+			if (_count <= 0)
+				return default;
+			if (_count == 1)
+				return _corrections[0].Amount;
 
-			for (int i = 0, count = _size; i < count; ++i)
+			Vector3 targetCorrection = default;
+
+			for (int i = 0; i < _count; ++i)
 			{
-				_targetCorrection += _corrections[i].Amount;
+				targetCorrection += _corrections[i].Amount;
 			}
 
-			return _targetCorrection;
+			return targetCorrection;
+		}
+
+		/// <summary>
+		/// Calculates target correction vector based on added corrections.
+		/// </summary>
+		public Vector3 CalculateAverage()
+		{
+			if (_count <= 0)
+				return default;
+			if (_count == 1)
+				return _corrections[0].Amount;
+
+			return CalculateSum() / _count;
 		}
 
 		/// <summary>
@@ -133,25 +209,52 @@ namespace Fusion.Addons.KCC
 		/// </summary>
 		public Vector3 CalculateBinary()
 		{
-			if (_size != 2)
-				throw new InvalidOperationException("Size must be 2!");
+			if (_count <= 0)
+				return default;
+			if (_count == 1)
+				return _corrections[0].Amount;
+			if (_count > 2)
+				throw new InvalidOperationException("Count of corrections must be 2 at max!");
 
-			_iterations       = default;
-			_targetCorrection = _minCorrection + _maxCorrection;
+			return CalculateBinary(_corrections[0], _corrections[1]);
+		}
 
-			Correction correction0 = _corrections[0];
-			Correction correction1 = _corrections[1];
+		/// <summary>
+		/// Calculates target correction vector based on added corrections.
+		/// </summary>
+		public Vector3 CalculateErrorDescent(int maxIterations, float maxError)
+		{
+			if (_count <= 0)
+				return default;
+			if (_count == 1)
+				return _corrections[0].Amount;
 
-			float correctionDot = Vector3.Dot(correction0.Direction, correction1.Direction);
-			if (correctionDot > 0.999f || correctionDot < -0.999f)
-				return _targetCorrection;
+			int     iterations       = default;
+			Vector3 targetCorrection = default;
 
-			Vector3 deltaCorrectionDirection = Vector3.Cross(Vector3.Cross(correction0.Direction, correction1.Direction), correction0.Direction).normalized;
-			float   deltaCorrectionDistance  = (correction1.Distance - correction0.Distance * correctionDot) / Mathf.Sqrt(1.0f - correctionDot * correctionDot);
+			while (iterations < maxIterations)
+			{
+				++iterations;
 
-			_targetCorrection = correction0.Amount + deltaCorrectionDirection * deltaCorrectionDistance;
+				float accumulatedError = 0.0f;
 
-			return _targetCorrection;
+				for (int i = 0; i < _count; ++i)
+				{
+					Correction correction = _corrections[i];
+
+					float error = correction.Distance - Vector3.Dot(targetCorrection, correction.Direction);
+					if (error > 0.0f)
+					{
+						accumulatedError += error;
+						targetCorrection += error * correction.Direction;
+					}
+				}
+
+				if(accumulatedError < maxError)
+					break;
+			}
+
+			return targetCorrection;
 		}
 
 		/// <summary>
@@ -159,32 +262,32 @@ namespace Fusion.Addons.KCC
 		/// </summary>
 		public Vector3 CalculateGradientDescent(int maxIterations, float maxError)
 		{
-			_iterations       = default;
-			_targetCorrection = _minCorrection + _maxCorrection;
-
-			if (_size <= 1)
-				return _targetCorrection;
+			if (_count <= 0)
+				return default;
+			if (_count == 1)
+				return _corrections[0].Amount;
 
 			Vector3      error;
 			float        errorDot;
 			float        errorCorrection;
 			float        errorCorrectionSize;
-			Vector3      desiredCorrection = _targetCorrection;
-			Correction[] corrections = _corrections;
-			Correction   correction;
+			Vector3      targetCorrection = default;
+			int          iterations = default;
 
-			while (_iterations < maxIterations)
+			while (iterations < maxIterations)
 			{
+				++iterations;
+
 				error               = default;
 				errorCorrection     = default;
 				errorCorrectionSize = default;
 
-				for (int i = 0, count = _size; i < count; ++i)
+				for (int i = 0; i < _count; ++i)
 				{
-					correction = corrections[i];
+					Correction correction = _corrections[i];
 
 					// Calculate error of desired correction relative to single correction.
-					correction.Error = correction.Direction.x * desiredCorrection.x + correction.Direction.y * desiredCorrection.y + correction.Direction.z * desiredCorrection.z - correction.Distance;
+					correction.Error = correction.Direction.x * targetCorrection.x + correction.Direction.y * targetCorrection.y + correction.Direction.z * targetCorrection.z - correction.Distance;
 
 					// Accumulate error of all corrections.
 					error += correction.Direction * correction.Error;
@@ -197,9 +300,9 @@ namespace Fusion.Addons.KCC
 				// Normalize the error => now we know what is the wrong direction => desired correction needs to move in opposite direction to lower the error.
 				error.Normalize();
 
-				for (int i = 0, count = _size; i < count; ++i)
+				for (int i = 0; i < _count; ++i)
 				{
-					correction = corrections[i];
+					Correction correction = _corrections[i];
 
 					// Compare single correction direction with the accumulated error direction.
 					errorDot = correction.Direction.x * error.x + correction.Direction.y * error.y + correction.Direction.z * error.z;
@@ -227,14 +330,73 @@ namespace Fusion.Addons.KCC
 					break;
 
 				// Move desired correction in opposite way of the accumulated error.
-				desiredCorrection -= error * errorCorrection;
-
-				++_iterations;
+				targetCorrection -= error * errorCorrection;
 			}
 
-			_targetCorrection = desiredCorrection;
+			return targetCorrection;
+		}
 
-			return desiredCorrection;
+		// PRIVATE METHODS
+
+		private static Vector3 CalculateMinMax(params Vector3[] corrections)
+		{
+			Vector3 minCorrection = default;
+			Vector3 maxCorrection = default;
+
+			for (int i = 0; i < corrections.Length; ++i)
+			{
+				Vector3 correction = corrections[i];
+				minCorrection = Vector3.Min(minCorrection, correction);
+				maxCorrection = Vector3.Max(maxCorrection, correction);
+			}
+
+			return minCorrection + maxCorrection;
+		}
+
+		private static Vector3 CalculateBinary(Correction correction0, Correction correction1)
+		{
+			Vector3D correction0Direction = new Vector3D(correction0.Direction);
+			Vector3D correction1Direction = new Vector3D(correction1.Direction);
+
+			double correctionDot = Dot(correction0Direction, correction1Direction);
+			if (correctionDot > 0.999999 || correctionDot < -0.999999)
+			{
+				Vector3 minCorrection = Vector3.Min(Vector3.Min(default, correction0.Amount), correction1.Amount);
+				Vector3 maxCorrection = Vector3.Max(Vector3.Max(default, correction0.Amount), correction1.Amount);
+				return minCorrection + maxCorrection;
+			}
+
+			Vector3D deltaCorrectionDirection = Normalize(Cross(Cross(correction0Direction, correction1Direction), correction0Direction));
+			double   deltaCorrectionDistance  = ((double)correction1.Distance - (double)correction0.Distance * correctionDot) / Math.Sqrt(1.0 - correctionDot * correctionDot);
+
+			Vector3 targetCorrection = correction0.Amount;
+
+			targetCorrection.x += (float)(deltaCorrectionDirection.x * deltaCorrectionDistance);
+			targetCorrection.y += (float)(deltaCorrectionDirection.y * deltaCorrectionDistance);
+			targetCorrection.z += (float)(deltaCorrectionDirection.z * deltaCorrectionDistance);
+
+			return targetCorrection;
+		}
+
+		private static double Dot(Vector3D lhs, Vector3D rhs)
+		{
+			return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+		}
+
+		private static Vector3D Cross(Vector3D lhs, Vector3D rhs)
+		{
+			return new Vector3D(lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x);
+		}
+
+		private static Vector3D Normalize(Vector3D value)
+		{
+			double magnitude = Magnitude(value);
+			return magnitude > 0.000000000001 ? new Vector3D(value.x / magnitude, value.y / magnitude, value.z / magnitude) : new Vector3D(0.0, 0.0, 0.0);
+		}
+
+		private static double Magnitude(Vector3D vector)
+		{
+			return Math.Sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
 		}
 
 		// DATA STRUCTURES
@@ -245,6 +407,27 @@ namespace Fusion.Addons.KCC
 			public Vector3 Direction;
 			public float   Distance;
 			public float   Error;
+		}
+
+		private struct Vector3D
+		{
+			public double x;
+			public double y;
+			public double z;
+
+			public Vector3D(double x, double y, double z)
+			{
+				this.x = x;
+				this.y = y;
+				this.z = z;
+			}
+
+			public Vector3D(Vector3 vector)
+			{
+				this.x = vector.x;
+				this.y = vector.y;
+				this.z = vector.z;
+			}
 		}
 	}
 }

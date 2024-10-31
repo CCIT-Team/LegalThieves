@@ -91,9 +91,9 @@ namespace Fusion.Addons.KCC
 			return Find(provider, out int index);
 		}
 
-		public TInteraction Add(NetworkObject networkObject, IKCCInteractionProvider provider)
+		public TInteraction Add(NetworkRunner networkRunner, NetworkObject networkObject, IKCCInteractionProvider provider)
 		{
-			return AddInternal(networkObject, provider, true);
+			return AddInternal(networkRunner, networkObject, provider, true);
 		}
 
 		public bool Add(NetworkObject networkObject, KCCNetworkID networkID)
@@ -181,10 +181,10 @@ namespace Fusion.Addons.KCC
 
 		// PROTECTED METHODS
 
-		protected TInteraction AddInternal(NetworkObject networkObject, IKCCInteractionProvider provider, bool invokeInitialize)
+		protected TInteraction AddInternal(NetworkRunner networkRunner, NetworkObject networkObject, IKCCInteractionProvider provider, bool invokeInitialize)
 		{
 			TInteraction interaction = _pool.PopOrCreate();
-			interaction.NetworkID     = KCCNetworkID.GetNetworkID(networkObject);
+			interaction.NetworkID     = KCCNetworkID.GetNetworkID(networkRunner, networkObject);
 			interaction.NetworkObject = networkObject;
 			interaction.Provider      = provider;
 
@@ -198,9 +198,9 @@ namespace Fusion.Addons.KCC
 			return interaction;
 		}
 
-		protected void AddInternal(TInteraction interaction, NetworkObject networkObject, IKCCInteractionProvider provider, bool invokeInitialize)
+		protected void AddInternal(TInteraction interaction, NetworkRunner networkRunner, NetworkObject networkObject, IKCCInteractionProvider provider, bool invokeInitialize)
 		{
-			interaction.NetworkID     = KCCNetworkID.GetNetworkID(networkObject);
+			interaction.NetworkID     = KCCNetworkID.GetNetworkID(networkRunner, networkObject);
 			interaction.NetworkObject = networkObject;
 			interaction.Provider      = provider;
 

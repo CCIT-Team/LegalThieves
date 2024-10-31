@@ -39,6 +39,54 @@ namespace Fusion.Addons.KCC
 
 		// PUBLIC METHODS
 
+		public bool HasCollider(Collider collider)
+		{
+			for (int i = 0, count = AllHitCount; i < count; ++i)
+			{
+				KCCOverlapHit hit = AllHits[i];
+				if (object.ReferenceEquals(hit.Collider, collider) == true)
+					return true;
+			}
+
+			return false;
+		}
+
+		public bool HasCollider(EColliderType colliderType)
+		{
+			for (int i = 0, count = AllHitCount; i < count; ++i)
+			{
+				KCCOverlapHit hit = AllHits[i];
+				if (hit.Type == colliderType)
+					return true;
+			}
+
+			return false;
+		}
+
+		public bool HasColliderWithinExtent(Collider collider)
+		{
+			for (int i = 0, count = AllHitCount; i < count; ++i)
+			{
+				KCCOverlapHit hit = AllHits[i];
+				if (object.ReferenceEquals(hit.Collider, collider) == true && hit.IsWithinExtent == true)
+					return true;
+			}
+
+			return false;
+		}
+
+		public bool HasColliderWithinExtent(EColliderType colliderType)
+		{
+			for (int i = 0, count = AllHitCount; i < count; ++i)
+			{
+				KCCOverlapHit hit = AllHits[i];
+				if (hit.Type == colliderType && hit.IsWithinExtent == true)
+					return true;
+			}
+
+			return false;
+		}
+
 		public void AddHit(Collider collider)
 		{
 			if (AllHitCount == AllHits.Length)

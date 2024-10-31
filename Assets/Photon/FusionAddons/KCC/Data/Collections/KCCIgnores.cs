@@ -49,14 +49,14 @@ namespace Fusion.Addons.KCC
 			return Find(collider, out int index) != null;
 		}
 
-		public KCCIgnore Add(NetworkObject networkObject, Collider collider, bool checkExisting)
+		public KCCIgnore Add(NetworkRunner networkRunner, NetworkObject networkObject, Collider collider, bool checkExisting)
 		{
 			KCCIgnore ignore = checkExisting == true ? Find(collider, out int index) : null;
 			if (ignore == null)
 			{
 				ignore = _pool.PopOrCreate();
 
-				ignore.NetworkID     = KCCNetworkID.GetNetworkID(networkObject);
+				ignore.NetworkID     = KCCNetworkID.GetNetworkID(networkRunner, networkObject);
 				ignore.NetworkObject = networkObject;
 				ignore.Collider      = collider;
 

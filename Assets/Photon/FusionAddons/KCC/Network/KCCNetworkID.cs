@@ -22,7 +22,7 @@ namespace Fusion.Addons.KCC
 
 		public bool Equals(KCCNetworkID other) => Value0 == other.Value0 && Value1 == other.Value1;
 
-		public static KCCNetworkID GetNetworkID(NetworkObject networkObject)
+		public static KCCNetworkID GetNetworkID(NetworkRunner runner, NetworkObject networkObject)
 		{
 			if (networkObject == null)
 				return default;
@@ -37,6 +37,19 @@ namespace Fusion.Addons.KCC
 			else
 			{
 				NetworkObjectTypeId networkTypeId = networkObject.NetworkTypeId;
+				if (networkTypeId.IsValid == false)
+				{
+					if (networkObject.TryGetComponent(out NetworkObjectPrefabData bakeData) == true)
+					{
+						NetworkPrefabId networkPrefabId = runner.Prefabs.GetId(bakeData.Guid);
+						if (networkPrefabId.IsValid == true)
+						{
+							networkTypeId = networkPrefabId;
+							networkObject.NetworkTypeId = networkTypeId;
+						}
+					}
+				}
+
 				KCCNetworkID networkTypeIdAsKCCNetworkID = *((KCCNetworkID*)&networkTypeId);
 				networkID.Value0 = networkTypeIdAsKCCNetworkID.Value0;
 				networkID.Value1 = 2U | (networkTypeIdAsKCCNetworkID.Value1 << 2);

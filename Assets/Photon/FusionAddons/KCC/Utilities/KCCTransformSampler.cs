@@ -248,29 +248,20 @@
 				return false;
 			}
 
-			Vector3 kccPositionDelta = default;
-
-			if (fromKCCData != null && toKCCData != null)
+			if (toKCCData != null && toKCCData.HasTeleported == true)
 			{
-				kccPositionDelta = toKCCData.TargetPosition - fromKCCData.TargetPosition;
-			}
-
-			if (Vector3.SqrMagnitude(kccPositionDelta) >= kcc.Settings.TeleportThreshold * kcc.Settings.TeleportThreshold)
-			{
-				if (renderAlpha >= 0.5f)
-				{
-					renderPosition = toSample.Position;
-					renderRotation = toSample.Rotation;
-				}
-				else
-				{
-					renderPosition = fromSample.Position;
-					renderRotation = toSample.Rotation;
-				}
+				renderPosition = toSample.Position;
+				renderRotation = toSample.Rotation;
 			}
 			else
 			{
-				Vector3 targetPosition = Vector3.Lerp(fromSample.Position, toSample.Position, renderAlpha);
+				Vector3 targetPosition   = Vector3.Lerp(fromSample.Position, toSample.Position, renderAlpha);
+				Vector3 kccPositionDelta = default;
+
+				if (fromKCCData != null && toKCCData != null)
+				{
+					kccPositionDelta = toKCCData.TargetPosition - fromKCCData.TargetPosition;
+				}
 
 				if (useAntiJitter == true && kcc.ActiveFeatures.Has(EKCCFeature.AntiJitter) == true)
 				{

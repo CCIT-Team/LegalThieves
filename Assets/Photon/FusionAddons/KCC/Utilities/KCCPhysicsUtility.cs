@@ -55,17 +55,21 @@ namespace Fusion.Addons.KCC
 			}
 		}
 
-		public static bool CheckGround(Collider collider, Vector3 position, Collider groundCollider, Vector3 groundPosition, Quaternion groundRotation, float radius, float height, float extent, float minGroundDot, out Vector3 groundNormal, out float groundDistance, out bool isWithinExtent)
+		public static bool CheckGround(Collider collider, Vector3 position, Collider groundCollider, Vector3 groundColliderPosition, Quaternion groundColliderRotation, float radius, float height, float extent, float minGroundDot, out Vector3 groundNormal, out float groundDistance, out bool isWithinExtent)
 		{
-			isWithinExtent = false;
+			return CheckGround(collider, position, groundCollider, groundColliderPosition, groundColliderRotation, radius, height, extent, minGroundDot, out Vector3 groundPosition, out groundNormal, out groundDistance, out isWithinExtent);
+		}
 
+		public static bool CheckGround(Collider collider, Vector3 position, Collider groundCollider, Vector3 groundColliderPosition, Quaternion groundColliderRotation, float radius, float height, float extent, float minGroundDot, out Vector3 groundPosition, out Vector3 groundNormal, out float groundDistance, out bool isWithinExtent)
+		{
 #if KCC_DISABLE_TERRAIN
 			if (groundCollider is MeshCollider)
 #else
 			if (groundCollider is MeshCollider || groundCollider is TerrainCollider)
 #endif
 			{
-				if (Physics.ComputePenetration(collider, position - new Vector3(0.0f, extent, 0.0f), Quaternion.identity, groundCollider, groundPosition, groundRotation, out Vector3 direction, out float distance) == true)
+				Vector3 checkPosition = position - new Vector3(0.0f, extent, 0.0f);
+				if (Physics.ComputePenetration(collider, checkPosition, Quaternion.identity, groundCollider, groundColliderPosition, groundColliderRotation, out Vector3 direction, out float distance) == true)
 				{
 					isWithinExtent = true;
 
@@ -77,10 +81,9 @@ namespace Fusion.Addons.KCC
 
 						ProjectHorizontalPenetration(ref projectedDirection, ref projectedDistance);
 
-						float verticalDistance = Mathf.Max(0.0f, extent - projectedDistance);
-
 						groundNormal   = direction;
-						groundDistance = verticalDistance * directionUpDot;
+						groundPosition = checkPosition + Vector3.up * radius - direction * radius + projectedDirection * projectedDistance;
+						groundDistance = Mathf.Max(0.0f, Vector3.Distance(position, groundPosition) - radius);
 
 						return true;
 					}
@@ -92,7 +95,7 @@ namespace Fusion.Addons.KCC
 				float   radiusExtent              = radius + extent;
 				float   radiusExtentSqr           = radiusExtent * radiusExtent;
 				Vector3 centerPosition            = position + new Vector3(0.0f, radius, 0.0f);
-				Vector3 closestPoint              = Physics.ClosestPoint(centerPosition, groundCollider, groundPosition, groundRotation);
+				Vector3 closestPoint              = Physics.ClosestPoint(centerPosition, groundCollider, groundColliderPosition, groundColliderRotation);
 				Vector3 closestPointOffset        = closestPoint - centerPosition;
 				Vector3 closestPointOffsetXZ      = closestPointOffset.OnlyXZ();
 				float   closestPointDistanceXZSqr = closestPointOffsetXZ.sqrMagnitude;
@@ -113,6 +116,7 @@ namespace Fusion.Addons.KCC
 							if (closestGroundDot >= minGroundDot)
 							{
 								groundNormal   = closestGroundNormal;
+								groundPosition = closestPoint;
 								groundDistance = Mathf.Max(0.0f, closestPointDistance - radius);
 
 								return true;
@@ -127,7 +131,9 @@ namespace Fusion.Addons.KCC
 			}
 
 			groundNormal   = Vector3.up;
-			groundDistance = 0.0f;
+			groundPosition = position;
+			groundDistance = default;
+			isWithinExtent = default;
 
 			return false;
 		}

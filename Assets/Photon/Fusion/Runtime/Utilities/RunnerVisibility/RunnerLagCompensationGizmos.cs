@@ -27,7 +27,7 @@ namespace Fusion
 
     private void OnDrawGizmos()
     {
-      if (_runner == null || _runner.IsRunning == false || _runner.GetVisible() == false || _runner.LagCompensation.DrawInfo == default) return;
+      if (_runner == null || _runner.IsRunning == false || _runner.GetVisible() == false || _runner.LagCompensation?.DrawInfo == default) return;
 
       if (DrawBroadphaseNodes)
       {

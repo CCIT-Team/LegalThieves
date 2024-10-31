@@ -90,20 +90,12 @@
 				return false;
 			}
 
-			Vector3 fromPosition  = fromData.TargetPosition;
-			Vector3 toPosition    = toData.TargetPosition;
-			Vector3 positionDelta = toPosition - fromPosition;
+			Vector3 fromPosition = fromData.TargetPosition;
+			Vector3 toPosition   = toData.TargetPosition;
 
-			if (Vector3.SqrMagnitude(positionDelta) >= _settings.TeleportThreshold * _settings.TeleportThreshold)
+			if (toData.HasTeleported == true)
 			{
-				if (renderAlpha >= 0.5f)
-				{
-					renderPosition = toPosition;
-				}
-				else
-				{
-					renderPosition = fromPosition;
-				}
+				renderPosition = toPosition;
 			}
 			else
 			{
@@ -112,7 +104,8 @@
 				if (_activeFeatures.Has(EKCCFeature.AntiJitter) == true && _settings.AntiJitterDistance.IsZero() == false)
 				{
 					targetPosition = fromPosition;
-					positionDelta  = Vector3.Lerp(fromPosition, toPosition, renderAlpha) - fromPosition;
+
+					Vector3 positionDelta = Vector3.Lerp(fromPosition, toPosition, renderAlpha) - fromPosition;
 
 					float distanceY = Mathf.Abs(positionDelta.y);
 					if (distanceY > 0.000001f && distanceY > _settings.AntiJitterDistance.y)
@@ -226,21 +219,13 @@
 				return false;
 			}
 
-			Vector3 fromPosition  = fromData.TargetPosition;
-			Vector3 toPosition    = toData.TargetPosition;
-			Vector3 positionDelta = toPosition - fromPosition;
-			Vector3 offset        = _transform.InverseTransformPoint(origin.position);
+			Vector3 fromPosition = fromData.TargetPosition;
+			Vector3 toPosition   = toData.TargetPosition;
+			Vector3 offset       = _transform.InverseTransformPoint(origin.position);
 
-			if (Vector3.SqrMagnitude(positionDelta) >= _settings.TeleportThreshold * _settings.TeleportThreshold)
+			if (toData.HasTeleported == true)
 			{
-				if (renderAlpha >= 0.5f)
-				{
-					renderPosition = toPosition + toData.TransformRotation * offset;
-				}
-				else
-				{
-					renderPosition = fromPosition + fromData.TransformRotation * offset;
-				}
+				renderPosition = toPosition + toData.TransformRotation * offset;
 			}
 			else
 			{
@@ -252,7 +237,8 @@
 				if (_activeFeatures.Has(EKCCFeature.AntiJitter) == true && _settings.AntiJitterDistance.IsZero() == false)
 				{
 					targetPosition = fromPosition;
-					positionDelta  = Vector3.Lerp(fromPosition, toPosition, renderAlpha) - fromPosition;
+
+					Vector3 positionDelta = Vector3.Lerp(fromPosition, toPosition, renderAlpha) - fromPosition;
 
 					float distanceY = Mathf.Abs(positionDelta.y);
 					if (distanceY > 0.000001f && distanceY > _settings.AntiJitterDistance.y)
@@ -411,20 +397,9 @@
 				return false;
 			}
 
-			Vector3 fromPosition  = fromPositionData.TargetPosition;
-			Vector3 toPosition    = toPositionData.TargetPosition;
-			Vector3 positionDelta = toPosition - fromPosition;
-
-			if (Vector3.SqrMagnitude(positionDelta) >= _settings.TeleportThreshold * _settings.TeleportThreshold)
+			if (toPositionData.HasTeleported == true)
 			{
-				if (renderAlpha >= 0.5f)
-				{
-					renderLookRotation = toRotationData.LookRotation;
-				}
-				else
-				{
-					renderLookRotation = fromRotationData.LookRotation;
-				}
+				renderLookRotation = toRotationData.LookRotation;
 			}
 			else
 			{
@@ -577,22 +552,13 @@
 				return false;
 			}
 
-			Vector3 fromPosition  = fromPositionData.TargetPosition;
-			Vector3 toPosition    = toPositionData.TargetPosition;
-			Vector3 positionDelta = toPosition - fromPosition;
+			Vector3 fromPosition = fromPositionData.TargetPosition;
+			Vector3 toPosition   = toPositionData.TargetPosition;
 
-			if (Vector3.SqrMagnitude(positionDelta) >= _settings.TeleportThreshold * _settings.TeleportThreshold)
+			if (toPositionData.HasTeleported == true)
 			{
-				if (positionAlpha >= 0.5f)
-				{
-					renderPosition     = toPosition;
-					renderLookRotation = toRotationData.LookRotation;
-				}
-				else
-				{
-					renderPosition     = fromPosition;
-					renderLookRotation = fromRotationData.LookRotation;
-				}
+				renderPosition     = toPosition;
+				renderLookRotation = toRotationData.LookRotation;
 			}
 			else
 			{
@@ -601,7 +567,8 @@
 				if (_activeFeatures.Has(EKCCFeature.AntiJitter) == true && _settings.AntiJitterDistance.IsZero() == false)
 				{
 					targetPosition = fromPosition;
-					positionDelta  = Vector3.Lerp(fromPosition, toPosition, positionAlpha) - fromPosition;
+
+					Vector3 positionDelta = Vector3.Lerp(fromPosition, toPosition, positionAlpha) - fromPosition;
 
 					float distanceY = Mathf.Abs(positionDelta.y);
 					if (distanceY > 0.000001f && distanceY > _settings.AntiJitterDistance.y)
@@ -777,23 +744,14 @@
 				return false;
 			}
 
-			Vector3 fromPosition  = fromPositionData.TargetPosition;
-			Vector3 toPosition    = toPositionData.TargetPosition;
-			Vector3 positionDelta = toPosition - fromPosition;
-			Vector3 offset        = _transform.InverseTransformPoint(origin.position);
+			Vector3 fromPosition = fromPositionData.TargetPosition;
+			Vector3 toPosition   = toPositionData.TargetPosition;
+			Vector3 offset       = _transform.InverseTransformPoint(origin.position);
 
-			if (Vector3.SqrMagnitude(positionDelta) >= _settings.TeleportThreshold * _settings.TeleportThreshold)
+			if (toPositionData.HasTeleported == true)
 			{
-				if (positionAlpha >= 0.5f)
-				{
-					renderPosition     = toPosition + toPositionData.TransformRotation * offset;
-					renderLookRotation = toRotationData.LookRotation;
-				}
-				else
-				{
-					renderPosition     = fromPosition + fromPositionData.TransformRotation * offset;
-					renderLookRotation = fromRotationData.LookRotation;
-				}
+				renderPosition     = toPosition + toPositionData.TransformRotation * offset;
+				renderLookRotation = toRotationData.LookRotation;
 			}
 			else
 			{
@@ -805,7 +763,8 @@
 				if (_activeFeatures.Has(EKCCFeature.AntiJitter) == true && _settings.AntiJitterDistance.IsZero() == false)
 				{
 					targetPosition = fromPosition;
-					positionDelta  = Vector3.Lerp(fromPosition, toPosition, positionAlpha) - fromPosition;
+
+					Vector3 positionDelta = Vector3.Lerp(fromPosition, toPosition, positionAlpha) - fromPosition;
 
 					float distanceY = Mathf.Abs(positionDelta.y);
 					if (distanceY > 0.000001f && distanceY > _settings.AntiJitterDistance.y)

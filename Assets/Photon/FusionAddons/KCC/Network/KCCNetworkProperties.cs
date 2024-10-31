@@ -9,7 +9,7 @@ namespace Fusion.Addons.KCC
 		// CONSTANTS
 
 		private const int TRSP_POSITION_ACCURACY   = 1 << 10;
-		private const int PROPERTIES_WORD_COUNT    = 10;
+		private const int PROPERTIES_WORD_COUNT    = 11;
 		private const int INTERACTIONS_BITS_SHIFT  = 8;
 		private const int MAX_INTERACTIONS_SINGLE  = 1 << INTERACTIONS_BITS_SHIFT;
 		private const int INTERACTIONS_MASK_SINGLE = MAX_INTERACTIONS_SINGLE - 1;
@@ -74,26 +74,31 @@ namespace Fusion.Addons.KCC
 			data.LookPitch      = ReadFloat(ref ptr);
 			data.LookYaw        = ReadFloat(ref ptr);
 
+			int combinedData = ReadInt(ref ptr);
+
+			// Bits 0 - 7  => teleport counter
+			// Bits 8 - 15 => jump counter
+			data.IsActive            = ((combinedData >> 16) & 0b1) == 1;
+			data.IsGrounded          = ((combinedData >> 17) & 0b1) == 1;
+			data.WasGrounded         = ((combinedData >> 18) & 0b1) == 1;
+			data.IsSteppingUp        = ((combinedData >> 19) & 0b1) == 1;
+			data.WasSteppingUp       = ((combinedData >> 20) & 0b1) == 1;
+			data.IsSnappingToGround  = ((combinedData >> 21) & 0b1) == 1;
+			data.WasSnappingToGround = ((combinedData >> 22) & 0b1) == 1;
+			data.HasTeleported       = ((combinedData >> 23) & 0b1) == 1;
+			data.JumpFrames          = ((combinedData >> 24) & 0b1);
+
 			int combinedSettings = ReadInt(ref ptr);
 
-			data.IsActive                 = ((combinedSettings >>  0) & 0b1) == 1;
-			data.IsGrounded               = ((combinedSettings >>  1) & 0b1) == 1;
-			data.WasGrounded              = ((combinedSettings >>  2) & 0b1) == 1;
-			data.IsSteppingUp             = ((combinedSettings >>  3) & 0b1) == 1;
-			data.WasSteppingUp            = ((combinedSettings >>  4) & 0b1) == 1;
-			data.IsSnappingToGround       = ((combinedSettings >>  5) & 0b1) == 1;
-			data.WasSnappingToGround      = ((combinedSettings >>  6) & 0b1) == 1;
-			data.HasTeleported            = ((combinedSettings >>  7) & 0b1) == 1;
-			data.JumpFrames               = ((combinedSettings >>  8) & 0b1);
-			settings.IsTrigger            = ((combinedSettings >>  9) & 0b1) == 1;
-			settings.AllowClientTeleports = ((combinedSettings >> 10) & 0b1) == 1;
-
-			settings.Shape                  =             (EKCCShape)((combinedSettings >> 11) & 0b11);
-			settings.InputAuthorityBehavior = (EKCCAuthorityBehavior)((combinedSettings >> 13) & 0b11);
-			settings.StateAuthorityBehavior = (EKCCAuthorityBehavior)((combinedSettings >> 15) & 0b11);
-			settings.ProxyInterpolationMode = (EKCCInterpolationMode)((combinedSettings >> 17) & 0b11);
-			settings.ColliderLayer          =                        ((combinedSettings >> 19) & 0b11111);
-			settings.Features               =          (EKCCFeatures)((combinedSettings >> 24) & 0b11111);
+			settings.IsTrigger                  =                        ((combinedSettings >>  0) & 0b1) == 1;
+			settings.ForcePredictedLookRotation =                        ((combinedSettings >>  1) & 0b1) == 1;
+			settings.AllowClientTeleports       =                        ((combinedSettings >>  2) & 0b1) == 1;
+			settings.Shape                      =             (EKCCShape)((combinedSettings >>  3) & 0b11);
+			settings.InputAuthorityBehavior     = (EKCCAuthorityBehavior)((combinedSettings >>  5) & 0b11);
+			settings.StateAuthorityBehavior     = (EKCCAuthorityBehavior)((combinedSettings >>  7) & 0b11);
+			settings.ProxyInterpolationMode     = (EKCCInterpolationMode)((combinedSettings >>  9) & 0b11);
+			settings.ColliderLayer              =                        ((combinedSettings >> 11) & 0b11111);
+			settings.Features                   =          (EKCCFeatures)((combinedSettings >> 16) & 0b11111);
 
 			settings.CollisionLayerMask = ReadInt(ref ptr);
 
@@ -135,28 +140,44 @@ namespace Fusion.Addons.KCC
 			WriteFloat(data.LookPitch, ref ptr);
 			WriteFloat(data.LookYaw, ref ptr);
 
+			int combinedData = 0;
+
+			byte currentTeleportCounter = (byte)(((*ptr) >> 0) & 0b11111111);
+			byte currentJumpCounter     = (byte)(((*ptr) >> 8) & 0b11111111);
+
+			if (data.HasTeleported == true) { ++currentTeleportCounter; }
+			if (data.HasJumped     == true) { ++currentJumpCounter;     }
+
+			combinedData |= (currentTeleportCounter & 0b11111111) << 0;
+			combinedData |= (currentJumpCounter     & 0b11111111) << 8;
+
+			if (data.IsActive            != default) { combinedData |= 1 << 16; }
+			if (data.IsGrounded          != default) { combinedData |= 1 << 17; }
+			if (data.WasGrounded         != default) { combinedData |= 1 << 18; }
+			if (data.IsSteppingUp        != default) { combinedData |= 1 << 19; }
+			if (data.WasSteppingUp       != default) { combinedData |= 1 << 20; }
+			if (data.IsSnappingToGround  != default) { combinedData |= 1 << 21; }
+			if (data.WasSnappingToGround != default) { combinedData |= 1 << 22; }
+			if (data.HasTeleported       != default) { combinedData |= 1 << 23; }
+			if (data.JumpFrames          != default) { combinedData |= 1 << 24; }
+
+			WriteInt(combinedData, ref ptr);
+
 			int combinedSettings = 0;
 
-			if (data.IsActive                 != default) { combinedSettings |= 1 <<  0; }
-			if (data.IsGrounded               != default) { combinedSettings |= 1 <<  1; }
-			if (data.WasGrounded              != default) { combinedSettings |= 1 <<  2; }
-			if (data.IsSteppingUp             != default) { combinedSettings |= 1 <<  3; }
-			if (data.WasSteppingUp            != default) { combinedSettings |= 1 <<  4; }
-			if (data.IsSnappingToGround       != default) { combinedSettings |= 1 <<  5; }
-			if (data.WasSnappingToGround      != default) { combinedSettings |= 1 <<  6; }
-			if (data.HasTeleported            != default) { combinedSettings |= 1 <<  7; }
-			if (data.JumpFrames               != default) { combinedSettings |= 1 <<  8; }
-			if (settings.IsTrigger            != default) { combinedSettings |= 1 <<  9; }
-			if (settings.AllowClientTeleports != default) { combinedSettings |= 1 << 10; }
+			if (settings.IsTrigger                  != default) { combinedSettings |= 1 << 0; }
+			if (settings.ForcePredictedLookRotation != default) { combinedSettings |= 1 << 1; }
+			if (settings.AllowClientTeleports       != default) { combinedSettings |= 1 << 2; }
 
-			combinedSettings |= ((int)settings.Shape                  & 0b11)    << 11;
-			combinedSettings |= ((int)settings.InputAuthorityBehavior & 0b11)    << 13;
-			combinedSettings |= ((int)settings.StateAuthorityBehavior & 0b11)    << 15;
-			combinedSettings |= ((int)settings.ProxyInterpolationMode & 0b11)    << 17;
-			combinedSettings |=      (settings.ColliderLayer          & 0b11111) << 19;
-			combinedSettings |= ((int)settings.Features               & 0b11111) << 24;
+			combinedSettings |= ((int)settings.Shape                  & 0b11)    <<  3;
+			combinedSettings |= ((int)settings.InputAuthorityBehavior & 0b11)    <<  5;
+			combinedSettings |= ((int)settings.StateAuthorityBehavior & 0b11)    <<  7;
+			combinedSettings |= ((int)settings.ProxyInterpolationMode & 0b11)    <<  9;
+			combinedSettings |=      (settings.ColliderLayer          & 0b11111) << 11;
+			combinedSettings |= ((int)settings.Features               & 0b11111) << 16;
 
 			WriteInt(combinedSettings, ref ptr);
+
 			WriteInt(settings.CollisionLayerMask, ref ptr);
 
 			WriteFloat(settings.Radius, ref ptr);
@@ -183,15 +204,65 @@ namespace Fusion.Addons.KCC
 			fromTargetPosition += fromPositionExtension;
 			toTargetPosition   += toPositionExtension;
 
-			data.BasePosition    = fromTargetPosition;
-			data.DesiredPosition = toTargetPosition;
-			data.TargetPosition  = Vector3.Lerp(fromTargetPosition, toTargetPosition, interpolationInfo.Alpha);
-
 			ReadFloats(ref interpolationInfo, out float fromLookPitch, out float toLookPitch);
-			data.LookPitch = Mathf.Lerp(fromLookPitch, toLookPitch, interpolationInfo.Alpha);
-
 			ReadFloats(ref interpolationInfo, out float fromLookYaw, out float toLookYaw);
-			data.LookYaw = KCCUtility.InterpolateRange(fromLookYaw, toLookYaw, -180.0f, 180.0f, interpolationInfo.Alpha);
+
+			ReadInts(ref interpolationInfo, out int fromCombinedData, out int toCombinedData);
+
+			byte fromTeleportCounter = (byte)((fromCombinedData >> 0) & 0b11111111);
+			byte toTeleportCounter   = (byte)((toCombinedData   >> 0) & 0b11111111);
+
+			data.RealVelocity = Vector3.zero;
+			data.RealSpeed    = 0.0f;
+
+			if (toTeleportCounter != fromTeleportCounter)
+			{
+				data.BasePosition    = toTargetPosition;
+				data.DesiredPosition = toTargetPosition;
+				data.TargetPosition  = toTargetPosition;
+				data.LookPitch       = toLookPitch;
+				data.LookYaw         = toLookYaw;
+			}
+			else
+			{
+				data.BasePosition    = fromTargetPosition;
+				data.DesiredPosition = toTargetPosition;
+				data.TargetPosition  = Vector3.Lerp(fromTargetPosition, toTargetPosition, interpolationInfo.Alpha);
+				data.LookPitch       = Mathf.Lerp(fromLookPitch, toLookPitch, interpolationInfo.Alpha);
+				data.LookYaw         = KCCUtility.InterpolateRange(fromLookYaw, toLookYaw, -180.0f, 180.0f, interpolationInfo.Alpha);
+
+				int ticks = interpolationInfo.ToBuffer.Tick - interpolationInfo.FromBuffer.Tick;
+				if (ticks > 0)
+				{
+					data.RealVelocity = (toTargetPosition - fromTargetPosition) / (runner.DeltaTime * ticks);
+					data.RealSpeed    = data.RealVelocity.magnitude;
+				}
+			}
+
+			data.HasTeleported = false;
+			if (Context.LastInterpolationTeleportCounter != toTeleportCounter)
+			{
+				if (Context.LastInterpolationTeleportCounter >= 0)
+				{
+					data.HasTeleported = true;
+				}
+
+				Context.LastInterpolationTeleportCounter = toTeleportCounter;
+			}
+
+			byte fromJumpCounter = (byte)((fromCombinedData >> 8) & 0b11111111);
+			byte toJumpCounter   = (byte)((toCombinedData   >> 8) & 0b11111111);
+
+			data.JumpFrames = 0;
+			if (Context.LastInterpolationJumpCounter != toJumpCounter)
+			{
+				if (Context.LastInterpolationJumpCounter >= 0)
+				{
+					data.JumpFrames = 1;
+				}
+
+				Context.LastInterpolationJumpCounter = toJumpCounter;
+			}
 
 			// Following properties are not interpolated, they are set from Read() method.
 			// Combined Settings
@@ -201,31 +272,6 @@ namespace Fusion.Addons.KCC
 			// KCCSettings.Extent
 			interpolationInfo.Offset += 5;
 			interpolationInfo.Offset += _interactionsWordCount;
-
-			// Teleport detection.
-
-			int ticks = interpolationInfo.ToBuffer.Tick - interpolationInfo.FromBuffer.Tick;
-			if (ticks > 0)
-			{
-				Vector3 positionDifference = toTargetPosition - fromTargetPosition;
-				if (positionDifference.sqrMagnitude > settings.TeleportThreshold * settings.TeleportThreshold * ticks * ticks)
-				{
-					data.HasTeleported  = true;
-					data.TargetPosition = toTargetPosition;
-					data.RealVelocity   = Vector3.zero;
-					data.RealSpeed      = 0.0f;
-				}
-				else
-				{
-					data.RealVelocity = positionDifference / (data.DeltaTime * ticks);
-					data.RealSpeed    = data.RealVelocity.magnitude;
-				}
-			}
-			else
-			{
-				data.RealVelocity = Vector3.zero;
-				data.RealSpeed    = 0.0f;
-			}
 		}
 
 		// PRIVATE METHODS
@@ -509,6 +555,15 @@ namespace Fusion.Addons.KCC
 			++interpolationInfo.Offset;
 
 			return interpolationInfo.Alpha < 0.5f ? fromValue : toValue;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void ReadInts(ref KCCInterpolationInfo interpolationInfo, out int fromValue, out int toValue)
+		{
+			fromValue = interpolationInfo.FromBuffer.ReinterpretState<int>(interpolationInfo.Offset);
+			toValue   = interpolationInfo.ToBuffer.ReinterpretState<int>(interpolationInfo.Offset);
+
+			++interpolationInfo.Offset;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -74,47 +74,46 @@ namespace Fusion {
       }
     }
 
-        public void Move(Vector3 direction)
-        {
-            var deltaTime = Runner.DeltaTime;
-            var previousPos = transform.position;
-            var moveVelocity = Data.Velocity;
+    public void Move(Vector3 direction) {
+      var deltaTime    = Runner.DeltaTime;
+      var previousPos  = transform.position;
+      var moveVelocity = Data.Velocity;
 
-            direction = direction.normalized;
+      direction = direction.normalized;
 
-            if (Data.Grounded && moveVelocity.y < 0)
-            {
-                moveVelocity.y = 0f;
-            }
+      if (Data.Grounded && moveVelocity.y < 0) {
+        moveVelocity.y = 0f;
+      }
 
-            moveVelocity.y += gravity * Runner.DeltaTime;
+      moveVelocity.y += gravity * Runner.DeltaTime;
 
-            var horizontalVel = default(Vector3);
-            horizontalVel.x = moveVelocity.x;
-            horizontalVel.z = moveVelocity.z;
+      var horizontalVel = default(Vector3);
+      horizontalVel.x = moveVelocity.x;
+      horizontalVel.z = moveVelocity.z;
 
-            if (direction == default)
-            {
-                horizontalVel = Vector3.Lerp(horizontalVel, default, braking * deltaTime);
-            }
-            else
-            {
-                horizontalVel = Vector3.ClampMagnitude(horizontalVel + direction * acceleration * deltaTime, maxSpeed);
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), rotationSpeed * Runner.DeltaTime);
-            }
+      if (direction == default) {
+        horizontalVel = Vector3.Lerp(horizontalVel, default, braking * deltaTime);
+      } else {
+        horizontalVel      = Vector3.ClampMagnitude(horizontalVel + direction * acceleration * deltaTime, maxSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), rotationSpeed * Runner.DeltaTime);
+      }
 
-            moveVelocity.x = horizontalVel.x;
-            moveVelocity.z = horizontalVel.z;
+      moveVelocity.x = horizontalVel.x;
+      moveVelocity.z = horizontalVel.z;
 
-            _controller.Move(moveVelocity * deltaTime);
+      _controller.Move(moveVelocity * deltaTime);
 
-            Data.Velocity = (transform.position - previousPos) * Runner.TickRate;
-            Data.Grounded = _controller.isGrounded;
-        }
+      Data.Velocity = (transform.position - previousPos) * Runner.TickRate;
+      Data.Grounded = _controller.isGrounded;
+    }
     
     public override void Spawned() {
       _initial = default;
       TryGetComponent(out _controller);
+      // Without disabling and re-enabling the CharacterController here, the first Move call will reset the position to 0,0,0 instead of
+      // keeping the position it was spawned at. Presumably disabling it clears some kind of internally cached "previous position" value
+      _controller.enabled = false;
+      _controller.enabled = true;
       CopyToBuffer();
     }
 

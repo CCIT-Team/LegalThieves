@@ -131,7 +131,7 @@ namespace Fusion.Addons.KCC
 			if (forceAdd == false && provider.CanStartInteraction(this, data) == false)
 				return false;
 
-			KCCModifier modifier = data.Modifiers.Add(networkObject, provider);
+			KCCModifier modifier = data.Modifiers.Add(Runner, networkObject, provider);
 			if (modifier.Processor != null)
 			{
 				OnProcessorAdded(data, modifier.Processor);
@@ -179,7 +179,7 @@ namespace Fusion.Addons.KCC
 			if (forceAdd == false && provider.CanStartInteraction(this, data) == false)
 				return false;
 
-			KCCModifier modifier = data.Modifiers.Add(networkObject, provider);
+			KCCModifier modifier = data.Modifiers.Add(Runner, networkObject, provider);
 			if (modifier.Processor != null)
 			{
 				OnProcessorAdded(data, modifier.Processor);
@@ -213,7 +213,7 @@ namespace Fusion.Addons.KCC
 			if (forceAdd == false && provider.CanStartInteraction(this, data) == false)
 				return false;
 
-			KCCModifier modifier = data.Modifiers.Add(networkObject, provider);
+			KCCModifier modifier = data.Modifiers.Add(Runner, networkObject, provider);
 			if (modifier.Processor != null)
 			{
 				OnProcessorAdded(data, modifier.Processor);
@@ -614,7 +614,7 @@ namespace Fusion.Addons.KCC
 					return false;
 				}
 
-				data.Ignores.Add(networkObject, ignoreCollider, false);
+				data.Ignores.Add(Runner, networkObject, ignoreCollider, false);
 			}
 			else
 			{
@@ -700,7 +700,7 @@ namespace Fusion.Addons.KCC
 			if (interactionProvider != null && interactionProvider.CanStartInteraction(this, data) == false)
 				return false;
 
-			KCCCollision collision = data.Collisions.Add(networkObject, interactionProvider, collisionCollider);
+			KCCCollision collision = data.Collisions.Add(Runner, networkObject, interactionProvider, collisionCollider);
 			if (collision.Processor != null)
 			{
 				OnProcessorAdded(data, collision.Processor);

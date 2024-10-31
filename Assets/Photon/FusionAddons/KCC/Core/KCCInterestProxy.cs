@@ -71,6 +71,9 @@ namespace Fusion.Addons.KCC
 		{
 			_isSpawned = true;
 
+			// Don't synchronize this component at all, it is needed on server only.
+			ReplicateToAll(false);
+
 			if (_hasExplicitPositionSource == false && _positionSource == null)
 			{
 				State.Position = transform.position;
@@ -91,12 +94,6 @@ namespace Fusion.Addons.KCC
 		public override void FixedUpdateNetwork()
 		{
 			Synchronize();
-		}
-
-		protected override bool ReplicateTo(PlayerRef player)
-		{
-			// Don't synchronize this component at all, it is needed on server only.
-			return false;
 		}
 
 		// MonoBehaviour INTERFACE

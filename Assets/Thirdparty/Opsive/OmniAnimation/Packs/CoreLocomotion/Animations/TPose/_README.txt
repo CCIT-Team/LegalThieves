@@ -1,1 +1,0 @@
-See the documentation at Opsive/OmniAnimation/Packs/CoreLocomotion for more information on the t-pose animations.

@@ -247,9 +247,19 @@
             Signal if the <see cref="T:Fusion.Sockets.NetAddress"/> represents an IPv6 Address
             </summary>
         </member>
+        <member name="P:Fusion.Sockets.NetAddress.IsIPv4">
+            <summary>
+            Signal if the <see cref="T:Fusion.Sockets.NetAddress"/> represents an IPv4 Address
+            </summary>
+        </member>
         <member name="P:Fusion.Sockets.NetAddress.IsValid">
             <summary>
             Signal if this <see cref="T:Fusion.Sockets.NetAddress"/> is not default/empty
+            </summary>
+        </member>
+        <member name="P:Fusion.Sockets.NetAddress.HasAddress">
+            <summary>
+            Signal if this <see cref="T:Fusion.Sockets.NetAddress"/> has a valid IP Address
             </summary>
         </member>
         <member name="M:Fusion.Sockets.NetAddress.FromActorId(System.Int32)">
@@ -258,7 +268,7 @@
             </summary>
             <param name="actorId">ActorId used to build the NetAddress</param>
             <returns>Relay NetAddress that references the ActorId</returns>
-            <remarks>ActorId must be 0 or greated</remarks>
+            <remarks>ActorId must be 0 or greater</remarks>
         </member>
         <member name="M:Fusion.Sockets.NetAddress.Hash64(Fusion.Sockets.NetAddress)">
             <summary>
@@ -447,11 +457,6 @@
             <seealso href="https://github.com/nxrighthere/NanoSockets/blob/master/Source/Native/nanosockets.h#L213"/>
             </summary>
         </member>
-        <member name="F:Fusion.Sockets.NetConfig.DefaultMtu">
-            <summary>
-            default Maximum Transmission Unit
-            </summary>
-        </member>
         <member name="F:Fusion.Sockets.NetConfig.PacketSize">
             <summary>
             UDP Packet Size in Bytes
@@ -561,24 +566,49 @@
             IPv6 header: 40 bytes, UDP header: 8 bytes, Realtime Header: 96 bytes
             </summary>
         </member>
-        <member name="F:Fusion.Sockets.NetPeer.MIN_MTU_BYTES">
+        <member name="F:Fusion.Sockets.NetPeer.MAX_MTU_BYTES_TOTAL">
+             <summary>
+             MaximumTransferUnit total bytes.
+            
+             The maximum size of bytes that can be sent in a single UDP packet.
+             </summary>
+        </member>
+        <member name="F:Fusion.Sockets.NetPeer.MAX_MTU_BYTES_PAYLOAD">
+             <summary>
+             MaximumTransferUnit payload bytes.
+            
+             The maximum number of bytes available for data(payload) in a single UDP packet.
+             </summary>
+        </member>
+        <member name="F:Fusion.Sockets.NetPeer.MAX_MTU_BITS_PAYLOAD">
+             <summary>
+             MaximumTransferUnit bits. (ipv6 header: 40 bytes, udp header: 8 bytes)
+            
+             Same as <see cref="F:Fusion.Sockets.NetPeer.MAX_MTU_BYTES_PAYLOAD"/> but in bits.
+             </summary>
+        </member>
+        <member name="F:Fusion.Sockets.NetPeer.MAX_PACKET_BYTES_PAYLOAD">
+             <summary>
+             Max packet payload size in bytes. (Considering the NetNotifyHeader size for each fragment)
+            
+             The maximum number of bytes available for data that can be fragmented into multiple packets of size <see cref="F:Fusion.Sockets.NetPeer.MAX_MTU_BYTES_PAYLOAD"/>.
+             </summary>
+        </member>
+        <member name="F:Fusion.Sockets.NetPeer.MAX_PACKET_BYTES_TOTAL">
+             <summary>
+             Max packet total size in bytes.
+            
+             The maximum number of bytes that can be fragmented into multiple packets of size <see cref="F:Fusion.Sockets.NetPeer.MAX_MTU_BYTES_TOTAL"/>.
+             </summary>
+        </member>
+        <member name="F:Fusion.Sockets.NetPeer.FRAG_MAX_COUNT">
             <summary>
-            MinimumTransferUnit bytes. 
+            Maximum number of fragments.
             </summary>
         </member>
-        <member name="F:Fusion.Sockets.NetPeer.MIN_MTU_BITS">
+        <member name="F:Fusion.Sockets.NetPeer.FRAG_END_BIT">
             <summary>
-            MinimumTransferUnit bits.
-            </summary>
-        </member>
-        <member name="F:Fusion.Sockets.NetPeer.MAX_MTU_BYTES">
-            <summary>
-            MaximumTransferUnit bytes.
-            </summary>
-        </member>
-        <member name="F:Fusion.Sockets.NetPeer.MAX_MTU_BITS">
-            <summary>
-            MaximumTransferUnit bits. (ipv6 header: 40 bytes, udp header: 8 bytes)
+            Flag for the last fragment.
             </summary>
         </member>
         <member name="M:Fusion.Sockets.NetSequencer.Distance(System.UInt64,System.UInt64)">
@@ -709,27 +739,56 @@
             List of public DNS Servers
             </summary>
         </member>
-        <member name="M:Fusion.Sockets.Stun.StunClient.QueryPublicAddress(Fusion.Sockets.NetPeer*,Fusion.Sockets.INetSocket,System.Net.Sockets.AddressFamily,System.Guid@)">
+        <member name="M:Fusion.Sockets.Stun.StunClient.Reset">
             <summary>
-            Sends a STUN Binding Request to a public STUN server to discover peer reflexive addresses.
+            Reset the state of the StunClient
             </summary>
-            <param name="peer">A reference to the network peer.</param>
-            <param name="socket">A reference to the network socket.</param>
-            <param name="originalFamily">The original address family.</param>
-            <param name="requestID">The ID of the request. This is a reference parameter that may be changed within the method if necessary.</param>
-            <returns>
-            Returns true if the STUN Binding Request was successfully sent, false otherwise.
-            </returns>
-            <exception cref="T:System.Exception">Thrown when an error occurs while sending the STUN Binding Request.</exception>
+        </member>
+        <member name="M:Fusion.Sockets.Stun.StunClient.QueryReflexiveInfo(Fusion.Sockets.NetAddress,System.Func{System.Byte[],Fusion.Sockets.NetAddress,System.Boolean},System.Nullable{Fusion.Sockets.NetAddress},System.String,System.Boolean,System.Func{System.Boolean})">
+            <summary>
+            Run the STUN Service to retrieve the current Reflexive Addresses of the local peer
+            </summary>
+            <param name="boundLocalAddress">The bound local address to be used for the STUN service.</param>
+            <param name="sendDataViaSocket">A function delegate that takes a byte array and a NetAddress as parameters and returns a boolean value. This function is used to send data via a socket.</param>
+            <param name="customPublicAddress">An optional parameter that represents a custom public address. If provided, this address is used instead of discovering one.</param>
+            <param name="customStunServer">An optional parameter that represents a custom STUN server. If provided, this server is used instead of the default one.</param>
+            <param name="extendedAttempts">A boolean value indicating whether to extend the query time. If true, the query time is extended; otherwise, it is not.</param>
+            <param name="keepRunning">A function delegate that takes no parameters and returns a boolean value. This function is used to determine whether the STUN service should keep running.</param>
+            <returns>Reflexive Info data as a <see cref="T:Fusion.Sockets.Stun.StunResult"/> object.</returns>
+        </member>
+        <member name="M:Fusion.Sockets.Stun.StunClient.TryParseAndStoreStunMessage(Fusion.Sockets.NetAddress*,System.Byte*,System.Int32)">
+            <summary>
+            Tries to parse a buffer data into a <see cref="T:Fusion.Sockets.Stun.StunMessage"/>
+            </summary>
+            <param name="origin">Remove origin of the buffer data</param>
+            <param name="buffer">Buffer data to be parsed</param>
+            <param name="bufferLength">Lenght of the buffer data to be parsed</param>
+            <returns>True if the buffer contains a <see cref="T:Fusion.Sockets.Stun.StunMessage"/>, false otherwise</returns>
+        </member>
+        <member name="M:Fusion.Sockets.Stun.StunClient.QueryLocalAddress(Fusion.Sockets.NetAddress,System.Net.Sockets.AddressFamily@,Fusion.Sockets.NetAddress@)">
+            <summary>
+            Query the LAN Address
+            </summary>
+            <param name="boundLocalAddress">Bound Local Address</param>
+            <param name="addressFamily">Output the Address Family found</param>
+            <param name="localAddress">Output the LAN Address</param>
+            <returns>True if a valid LAN Address was found, false otherwise</returns>
+        </member>
+        <member name="M:Fusion.Sockets.Stun.StunClient.QueryPublicAddress(System.Func{System.Byte[],Fusion.Sockets.NetAddress,System.Boolean},System.Net.Sockets.AddressFamily,System.Guid@,System.Boolean@)">
+            <summary>
+            Run a STUN Binding Request against the Public STUN Server in order to discover peer reflexive addresses
+            </summary>
+            <param name="sendAnyData">Custom method to send data to remote Address</param>
+            <param name="originalFamily">Original Address Family</param>
+            <param name="requestID">Request ID to be used when sending the STUN Binding Request</param>
+            <param name="skipNATDiscovery">Signal to skip the NAT Type discovery</param>
+            <returns>Running Task of the STUN Query Procedure</returns>
         </member>
         <member name="M:Fusion.Sockets.Stun.StunClient.GetLocalAddress(System.Net.Sockets.AddressFamily@,System.Net.IPAddress@)">
             <summary>
-            Retrieves the local IP endpoint currently active.
+            Retrieve the Local IP Endpoint currently active
             </summary>
-            <param name="addressFamily">The address family to be used.</param>
-            <param name="localIP">The local IP address that is currently active. This is an output parameter.</param>
-            <returns>Returns true if the local IP address was successfully retrieved, false otherwise.</returns>
-            <exception cref="T:System.Net.Sockets.SocketException">Thrown when an error occurs while creating the socket or connecting to the test IP.</exception>
+            <returns>True if a valid Local IP Address was found, false otherwise</returns>
         </member>
         <member name="T:Fusion.Sockets.Stun.StunErrorAttribute">
             <summary>
@@ -823,7 +882,7 @@
             Parses STUN message from raw data packet.
             </summary>
             <param name="data">Raw STUN message.</param>
-            <param name="length">Length of raw STUN message.</param>
+            <param name="length">STUN Message length</param>
         </member>
         <member name="M:Fusion.Sockets.Stun.StunMessage.Serialize">
             <summary>
@@ -838,7 +897,7 @@
             <param name="data">SIP message data.</param>
             <param name="offset">Offset in data.</param>
         </member>
-        <member name="M:Fusion.Sockets.Stun.StunMessage.ParseEndPoint(System.Byte[],System.Int32@)">
+        <member name="M:Fusion.Sockets.Stun.StunMessage.ParseEndPoint(System.Byte*,System.Int32@)">
             <summary>
             Pasrses IP endpoint attribute.
             </summary>
@@ -897,15 +956,31 @@
             List of public STUN Servers
             </summary>
         </member>
-        <member name="M:Fusion.Sockets.Stun.StunServers.BuildIP(System.String)">
+        <member name="T:Fusion.Sockets.Stun.StunServers.StunServer">
             <summary>
-            Builds a STUN server object from a given STUN server address.
+            Stores Addresses of a STUN Server
             </summary>
-            <param name="stunServerAddr">The STUN server address in the format "ip:port".</param>
-            <returns>A Task that represents the asynchronous operation. The Task's result is the STUN server object.</returns>
-            <exception cref="T:System.FormatException">Thrown when the provided STUN server address is not in the correct format.</exception>
-            <exception cref="T:System.Net.Sockets.SocketException">Thrown when an error is encountered when resolving the hostname to an IP address.</exception>
-            <seealso href="https://datatracker.ietf.org/doc/html/rfc5952#section-6"/>
+        </member>
+        <member name="M:Fusion.Sockets.Stun.StunServers.GetStunServer(System.Boolean)">
+            <summary>
+            Build a list of STUN Servers
+            </summary>
+            <param name="IPv6Support">Filter STUN Servers with IPv6 Support</param>
+            <returns>List of valid STUN Servers</returns>
+        </member>
+        <member name="M:Fusion.Sockets.Stun.StunServers.SetupStunServers(System.String)">
+            <summary>
+            Pre-Build the list of all STUN Servers
+            </summary>
+            <param name="customStunServer">Optional Custom STUN Server to ping</param>
+        </member>
+        <member name="M:Fusion.Sockets.Stun.StunServers.ResolveStunServerInfo(System.String)">
+            <summary>
+            Build the STUN Server Info by checking its valid IPs
+            <see href="https://datatracker.ietf.org/doc/html/rfc5952#section-6"/>
+            </summary>
+            <param name="stunServerAddress">STUN Server Address</param>
+            <returns><see cref="T:Fusion.Sockets.Stun.StunServers.StunServer"/> reference </returns>
         </member>
         <member name="P:Fusion.Protocol.BitStream.Size">
             <summary>
@@ -1001,6 +1076,16 @@
             Stores the Current Fusion Serialization Version
             </summary>
         </member>
+        <member name="P:Fusion.Protocol.Message.IsValid">
+            <summary>
+            Signal if this Message is Valid or not
+            </summary>
+        </member>
+        <member name="P:Fusion.Protocol.Message.HasValidVersion">
+            <summary>
+            Signal if this Message has a valid Protocol Version and Fusion Serialization Version
+            </summary>
+        </member>
         <member name="P:Fusion.Protocol.Message.CustomData">
             <summary>
             Custom data send along side any Protocol Message
@@ -1030,12 +1115,13 @@
             </summary>
             <param name="stream">Buffer to read from or write into the data of the Message</param>
         </member>
-        <member name="M:Fusion.Protocol.Message.CheckCompability(Fusion.Protocol.ProtocolMessageVersion,System.Version)">
+        <member name="M:Fusion.Protocol.Message.CheckCompability(Fusion.Protocol.ProtocolMessageVersion,System.Version,System.Version)">
             <summary>
             Check if this Message is compatible with target versions
             </summary>
-            <param name="targetProtocolVersion">Target Protocol Message Version</param>
-            <param name="pluginSerializationVersion">Target Fusion Serialization Version</param>
+            <param name="pluginProtocolVersion">Target Protocol Message Version</param>
+            <param name="pluginVersion">Plugin Version</param>
+            <param name="sessionSerializationVersion">Target Fusion Serialization Version</param>
             <returns>True if message is compatible with versions</returns>
         </member>
         <member name="T:Fusion.Protocol.Disconnect">
@@ -1102,6 +1188,21 @@
         <member name="F:Fusion.Protocol.DisconnectReason.Error">
             <summary>
             An error occured on the Plugin
+            </summary>
+        </member>
+        <member name="P:Fusion.Protocol.DummyTrafficSync.SendInterval">
+            <summary>
+            Dummy Traffic Send Interval
+            </summary>
+        </member>
+        <member name="P:Fusion.Protocol.DummyTrafficSync.Size">
+            <summary>
+            Dummy Traffic Size
+            </summary>
+        </member>
+        <member name="P:Fusion.Protocol.DummyTrafficSync.IsValid">
+            <summary>
+            Flag to signal if the Dummy Traffic is valid
             </summary>
         </member>
         <member name="F:Fusion.Protocol.HostMigration.PeerMode">
@@ -1440,6 +1541,11 @@
             Data Event Code
             </summary>
         </member>
+        <member name="F:Fusion.Protocol.EventCodes.DUMMY">
+            <summary>
+            Dummy Event Code
+            </summary>
+        </member>
         <member name="F:Fusion.Protocol.PhotonConstants.SERVER_ACTOR_ID">
             <summary>
             Zero (0) means: if it should be the room itself (authorative event).
@@ -1523,6 +1629,11 @@
         <member name="F:Fusion.Protocol.ProtocolMessageVersion.V1_5_0">
             <summary>
             Added Encryption Support
+            </summary>
+        </member>
+        <member name="F:Fusion.Protocol.ProtocolMessageVersion.V1_6_0">
+            <summary>
+            Added Dummy Traffic Support
             </summary>
         </member>
         <member name="F:Fusion.Protocol.ProtocolMessageVersion.LATEST">

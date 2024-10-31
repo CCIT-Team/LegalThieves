@@ -130,6 +130,41 @@ namespace Fusion.Addons.KCC
 		}
 
 		/// <summary>
+		/// <c>True</c> if the look rotation prediction is enabled in fixed/render update.
+		/// </summary>
+		public bool IsPredictingLookRotation
+		{
+			get
+			{
+				if (Object.HasInputAuthority == true)
+				{
+					if (_settings.InputAuthorityBehavior == EKCCAuthorityBehavior.PredictFixed_PredictRender)
+						return true;
+					if (_settings.ForcePredictedLookRotation == true)
+						return true;
+
+					return IsInFixedUpdate;
+				}
+				if (Object.HasStateAuthority == true)
+				{
+					if (_settings.StateAuthorityBehavior == EKCCAuthorityBehavior.PredictFixed_PredictRender)
+						return true;
+
+					return IsInFixedUpdate;
+				}
+				if (Object.IsInSimulation == true)
+				{
+					if (_settings.ForcePredictedLookRotation == true)
+						return true;
+
+					return IsInFixedUpdate;
+				}
+
+				return false;
+			}
+		}
+
+		/// <summary>
 		/// Tick number of the last fixed update in which KCC was predicted.
 		/// </summary>
 		public int LastPredictedFixedTick => _lastPredictedFixedTick;

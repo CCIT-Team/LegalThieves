@@ -6,7 +6,7 @@ namespace Fusion.Addons.KCC
 	/// </summary>
 	public partial interface IKCCProcessor
 	{
-		/// <summary>
+		/// <summary> 
 		/// Controls whether the processor is active in current execution loop.
 		/// Inactive processors still get OnEnter/OnExit callbacks, but everything else is ignored including stages.
 		/// This method can be used to filter out processor early as performance optimization.
