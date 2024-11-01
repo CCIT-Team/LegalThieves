@@ -3,40 +3,48 @@ using UnityEngine.InputSystem;
 using Fusion;
 using Fusion.Addons.KCC;
 
+/// <summary>
+/// 네트워크 입력 데이터 구조체. 이동 방향, 회전 값, 버튼 입력을 포함.
+/// </summary>
 public struct InputData : INetworkInput
 {
-    public Vector2 MoveDirection;
-    public Vector2 LookRotationDelta;
-    public NetworkButtons Actions;
+    public Vector2 MoveDirection; // 이동 방향
+    public Vector2 LookRotationDelta; // 회전 델타값
+    public NetworkButtons Actions; // 네트워크 상의 버튼 입력 상태
 
+    // 버튼 인덱스 정의
     public const int JUMP_BUTTON = 0;
     public const int SPRINT_BUTTON = 1;
     public const int HEAL_BUTTON = 2;
     public const int DAMAGE_BUTTON = 3;
     public const int INTERACT_BUTTON = 4;
+    public const int CROUCH_BUTTON = 5;
 }
+
+/// <summary>
+/// PlayerInput 클래스는 네트워크에서 입력을 처리하며, 게임 내에서 플레이어의 움직임과 행동을 처리한다.
+/// </summary>
 public sealed class PlayerInput : NetworkBehaviour, IBeforeUpdate, IBeforeTick
 {
+    // 현재와 이전 입력 상태를 가져오는 속성
     public InputData CurrentInput => _currentInput;
     public InputData PreviousInput => _previousInput;
 
     [SerializeField]
-    [Tooltip("Mouse delta multiplier.")]
+    [Tooltip("마우스 델타 민감도")]
     private Vector2 _lookSensitivity = Vector2.one;
 
-    // We need to store current input to compare against previous input (to track actions activation/deactivation). It is also used if the input for current tick is not available.
-    // This is not needed on proxies and will be replicated to input authority only.
     [Networked]
-    private InputData _currentInput { get; set; }
+    private InputData _currentInput { get; set; } // 현재 입력 상태
 
-    private InputData _previousInput;
-    private InputData _accumulatedInput;
-    private bool _resetAccumulatedInput;
-    private Vector2Accumulator _lookRotationAccumulator = new Vector2Accumulator(0.02f, true);
+    private InputData _previousInput; // 이전 입력 상태
+    private InputData _accumulatedInput; // 누적 입력
+    private bool _resetAccumulatedInput; // 누적 입력을 리셋할지 여부
+    private Vector2Accumulator _lookRotationAccumulator = new Vector2Accumulator(0.02f, true); // 회전 값 누적
 
     public override void Spawned()
     {
-        // Reset to defaults.
+        // 기본 값으로 초기화
         _currentInput = default;
         _previousInput = default;
         _accumulatedInput = default;
@@ -44,20 +52,19 @@ public sealed class PlayerInput : NetworkBehaviour, IBeforeUpdate, IBeforeTick
 
         if (HasInputAuthority == true)
         {
-            // Register local player input polling.
+            // 로컬 플레이어의 입력 폴링을 등록
             NetworkEvents networkEvents = Runner.GetComponent<NetworkEvents>();
             networkEvents.OnInput.AddListener(OnInput);
 
+            // 모바일 플랫폼이 아니거나, 에디터라면 커서 숨기기
             if (Application.isMobilePlatform == false || Application.isEditor == true)
             {
-                // Hide cursor.
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
         }
 
-        // Only local player needs networked properties (current input).
-        // This saves network traffic by not synchronizing networked properties to other clients except local player.
+        // 로컬 플레이어에게만 네트워크 속성 동기화 (트래픽 절약)
         ReplicateToAll(false);
         ReplicateTo(Object.InputAuthority, true);
     }
@@ -67,90 +74,83 @@ public sealed class PlayerInput : NetworkBehaviour, IBeforeUpdate, IBeforeTick
         if (runner == null)
             return;
 
+        // 로컬 플레이어 입력 폴링 해제
         NetworkEvents networkEvents = runner.GetComponent<NetworkEvents>();
         if (networkEvents != null)
         {
-            // Unregister local player input polling.
             networkEvents.OnInput.RemoveListener(OnInput);
         }
     }
 
     /// <summary>
-    /// 1. Collect input from devices, can be executed multiple times between FixedUpdateNetwork() calls because of faster rendering speed.
+    /// 입력 장치에서 데이터를 수집. FixedUpdateNetwork() 호출 사이에 여러 번 실행 가능.
     /// </summary>
     void IBeforeUpdate.BeforeUpdate()
     {
         if (HasInputAuthority == false)
             return;
 
-        // Accumulated input was polled and explicit reset requested.
+        // 누적 입력이 폴링 되었고, 리셋 요청이 있으면 초기화
         if (_resetAccumulatedInput == true)
         {
             _resetAccumulatedInput = false;
             _accumulatedInput = default;
         }
 
+        // 모바일 플랫폼이 아니거나 에디터라면 커서가 잠긴 상태에서만 입력 추적
         if (Application.isMobilePlatform == false || Application.isEditor == true)
         {
-            // Input is tracked only if the cursor is locked.
             if (Cursor.lockState != CursorLockMode.Locked)
                 return;
         }
 
-        ProcessStandaloneInput();
+        ProcessStandaloneInput(); // 독립 실행형 장치에서 입력 처리
     }
 
     /// <summary>
-    /// 3. Read input from Fusion.
+    /// Fusion에서 입력을 읽어들임.
     /// </summary>
     void IBeforeTick.BeforeTick()
     {
         if (Object == null)
             return;
 
-        // Set current in input as previous.
+        // 현재 입력을 이전 입력으로 설정
         _previousInput = _currentInput;
 
-        // Clear all properties which should not propagate from last known input in case of missing new input. As example, following line will reset look rotation delta.
-        // This results to the player not being incorrectly rotated (by using rotation delta from last known input) in case of missing input on state authority, followed by a correction on the input authority.
+        // LookRotationDelta는 새 입력이 없는 경우 오류 방지를 위해 기본값으로 초기화
         InputData currentInput = _currentInput;
         currentInput.LookRotationDelta = default;
         _currentInput = currentInput;
 
+        // 새 입력이 있다면 현재 입력으로 저장
         if (Object.InputAuthority != PlayerRef.None)
         {
-            // If this fails, the current input won't be updated and input from previous tick will be reused.
             if (GetInput(out InputData input) == true)
             {
-                // New input received, we can store it as current.
                 _currentInput = input;
             }
         }
     }
 
     /// <summary>
-    /// 2. Push accumulated input and reset properties, can be executed multiple times within single Unity frame if the rendering speed is slower than Fusion simulation.
-    /// This is usually executed multiple times if there is a performance spike, for example after expensive spawn which includes asset loading.
+    /// 누적된 입력을 푸시하고 속성을 초기화. 주로 렌더링 속도가 Fusion 시뮬레이션보다 느릴 때 실행.
     /// </summary>
     private void OnInput(NetworkRunner runner, NetworkInput networkInput)
     {
-        // Mouse movement (delta values) is aligned to engine update.
-        // To get perfectly smooth interpolated look, we need to align the mouse input with Fusion ticks.
+        // 마우스 움직임(델타 값)을 엔진 업데이트와 일치시킴
         _accumulatedInput.LookRotationDelta = _lookRotationAccumulator.ConsumeTickAligned(runner);
 
-        // Set accumulated input.
+        // 누적된 입력 설정
         networkInput.Set(_accumulatedInput);
 
-        // Input is polled for single fixed update, but at this time we don't know how many times in a row OnInput() will be executed.
-        // This is the reason to have a reset flag instead of resetting input immediately, otherwise we could lose input for next fixed updates (for example move direction).
+        // OnInput()이 여러 번 실행될 수 있으므로 플래그로 리셋 처리
         _resetAccumulatedInput = true;
     }
 
     private void ProcessStandaloneInput()
     {
-        // Always use KeyControl.isPressed, Input.GetMouseButton() and Input.GetKey().
-        // Never use KeyControl.wasPressedThisFrame, Input.GetMouseButtonDown() or Input.GetKeyDown() otherwise the action might be lost.
-
+        // 항상 KeyControl.isPressed, Input.GetMouseButton(), Input.GetKey()를 사용하여 키 입력 상태 확인
         Mouse mouse = Mouse.current;
         if (mouse != null)
         {
@@ -163,6 +163,7 @@ public sealed class PlayerInput : NetworkBehaviour, IBeforeUpdate, IBeforeTick
         {
             Vector2 moveDirection = Vector2.zero;
 
+            // 키보드 입력으로 이동 방향 계산
             if (keyboard.wKey.isPressed == true) { moveDirection += Vector2.up; }
             if (keyboard.sKey.isPressed == true) { moveDirection += Vector2.down; }
             if (keyboard.aKey.isPressed == true) { moveDirection += Vector2.left; }
@@ -170,11 +171,13 @@ public sealed class PlayerInput : NetworkBehaviour, IBeforeUpdate, IBeforeTick
 
             _accumulatedInput.MoveDirection = moveDirection.normalized;
 
+            // 각 키 상태를 버튼 입력에 반영
             _accumulatedInput.Actions.Set(InputData.JUMP_BUTTON, keyboard.spaceKey.isPressed);
             _accumulatedInput.Actions.Set(InputData.SPRINT_BUTTON, keyboard.leftShiftKey.isPressed);
             _accumulatedInput.Actions.Set(InputData.HEAL_BUTTON, keyboard.hKey.isPressed);
             _accumulatedInput.Actions.Set(InputData.DAMAGE_BUTTON, keyboard.jKey.isPressed);
             _accumulatedInput.Actions.Set(InputData.INTERACT_BUTTON, keyboard.eKey.isPressed);
+            _accumulatedInput.Actions.Set(InputData.CROUCH_BUTTON, keyboard.leftCtrlKey.isPressed);
         }
     }
 }

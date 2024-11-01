@@ -218,7 +218,6 @@ namespace Fusion.Addons.KCC
 			float height = Mathf.Max(radius * 2.0f, _settings.Height);
 
 			Vector3 basePosition = transform.position;
-
 			Color gizmosColor = Gizmos.color;
 
 			Vector3 baseLow     = basePosition + Vector3.up * radius;

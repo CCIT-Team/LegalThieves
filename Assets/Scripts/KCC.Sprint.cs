@@ -27,6 +27,15 @@ namespace Fusion.Addons.KCC
             // To prevent visual glitches, it is highly recommended to call SetSprint() always before the KCC update.
             // Ideally put some asserts to make sure execution order is correct.
         }
+        public void SetCrouch(bool crouch)
+        {
+            _renderData.Crouch = crouch;
+
+            if (IsInFixedUpdate == true)
+            {
+                _fixedData.Crouch = crouch;
+            }
+        }
     }
 }
 
