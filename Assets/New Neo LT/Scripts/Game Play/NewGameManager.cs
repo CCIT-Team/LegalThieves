@@ -11,7 +11,7 @@ namespace New_Neo_LT.Scripts.Game_Play
     {
         [Header("Components & References")]
         [SerializeField] private NetworkPrefabRef    playerPrefab;
-        [SerializeField] private float               playtime = 300;
+        [SerializeField] private float               playtime = 15;
         
         public static NewGameManager Instance { get; private set; }
         public static GameState State { get; private set; }

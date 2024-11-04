@@ -17,7 +17,7 @@ namespace New_Neo_LT.Scripts.Game_Play
 		public static int Count => Instance.Players.Count;
 
 		[Networked, Capacity(Capacity)]
-		NetworkDictionary<PlayerRef, PlayerCharacter> Players { get; }
+		private NetworkDictionary<PlayerRef, PlayerCharacter> Players { get; }
 
 		public override void Spawned()
 		{

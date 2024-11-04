@@ -1,3 +1,4 @@
+using System.Linq;
 using Fusion;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Game_Play.Game_State;
@@ -9,14 +10,17 @@ namespace New_Neo_LT.Scripts.Map.MapObjects
     {
         [SerializeField] private Collider col;
 
-        
-
-        private void OnTriggerEnter(Collider other)
+        public override void FixedUpdateNetwork()
         {
-            if(!HasInputAuthority)
+            base.FixedUpdateNetwork();
+
+            if (Runner.Tick % 10 != 0) 
                 return;
-            if(other.CompareTag("Player"))
+            
+            if (PlayerRegistry.Where(p => col.bounds.Contains(p.transform.position)).Any())
+            {
                 NewGameManager.State.Server_SetState<PlayStateBehaviour>();
+            }
         }
     }
 }

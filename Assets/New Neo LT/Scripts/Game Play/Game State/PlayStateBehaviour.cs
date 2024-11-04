@@ -1,4 +1,5 @@
 ﻿using Fusion.Addons.FSM;
+using LegalThieves;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Game_Play.Game_State
@@ -20,6 +21,18 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             Debug.Log("게임 플레이 상태 진입");
 #endif
             // UI 변경
+        }
+
+        protected override void OnRender()
+        {
+            
+            UIManager.Singleton.SetTimer(NewGameManager.State.GetRemainingTime());
+        }
+        
+        protected override void OnExitStateRender()
+        {
+            // UI 변경
+            UIManager.Singleton.SetTimer("Waiting...");
         }
     }
 }
