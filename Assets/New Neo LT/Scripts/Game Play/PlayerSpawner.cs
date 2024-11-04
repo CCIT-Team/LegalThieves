@@ -11,7 +11,7 @@ namespace New_Neo_LT.Scripts.Game_Play
             // Only the server can spawn.
             if (Runner.IsServer)
             {
-                Runner.Spawn(playerObject, position: NewGameManager.Instance.GetSpawnPosition(player.AsIndex), inputAuthority: player);
+                Runner.Spawn(playerObject, position: NewGameManager.Instance.GetPregameSpawnPosition(player.AsIndex), inputAuthority: player);
             }
         }
 

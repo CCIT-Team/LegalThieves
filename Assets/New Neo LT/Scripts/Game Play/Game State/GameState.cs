@@ -23,11 +23,11 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 
         public void FixedUpdate()
         {
-            if (DelayedStateId >= 0 && Delay.ExpiredOrNotRunning(Runner))
-            {
-                _stateMachine.ForceActivateState(DelayedStateId);
-                DelayedStateId = -1;
-            }
+            // if (DelayedStateId >= 0 && Delay.ExpiredOrNotRunning(Runner))
+            // {
+            //     _stateMachine.ForceActivateState(DelayedStateId);
+            //     DelayedStateId = -1;
+            // }
         }
         
         public void Server_SetState<T>() where T : StateBehaviour

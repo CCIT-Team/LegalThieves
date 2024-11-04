@@ -6,6 +6,8 @@ namespace New_Neo_LT.Scripts.Map
     {
         [SerializeField] private Transform[] spawnPoints;
         
+        public int SpawnPointCount => spawnPoints.Length;
+        
         public Vector3 GetSpawnPosition(int index)
         {
             return spawnPoints[index].position;

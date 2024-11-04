@@ -2,16 +2,15 @@ using System.Linq;
 using Fusion;
 using New_Neo_LT.Scripts.Game_Play.Game_State;
 using New_Neo_LT.Scripts.Map;
-using Unity.Mathematics;
+using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Game_Play
 {
-    public class NewGameManager : NetworkBehaviour, IPlayerJoined, IPlayerLeft
+    public class NewGameManager : NetworkBehaviour//, IPlayerJoined, IPlayerLeft
     {
         [Header("Components & References")]
         [SerializeField] private NetworkPrefabRef    playerPrefab;
-        [SerializeField] private Transform[]         spawnPoints;
         [SerializeField] private float               playtime = 300;
         
         public static NewGameManager Instance { get; private set; }
@@ -55,6 +54,8 @@ namespace New_Neo_LT.Scripts.Game_Play
         public override void Spawned()
         {
             base.Spawned();
+            
+            // UIManager.Instance.InitWaitUI();
         }
 
         #endregion
@@ -109,9 +110,9 @@ namespace New_Neo_LT.Scripts.Game_Play
             return true;
         }
         
-        public Vector3 GetSpawnPosition(int pIndex)
+        public Vector3 GetPregameSpawnPosition(int pIndex)
         {
-            return spawnPoints[pIndex].position;
+            return pregameMapData.GetSpawnPosition(pIndex);
         }
         
         public static void Server_Add(NetworkRunner runner, PlayerRef pRef, PlayerCharacter pObj)
@@ -143,29 +144,29 @@ namespace New_Neo_LT.Scripts.Game_Play
         }
 
         #region Player Joined/Left Events
-        
-        public void PlayerJoined(PlayerRef player)
-        {
-            if (!HasStateAuthority) 
-                return;
-            var randomIndex = UnityEngine.Random.Range(0, spawnPoints.Length);
-            var playerChar = Runner.Spawn(playerPrefab, spawnPoints[0].position, quaternion.identity, player);
-            Runner.SetPlayerObject(player, playerChar);
-            
-            Players.Add(player, playerChar.GetComponent<PlayerCharacter>());
-        }
-        
-        public void PlayerLeft(PlayerRef player)
-        {
-            if(!HasStateAuthority || !Players.TryGet(player, out var playerInfo))
-                return;
-        
-            Players.Remove(player);
-            
-            Runner.TryGetPlayerObject(player, out var playerObject);
-            Runner.Despawn(playerObject);
-        }
-        
+        //
+        // public void PlayerJoined(PlayerRef player)
+        // {
+        //     if (!HasStateAuthority) 
+        //         return;
+        //     var randomIndex = UnityEngine.Random.Range(0, pregameMapData.SpawnPointCount);
+        //     var playerChar = Runner.Spawn(playerPrefab, pregameMapData.GetSpawnPosition(randomIndex), quaternion.identity, player);
+        //     Runner.SetPlayerObject(player, playerChar);
+        //     
+        //     Players.Add(player, playerChar.GetComponent<PlayerCharacter>());
+        // }
+        //
+        // public void PlayerLeft(PlayerRef player)
+        // {
+        //     if(!HasStateAuthority || !Players.TryGet(player, out var playerInfo))
+        //         return;
+        //
+        //     Players.Remove(player);
+        //     
+        //     Runner.TryGetPlayerObject(player, out var playerObject);
+        //     Runner.Despawn(playerObject);
+        // }
+        //
         #endregion
 
         #region RPC Methods...

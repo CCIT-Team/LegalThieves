@@ -5,11 +5,10 @@ using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 
-namespace New_Neo_LT.Scripts
+namespace New_Neo_LT.Scripts.PlayerComponent
 {
     [RequireComponent(typeof(PlayerStats))]
     public class PlayerCharacter : Character
@@ -129,7 +128,7 @@ namespace New_Neo_LT.Scripts
         
         private void NicknameChanged()
         {
-            playerNickname.text = Nickname.Value;
+            // playerNickname.text = Nickname.Value;
         }
         
         public void Server_Init(PlayerRef pRef, byte index)
@@ -168,8 +167,8 @@ namespace New_Neo_LT.Scripts
                 kcc.FixedData.KinematicSpeed = characterStats.MoveSpeed;
             
             // Jump
-            // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump))
-            //     OnJumpButtonPressed();
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump))
+                OnJumpButtonPressed();
             // Crouch
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Crouch))
                 CrouchSync = 0;
