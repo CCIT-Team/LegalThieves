@@ -6,7 +6,7 @@ namespace New_Neo_LT.Scripts.Game_Play
 {
     public struct PlayerInfo : INetworkStruct
     {
-        [Networked, Capacity(24)] public string             PlayerName => default;
+        [Networked, Capacity(24)] public string             PlayerName { get; set; }
         [Networked, Capacity(10)] public NetworkArray<int>  Relics       => default;
 
         [Networked] public bool                             IsWinByGold  { get; set; }

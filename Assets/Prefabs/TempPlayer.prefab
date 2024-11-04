@@ -293,7 +293,6 @@ GameObject:
   - component: {fileID: 7954084971197861700}
   - component: {fileID: -6779440455557013643}
   - component: {fileID: 5247977335843116981}
-  - component: {fileID: -3939038222902858634}
   - component: {fileID: 1268123419817404660}
   - component: {fileID: 3350122550624142934}
   m_Layer: 0
@@ -365,7 +364,6 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: -6779440455557013643}
   - {fileID: 5247977335843116981}
-  - {fileID: -3939038222902858634}
   - {fileID: 3350122550624142934}
 --- !u!114 &-6779440455557013643
 MonoBehaviour:
@@ -422,10 +420,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   modelParts:
   - {fileID: 4871496367177242805}
+  clothMaterials: []
+  hairMaterials: []
   kcc: {fileID: -6779440455557013643}
   sprintProcessor: {fileID: 7556963233328221503, guid: b7147414adb9e7244be871ed37d39173, type: 3}
   crouchProcessor: {fileID: 7556963233328221503, guid: aacff19f101670d43b45a0a4a389fd90, type: 3}
   camTarget: {fileID: 7529312243237300391}
+  _animator: {fileID: 0}
   maxPitch: 85
   lookSensitivity: 0.15
   jumpImpulse: {x: 0, y: 8, z: 0}
@@ -440,33 +441,12 @@ MonoBehaviour:
   isReady: 0
   playerBoxItems: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
   _inventoryItems: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+  Torch: {fileID: 0}
   _Name: 
   _IsSprinting: 0
-  _IsCrouching: 0
---- !u!114 &-3939038222902858634
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9040168462585498880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ef596df8b409cb479d5c1fbe84febec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  checkRate: 0.05
-  maxCheckDistance: 3
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 128
-  tempPlayer: {fileID: 5247977335843116981}
-  Torch: {fileID: 142246834975781448}
-  promptText: {fileID: 0}
-  EquipItems:
-  - {fileID: 7292724884793201948}
-  - {fileID: 4529972122857874993}
-  - {fileID: 472248965899449656}
+  _IsHoldingItem: 0
+  _PickTorch: 0
+  ItemTorch: {fileID: 0}
 --- !u!114 &1268123419817404660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -506,7 +486,7 @@ MonoBehaviour:
     m_ActionName: PlayerActions/MousePos[/Mouse/delta]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -3939038222902858634}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: InteractionManager_k, Assembly-CSharp
         m_MethodName: OnInteractInput
         m_Mode: 0
@@ -522,7 +502,7 @@ MonoBehaviour:
     m_ActionName: PlayerActions/Interact[/Keyboard/e]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -3939038222902858634}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: InteractionManager_k, Assembly-CSharp
         m_MethodName: OnAttack
         m_Mode: 0
@@ -542,7 +522,7 @@ MonoBehaviour:
     m_ActionName: PlayerActions/Inventory[/Keyboard/tab]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -3939038222902858634}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: InteractionManager_k, Assembly-CSharp
         m_MethodName: OnExcavate
         m_Mode: 0
@@ -558,7 +538,7 @@ MonoBehaviour:
     m_ActionName: PlayerActions/Excavate[/Keyboard/f]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -3939038222902858634}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: InteractionManager_k, Assembly-CSharp
         m_MethodName: OnTorch
         m_Mode: 0
@@ -590,7 +570,7 @@ MonoBehaviour:
     m_ActionName: PlayerActions/Equip2[/Keyboard/2]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -3939038222902858634}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: InteractionManager_k, Assembly-CSharp
         m_MethodName: OnBandage
         m_Mode: 0
@@ -625,8 +605,8 @@ MonoBehaviour:
   TotalWords: 6
   ApplyTiming: 2
   SyncSettings: 111
-  StateHashes: 0000000052824073f2f813bd31001b6d844598e3702be21236ef67a916eb40993a7f13df47ce4ef0010acb4bb45938cc2cb3efd2c7df733b729af0b57a51832c0d6e1d1e9d188e2f3d62dde1958cc202077cdad404ffea649c153d7ad15bd7b35207ae0992df1204f6220623a53abee62784bfe5ecb186cf
-  TriggerHashes: 00000000851772150d286c4012afc47e
+  StateHashes: 0000000052824073f2f813bd31001b6d844598e3702be21236ef67a916eb40993a7f13df47ce4ef0010acb4bb45938cc2cb3efd2c7df733b729af0b57a51832c0d6e1d1e9d188e2f3d62dde1958cc202077cdad404ffea649c153d7ad15bd7b35207ae0992df1204f6220623a53abee62784bfe5ecb186cfc63906bfeda10fdd0f0e331cd7feedb0
+  TriggerHashes: 00000000851772150d286c4012afc47e335f060fc63906bf
 --- !u!1001 &6599315047129645769
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -704,30 +684,9 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
---- !u!114 &142246834975781448 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6515625282083893377, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
-  m_PrefabInstance: {fileID: 6599315047129645769}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 472248965899449656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2ebd57370d41184d8bfbe2d012014d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &472248965899449656 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6708316139786008561, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
-  m_PrefabInstance: {fileID: 6599315047129645769}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &787495143826208536 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5870658422505387473, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
-  m_PrefabInstance: {fileID: 6599315047129645769}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &4529972122857874993 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7298307182998594808, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
   m_PrefabInstance: {fileID: 6599315047129645769}
   m_PrefabAsset: {fileID: 0}
 --- !u!137 &4871496367177242805 stripped
@@ -738,10 +697,5 @@ SkinnedMeshRenderer:
 --- !u!95 &6633118894765043042 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 547442921023696811, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
-  m_PrefabInstance: {fileID: 6599315047129645769}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7292724884793201948 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4513043019004221397, guid: 5f1258f03ee136c4da15ed83761ed543, type: 3}
   m_PrefabInstance: {fileID: 6599315047129645769}
   m_PrefabAsset: {fileID: 0}
