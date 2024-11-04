@@ -1,149 +1,58 @@
-using System.Collections;
+using System.Collections.Generic;
 using Fusion;
-using Unity.VisualScripting;
+using Fusion.Addons.FSM;
+using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Game_Play.Game_State
 {
-    public enum EGameState
+    public class GameState : NetworkBehaviour, IStateMachineOwner
     {
-        Waiting        = 0,
-        Playing        = 1,
-        Finish         = 2,
-        GameStateCount = 3
-    }
-    
-    public interface IState
-    {
-        public void Enter();
-        public void Execute();
-        public void Exit();
-    }
-    
-    public class GameStateMachine
-    {
-        private IState _currentState;
+        public StateBehaviour ActiveState  => _stateMachine.ActiveState;
+        public bool           AllowInput   => _stateMachine.ActiveStateId == playState.StateId || _stateMachine.ActiveStateId == pregameState.StateId;
+        public bool           IsInGame     => _stateMachine.ActiveStateId == playState.StateId;
         
-        public void ChangeState(IState newState)
-        {
-            _currentState?.Exit();
-
-            _currentState = newState;
-            _currentState.Enter();
-        }
+        [Networked] private TickTimer         Delay           { get; set; } 
+        [Networked] private int               DelayedStateId  { get; set; }
         
-        public IState GetCurrentState() => _currentState;
+        [Header("Game State References")]
+        public PregameStateBehaviour          pregameState;
+        public PlayStateBehaviour             playState;
+        public WinStateBehaviour              winState;
         
-        public void Update()
-        {
-            _currentState?.Execute();
-        }
-    }
+        private StateMachine<StateBehaviour>  _stateMachine;
 
-    public abstract class GameState : IState
-    {
-        protected NewGameManager Owner;
-
-        public GameState(NewGameManager owner)
+        public void FixedUpdate()
         {
-            Owner = owner;
-        }
-        
-        protected virtual void SetUI(bool isActive) { }
-        
-        public virtual void Enter()   { }
-        public virtual void Execute() { }
-        public virtual void Exit()    { }
-    }
-    
-    public class WaitingState : GameState
-    {
-        public WaitingState(NewGameManager owner) : base(owner) { }
-
-        protected override void SetUI(bool isActive)
-        {
-            // Set Waiting UI to Active
-            // Set Player List UI to Active
-            // Set Player Ready UI to Inactive
-            // Set Player Joined UI to Active
-            
-        }
-        
-        public override void Enter()
-        {
-            SetUI(true);
-            
-            // If Host
-            // Start Map Generation
-            // Generate Rooms -> Set Room Connections -> Generate Streets -> Generate Relics
-            
-            // If Client
-            // Try get Map Data
-            // Set Map Data
-            // Set Networked Objects Data (PlayerData, Relic ...) 스폰으로 생성된 오브젝트들은 알아서 동기화가 되나?
-        }
-
-        public bool IsAllPlayerJoined = false;
-
-        public override void Execute()
-        {
-            // Check if all players are Joined and Ready
-            if (IsAllPlayerJoined)
+            if (DelayedStateId >= 0 && Delay.ExpiredOrNotRunning(Runner))
             {
-                // Start Game
-                Owner.ChangeGameState(EGameState.Playing);
+                _stateMachine.ForceActivateState(DelayedStateId);
+                DelayedStateId = -1;
             }
         }
-
-        public override void Exit()
-        {
-            // Set Waiting UI to Inactive
-            SetUI(false);
-        }
-    }
-    
-    public class PlayingState : GameState
-    {
-        public PlayingState(NewGameManager owner) : base(owner) { }
         
-        public override void Enter()
+        public void Server_SetState<T>() where T : StateBehaviour
         {
-            // Set Playing UI to Active
+            Assert.Check(HasInputAuthority, "호스트만 상태를 변경할 수 있습니다.");
             
-            // Set profit quota timer 
+            Delay = TickTimer.None;
+            DelayedStateId = _stateMachine.GetState<T>().StateId;
         }
-
-        public override void Execute()
-        {
-            // Check timer
-            // if timer is 0
-            //
-            
-            Owner.ChangeGameState(EGameState.Playing); 
-        }
-
-        public override void Exit()
-        {
-            
-        }
-    }
-    
-    public class FinishState : GameState
-    {
-        public FinishState(NewGameManager owner) : base(owner) { }
         
-        public override void Enter()
+        public void Server_DelaySetState<T>(float delay) where T : StateBehaviour
         {
+            Assert.Check(HasInputAuthority, "호스트만 상태를 변경할 수 있습니다.");
             
+#if UNITY_EDITOR
+            Debug.Log($"{delay}초 후 {nameof(T)}로 상태 변경 예약");
+#endif
+            Delay = TickTimer.CreateFromSeconds(Runner, delay);
+            DelayedStateId = _stateMachine.GetState<T>().StateId;
         }
 
-        public override void Execute()
+        public void CollectStateMachines(List<IStateMachine> stateMachines)
         {
-            
-        }
-
-        public override void Exit()
-        {
-            // Disconnect all players
+            _stateMachine = new StateMachine<StateBehaviour>("Game_State", pregameState, playState, winState);
+            stateMachines.Add(_stateMachine);
         }
     }
 }

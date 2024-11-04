@@ -6,8 +6,8 @@ namespace New_Neo_LT.Scripts
 {
     public enum KCCProcessorType
     {
-        None,
-        Movement,
+        None = -1,
+        Movement = 0,
         Jumping,
         Sprinting,
         Crouching,
@@ -34,10 +34,11 @@ namespace New_Neo_LT.Scripts
            characterStats.InitializeStats();
        }
        
-       public void Teleport(Vector3 position, Quaternion rotation)
+       public void Teleport(Vector3 position, Quaternion rotation = default)
        {
            kcc.SetPosition(position);
-           kcc.SetLookRotation(rotation);
+           if(rotation != default)
+               kcc.SetLookRotation(rotation);
        }
     }
 }

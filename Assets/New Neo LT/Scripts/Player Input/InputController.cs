@@ -47,7 +47,7 @@ namespace New_Neo_LT.Scripts.Player_Input
         
         /*------------------------------------------------------------------------------------------------------------*/
 
-        #region Unity Events...
+        #region Monobehaviour Events...
 
         private void Start()
         {
@@ -157,6 +157,12 @@ namespace New_Neo_LT.Scripts.Player_Input
         
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
+            if (runner.IsServer)
+            {
+                
+            }
+            
+            
             if (player != runner.LocalPlayer)
                 return;
 

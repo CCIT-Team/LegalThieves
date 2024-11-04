@@ -1,6 +1,4 @@
-using System;
 using Fusion;
-using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Elements.Relic

@@ -1,5 +1,4 @@
 using System.Linq;
-using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -23,31 +22,27 @@ namespace LegalThieves
         [SerializeField] private Transform         spawnpoint;
         [SerializeField] private Transform         spawnpointPivot;
         [SerializeField] private float             gametime;
+        
         private int playerindex = 0;//마테리얼 적용용, 나중에 삭제
         
         [Networked] private TickTimer RemainTime { get; set; }
-
-        [Networked] private TempPlayer Winner { get; set; }     //삭제 혹은 변경 예정
-
-        [Networked, OnChangedRender(nameof(GameStateChanged))] private EGameState State { get; set; }
-
+        [Networked, OnChangedRender(nameof(OnGameStateChanged))] private EGameState State { get; set; }
         [Networked, Capacity(4)] private NetworkDictionary<PlayerRef, TempPlayer> Players => default;
+        [Networked, Capacity(120)] private NetworkArray<int> Relics { get; }
+        [Networked, Capacity(40), OnChangedRender(nameof(CheckAllRoomExplained))] public NetworkArray<int> ExplainedRooms { get; } = MakeInitializer(Enumerable.Repeat(-1, 40).ToArray());
 
+        //[Networked, Capacity(10), ] private Queue RelicQueue { get; set; }
+        
         [SerializeField] RelicDisplayer[] RelicBox = new RelicDisplayer[4];
-
         [SerializeField] CampPointUI campPointUI;
 
-        [Networked, Capacity(120)] private NetworkArray<int> Relics { get; }
-
-        [Networked, Capacity(40), OnChangedRender(nameof(CheckAllRoomExplained))] public NetworkArray<int> ExplainedRooms { get; } = MakeInitializer(Enumerable.Repeat(-1, 40).ToArray());
 
         #region Overrided user callback functions in NetworkBehaviour
 
         public override void Spawned()
         {
-            Winner = null;
             State = EGameState.Waiting;
-            UIManager.Singleton.SetWaitUI(State, Winner);
+            //UIManager.Singleton.SetWaitUI(State, Winner);
             Runner.SetIsSimulated(Object, true);
 
             AudioManager.instance.PlayJungleBgm(true);
@@ -76,22 +71,11 @@ namespace LegalThieves
             }
         }
 
-        private void OnTriggerEnter(Collider other)
-        {
-            if (!Runner.IsServer || Winner != null || other.attachedRigidbody == null ||
-                !other.attachedRigidbody.TryGetComponent(out TempPlayer player)) 
-                return;
-            
-            UnreadyAll();
-            Winner = player;
-            State = EGameState.Waiting;
-        }
-
         #endregion
         
         #region GameLogic Methods
 
-        private void GameStateChanged()
+        private void OnGameStateChanged()
         {
             
         }
@@ -190,15 +174,18 @@ namespace LegalThieves
         
         #endregion
 
-        #region Join, Left Methods
+        #region Join, Left Callbacks
 
         public void PlayerJoined(PlayerRef player)
         {
             if (!HasStateAuthority) 
                 return;
+            
             GetNextSpawnpoint(90f, out var position, out var rotation);
+            
             var playerObject = Runner.Spawn(playerPrefab, position, rotation, player);
             Players.Add(player, playerObject.GetComponent<TempPlayer>());
+            
             RelicBox[Players.Count - 1].owner = playerObject.GetComponent<TempPlayer>();
             campPointUI.AddPlayer(playerObject.GetComponent<TempPlayer>());
             if (playerindex >= 4)

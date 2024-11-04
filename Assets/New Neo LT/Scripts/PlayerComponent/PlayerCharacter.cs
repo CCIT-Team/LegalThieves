@@ -1,9 +1,11 @@
 using Fusion;
 using Fusion.Addons.KCC;
 using LegalThieves;
+using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 
@@ -14,7 +16,7 @@ namespace New_Neo_LT.Scripts
     {
         [Header("Player Components")]
         [SerializeField] private Transform             camTarget;
-        [SerializeField] private TMP_Text           playerStats;
+        [SerializeField] private TMP_Text              playerNickname;
 
         [Header("Player Setup")]
         [Range(-90, 90)]
@@ -22,6 +24,15 @@ namespace New_Neo_LT.Scripts
         [SerializeField] private float                 lookSensitivity  = 0.15f;
         [SerializeField] private Vector3               jumpImpulse      = new(0f, 5f, 0f);
         [SerializeField] private float                 interactionRange = 5f;
+        
+        [Networked] 
+        public PlayerRef          Ref        { get; set; }
+        [Networked] 
+        public byte               Index      { get; set; }
+        [Networked, OnChangedRender(nameof(NicknameChanged))] 
+        public NetworkString<_16> Nickname   { get; set; }
+        [Networked] 
+        private float             CrouchSync { get; set; } = 1f;
         
         private NetworkButtons  _previousButtons;
         private Vector2         _accumulatedMouseDelta;
@@ -34,7 +45,7 @@ namespace New_Neo_LT.Scripts
         
         private RaycastHit      _rayCastHit;
 
-        [Networked] private float CrouchSync { get; set; } = 1f;
+        public static PlayerCharacter Local { get; set; }
 
         #region Animation Hashes...
 
@@ -52,9 +63,23 @@ namespace New_Neo_LT.Scripts
 
         public override void Spawned()
         {
-            InitializeCharacterComponents();
-            InitializePlayerComponents();
-            InitializePlayerNetworkedProperties();
+            base.Spawned();
+
+            if (Object.HasStateAuthority)
+            {
+                PlayerRegistry.Server_Add(Runner, Object.InputAuthority, this);
+            }
+
+            if (Object.HasInputAuthority)
+            {
+                Local = this;
+                InitializeCharacterComponents();
+                InitializePlayerComponents();
+                InitializePlayerNetworkedProperties();
+            }
+            
+            
+            NicknameChanged();
         }
         
         public override void FixedUpdateNetwork()
@@ -84,9 +109,6 @@ namespace New_Neo_LT.Scripts
 
         private void InitializePlayerComponents()
         {
-            if (!HasInputAuthority)
-                return;
-            
             camTarget ??= transform.Find("CamTarget");
             CameraFollow.Singleton.SetTarget(camTarget);
             
@@ -103,6 +125,19 @@ namespace New_Neo_LT.Scripts
         public void SetPlayerName(string playerName)
         {
             _playerName = playerName;
+        }
+        
+        private void NicknameChanged()
+        {
+            playerNickname.text = Nickname.Value;
+        }
+        
+        public void Server_Init(PlayerRef pRef, byte index)
+        {
+            Debug.Assert(Runner.IsServer);
+
+            Ref = pRef;
+            Index = index;
         }
         
         #region Player Input Methods...
