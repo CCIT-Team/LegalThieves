@@ -30,9 +30,9 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             }
         }
         
-        public int GetRemainingTime()
+        public float GetRemainingTime()
         {
-            return (int?)Delay.RemainingTime(Runner) ?? -1;
+            return Delay.RemainingTime(Runner) ?? -1;
         }
         
         public void Server_SetState<T>() where T : StateBehaviour
