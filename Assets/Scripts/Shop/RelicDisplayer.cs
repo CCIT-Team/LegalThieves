@@ -40,7 +40,7 @@ public class RelicDisplayer : NetworkBehaviour
                 DisplayedRelics.Set(i, relicID);
                 player.playerBoxItems[i] = relicID;
 
-                int roomID = RelicManager.Singleton.GetTempRelicWithIndex(relicID).RoomNum;
+                int roomID = 0;//RelicManager.instance.GetTempRelicWithIndex(relicID).RoomNum;
                 if (explainCount.Length < roomID)
                     Array.Resize(ref explainCount, roomID);
                 explainCount[roomID] += 1;

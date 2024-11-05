@@ -44,15 +44,15 @@ public class CampPointUI : NetworkBehaviour
         if(Soldrelics.Count > 0)
             foreach (var relicID in Soldrelics)
             {
-                goldPoint += RelicManager.Singleton.GetTempRelicWithIndex(relicID).GoldPoint;
-                renownPoint += RelicManager.Singleton.GetTempRelicWithIndex(relicID).RenownPoint;
+                //goldPoint += RelicManager.instance.GetTempRelicWithIndex(relicID).GoldPoint;
+                //renownPoint += RelicManager.instance.GetTempRelicWithIndex(relicID).RenownPoint;
             }
         foreach (var relicID in DisplayedRelics)
         {
             if(relicID != -1)
             {
-                goldPoint += RelicManager.Singleton.GetTempRelicWithIndex(relicID).GoldPoint;
-                renownPoint += RelicManager.Singleton.GetTempRelicWithIndex(relicID).RenownPoint;
+                //goldPoint += RelicManager.instance.GetTempRelicWithIndex(relicID).GoldPoint;
+                //renownPoint += RelicManager.instance.GetTempRelicWithIndex(relicID).RenownPoint;
             }
         }
         renownPoint += gameLogic.ExplainedRooms.Count(a => a == players.IndexOf(player)) * 50;
