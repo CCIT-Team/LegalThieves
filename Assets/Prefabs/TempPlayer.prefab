@@ -426,13 +426,18 @@ MonoBehaviour:
   sprintProcessor: {fileID: 7556963233328221503, guid: b7147414adb9e7244be871ed37d39173, type: 3}
   crouchProcessor: {fileID: 7556963233328221503, guid: aacff19f101670d43b45a0a4a389fd90, type: 3}
   camTarget: {fileID: 7529312243237300391}
-  animator: {fileID: 0}
+  _animator: {fileID: 0}
   maxPitch: 85
   lookSensitivity: 0.15
   jumpImpulse: {x: 0, y: 8, z: 0}
   maxHealth: 100
   maxStemina: 100
   <AbilityRange>k__BackingField: 5
+  EPlayerWinPoint: 0
+  _goldPoint: 0
+  _renownPoint: 0
+  _remainPoint: 0
+  _maxPoint: 0
   isReady: 0
   playerBoxItems: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
   _inventoryItems: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
@@ -600,8 +605,8 @@ MonoBehaviour:
   TotalWords: 6
   ApplyTiming: 2
   SyncSettings: 111
-  StateHashes: 0000000052824073f2f813bd31001b6d844598e3702be21236ef67a916eb40993a7f13df47ce4ef0010acb4bb45938cc2cb3efd2c7df733b729af0b57a51832c0d6e1d1e9d188e2f3d62dde1958cc202077cdad404ffea649c153d7ad15bd7b35207ae0992df1204f6220623a53abee62784bfe5ecb186cf
-  TriggerHashes: 00000000851772150d286c4012afc47e
+  StateHashes: 0000000052824073f2f813bd31001b6d844598e3702be21236ef67a916eb40993a7f13df47ce4ef0010acb4bb45938cc2cb3efd2c7df733b729af0b57a51832c0d6e1d1e9d188e2f3d62dde1958cc202077cdad404ffea649c153d7ad15bd7b35207ae0992df1204f6220623a53abee62784bfe5ecb186cfc63906bfeda10fdd0f0e331cd7feedb0
+  TriggerHashes: 00000000851772150d286c4012afc47e335f060fc63906bf
 --- !u!1001 &6599315047129645769
 PrefabInstance:
   m_ObjectHideFlags: 0

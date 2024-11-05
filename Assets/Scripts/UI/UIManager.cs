@@ -111,7 +111,7 @@ namespace LegalThieves
                     break;
             }
         }
-        
+
         public void UpdateLeaderboard(KeyValuePair<PlayerRef, TempPlayer>[] players)
         {
             for (var i = 0; i < leaderboardItems.Length; i++)
@@ -122,14 +122,14 @@ namespace LegalThieves
                 {
                     if (players[i].Key == localTempPlayer.Runner.LocalPlayer)
                     {
-                        
+
                     }
                     item.nameText.text = players[i].Value.Name;
                     item.heightText.text = $"{players[i].Value.Score}m";
                 }
                 else
                 {
-                    item.nameText.text   = "";
+                    item.nameText.text = "";
                     item.heightText.text = "";
                 }
             }

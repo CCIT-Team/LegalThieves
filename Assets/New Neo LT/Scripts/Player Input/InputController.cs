@@ -23,6 +23,7 @@ namespace New_Neo_LT.Scripts.Player_Input
         Sprint,          // Shift
         Crouch,          // Ctrl
         Inventory,       // Tab
+        Slot1, Slot2, Slot3, Slot4, Slot5, Slot6, Slot7, Slot8, Slot9,Slot10,
         InputButtonCount // 버튼 개수
     }
 
@@ -81,6 +82,17 @@ namespace New_Neo_LT.Scripts.Player_Input
             _inputActions.Skills.F.performed         += InteractionF;
             _inputActions.Skills.G.performed         += InteractionG;
             _inputActions.UI.Tab.performed           += Inventory;
+            _inputActions.ItemSlot._1.performed      += Slot1;
+            _inputActions.ItemSlot._2.performed      += Slot2;
+            _inputActions.ItemSlot._3.performed      += Slot3;
+            _inputActions.ItemSlot._4.performed      += Slot4;
+            _inputActions.ItemSlot._5.performed      += Slot5;
+            _inputActions.ItemSlot._6.performed      += Slot6;
+            _inputActions.ItemSlot._7.performed      += Slot7;
+            _inputActions.ItemSlot._8.performed      += Slot8;
+            _inputActions.ItemSlot._9.performed      += Slot9;
+            _inputActions.ItemSlot._10.performed     += Slot10;
+
         }
 
         private Vector2 _mouseDeltaVector;
@@ -150,11 +162,51 @@ namespace New_Neo_LT.Scripts.Player_Input
         {
             _accumulateInput.Buttons.Set(EInputButton.Inventory, ctx.ReadValueAsButton());
         }
-        
+
+        private void Slot1(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.Slot1, ctx.ReadValueAsButton());
+        }
+        private void Slot2(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.Slot2, ctx.ReadValueAsButton());
+        }
+        private void Slot3(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.Slot3, ctx.ReadValueAsButton());
+        }
+        private void Slot4(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.Slot4, ctx.ReadValueAsButton());
+        }
+        private void Slot5(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.Slot5, ctx.ReadValueAsButton());
+        }
+        private void Slot6(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.Slot6, ctx.ReadValueAsButton());
+        }
+        private void Slot7(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.Slot7, ctx.ReadValueAsButton());
+        }
+        private void Slot8(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.Slot8, ctx.ReadValueAsButton());
+        }
+        private void Slot9(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.Slot9, ctx.ReadValueAsButton());
+        }
+        private void Slot10(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.Slot10, ctx.ReadValueAsButton());
+        }
         #endregion
 
         #region INetworkRunnerCallbacks...
-        
+
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
             if (runner.IsServer)

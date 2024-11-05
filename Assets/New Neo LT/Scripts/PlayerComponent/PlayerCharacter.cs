@@ -33,6 +33,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
         
+
         private NetworkButtons  _previousButtons;
         private Vector2         _accumulatedMouseDelta;
         private string          _playerName;
@@ -40,10 +41,20 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private bool            _isSprinting;
         private bool            CanJump   => kcc.FixedData.IsGrounded;
         private bool            CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
-        
-        
-        private RaycastHit      _rayCastHit;
 
+
+
+       
+
+        [SerializeField] private int[] inventory = new int[10];
+        [SerializeField] private int slotIndex =0;
+
+
+
+
+        private RaycastHit      _rayCastHit;
+        [SerializeField]
+        private PlayerInteraction PlayerInteraction;
         public static PlayerCharacter Local { get; set; }
 
         #region Animation Hashes...
@@ -118,7 +129,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void InitializePlayerNetworkedProperties()
         {
-            
+            for (int i = 0; i < inventory.Length; i++)
+            {
+                inventory[i] = -1;
+            }
         }
         
         public void SetPlayerName(string playerName)
@@ -174,8 +188,33 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 CrouchSync = 0;
             if(playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Crouch))
                 CrouchSync = 1;
-                
-            
+
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction2))
+                PlayerInteraction.CheckInteraction();
+
+            if(playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot1))
+                slotIndex = 0;
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot2))
+                slotIndex = 1;
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot3))
+                slotIndex = 2;
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot4))
+                slotIndex = 3;
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot5))
+                slotIndex = 4;
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
+                slotIndex = 5;
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot7))
+                slotIndex = 6;
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot8))
+                slotIndex = 7;
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot9))
+                slotIndex = 8;
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot10))
+                slotIndex = 9;
+
+           
+
             // Previous Buttons for comparison
             _previousButtons = playerInput.Buttons;
         }
@@ -229,12 +268,53 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             // 현재 들고있는 아이템에 따라 바뀜 아이템 클래스 구현 후 추가 예정
         }
+
+        #endregion
+
+        #region Inventory
         
+        //public int GetSlot(int relicId)
+        //{
+        //    inventory[slotIndex]
+        //}
+        public bool SetSlot(int relicId)
+        {
+            if (inventory[slotIndex] == -1 )
+            {
+                inventory[slotIndex] = relicId;
+
+                return true;
+            }
+            else
+            {
+                for(int i =0; i< inventory.Length; i++)
+                {
+                    if (inventory[i] == -1)
+                    {
+                        inventory[i] = relicId;
+
+                        return true;
+                    }
+                }
+             
+                Debug.Log("인벤토리 빈공간 없음");
+            
+            }
+           
+            return false;
+
+        }
+        public TMP_Text a;
+        public void SellRelic()
+        {
+
+        }
+
         #endregion
 
         #region RPC Methods...
 
-        
+
 
         #endregion
     }
