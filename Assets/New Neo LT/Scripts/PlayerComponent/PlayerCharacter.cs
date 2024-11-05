@@ -321,10 +321,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                     DamageTime = 0;
                     IsMovable = false;
                     StartCoroutine(StayDamageTime());
-                   
+                    NewUiManager.instance.OnProgressbar();
                 }
                 else if (!IsMovable)
                 {
+                    NewUiManager.instance.OffProgressbar();
                     IsMovable = true;
                     StopCoroutine(StayDamageTime());
                 }
@@ -353,7 +354,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (Object.HasStateAuthority && inventory[slotIndex] != -1) // 서버에서만 실행
             {
                 Debug.Log($"Damage to {inventory[slotIndex]}");
-             
+              
                 inventory[slotIndex] = -1; // 인벤토리에서 제거
                 UpdateInventoryUI(slotIndex, -1, false); // 로컬 UI 업데이트
                 IsMovable = true;

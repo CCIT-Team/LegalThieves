@@ -21,6 +21,12 @@ public class NewUiManager : MonoBehaviour
     }
     [SerializeField] private GameObject[] Slots;
     int preindex ;
+
+    [SerializeField] private GameObject progressBar;
+    [SerializeField] private InteractionProgressUITemp InteractionProgressUITemp;
+
+
+
     private void Start()
     {
         Slots[0].transform.GetChild(1).gameObject.SetActive(true);
@@ -42,4 +48,20 @@ public class NewUiManager : MonoBehaviour
       //  tempImage.sprite = icon;    <--¿©±â¼­ ·¼¸¯ sprite ¹Ù²ã²¸¾ßÇÔ
         tempImage.enabled = isFull;
     }
+
+
+    public void OnProgressbar()
+    {
+        progressBar.SetActive(true);
+        InteractionProgressUITemp.StartProgress(10f, "À¯¹° ÈÑ¼Õ Áß", "À¯¹° ÈÑ¼Õ ¿Ï·á!");
+
+    }
+    public void OffProgressbar()
+    {
+        progressBar.SetActive(false);
+         
+
+    }
+
+
 }
