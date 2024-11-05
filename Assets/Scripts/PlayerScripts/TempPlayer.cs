@@ -489,7 +489,7 @@ namespace LegalThieves
         {
             _animator.SetTrigger(Jump);
             //source.Play();
-            AudioManager.instance.PlaySfx(AudioManager.Sfx.JUMP_01);
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.JUMP_01, transform.position, transform.position);
         }
 
         private void Attacked()
