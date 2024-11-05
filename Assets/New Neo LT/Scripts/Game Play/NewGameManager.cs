@@ -169,9 +169,16 @@ namespace New_Neo_LT.Scripts.Game_Play
         //
         #endregion
 
+        #region RelicTemp
+        public void SellRelic(PlayerRef player, int RelicId)
+        {
+           //Relic re = RelicManager(°¡Á¦).GetRelic(RelicId)    //·¼¸¯ Ç®¿¡¼­ ÇØ´ç ·¼¸¯ ¹Þ¾Æ¿È
+           
+        }
+        #endregion
         #region RPC Methods...
 
-        
+
 
         #endregion
     }

@@ -14,15 +14,15 @@ public class RelicObject : NetworkBehaviour, IInteractable
 
     public void OnInteract(NetworkRunner runner)
     {
-        // 아이템 줍기 로직 처리
-        // 여기서 서버에서만 아이템을 없애도록 하여 다른 플레이어와의 동기화를 유지합니다.
+    
         if (HasStateAuthority)
         {
             Debug.Log($"Picked up {relicData.displayName}");
-            if (PlayerRegistry.GetPlayer(runner.LocalPlayer).SetSlot(relicData.id))
+            if (PlayerRegistry.GetPlayer(runner.LocalPlayer).SetSlot(relicData))
             {
                 runner.Despawn(Object);
             }
         }
     }
+
 }
