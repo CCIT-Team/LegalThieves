@@ -450,18 +450,18 @@ namespace LegalThieves
                 var index = Table.AddRelics(_inventoryItems[UIManager.Singleton.currentSlotIndex], this);
                 if (index == -1) return;
                 var selectedItemIndex = _inventoryItems[UIManager.Singleton.currentSlotIndex];
-                var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(selectedItemIndex);
+                //var tempRelic = RelicManager.instance.GetTempRelicWithIndex(selectedItemIndex);
                 _inventoryItems[UIManager.Singleton.currentSlotIndex] = -1;
                 UIManager.Singleton.SetSlotImage(false);
-                tempRelic.SpawnRelic(Table.GetRelicPosition(index), Quaternion.Euler(Vector3.zero), Vector3.zero);
+                //tempRelic.SpawnRelic(Table.GetRelicPosition(index), Quaternion.Euler(Vector3.zero), Vector3.zero);
                 return;
             }
             if (_inventoryItems[UIManager.Singleton.currentSlotIndex] != -1) return;
             if (hitInfo.collider.TryGetComponent(out TempRelic relic))
             {
-                _inventoryItems[UIManager.Singleton.currentSlotIndex] = relic.relicNumber;
-                UIManager.Singleton.SetSlotImage(true, relic.relicSprites[relic.ChosenVisualIndex]);
-                relic.GetRelic(this);
+                //_inventoryItems[UIManager.Singleton.currentSlotIndex] = relic.relicNumber;
+                //UIManager.Singleton.SetSlotImage(true, relic.relicSprites[relic.ChosenVisualIndex]);
+                //relic.GetRelic(this);
             }
         }
         
@@ -474,10 +474,10 @@ namespace LegalThieves
                 return;
 
             var selectedItemIndex = _inventoryItems[UIManager.Singleton.currentSlotIndex];
-            var tempRelic = RelicManager.Singleton.GetTempRelicWithIndex(selectedItemIndex);
+            //var tempRelic = RelicManager.instance.GetTempRelicWithIndex(selectedItemIndex);
             _inventoryItems[UIManager.Singleton.currentSlotIndex] = -1;
             UIManager.Singleton.SetSlotImage(false);
-            tempRelic.SpawnRelic(camTarget.position, camTarget.rotation, camTarget.forward);
+            //tempRelic.SpawnRelic(camTarget.position, camTarget.rotation, camTarget.forward);
         }
 
         private void UpdateCamTarget()
