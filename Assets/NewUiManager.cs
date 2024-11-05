@@ -34,9 +34,12 @@ public class NewUiManager : MonoBehaviour
     }
 
     //아이템 들어오면 스프라이트에 이미지 넣는 메서드
-    public void SetRelicSprite(int index,Sprite icon,bool isFull) {
+    public void SetRelicSprite(int index,int relicId, bool isFull) {
+        
+        //relic 검색해서 가져오고
+        
         Image tempImage = Slots[index].transform.GetChild(2).GetComponent<Image>();
-        tempImage.sprite = icon;
+      //  tempImage.sprite = icon;    <--여기서 렐릭 sprite 바꿔껴야함
         tempImage.enabled = isFull;
     }
 }

@@ -48,13 +48,16 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
 
 
-        [SerializeField] private RelicData[] inventory = new RelicData[10];
-        [SerializeField] private int slotIndex =0;
+        [SerializeField] private int[] inventory = new int[10];
+        [SerializeField] private int slotIndex = 0;
 
 
         private void Start()
         {
-            inventory = new RelicData[10]; // 인벤토리 초기화
+            for (int i = 0; i < 10; i++)
+            {
+                inventory[i] = -1;
+            }
         }
 
         [Networked]
@@ -143,7 +146,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void InitializePlayerNetworkedProperties()
         {
-            inventory = new RelicData[10];
+           
         }
         
         public void SetPlayerName(string playerName)
@@ -306,15 +309,15 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             }
         }
 
-        public bool SetSlot(RelicData relic)
+        public bool SetSlot(int relicId)
         {
             if (Object.HasStateAuthority) // 서버 권한 확인
             {
                 // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
-                if (inventory[slotIndex] == null)
+                if (inventory[slotIndex] == -1)
                 {
-                    inventory[slotIndex] = relic;
-                    UpdateInventoryUI(slotIndex, relic.icon, true);
+                    inventory[slotIndex] = relicId;
+                    UpdateInventoryUI(slotIndex, relicId.icon, true);
                     return true;
                 }
                 else
@@ -322,10 +325,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                     // 빈 슬롯을 찾아 아이템 추가
                     for (int i = 0; i < inventory.Length; i++)
                     {
-                        if (inventory[i] == null)
+                        if (inventory[i] == -1)
                         {
-                            inventory[i] = relic;
-                            UpdateInventoryUI(i, relic.icon, true);
+                            inventory[i] = relicId;
+                            UpdateInventoryUI(i, relicId, true);
                             return true;
                         }
                     }
@@ -335,23 +338,24 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             return false;
         }
 
-        private void UpdateInventoryUI(int index, Sprite icon, bool hasItem)
+        private void UpdateInventoryUI(int index, int relicId, bool hasItem)
         {
             if (Object.HasInputAuthority) // 로컬 플레이어 UI만 업데이트
             {
-                NewUiManager.Instance.SetRelicSprite(index, icon, hasItem);
+                NewUiManager.Instance.SetRelicSprite(index, relicId, hasItem);
             }
         }
         
 
         public void ThrowRelic()
         {
-            if (Object.HasStateAuthority && inventory[slotIndex] != null) // 서버에서만 실행
+            if (Object.HasStateAuthority && inventory[slotIndex] != -1) // 서버에서만 실행
             {
                 // 현재 선택된 슬롯의 아이템을 버림
-                Runner.Spawn(inventory[slotIndex].dropPrefab, camera.position + transform.forward * 2);
-                inventory[slotIndex] =  null; // 인벤토리에서 제거
-                UpdateInventoryUI(slotIndex, null, false); // 로컬 UI 업데이트
+                //렐릭 풀에서 인덱스 검사해서 가져와 오브젝트에 할당
+               // Runner.Spawn(오브젝트, camera.position + transform.forward * 2);
+                inventory[slotIndex] =  -1; // 인벤토리에서 제거
+                UpdateInventoryUI(slotIndex, -1, false); // 로컬 UI 업데이트
             }
             else if (Object.HasInputAuthority && inventory[slotIndex] == null)
             {
