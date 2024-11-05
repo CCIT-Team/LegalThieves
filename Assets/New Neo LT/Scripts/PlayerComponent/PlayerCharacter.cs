@@ -192,12 +192,15 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             // Sprint
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
                 kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
+                
             if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Sprint))
                 kcc.FixedData.KinematicSpeed = characterStats.MoveSpeed;
-            
+                
+
             // Jump
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump))
                 OnJumpButtonPressed();
+
             // Crouch
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Crouch))
                 CrouchSync = 0;
@@ -258,6 +261,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             kcc.Jump(jumpImpulse);
             animator.SetTrigger(AnimJumpTrigger);
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.JUMP_01, transform.position);
         }
         
         private Vector3 GetAnimationMoveVelocity()

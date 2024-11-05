@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2138056313714497176}
   - component: {fileID: 4847043816286522404}
   - component: {fileID: 1812617601711276161}
+  - component: {fileID: 8105282239732789082}
   m_Layer: 0
   m_Name: NewNeoPlayer
   m_TagString: Player
@@ -183,7 +184,6 @@ MonoBehaviour:
   inventory: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
   slotIndex: 0
   PlayerInteraction: {fileID: 1812617601711276161}
-  a: {fileID: 0}
 --- !u!114 &1812617601711276161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,6 +201,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   curInteractGameobject: {fileID: 0}
+--- !u!81 &8105282239732789082
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854763091732172352}
+  m_Enabled: 1
 --- !u!1 &888749077065809398
 GameObject:
   m_ObjectHideFlags: 0

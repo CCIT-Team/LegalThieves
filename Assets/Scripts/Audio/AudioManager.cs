@@ -6,6 +6,12 @@ using static AudioManager;
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager instance;
+
+    [Header("AudioManager Settings")]
+    [SerializeField] private float maxDistance = 15F;
+    [SerializeField] private float minDistance = 0.1F;
+    [SerializeField] private AudioRolloffMode rolloffMode = AudioRolloffMode.Logarithmic;
+
     [Header("#BGMJungle")]
     public AudioClip bgmJungleClip;
     public float bgmJungleVolume;
@@ -15,6 +21,9 @@ public class AudioManager : MonoBehaviour
     public AudioClip bgmCaveClip;
     public float bgmCaveVolume;
     AudioSource bgmCavePlayer;
+
+    private AudioSource localBgmPlayer;  // 로컬 BGM용 AudioSource
+
 
     [Header("#SFXTorchLoop")]
     public AudioClip sfxTorchLoopClip;
@@ -70,23 +79,23 @@ public class AudioManager : MonoBehaviour
     }
     void Init()
     {
-        //정글 배경음 플레이어 초기화
-        GameObject bgmJungleObject = new GameObject("BgmJunglePlayer");
-        bgmJungleObject.transform.parent = transform;
-        bgmJunglePlayer = bgmJungleObject.AddComponent<AudioSource>();
-        bgmJunglePlayer.playOnAwake = false;
-        bgmJunglePlayer.loop = true;
-        bgmJunglePlayer.volume = bgmJungleVolume;
-        bgmJunglePlayer.clip = bgmJungleClip;
+        ////정글 배경음 플레이어 초기화
+        //GameObject bgmJungleObject = new GameObject("BgmJunglePlayer");
+        //bgmJungleObject.transform.parent = transform;
+        //bgmJunglePlayer = bgmJungleObject.AddComponent<AudioSource>();
+        //bgmJunglePlayer.playOnAwake = false;
+        //bgmJunglePlayer.loop = true;
+        //bgmJunglePlayer.volume = bgmJungleVolume;
+        //bgmJunglePlayer.clip = bgmJungleClip;
 
-        //동굴 배경음 플레이어 초기화
-        GameObject bgmCaveObject = new GameObject("BgmCavePlayer");
-        bgmCaveObject.transform.parent = transform;
-        bgmCavePlayer = bgmCaveObject.AddComponent<AudioSource>();
-        bgmCavePlayer.playOnAwake = false;
-        bgmCavePlayer.loop = true;
-        bgmCavePlayer.volume = bgmCaveVolume;
-        bgmCavePlayer.clip = bgmCaveClip;
+        ////동굴 배경음 플레이어 초기화
+        //GameObject bgmCaveObject = new GameObject("BgmCavePlayer");
+        //bgmCaveObject.transform.parent = transform;
+        //bgmCavePlayer = bgmCaveObject.AddComponent<AudioSource>();
+        //bgmCavePlayer.playOnAwake = false;
+        //bgmCavePlayer.loop = true;
+        //bgmCavePlayer.volume = bgmCaveVolume;
+        //bgmCavePlayer.clip = bgmCaveClip;
 
         //횃불타는 소리 효과음 플레이어 초기화
         GameObject sfxTorchLoopObject = new GameObject("sfxTorchLoopPlayer");
@@ -241,10 +250,9 @@ public class AudioManager : MonoBehaviour
             sfxHRDFPlayer.Stop();
         }
     }
-
-    public void PlaySfx(Sfx sfx)
+    public void PlaySfx(Sfx sfx, Vector3 soundPosition)
     {
-        for(int index = 0;index < sfxPlayers.Length; index++)
+        for (int index = 0; index < sfxPlayers.Length; index++)
         {
             int loopIndex = (index + channelIndex) % sfxPlayers.Length;
 
@@ -252,9 +260,55 @@ public class AudioManager : MonoBehaviour
                 continue;
 
             channelIndex = loopIndex;
-            sfxPlayers[loopIndex].clip = sfxClips[(int)sfx];
-            sfxPlayers[loopIndex].Play();
+            AudioSource audioSource = sfxPlayers[loopIndex];
+            audioSource.clip = sfxClips[(int)sfx];
+
+            // 거리 기반 소리 감쇠 적용
+            float distance = Vector3.Distance(soundPosition, transform.position);
+            audioSource.volume = Mathf.Clamp01(1 - (distance / maxDistance));
+            audioSource.rolloffMode = rolloffMode;
+            audioSource.maxDistance = maxDistance;
+            audioSource.minDistance = minDistance;
+
+            audioSource.transform.position = soundPosition;
+            audioSource.Play();
             break;
         }
     }
+    //public void PlaySfx(Sfx sfx, Vector3 soundPosition, Vector3 listenerPosition)
+    //{
+    //    for (int index = 0; index < sfxPlayers.Length; index++)
+    //    {
+    //        int loopIndex = (index + channelIndex) % sfxPlayers.Length;
+
+    //        if (sfxPlayers[loopIndex].isPlaying)
+    //            continue;
+
+    //        channelIndex = loopIndex;
+    //        AudioSource audioSource = sfxPlayers[loopIndex];
+    //        audioSource.clip = sfxClips[(int)sfx];
+
+    //        // 거리 기반 소리 감쇠 적용
+    //        float distance = Vector3.Distance(soundPosition, listenerPosition);
+    //        audioSource.volume = Mathf.Clamp01(1 - (distance / maxDistance));
+    //        audioSource.rolloffMode = rolloffMode;
+    //        audioSource.maxDistance = maxDistance;
+    //        audioSource.minDistance = minDistance;
+
+    //        audioSource.transform.position = soundPosition;
+    //        audioSource.Play();
+    //        break;
+    //    }
+    //}
+
+    //public void StopSfx()
+    //{
+    //    foreach (AudioSource sfxPlayer in sfxPlayers)
+    //    {
+    //        if (sfxPlayer.isPlaying)
+    //        {
+    //            sfxPlayer.Stop();
+    //        }
+    //    }
+    //}
 }
