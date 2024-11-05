@@ -1,10 +1,13 @@
 using Fusion;
 using Fusion.Addons.KCC;
 using LegalThieves;
+using New_Neo_LT.Scripts.Elements.Relic;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
+using System;
 using TMPro;
 using UnityEngine;
+
 using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 
@@ -44,17 +47,31 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
 
 
-       
 
         [SerializeField] private int[] inventory = new int[10];
-        [SerializeField] private int slotIndex =0;
+        [SerializeField] private int slotIndex = 0;
 
 
+        private void Start()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                inventory[i] = -1;
+            }
+        }
 
+        [Networked]
+        private int renownPoint { get; set; }
+        [Networked]
+        private int goldPoint { get; set; }
+
+        private Transform camera;
 
         private RaycastHit      _rayCastHit;
         [SerializeField]
         private PlayerInteraction PlayerInteraction;
+        [SerializeField]
+        
         public static PlayerCharacter Local { get; set; }
 
         #region Animation Hashes...
@@ -121,7 +138,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             camTarget ??= transform.Find("CamTarget");
             CameraFollow.Singleton.SetTarget(camTarget);
-            
+            camera = camTarget;
             kcc.Settings.ForcePredictedLookRotation = true;
 
             _accumulatedMouseDelta = Runner.GetComponent<InputController>().AccumulatedMouseDelta;
@@ -129,10 +146,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void InitializePlayerNetworkedProperties()
         {
-            for (int i = 0; i < inventory.Length; i++)
-            {
-                inventory[i] = -1;
-            }
+           
         }
         
         public void SetPlayerName(string playerName)
@@ -188,32 +202,35 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 CrouchSync = 0;
             if(playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Crouch))
                 CrouchSync = 1;
-
+            //getRelic
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction2))
-                PlayerInteraction.CheckInteraction();
-
-            if(playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot1))
-                slotIndex = 0;
+                CheckInteraction();
+            //throwRelic
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction5))
+                ThrowRelic();
+                //slot
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot1))
+                SelectSlot(0);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot2))
-                slotIndex = 1;
+                SelectSlot(1);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot3))
-                slotIndex = 2;
+                SelectSlot(2);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot4))
-                slotIndex = 3;
+                SelectSlot(3);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot5))
-                slotIndex = 4;
+                SelectSlot(4);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
-                slotIndex = 5;
+                SelectSlot(5);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot7))
-                slotIndex = 6;
+                SelectSlot(6);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot8))
-                slotIndex = 7;
+                SelectSlot(7);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot9))
-                slotIndex = 8;
+                SelectSlot(8);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot10))
-                slotIndex = 9;
+                SelectSlot(9);
 
-           
+
 
             // Previous Buttons for comparison
             _previousButtons = playerInput.Buttons;
@@ -269,52 +286,96 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             // 현재 들고있는 아이템에 따라 바뀜 아이템 클래스 구현 후 추가 예정
         }
 
+        public void CheckInteraction()
+        {
+            if (Object.HasInputAuthority)
+            {
+                PlayerInteraction.CheckInteraction(camera);
+
+            }
+    
+        }
+
         #endregion
+
 
         #region Inventory
-        
-        //public int GetSlot(int relicId)
-        //{
-        //    inventory[slotIndex]
-        //}
+        public void SelectSlot(int index)
+        {
+            if (Object.HasInputAuthority) // 로컬 플레이어만 UI 업데이트
+            {
+                slotIndex = index;
+                NewUiManager.Instance.SelectTogle(index);
+            }
+        }
+
         public bool SetSlot(int relicId)
         {
-            if (inventory[slotIndex] == -1 )
+            if (Object.HasStateAuthority) // 서버 권한 확인
             {
-                inventory[slotIndex] = relicId;
-
-                return true;
-            }
-            else
-            {
-                for(int i =0; i< inventory.Length; i++)
+                // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
+                if (inventory[slotIndex] == -1)
                 {
-                    if (inventory[i] == -1)
-                    {
-                        inventory[i] = relicId;
-
-                        return true;
-                    }
+                    inventory[slotIndex] = relicId;
+                    UpdateInventoryUI(slotIndex, relicId.icon, true);
+                    return true;
                 }
-             
-                Debug.Log("인벤토리 빈공간 없음");
-            
+                else
+                {
+                    // 빈 슬롯을 찾아 아이템 추가
+                    for (int i = 0; i < inventory.Length; i++)
+                    {
+                        if (inventory[i] == -1)
+                        {
+                            inventory[i] = relicId;
+                            UpdateInventoryUI(i, relicId, true);
+                            return true;
+                        }
+                    }
+                    Debug.Log("인벤토리 빈공간 없음");
+                }
             }
-           
             return false;
-
         }
-        public TMP_Text a;
-        public void SellRelic()
-        {
 
+        private void UpdateInventoryUI(int index, int relicId, bool hasItem)
+        {
+            if (Object.HasInputAuthority) // 로컬 플레이어 UI만 업데이트
+            {
+                NewUiManager.Instance.SetRelicSprite(index, relicId, hasItem);
+            }
+        }
+        
+
+        public void ThrowRelic()
+        {
+            if (Object.HasStateAuthority && inventory[slotIndex] != -1) // 서버에서만 실행
+            {
+                // 현재 선택된 슬롯의 아이템을 버림
+                //렐릭 풀에서 인덱스 검사해서 가져와 오브젝트에 할당
+               // Runner.Spawn(오브젝트, camera.position + transform.forward * 2);
+                inventory[slotIndex] =  -1; // 인벤토리에서 제거
+                UpdateInventoryUI(slotIndex, -1, false); // 로컬 UI 업데이트
+            }
+            else if (Object.HasInputAuthority && inventory[slotIndex] == null)
+            {
+                Debug.Log("아이템이 없습니다.");
+            }
         }
 
         #endregion
 
+        #region PointSystem
+        public void SellRelic()
+        {
+            NewGameManager.Instance.SellRelic(Runner.LocalPlayer, slotIndex);
+        }
+        public void GetPoint()
+        {
+
+        }
+        #endregion
         #region RPC Methods...
-
-
 
         #endregion
     }
