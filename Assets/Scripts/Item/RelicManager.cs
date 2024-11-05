@@ -42,7 +42,7 @@ namespace LegalThieves
         [SerializeField]
         List<RelicData> relicDatas = new();
         [Networked, Capacity(200)]
-        NetworkLinkedList<TempRelic> relics => default;
+        NetworkLinkedList<RelicObject> relics => default;
 
         public TextAsset relicDataFile;
 
@@ -101,22 +101,23 @@ namespace LegalThieves
         //팔기 -> 포인트
 
 
-        public TempRelic SpawnRelic(int index = -1, Vector3 position = default)
+        public RelicObject SpawnRelic(int index = -1, Vector3 position = default)
         {
-            var relic = Runner.Spawn(relicPrefab[relicDatas[index].visualIndex-1], position).GetComponent<TempRelic>();
-            relic.data = relicDatas[index];
+            var relic = Runner.Spawn(relicPrefab[relicDatas[index-1].visualIndex-1], position).GetComponent<RelicObject>();
+            Debug.Log("Real"+(relicDatas[index-1].visualIndex - 1));
+            relic.relicData = relicDatas[index-1];
             relics.Add(relic);
-            relic.data.dataIndex = relics.Count-1;
+            relic.relicData.dataIndex = index;
             return relic;
         }
 
-        public bool DeSpawn(NetworkObject networkObject)
+        public bool DeSpawnRelic(NetworkObject networkObject)
         {
-            TempRelic relic;
-            if (networkObject.TryGetComponent<TempRelic>(out relic))
+            RelicObject relic;
+            if (networkObject.TryGetComponent<RelicObject>(out relic))
             {
                 relics.Remove(relic);
-                DeSpawn(networkObject);
+                Runner.Despawn(networkObject);
                 return true;
             }
             return false;

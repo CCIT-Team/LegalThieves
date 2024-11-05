@@ -317,7 +317,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 if (inventory[slotIndex] == -1)
                 {
                     inventory[slotIndex] = relicId;
-                    UpdateInventoryUI(slotIndex, relicId.icon, true);
+                    UpdateInventoryUI(slotIndex, relicId, true);
                     return true;
                 }
                 else
@@ -353,7 +353,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 // 현재 선택된 슬롯의 아이템을 버림
                 //렐릭 풀에서 인덱스 검사해서 가져와 오브젝트에 할당
-               // Runner.Spawn(오브젝트, camera.position + transform.forward * 2);
+                Debug.Log($"Drop {inventory[slotIndex]}");
+                RelicManager.instance.SpawnRelic(inventory[slotIndex], camera.position + transform.forward * 2);
+                //Runner.Spawn(오브젝트, camera.position + transform.forward * 2);
                 inventory[slotIndex] =  -1; // 인벤토리에서 제거
                 UpdateInventoryUI(slotIndex, -1, false); // 로컬 UI 업데이트
             }

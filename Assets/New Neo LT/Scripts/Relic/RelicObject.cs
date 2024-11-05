@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using New_Neo_LT.Scripts.Game_Play;
+using LegalThieves;
 
 public class RelicObject : NetworkBehaviour, IInteractable
 {
-    public RelicData relicData;
+    public LegalThieves.RelicData relicData;
     public string GetInteractPrompt()
     {
-        return string.Format("Pickup {0}", relicData.displayName);
+        return string.Format("Pickup {0}", relicData);
     }
 
     public void OnInteract(NetworkRunner runner)
@@ -17,10 +18,11 @@ public class RelicObject : NetworkBehaviour, IInteractable
     
         if (HasStateAuthority)
         {
-            Debug.Log($"Picked up {relicData.displayName}");
-            if (PlayerRegistry.GetPlayer(runner.LocalPlayer).SetSlot(relicData))
+            Debug.Log($"Picked up {relicData.visualIndex}");
+            if (PlayerRegistry.GetPlayer(runner.LocalPlayer).SetSlot(relicData.dataIndex))
             {
-                runner.Despawn(Object);
+                RelicManager.instance.DeSpawnRelic(Object);
+                //runner.Despawn(Object);
             }
         }
     }

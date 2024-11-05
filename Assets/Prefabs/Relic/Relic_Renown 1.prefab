@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 3105498506449574853}
   - component: {fileID: -3094008859625299954}
   - component: {fileID: 3906867221344342197}
-  - component: {fileID: 4061903896301202686}
   - component: {fileID: 8663706766228128761}
-  m_Layer: 0
+  - component: {fileID: 978457563002944781}
+  m_Layer: 7
   m_Name: Relic_Renown 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35,7 +35,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8731853111398232566}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4976794373059568797
@@ -106,7 +107,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 3906867221344342197}
-  - {fileID: 4061903896301202686}
+  - {fileID: 978457563002944781}
 --- !u!54 &-3094008859625299954
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -148,7 +149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SyncScale: 0
   SyncParent: 1
-  _interpolationTarget: {fileID: 2039316348899894179, guid: a3d6c5f2579b7374183e932e03eba8a2, type: 3}
+  _interpolationTarget: {fileID: 8731853111398232566}
   UsePreciseRotation: 0
   UseRenderSleepThresholds: 1
   RenderThresholds:
@@ -156,19 +157,6 @@ MonoBehaviour:
     Position: 0.01
     Rotation: 0.01
     Scale: 0.01
---- !u!114 &4061903896301202686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1886535664110915815}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f1f182fe60d7af4fb317f0a79d805d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  visual: {fileID: 0}
 --- !u!65 &8663706766228128761
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -190,3 +178,46 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.4992782, y: 0.49811524, z: 0.38045174}
   m_Center: {x: 0, y: 0.24904335, z: -0.000000074505806}
+--- !u!114 &978457563002944781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1886535664110915815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c558daf61633ae94192b78ae34b6e858, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &8432756120154884829
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8731853111398232566}
+  m_Layer: 0
+  m_Name: Root
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8731853111398232566
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8432756120154884829}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.000000017873367, y: 0.00000004281637, z: -0.00000001223528, w: 1}
+  m_LocalPosition: {x: 6, y: 0, z: -1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2039316348899894179}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
