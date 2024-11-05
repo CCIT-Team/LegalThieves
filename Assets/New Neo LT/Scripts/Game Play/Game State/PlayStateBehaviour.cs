@@ -12,7 +12,8 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         protected override void OnEnterState()
         {
             PlayerRegistry.ForEach(pc => pc.Teleport(NewGameManager.Instance.playMapData.GetSpawnPosition(pc.Index)));
-            NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Playtime);
+            
+                
         }
 
         protected override void OnEnterStateRender()
@@ -21,18 +22,19 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             Debug.Log("게임 플레이 상태 진입");
 #endif
             // UI 변경
+            NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Playtime);
         }
 
         protected override void OnRender()
         {
             
-            UIManager.Singleton.SetTimer(NewGameManager.State.GetRemainingTime());
+            UIManager.Singleton.SetTimer((int)NewGameManager.State.GetRemainingTime());
         }
         
         protected override void OnExitStateRender()
         {
             // UI 변경
-            UIManager.Singleton.SetTimer("Waiting...");
+            UIManager.Singleton.SetTimer("Waiting");
         }
     }
 }

@@ -21,7 +21,7 @@ namespace New_Neo_LT.Scripts.Game_Play
             if (!Runner.IsServer) 
                 return;
             
-            var leftPlayer = NewGameManager.GetPlayer(player);
+            var leftPlayer = PlayerRegistry.GetPlayer(player);
             if (leftPlayer != null)
             {
                 Runner.Despawn(leftPlayer.Object);
