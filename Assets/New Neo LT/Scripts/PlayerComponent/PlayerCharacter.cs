@@ -5,6 +5,7 @@ using New_Neo_LT.Scripts.Elements.Relic;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -44,13 +45,15 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private bool            _isSprinting;
         private bool            CanJump   => kcc.FixedData.IsGrounded;
         private bool            CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
-
+        private bool IsMovable = true;
 
 
 
         [SerializeField] private int[] inventory = new int[10];
         [SerializeField] private int slotIndex = 0;
 
+        private int MaxDamageTime =10;
+        float DamageTime = 0;
 
         private void Start()
         {
@@ -172,8 +175,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         // Player Input to player character state
         private void SetPlayerInput(NetInput playerInput)
         {
-            // Set Movement (WASD)
-            kcc.SetInputDirection(kcc.FixedData.TransformRotation * playerInput.Direction.X0Y());
             
             // Set face direction by mouse pointer position delta
             kcc.AddLookRotation(playerInput.LookDelta * lookSensitivity, -maxPitch, maxPitch);
@@ -202,34 +203,47 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 CrouchSync = 0;
             if(playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Crouch))
                 CrouchSync = 1;
-            //getRelic
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction2))
-                CheckInteraction();
-            //throwRelic
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction5))
-                ThrowRelic();
-                //slot
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot1))
-                SelectSlot(0);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot2))
-                SelectSlot(1);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot3))
-                SelectSlot(2);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot4))
-                SelectSlot(3);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot5))
-                SelectSlot(4);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
-                SelectSlot(5);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot7))
-                SelectSlot(6);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot8))
-                SelectSlot(7);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot9))
-                SelectSlot(8);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot10))
-                SelectSlot(9);
 
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction1))
+                CheckInteractionF();
+            if (IsMovable)
+
+            { // Set Movement (WASD)
+                kcc.SetInputDirection(kcc.FixedData.TransformRotation * playerInput.Direction.X0Y());
+
+                //getRelic
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction2))
+                    CheckInteractionE();
+                //throwRelic
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction5))
+                    ThrowRelic();
+
+                //slot
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot1))
+                    SelectSlot(0);
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot2))
+                    SelectSlot(1);
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot3))
+                    SelectSlot(2);
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot4))
+                    SelectSlot(3);
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot5))
+                    SelectSlot(4);
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
+                    SelectSlot(5);
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot7))
+                    SelectSlot(6);
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot8))
+                    SelectSlot(7);
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot9))
+                    SelectSlot(8);
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot10))
+                    SelectSlot(9);
+            }else
+            {
+                kcc.SetInputDirection(Vector3.zero);
+
+            }
 
 
             // Previous Buttons for comparison
@@ -286,16 +300,62 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             // 현재 들고있는 아이템에 따라 바뀜 아이템 클래스 구현 후 추가 예정
         }
 
-        public void CheckInteraction()
+        public void CheckInteractionE()
         {
-            if (Object.HasInputAuthority)
+            if (HasInputAuthority)
             {
                 PlayerInteraction.CheckInteraction(camera);
-
             }
-    
         }
 
+        public void CheckInteractionF()
+        {
+            if (HasInputAuthority && inventory[slotIndex] != -1)
+            {
+                if (IsMovable)
+                {
+                    DamageTime = 0;
+                    IsMovable = false;
+                    StartCoroutine(StayDamageTime());
+                   
+                }
+                else if (!IsMovable)
+                {
+                    IsMovable = true;
+                    StopCoroutine(StayDamageTime());
+                }
+            }
+            else { Debug.Log("아이템이 없습니다."); }
+        }
+
+        IEnumerator StayDamageTime()
+        {
+            while (!IsMovable)
+            {
+                DamageTime += 0.2f;
+                Debug.Log(DamageTime);
+                if (DamageTime >= MaxDamageTime)
+                {
+                    DamageToRelic();
+                    break;
+                }
+                yield return new WaitForSeconds(0.2f);
+            }
+            yield return null;
+        }
+
+        public void DamageToRelic()
+        {
+            if (Object.HasStateAuthority && inventory[slotIndex] != -1) // 서버에서만 실행
+            {
+                Debug.Log($"Damage to {inventory[slotIndex]}");
+             
+                inventory[slotIndex] = -1; // 인벤토리에서 제거
+                UpdateInventoryUI(slotIndex, -1, false); // 로컬 UI 업데이트
+                IsMovable = true;
+            }
+       
+        }
         #endregion
 
 
@@ -311,8 +371,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public bool SetSlot(int relicId)
         {
-            if (Object.HasStateAuthority) // 서버 권한 확인
-            {
+          
                 // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
                 if (inventory[slotIndex] == -1)
                 {
@@ -334,7 +393,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                     }
                     Debug.Log("인벤토리 빈공간 없음");
                 }
-            }
+            
             return false;
         }
 
@@ -359,7 +418,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 inventory[slotIndex] =  -1; // 인벤토리에서 제거
                 UpdateInventoryUI(slotIndex, -1, false); // 로컬 UI 업데이트
             }
-            else if (Object.HasInputAuthority && inventory[slotIndex] == null)
+            else if (Object.HasInputAuthority && inventory[slotIndex] == -1)
             {
                 Debug.Log("아이템이 없습니다.");
             }

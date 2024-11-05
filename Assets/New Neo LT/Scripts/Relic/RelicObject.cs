@@ -15,16 +15,15 @@ public class RelicObject : NetworkBehaviour, IInteractable
 
     public void OnInteract(NetworkRunner runner)
     {
-    
-        if (HasStateAuthority)
-        {
-            Debug.Log($"Picked up {relicData.visualIndex}");
+
+        Debug.Log($"Picked up {relicData.visualIndex}");
             if (PlayerRegistry.GetPlayer(runner.LocalPlayer).SetSlot(relicData.dataIndex))
             {
-                RelicManager.instance.DeSpawnRelic(Object);
+         
+            RelicManager.instance.DeSpawnRelic(Object);
                 //runner.Despawn(Object);
             }
-        }
+        
     }
 
 }

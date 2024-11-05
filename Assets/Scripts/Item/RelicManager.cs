@@ -113,8 +113,7 @@ namespace LegalThieves
 
         public bool DeSpawnRelic(NetworkObject networkObject)
         {
-            RelicObject relic;
-            if (networkObject.TryGetComponent<RelicObject>(out relic))
+            if (networkObject.TryGetComponent<RelicObject>(out RelicObject relic))
             {
                 relics.Remove(relic);
                 Runner.Despawn(networkObject);
