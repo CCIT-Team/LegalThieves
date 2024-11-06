@@ -12,8 +12,9 @@ public class ClickableIcon : MonoBehaviour, IPointerDownHandler
         Debug.Log("Down");
         if(transform.parent.parent.TryGetComponent<SellingUITest>( out var sellui))
         {
-            if (transform.parent == sellui.inventoryGrid)
-                sellui.SetSelectedRellicToGrid(gameObject, sellui.sellingTableGrid);
+            Debug.Log("Pass");
+            if (transform.parent.gameObject == sellui.inventoryGrid)
+                sellui.SetSelectedRellicToGrid(gameObject, sellui.sellingTableGrid); 
             else
                 sellui.SetSelectedRellicToGrid(gameObject, sellui.inventoryGrid);
         }

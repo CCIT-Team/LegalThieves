@@ -1,3 +1,5 @@
+using Fusion;
+using New_Neo_LT.Scripts.Game_Play;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,6 +26,8 @@ public class NewUiManager : MonoBehaviour
 
     [SerializeField] private GameObject progressBar;
     [SerializeField] private InteractionProgressUITemp InteractionProgressUITemp;
+
+    [SerializeField] private SellingUITest shopUI;
 
 
 
@@ -63,5 +67,32 @@ public class NewUiManager : MonoBehaviour
 
     }
 
+    public void ToggleShop(int[] inventory)
+    {
+        if(ToggleCusorSetting())
+        {
+            shopUI.gameObject.SetActive(true);
+            shopUI.SetInventoryGrid(inventory);
+        }
+        else
+        {
+            shopUI.ClearUI();
+            shopUI.gameObject.SetActive(false);
+        }
+        
+    }
 
+    public bool ToggleCusorSetting()
+    {
+        Cursor.visible = !Cursor.visible;
+        if (Cursor.visible)
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        return Cursor.visible;
+    }
 }
