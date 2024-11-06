@@ -269,7 +269,7 @@ namespace New_Neo_LT.Scripts.Player_Input
         
         public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
 
-        public async void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
+        public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
         
         public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data) { }
         public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress) { }

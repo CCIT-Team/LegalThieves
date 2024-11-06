@@ -1,55 +1,36 @@
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
 using Fusion;
+using JetBrains.Annotations;
+using New_Neo_LT.Scripts.Game_Play;
+using New_Neo_LT.Scripts.Relic;
 using UnityEngine;
-using static RelicCreation;
-using Random = UnityEngine.Random;
 
 namespace LegalThieves
 {
-    public enum RelicType { None = -1, Normal, Gold, Renown, Count } // 유물 타입 열거형
-
-    [Serializable]
-    public class RelicData
-    {
-        public RelicType relicType { get; private set; }
-        public int goldPoint { get; private set; }
-        public int renownPoint { get; private set; }
-        public int visualIndex { get; private set; }
-        public int dataIndex { get; set; }
-
-
-        public RelicData(RelicType type, int gold, int renown,int visual = 0)
-        {
-            relicType = type;
-            goldPoint = gold;
-            renownPoint = renown;
-            visualIndex = visual;
-        }
-    }
-
-
     public class RelicManager : NetworkBehaviour
     {
-        public static RelicManager instance = null;
+        public static RelicManager Instance;
 
         [Header("Components")]
-        [SerializeField] private NetworkPrefabRef[]  relicPrefab;
-        [SerializeField] private TempRoom[]          rooms;
+        [SerializeField] private NetworkPrefabRef    relicPrefab;
         [SerializeField] private Transform           relicPool;
+        
+        [Header("Relic Data")]
+        [Header("Gold Relics")]
+        [SerializeField] private GameObject[]        goldRelicVisuals;
+        [SerializeField] private Sprite[]            goldRelicSprites;
+        [Header("Renown Relics")]
+        [SerializeField] private GameObject[]        renownRelicVisuals;
+        [SerializeField] private Sprite[]            renownRelicSprites;
+        
+        
 
-        [SerializeField]
-        List<RelicData> relicDatas = new();
         [Networked, Capacity(200)]
-        NetworkLinkedList<RelicObject> relics => default;
-
-        public TextAsset relicDataFile;
+        NetworkLinkedList<RelicObject> Relics => default;
 
         private void Awake()
         {
-            if (instance == null)
-                instance = this;
+            if (Instance == null)
+                Instance = this;
             else
                 Destroy(this);
         }
@@ -58,73 +39,55 @@ namespace LegalThieves
         {
             if (!HasStateAuthority)
                 return;
-
-            ReadCSV();
-            Debug.Log("CSV 데이터 로드 완료: " + relicDatas.Count.ToString() + "개의 유물 데이터 로드됨");
-
-            if (Runner.Mode != SimulationModes.Host)
-                return;
-            for (int i = 0; i < 20; i++)
-            {
-                SpawnRelic(Random.Range(0, relicDatas.Count),new Vector3(Random.Range(-20, 20), 3, Random.Range(-20, 20)));
-            }
+            
+            for(var i = 0; i < NewGameManager.Instance.playMapData.RelicSpawnPointCount; i++)
+                SpawnRelic(NewGameManager.Instance.playMapData.GetRelicSpawnPosition(i));
         }
 
-        void ReadCSV()
+        public void SpawnRelic(Vector3 position = default)
         {
-            string[] rows = relicDataFile.text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 1; i < rows.Length; i++) // 헤더를 제외하고 시작
-            {
-                string[] data = rows[i].Split(new char[] { ',' }, StringSplitOptions.None);
-                if (!Enum.TryParse(data[0], out RelicType type))
-                {
-                    Debug.LogError($"Invalid Type on line {i + 1}");
-                    continue;
-                }
-
-                if (!int.TryParse(data[1], out int goldPoint) ||
-                    !int.TryParse(data[2], out int renownPoint)||
-                    !int.TryParse(data[3], out int visualIndex))
-                {
-                    Debug.LogError($"Data format error on line {i + 1}");
-                    continue;
-                }
-
-                RelicData relic = new RelicData(type, goldPoint,renownPoint, visualIndex);
-
-                relicDatas.Add(relic);
-            }
+            var netObj = Runner.Spawn(relicPrefab, position, Quaternion.identity, null, OnBeforeRelicSpawned);
+            netObj.transform.SetParent(relicPool);
+            var relic = netObj.GetComponent<RelicObject>();
+            
+            Relics.Add(relic);
         }
 
-        //생성, 드랍, 진열 -> 스폰
-        //줍기 -> 디스폰
-        //팔기 -> 포인트
-
-
-        public RelicObject SpawnRelic(int index = -1, Vector3 position = default)
+        // 유물 스폰 전에 유물 데이터를 설정합니다.
+        private void OnBeforeRelicSpawned(NetworkRunner runner, NetworkObject obj)
         {
-            var relic = Runner.Spawn(relicPrefab[relicDatas[index-1].visualIndex-1], position).GetComponent<RelicObject>();
-            Debug.Log("Real"+(relicDatas[index-1].visualIndex - 1));
-            relic.relicData = relicDatas[index-1];
-            relics.Add(relic);
-            relic.relicData.dataIndex = index;
-            return relic;
+            
         }
 
-        public bool DeSpawnRelic(NetworkObject networkObject)
+        public RelicObject GetRelicData(int index)
         {
-            if (networkObject.TryGetComponent<RelicObject>(out RelicObject relic))
-            {
-                relics.Remove(relic);
-                Runner.Despawn(networkObject);
-                return true;
-            }
-            return false;
+            return Relics[index];
+        }
+        
+        public int GetRelicIndex(RelicObject relic)
+        {
+            return Relics.IndexOf(relic);
         }
 
-        public RelicData GetRelicData(int index)
+        public Mesh GetRelicMesh(int index)
         {
-            return relicDatas[index];
+            return index < goldRelicVisuals.Length ? 
+                goldRelicVisuals[index].GetComponent<MeshFilter>().sharedMesh : 
+                renownRelicVisuals[index - goldRelicVisuals.Length].GetComponent<MeshFilter>().sharedMesh;
+        }
+        
+        public Material[] GetRelicMaterial(int index)
+        {
+            return index < goldRelicVisuals.Length ? 
+                goldRelicVisuals[index].GetComponent<MeshRenderer>().sharedMaterials : 
+                renownRelicVisuals[index - goldRelicVisuals.Length].GetComponent<MeshRenderer>().sharedMaterials;
+        }
+
+        public Sprite GetRelicSprite(int index)
+        {
+            return index < goldRelicVisuals.Length ? 
+                goldRelicSprites[index] : 
+                renownRelicSprites[index - goldRelicVisuals.Length];
         }
     }
 }

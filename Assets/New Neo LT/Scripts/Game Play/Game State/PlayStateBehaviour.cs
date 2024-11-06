@@ -11,8 +11,8 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         
         protected override void OnEnterState()
         {
-            PlayerRegistry.ForEach(pc => pc.Teleport(NewGameManager.Instance.playMapData.GetSpawnPosition(pc.Index)));
-            
+            if(HasStateAuthority)
+                PlayerRegistry.ForEach(pc => pc.Teleport(NewGameManager.Instance.playMapData.GetSpawnPosition(pc.Index)));
                 
         }
 
@@ -21,8 +21,12 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 #if UNITY_EDITOR
             Debug.Log("게임 플레이 상태 진입");
 #endif
-            // UI 변경
-            NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Playtime);
+            // WinState로 게임 상태 전환 예약
+            // 딜레이 시간은 게임 메니저 인스펙터로 관리
+            if (HasStateAuthority)
+            {
+                NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Playtime);
+            }
         }
 
         protected override void OnRender()

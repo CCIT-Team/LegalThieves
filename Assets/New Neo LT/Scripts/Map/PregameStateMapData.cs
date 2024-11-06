@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Map
 {
-    public class MapData : MonoBehaviour
+    public class PregameStateMapData : MonoBehaviour
     {
-        [SerializeField] private Transform[] spawnPoints;
+        [SerializeField] protected Transform[] spawnPoints;
         
         public int SpawnPointCount => spawnPoints.Length;
         
