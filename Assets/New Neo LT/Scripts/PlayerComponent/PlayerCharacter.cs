@@ -58,7 +58,18 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 inventory[i] = -1;
             }
+            // 로컬 플레이어인지 확인
+            if (!Object.HasInputAuthority) // Photon Fusion에서는 HasInputAuthority로 로컬인지 확인
+            {
+                // 로컬 플레이어가 아닌 경우 AudioListener 비활성화
+                AudioListener listener = GetComponentInChildren<AudioListener>();
+                if (listener != null)
+                {
+                    listener.enabled = false;
+                }
+            }
         }
+
 
         [Networked]
         private int renownPoint { get; set; }
@@ -247,9 +258,19 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             kcc.Jump(jumpImpulse);
             animator.SetTrigger(AnimJumpTrigger);
-            AudioManager.instance.PlaySfx(AudioManager.Sfx.JUMP_01, transform.position);
+            if (Object.HasStateAuthority) // 서버 권한을 가진 경우에만 RPC 호출
+            {
+                RPC_PlayJumpSound(transform.position);
+            }
         }
-        
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_PlayJumpSound(Vector3 position)
+        {
+            // 점프 소리 재생
+            AudioManager.instance.PlayJumpSfx(position, true);
+        }
+
         private Vector3 GetAnimationMoveVelocity()
         {
             if (kcc.Data.RealSpeed < 0.01f)

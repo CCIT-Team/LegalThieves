@@ -1,7 +1,7 @@
+using Fusion;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static AudioManager;
+using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
 {
@@ -15,199 +15,103 @@ public class AudioManager : MonoBehaviour
     [Header("#BGMJungle")]
     public AudioClip bgmJungleClip;
     public float bgmJungleVolume;
-    AudioSource bgmJunglePlayer;
 
     [Header("#BGMCave")]
     public AudioClip bgmCaveClip;
     public float bgmCaveVolume;
-    AudioSource bgmCavePlayer;
 
     private AudioSource localBgmPlayer;  // 로컬 BGM용 AudioSource
 
-
-    [Header("#SFXTorchLoop")]
+    [Header("#SFX")]
     public AudioClip sfxTorchLoopClip;
     public float sfxTorchLoopVolume;
-    AudioSource sfxTorchLoopPlayer;
-
-    [Header("#SFXBreath")]
     public AudioClip sfxBreathClip;
     public float sfxBreathVolume;
-    AudioSource sfxBreathPlayer;
-
-    [Header("#SFXGF")]  //GF->Gravel Footsteps 의 준말 유적내부 걸을떄 발소리
     public AudioClip sfxGFClip;
     public float sfxGFVolume;
-    AudioSource sfxGFPlayer;
-
-    [Header("#SFXDF")]  //GF->Gravel Footsteps 의 준말 유적외부 걸을떄 발소리
     public AudioClip sfxDFClip;
     public float sfxDFVolume;
-    AudioSource sfxDFPlayer;
-
-    [Header("#SFXHRGF")]  //HRGF->Heavy Running Gravel Footsteps 의 준말 유적내부 뛸떄 발소리
     public AudioClip sfxHRGFClip;
     public float sfxHRGFVolume;
-    AudioSource sfxHRGFPlayer;
-
-    [Header("#SFXHRDF")]  //HRDF->Heavy Running Dirt Footsteps 의 준말 유적외부 뛸떄 발소리
     public AudioClip sfxHRDFClip;
     public float sfxHRDFVolume;
-    AudioSource sfxHRDFPlayer;
+    public AudioClip sfxJUMPClip;
+    public float sfxJUMPVolume;
 
-    [Header("#SFX")]
-    public AudioClip[] sfxClips;
-    public float sfxVolume;
-    public int channels;
-    AudioSource[] sfxPlayers;
-    int channelIndex;
+    private AudioSource sfxTorchLoopPlayer;
+    private AudioSource sfxBreathPlayer;
+    private AudioSource sfxGFPlayer;
+    private AudioSource sfxDFPlayer;
+    private AudioSource sfxHRGFPlayer;
+    private AudioSource sfxHRDFPlayer;
+    private AudioSource sfxJumpPlayer;
 
-    public enum Bgm {Cave, Jungle }
-
-    public enum Sfx 
-    { 
-        ATTACK_01, ATTACK_02, BandageSound1, BodyDrop5, Club1, Club2, Coins10, DEATH,
-        DEATH3, JUMP_01, JUMP_03, TorchSwing4, TorchSwing6, TurningFlashlightOn, 
-        TurningFlashlightOff3
-    }
-
+    private Dictionary<string, AudioSource> sfxPlayers = new Dictionary<string, AudioSource>();
 
     private void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+        DontDestroyOnLoad(gameObject);
         Init();
     }
-    void Init()
+
+    private void Init()
     {
-        ////정글 배경음 플레이어 초기화
-        //GameObject bgmJungleObject = new GameObject("BgmJunglePlayer");
-        //bgmJungleObject.transform.parent = transform;
-        //bgmJunglePlayer = bgmJungleObject.AddComponent<AudioSource>();
-        //bgmJunglePlayer.playOnAwake = false;
-        //bgmJunglePlayer.loop = true;
-        //bgmJunglePlayer.volume = bgmJungleVolume;
-        //bgmJunglePlayer.clip = bgmJungleClip;
+        // 로컬 플레이어의 BGM 플레이어 초기화
+        localBgmPlayer = CreateAudioSource("LocalBgmPlayer", null, 0, true, isBgm: true);
 
-        ////동굴 배경음 플레이어 초기화
-        //GameObject bgmCaveObject = new GameObject("BgmCavePlayer");
-        //bgmCaveObject.transform.parent = transform;
-        //bgmCavePlayer = bgmCaveObject.AddComponent<AudioSource>();
-        //bgmCavePlayer.playOnAwake = false;
-        //bgmCavePlayer.loop = true;
-        //bgmCavePlayer.volume = bgmCaveVolume;
-        //bgmCavePlayer.clip = bgmCaveClip;
+        // SFX 플레이어 초기화
+        sfxTorchLoopPlayer = CreateAudioSource("TorchLoopPlayer", sfxTorchLoopClip, sfxTorchLoopVolume, loop: true, isBgm: false);
+        sfxBreathPlayer = CreateAudioSource("BreathPlayer", sfxBreathClip, sfxBreathVolume, loop: true, isBgm: false);
+        sfxGFPlayer = CreateAudioSource("GFPlayer", sfxGFClip, sfxGFVolume, loop: false, isBgm: false);
+        sfxDFPlayer = CreateAudioSource("DFPlayer", sfxDFClip, sfxDFVolume, loop: false, isBgm: false);
+        sfxHRGFPlayer = CreateAudioSource("HRGFPlayer", sfxHRGFClip, sfxHRGFVolume, loop: false, isBgm: false);
+        sfxHRDFPlayer = CreateAudioSource("HRDFPlayer", sfxHRDFClip, sfxHRDFVolume, loop: false, isBgm: false);
+        sfxJumpPlayer = CreateAudioSource("JumpPlayer", sfxJUMPClip, sfxJUMPVolume, loop: false, isBgm: false);
 
-        //횃불타는 소리 효과음 플레이어 초기화
-        GameObject sfxTorchLoopObject = new GameObject("sfxTorchLoopPlayer");
-        sfxTorchLoopObject.transform.parent = transform;
-        sfxTorchLoopPlayer = sfxTorchLoopObject.AddComponent<AudioSource>();
-        sfxTorchLoopPlayer.playOnAwake = false;
-        sfxTorchLoopPlayer.loop = true;
-        sfxTorchLoopPlayer.volume = sfxTorchLoopVolume;
-        sfxTorchLoopPlayer.clip = sfxTorchLoopClip;
-
-        //뛸 때 숨소리 효과음 플레이어 초기화
-        GameObject sfxBreathObject = new GameObject("sfxBreathPlayer");
-        sfxBreathObject.transform.parent = transform;
-        sfxBreathPlayer = sfxBreathObject.AddComponent<AudioSource>();
-        sfxBreathPlayer.playOnAwake = false;
-        sfxBreathPlayer.loop = true;
-        sfxBreathPlayer.volume = sfxBreathVolume;
-        sfxBreathPlayer.clip = sfxBreathClip;
-
-        //유적 내부 걸을때 발소리 효과음 플레이어 초기화
-        GameObject sfxGFObject = new GameObject("sfxHRGFPlayer");
-        sfxGFObject.transform.parent = transform;
-        sfxGFPlayer = sfxGFObject.AddComponent<AudioSource>();
-        sfxGFPlayer.playOnAwake = false;
-        sfxGFPlayer.loop = true;
-        sfxGFPlayer.volume = sfxGFVolume;
-        sfxGFPlayer.clip = sfxGFClip;
-
-        //유적 외부 걸을때 발소리 효과음 플레이어 초기화
-        GameObject sfxDFObject = new GameObject("sfxHRGFPlayer");
-        sfxDFObject.transform.parent = transform;
-        sfxDFPlayer = sfxDFObject.AddComponent<AudioSource>();
-        sfxDFPlayer.playOnAwake = false;
-        sfxDFPlayer.loop = true;
-        sfxDFPlayer.volume = sfxDFVolume;
-        sfxDFPlayer.clip = sfxDFClip;
-
-        //유적 내부 뛸 때 발소리 효과음 플레이어 초기화
-        GameObject sfxHRGFObject = new GameObject("sfxHRGFPlayer");
-        sfxHRGFObject.transform.parent = transform;
-        sfxHRGFPlayer = sfxHRGFObject.AddComponent<AudioSource>();
-        sfxHRGFPlayer.playOnAwake = false;
-        sfxHRGFPlayer.loop = true;
-        sfxHRGFPlayer.volume = sfxHRGFVolume;
-        sfxHRGFPlayer.clip = sfxHRGFClip;
-
-        //유적 외부 뛸 때 발소리 효과음 플레이어 초기화
-        GameObject sfxHRDFObject = new GameObject("sfxHRDFPlayer");
-        sfxHRDFObject.transform.parent = transform;
-        sfxHRDFPlayer = sfxHRDFObject.AddComponent<AudioSource>();
-        sfxHRDFPlayer.playOnAwake = false;
-        sfxHRDFPlayer.loop = true;
-        sfxHRDFPlayer.volume = sfxHRDFVolume;
-        sfxHRDFPlayer.clip = sfxHRDFClip;
-
-        //효과음 플레이어 초기화
-        GameObject sfxObject = new GameObject("sfxPlayer");
-        sfxObject.transform.parent = transform;
-        sfxPlayers = new AudioSource[channels]; 
-
-        for(int index=0; index < sfxPlayers.Length; index++)
-        {
-            sfxPlayers[index] = sfxObject.AddComponent<AudioSource>();
-            sfxPlayers[index].playOnAwake=false;
-            sfxPlayers[index].volume = sfxVolume;
-        }
+        sfxPlayers.Add("TorchLoop", sfxTorchLoopPlayer);
+        sfxPlayers.Add("Breath", sfxBreathPlayer);
+        sfxPlayers.Add("GF", sfxGFPlayer);
+        sfxPlayers.Add("DF", sfxDFPlayer);
+        sfxPlayers.Add("HRGF", sfxHRGFPlayer);
+        sfxPlayers.Add("HRDF", sfxHRDFPlayer);
+        sfxPlayers.Add("Jump", sfxJumpPlayer);
     }
 
-    public void PlayJungleBgm(bool isPlay)
+    private AudioSource CreateAudioSource(string name, AudioClip clip, float volume, bool loop, bool isBgm)
     {
-        if (isPlay)
-        {
-            bgmJunglePlayer.Play();
-        }
-        else { bgmJunglePlayer.Stop();
-        }
+        GameObject audioObject = new GameObject(name);
+        audioObject.transform.parent = transform;
+        AudioSource audioSource = audioObject.AddComponent<AudioSource>();
+        audioSource.clip = clip;
+        audioSource.volume = volume;
+        audioSource.loop = loop;
+
+        ConfigureAudioSource(audioSource);
+        return audioSource;
     }
-    public void PlayCaveBgm(bool isPlay)
+
+    private void ConfigureAudioSource(AudioSource audioSource)
     {
-        if (isPlay)
-        {
-            bgmCavePlayer.Play();
-        }
-        else
-        {
-            bgmCavePlayer.Stop();
-        }
+        // 거리별 소리 감소 효과 설정
+        audioSource.spatialBlend = 1.0f; // 3D 사운드로 설정
+        audioSource.rolloffMode = rolloffMode;
+        audioSource.maxDistance = maxDistance;
+        audioSource.minDistance = minDistance;
+        audioSource.dopplerLevel = 0f; // Doppler 효과 비활성화
     }
-    public void PlayTorchLoopSfx(bool isPlay)
+
+    public void PlayGFSfx(Vector3 playerPosition, bool isPlay)
     {
-        if (isPlay)
-        {
-            sfxTorchLoopPlayer.Play();
-        }
-        else
-        {
-            sfxTorchLoopPlayer.Stop();
-        }
-    }
-    public void PlayBreathSfx(bool isPlay)
-    {
-        if (isPlay)
-        {
-            sfxBreathPlayer.Play();
-        }
-        else
-        {
-            sfxBreathPlayer.Stop();
-        }
-    }
-    public void PlayGFSfx(bool isPlay)
-    {
+        sfxGFPlayer.transform.position = playerPosition;
         if (isPlay)
         {
             sfxGFPlayer.Play();
@@ -217,8 +121,10 @@ public class AudioManager : MonoBehaviour
             sfxGFPlayer.Stop();
         }
     }
-    public void PlayDFSfx(bool isPlay)
+
+    public void PlayDFSfx(Vector3 playerPosition, bool isPlay)
     {
+        sfxDFPlayer.transform.position = playerPosition;
         if (isPlay)
         {
             sfxDFPlayer.Play();
@@ -228,8 +134,10 @@ public class AudioManager : MonoBehaviour
             sfxDFPlayer.Stop();
         }
     }
-    public void PlayHRGFSfx(bool isPlay)
+
+    public void PlayHRGFSfx(Vector3 playerPosition, bool isPlay)
     {
+        sfxHRGFPlayer.transform.position = playerPosition;
         if (isPlay)
         {
             sfxHRGFPlayer.Play();
@@ -239,8 +147,10 @@ public class AudioManager : MonoBehaviour
             sfxHRGFPlayer.Stop();
         }
     }
-    public void PlayHRDFSfx(bool isPlay)
+
+    public void PlayHRDFSfx(Vector3 playerPosition, bool isPlay)
     {
+        sfxHRDFPlayer.transform.position = playerPosition;
         if (isPlay)
         {
             sfxHRDFPlayer.Play();
@@ -250,65 +160,66 @@ public class AudioManager : MonoBehaviour
             sfxHRDFPlayer.Stop();
         }
     }
-    public void PlaySfx(Sfx sfx, Vector3 soundPosition)
+
+    public void PlayTorchLoopSfx(Vector3 playerPosition, bool isPlay)
     {
-        for (int index = 0; index < sfxPlayers.Length; index++)
+        sfxTorchLoopPlayer.transform.position = playerPosition;
+        if (isPlay)
         {
-            int loopIndex = (index + channelIndex) % sfxPlayers.Length;
-
-            if (sfxPlayers[loopIndex].isPlaying)
-                continue;
-
-            channelIndex = loopIndex;
-            AudioSource audioSource = sfxPlayers[loopIndex];
-            audioSource.clip = sfxClips[(int)sfx];
-
-            // 거리 기반 소리 감쇠 적용
-            float distance = Vector3.Distance(soundPosition, transform.position);
-            audioSource.volume = Mathf.Clamp01(1 - (distance / maxDistance));
-            audioSource.rolloffMode = rolloffMode;
-            audioSource.maxDistance = maxDistance;
-            audioSource.minDistance = minDistance;
-
-            audioSource.transform.position = soundPosition;
-            audioSource.Play();
-            break;
+            sfxTorchLoopPlayer.Play();
+        }
+        else
+        {
+            sfxTorchLoopPlayer.Stop();
         }
     }
-    //public void PlaySfx(Sfx sfx, Vector3 soundPosition, Vector3 listenerPosition)
-    //{
-    //    for (int index = 0; index < sfxPlayers.Length; index++)
-    //    {
-    //        int loopIndex = (index + channelIndex) % sfxPlayers.Length;
 
-    //        if (sfxPlayers[loopIndex].isPlaying)
-    //            continue;
+    public void PlayBreathSfx(Vector3 playerPosition, bool isPlay)
+    {
+        sfxBreathPlayer.transform.position = playerPosition;
+        if (isPlay)
+        {
+            sfxBreathPlayer.Play();
+        }
+        else
+        {
+            sfxBreathPlayer.Stop();
+        }
+    }
 
-    //        channelIndex = loopIndex;
-    //        AudioSource audioSource = sfxPlayers[loopIndex];
-    //        audioSource.clip = sfxClips[(int)sfx];
+    public void PlayJumpSfx(Vector3 playerPosition, bool isPlay)
+    {
+        sfxJumpPlayer.transform.position = playerPosition;
+        if (isPlay)
+        {
+            sfxJumpPlayer.Play();
+        }
+        else
+        {
+            sfxJumpPlayer.Stop();
+        }
+    }
 
-    //        // 거리 기반 소리 감쇠 적용
-    //        float distance = Vector3.Distance(soundPosition, listenerPosition);
-    //        audioSource.volume = Mathf.Clamp01(1 - (distance / maxDistance));
-    //        audioSource.rolloffMode = rolloffMode;
-    //        audioSource.maxDistance = maxDistance;
-    //        audioSource.minDistance = minDistance;
+    public void UpdateBgmBasedOnLocation(bool isInCave)
+    {
+        if (isInCave)
+        {
+            PlayLocalBgm(bgmCaveClip, bgmCaveVolume);
+        }
+        else
+        {
+            PlayLocalBgm(bgmJungleClip, bgmJungleVolume);
+        }
+    }
 
-    //        audioSource.transform.position = soundPosition;
-    //        audioSource.Play();
-    //        break;
-    //    }
-    //}
-
-    //public void StopSfx()
-    //{
-    //    foreach (AudioSource sfxPlayer in sfxPlayers)
-    //    {
-    //        if (sfxPlayer.isPlaying)
-    //        {
-    //            sfxPlayer.Stop();
-    //        }
-    //    }
-    //}
+    private void PlayLocalBgm(AudioClip clip, float volume)
+    {
+        if (localBgmPlayer.clip != clip)
+        {
+            localBgmPlayer.Stop();
+            localBgmPlayer.clip = clip;
+            localBgmPlayer.volume = volume;
+            localBgmPlayer.Play();
+        }
+    }
 }
