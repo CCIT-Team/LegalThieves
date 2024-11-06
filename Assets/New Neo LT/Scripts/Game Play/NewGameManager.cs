@@ -21,8 +21,8 @@ namespace New_Neo_LT.Scripts.Game_Play
         
         public static float Playtime => Instance.playtime;
         
-        public MapData pregameMapData;
-        public MapData playMapData;
+        public PregameStateMapData pregameMapData;
+        public PlayStateMapData    playMapData;
         
         [Networked, Capacity(4)] 
         public NetworkDictionary<PlayerRef, PlayerCharacter> Players => default;
@@ -172,7 +172,7 @@ namespace New_Neo_LT.Scripts.Game_Play
         #region RelicTemp
         public void SellRelic(PlayerRef player, int RelicId)
         {
-           //Relic re = RelicManager(°¡Á¦).GetRelic(RelicId)    //·¼¸¯ Ç®¿¡¼­ ÇØ´ç ·¼¸¯ ¹Þ¾Æ¿È
+           //Relic re = RelicManager(ï¿½ï¿½ï¿½ï¿½).GetRelic(RelicId)    //ï¿½ï¿½ï¿½ï¿½ Ç®ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¿ï¿½
            
         }
         #endregion

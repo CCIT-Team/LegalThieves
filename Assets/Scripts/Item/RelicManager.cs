@@ -1,4 +1,6 @@
 using Fusion;
+using JetBrains.Annotations;
+using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Relic;
 using UnityEngine;
 
@@ -11,6 +13,16 @@ namespace LegalThieves
         [Header("Components")]
         [SerializeField] private NetworkPrefabRef    relicPrefab;
         [SerializeField] private Transform           relicPool;
+        
+        [Header("Relic Data")]
+        [Header("Gold Relics")]
+        [SerializeField] private GameObject[]        goldRelicVisuals;
+        [SerializeField] private Sprite[]            goldRelicSprites;
+        [Header("Renown Relics")]
+        [SerializeField] private GameObject[]        renownRelicVisuals;
+        [SerializeField] private Sprite[]            renownRelicSprites;
+        
+        
 
         [Networked, Capacity(200)]
         NetworkLinkedList<RelicObject> Relics => default;
@@ -27,23 +39,24 @@ namespace LegalThieves
         {
             if (!HasStateAuthority)
                 return;
-
-            for (var i = 0; i < 5; i++)
-            {
-                SpawnRelic(new Vector3(0, 1, i));
-            }
+            
+            for(var i = 0; i < NewGameManager.Instance.playMapData.RelicSpawnPointCount; i++)
+                SpawnRelic(NewGameManager.Instance.playMapData.GetRelicSpawnPosition(i));
         }
-
-        //생성, 드랍, 진열 -> 스폰
-        //줍기 -> 디스폰
-        //팔기 -> 포인트
-
 
         public void SpawnRelic(Vector3 position = default)
         {
-            var relic = Runner.Spawn(relicPrefab, position).GetComponent<RelicObject>();
+            var netObj = Runner.Spawn(relicPrefab, position, Quaternion.identity, null, OnBeforeRelicSpawned);
+            netObj.transform.SetParent(relicPool);
+            var relic = netObj.GetComponent<RelicObject>();
             
             Relics.Add(relic);
+        }
+
+        // 유물 스폰 전에 유물 데이터를 설정합니다.
+        private void OnBeforeRelicSpawned(NetworkRunner runner, NetworkObject obj)
+        {
+            
         }
 
         public RelicObject GetRelicData(int index)
@@ -54,6 +67,27 @@ namespace LegalThieves
         public int GetRelicIndex(RelicObject relic)
         {
             return Relics.IndexOf(relic);
+        }
+
+        public Mesh GetRelicMesh(int index)
+        {
+            return index < goldRelicVisuals.Length ? 
+                goldRelicVisuals[index].GetComponent<MeshFilter>().sharedMesh : 
+                renownRelicVisuals[index - goldRelicVisuals.Length].GetComponent<MeshFilter>().sharedMesh;
+        }
+        
+        public Material[] GetRelicMaterial(int index)
+        {
+            return index < goldRelicVisuals.Length ? 
+                goldRelicVisuals[index].GetComponent<MeshRenderer>().sharedMaterials : 
+                renownRelicVisuals[index - goldRelicVisuals.Length].GetComponent<MeshRenderer>().sharedMaterials;
+        }
+
+        public Sprite GetRelicSprite(int index)
+        {
+            return index < goldRelicVisuals.Length ? 
+                goldRelicSprites[index] : 
+                renownRelicSprites[index - goldRelicVisuals.Length];
         }
     }
 }

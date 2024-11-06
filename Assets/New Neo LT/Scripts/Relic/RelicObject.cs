@@ -1,7 +1,6 @@
 using Fusion;
 using Fusion.Addons.Physics;
 using New_Neo_LT.Scripts.Game_Play;
-using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Relic
@@ -12,7 +11,8 @@ namespace New_Neo_LT.Scripts.Relic
         [SerializeField] private BoxCollider boxCollider;
         [SerializeField] private NetworkRigidbody3D networkRigidbody;
         
-        public bool IsActive => IsActivated;
+        [Networked]
+        private int TypeIndex { get; set; }
         
         [Networked]
         private int GoldPoint { get; set; }
@@ -27,9 +27,26 @@ namespace New_Neo_LT.Scripts.Relic
             base.Spawned();
             IsActivated = true;
             
-            if(!HasStateAuthority)
-                return;
-            GoldPoint = Random.Range(1, 10);
+            if(HasStateAuthority) 
+                InitRelic();
+
+            SetVisual();
+        }
+        
+        private void InitRelic()
+        {
+            TypeIndex = Random.Range(0, 5);
+            var tempPoint = Random.Range(501, 1000);
+            if( TypeIndex < 3)
+                SetPoints(tempPoint, 1000 - tempPoint);
+            else
+                SetPoints(1000 - tempPoint, tempPoint);
+        }
+        
+        private void SetVisual()
+        {
+            visual.GetComponent<MeshFilter>().mesh = LegalThieves.RelicManager.Instance.GetRelicMesh(TypeIndex);
+            visual.GetComponent<MeshRenderer>().materials = LegalThieves.RelicManager.Instance.GetRelicMaterial(TypeIndex);
         }
         
         public string GetInteractPrompt()
@@ -39,9 +56,6 @@ namespace New_Neo_LT.Scripts.Relic
 
         public void OnInteract(PlayerRef player)
         {
-            // if (!HasStateAuthority) 
-            //     return;
-            
             if (PlayerRegistry.GetPlayer(player).SetSlot(LegalThieves.RelicManager.Instance.GetRelicIndex(this)))
             {
                 IsActivated = false;
@@ -50,9 +64,6 @@ namespace New_Neo_LT.Scripts.Relic
         
         public void OnThrowAway(PlayerRef player)
         {
-            if (!HasStateAuthority) 
-                return;
-
             var ownerTf = PlayerRegistry.GetPlayer(player).GetCamTarget();
             var spawnPoint = ownerTf.forward + ownerTf.position;
             
@@ -60,10 +71,9 @@ namespace New_Neo_LT.Scripts.Relic
             IsActivated = true;
         }
 
-        public void OnApplyRelic(NetworkRunner runner)
+        public void OnApplyRelic(PlayerRef player)
         {
-            if (!HasStateAuthority) 
-                return;
+            
         }
 
         private void OnIsActiveChange()
@@ -87,6 +97,16 @@ namespace New_Neo_LT.Scripts.Relic
         public int GetRenownPoint()
         {
             return RenownPoint;
+        }
+        
+        public (int, int) GetPoints()
+        {
+            return (GoldPoint, RenownPoint);
+        }
+        
+        public int GetTypeIndex()
+        {
+            return TypeIndex;
         }
     }
 }

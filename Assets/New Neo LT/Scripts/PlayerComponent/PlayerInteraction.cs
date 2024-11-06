@@ -1,6 +1,5 @@
 using UnityEngine;
 using Fusion;
-using New_Neo_LT.Scripts;
 
 public interface IInteractable
 {
