@@ -10,11 +10,11 @@ public class Item_Torch_Temp : MonoBehaviour
     [SerializeField] private ParticleSystem[] torchParticleSystems;
     [SerializeField] private Light torchLight;
 
-    void Start()
-    {
-        torchLight = this.GetComponentInChildren<Light>();
-        torchParticleSystems = this.GetComponentsInChildren<ParticleSystem>();
-    }
+    //void Start()
+    //{
+    //    torchLight = this.GetComponentInChildren<Light>();
+    //    torchParticleSystems = this.GetComponentsInChildren<ParticleSystem>();
+    //}
 
     public void TurnOnLight()
     {

@@ -6,6 +6,7 @@ using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -36,17 +37,17 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         public NetworkString<_16> Nickname   { get; set; }
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
-        
+        [Networked] 
+        private bool IsPickTorch { get; set; }
 
         private NetworkButtons  _previousButtons;
         private Vector2         _accumulatedMouseDelta;
         private string          _playerName;
-        
-        private bool            _isSprinting;
+
         private bool            CanJump   => kcc.FixedData.IsGrounded;
         private bool            CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
         private bool IsMovable = true;
-
+       
 
 
         [SerializeField] private int[] inventory = new int[10];
@@ -54,6 +55,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private int MaxDamageTime =10;
         float DamageTime = 0;
+    
+  
+        [SerializeField] private GameObject itemTorch;
+        [SerializeField] private Item_Torch_Temp Torch;
 
         private void Start()
         {
@@ -84,7 +89,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private static readonly int AnimIsCrouchSync  = Animator.StringToHash("IsCrouchSync");
         private static readonly int AnimLookPit       = Animator.StringToHash("LookPit");
         private static readonly int AnimJumpTrigger   = Animator.StringToHash("Jump");
-        
+        private static readonly int AnimTorch         = Animator.StringToHash("pickTorch");
         #endregion
         
         /*------------------------------------------------------------------------------------------------------------*/
@@ -118,7 +123,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if(GetInput(out NetInput playerInput))
                 SetPlayerInput(playerInput);
         }
-        
         public override void Render()
         {
             // Update Player facing direction
@@ -126,11 +130,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 kcc.SetLookRotation(kcc.GetLookRotation() + _accumulatedMouseDelta * lookSensitivity);
             camTarget.localRotation = Quaternion.Euler(kcc.GetLookRotation().x, 0f, 0f);
             
+
             var moveVelocity = GetAnimationMoveVelocity();
             animator.SetFloat(AnimMoveDirX    , moveVelocity.x, 0.05f, Time.deltaTime);
             animator.SetFloat(AnimMoveDirY    , moveVelocity.z, 0.05f, Time.deltaTime);
             animator.SetFloat(AnimIsCrouchSync, CrouchSync);
             animator.SetFloat(AnimLookPit     , kcc.FixedData.LookPitch);
+            animator.SetBool(AnimTorch        , IsPickTorch);
         }
 
         
@@ -176,6 +182,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void SetPlayerInput(NetInput playerInput)
         {
             
+
             // Set face direction by mouse pointer position delta
             kcc.AddLookRotation(playerInput.LookDelta * lookSensitivity, -maxPitch, maxPitch);
             
@@ -209,10 +216,15 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction1))
                 CheckInteractionF();
+
+          
             if (IsMovable)
 
             { // Set Movement (WASD)
                 kcc.SetInputDirection(kcc.FixedData.TransformRotation * playerInput.Direction.X0Y());
+               
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.InteractionQ))
+                    CheckInteractionQ();
 
                 //getRelic
                 if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction2))
@@ -253,6 +265,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             _previousButtons = playerInput.Buttons;
         }
 
+       
         #endregion
 
         #region Movement Methods...
@@ -281,8 +294,59 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             return transform.InverseTransformVector(velocity);
         }
 
+        private void CheckInteractionQ()
+        {
+            if (!IsPickTorch)
+            {
+       
+                StartCoroutine(WaitOn());
+
+
+            } else{
+                StartCoroutine(WaitOff());
+           
+            }
+            
+        }
+        private IEnumerator WaitOn()
+        {
+            Debug.Log("횃불 ON");
+            RpcSetTorchState(true);
+           
+            yield return new WaitForSeconds(1f);
+            Torch.TurnOnLight();
+            //IsHoldingItem = true;
+
+        }
+        private IEnumerator WaitOff()
+        {
+            Torch.TurnOffLight();
+         
+            IsPickTorch = false;
+            yield return new WaitForSeconds(1.0f);
+            itemTorch.SetActive(false);
+
+           // IsHoldingItem = false;
+        }
+        //private IEnumerator TurnOnTorch()
+        //{
+        //    RpcSetTorchState(true);  // 모든 클라이언트에게 횃불 상태 전파
+        //    yield return new WaitForSeconds(1f);
+
+        //    Torch.transform.GetChild(0).gameObject.SetActive(true);
+        //    Torch.GetComponent<Item_Torch_Temp>().TurnOnLight();
+        //}
+
+        //private IEnumerator TurnOffTorch()
+        //{
+        //    Torch.transform.GetChild(0).gameObject.SetActive(false);
+        //    Torch.GetComponent<Item_Torch_Temp>().TurnOffLight();
+
+        //    RpcSetTorchState(false);
+        //    yield return null;
+        //}
         #endregion
-        
+
         #region Interaction Methods...
 
         private void OnMouseLeftClick()
@@ -442,6 +506,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
         #endregion
         #region RPC Methods...
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        private void RpcSetTorchState(bool state)
+        {
+            IsPickTorch = state;
+            itemTorch.SetActive(state);
+        }
 
         #endregion
     }

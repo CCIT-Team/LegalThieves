@@ -227,7 +227,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 19876116, guid: 85ad5e1b2103b0c4f8a3fb33bb5d873f, type: 3}
       propertyPath: EmissionModule.enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -318,7 +318,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 19832852, guid: d3a220809e23aef44a41807b2a5d18ec, type: 3}
       propertyPath: EmissionModule.enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 19832852, guid: d3a220809e23aef44a41807b2a5d18ec, type: 3}
       propertyPath: InitialModule.startSizeY.minMaxState
@@ -425,7 +425,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 19832756, guid: 870ab9cf0ee811442a350fe653f10555, type: 3}
       propertyPath: EmissionModule.enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 19832756, guid: 870ab9cf0ee811442a350fe653f10555, type: 3}
       propertyPath: InitialModule.startSizeY.minMaxState
@@ -524,6 +524,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c73b11a0eb18ded48b5b3d6af65bd064, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8506065384447623118}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c73b11a0eb18ded48b5b3d6af65bd064, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7290919773951477351}
   m_SourcePrefab: {fileID: 100100000, guid: c73b11a0eb18ded48b5b3d6af65bd064, type: 3}
 --- !u!1 &8178257883455289534 stripped
 GameObject:
@@ -549,6 +552,23 @@ MonoBehaviour:
   - {fileID: 3724623096149485512}
   - {fileID: 8118134202812309588}
   torchLight: {fileID: 7421132034889084392}
+--- !u!114 &7290919773951477351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8178257883455289534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 2663569186
+  ObjectInterest: 1
+  Flags: 1
+  NestedObjects: []
+  NetworkedBehaviours: []
 --- !u!4 &8805894731932606980 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c73b11a0eb18ded48b5b3d6af65bd064, type: 3}

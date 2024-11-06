@@ -17,7 +17,7 @@ namespace New_Neo_LT.Scripts.Player_Input
         Jump,            // 스페이스바
         Interaction1,    // F 
         Interaction2,    // E skill1?
-        Interaction3,    // Q skill2?
+        InteractionQ,    // Q skill2?
         Interaction4,    // R skill3?
         Interaction5,    // G drop item
         Sprint,          // Shift
@@ -135,7 +135,7 @@ namespace New_Neo_LT.Scripts.Player_Input
         
         private void InteractionQ(InputAction.CallbackContext ctx)
         {
-            _accumulateInput.Buttons.Set(EInputButton.Interaction3, ctx.ReadValueAsButton());
+            _accumulateInput.Buttons.Set(EInputButton.InteractionQ, ctx.ReadValueAsButton());
         }
         
         private void InteractionE(InputAction.CallbackContext ctx)
