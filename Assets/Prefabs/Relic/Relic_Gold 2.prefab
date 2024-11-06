@@ -15,8 +15,7 @@ GameObject:
   - component: {fileID: -9069870145073303921}
   - component: {fileID: 5319386177903479852}
   - component: {fileID: -5849940452492289100}
-  - component: {fileID: 5009966779541140743}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Relic_Gold 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +107,6 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 5319386177903479852}
-  - {fileID: 5009966779541140743}
 --- !u!54 &-9069870145073303921
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -134,7 +132,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 122
   m_CollisionDetection: 0
 --- !u!114 &5319386177903479852
 MonoBehaviour:
@@ -179,18 +177,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.4235767, y: 0.098785095, z: 0.4840893}
   m_Center: {x: 0.00000012665987, y: 0.048831906, z: -0.0007926971}
---- !u!114 &5009966779541140743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1886535664110915815}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c558daf61633ae94192b78ae34b6e858, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2535994997787752310
 GameObject:
   m_ObjectHideFlags: 0

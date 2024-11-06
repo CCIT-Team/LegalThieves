@@ -2225,7 +2225,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8412483149573525068}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7733783486088900656}
+        m_TargetAssemblyTypeName: SellingUITest, Assembly-CSharp
+        m_MethodName: SellSellingTableRellics
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &3148498064870226662
 GameObject:
   m_ObjectHideFlags: 0
@@ -3284,6 +3296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryGrid: {fileID: 7054840576281394878}
   sellingTableGrid: {fileID: 2062396490294933458}
+  sellingPoint: {fileID: 0}
   rellicIcons:
   - {fileID: 3754274401685993517, guid: d39c403f40e69724ca28a7e5a60bb5e0, type: 3}
   - {fileID: 3754274401685993517, guid: 677378daaaa7b974cbdd41aee71028a4, type: 3}

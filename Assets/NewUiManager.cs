@@ -67,11 +67,13 @@ public class NewUiManager : MonoBehaviour
 
     }
 
-    public void ToggleShop(int[] inventory)
+    public void ToggleShop(int[] inventory, Shop shop = null)
     {
         if(ToggleCusorSetting())
         {
             shopUI.gameObject.SetActive(true);
+            if(shopUI.shop == null)
+                shopUI.shop = shop;
             shopUI.SetInventoryGrid(inventory);
         }
         else

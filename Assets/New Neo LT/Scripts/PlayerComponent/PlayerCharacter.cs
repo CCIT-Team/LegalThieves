@@ -366,9 +366,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
 
         }
-        public void ToggleShop()
+        public void ToggleShop(Shop shop = null)
         {
-            NewUiManager.instance.ToggleShop(inventory.ToArray());
+            NewUiManager.instance.ToggleShop(inventory.ToArray(), shop);
         }
         #endregion
         #region RPC Methods...

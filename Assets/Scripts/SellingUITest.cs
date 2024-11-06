@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using TMPro;
+using Fusion;
 
 public class SellingUITest : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class SellingUITest : MonoBehaviour
 
     private GameObject[] inventoryRellics = { };
     private GameObject[] sellingRellics = { };
+
+    [HideInInspector,Networked]
+    public Shop shop { get; set; }
 
     private void Update()
     {
@@ -74,15 +78,18 @@ public class SellingUITest : MonoBehaviour
 
     public void SellSellingTableRellics()
     {
+        List<int> ids = new();
         var gp = 0;
         var rp = 0;
         foreach (GameObject rellic in inventoryRellics)
         {
+            ids.Add((int)rellic.transform.localScale.z);
             gp += RelicManager.Instance.GetRelicData((int)rellic.transform.localScale.z).GetGoldPoint();
             rp += RelicManager.Instance.GetRelicData((int)rellic.transform.localScale.z).GetRenownPoint();
             //여기서 테이블 위 유물들 포인트 총량 합산
         }
-        
+        shop.AddPoint(gp,rp, ids.ToArray());
+
         ClearSellingTableGrid();
         //여기서 테이블 위 유물들 포인트 총량 반환
     }
