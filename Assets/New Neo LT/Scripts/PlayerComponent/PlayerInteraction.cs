@@ -1,13 +1,11 @@
 using UnityEngine;
-using UnityEngine.UI;
 using Fusion;
-using TMPro;
-using Fusion.Addons.KCC;
+using New_Neo_LT.Scripts;
 
 public interface IInteractable
 {
     string GetInteractPrompt();
-    void OnInteract(NetworkRunner runner);
+    void OnInteract(PlayerRef player);
 }
 
 public class PlayerInteraction : NetworkBehaviour
@@ -27,7 +25,7 @@ public class PlayerInteraction : NetworkBehaviour
             {
                 curInteractGameobject = hit.collider.gameObject;
                 curInteractable = hit.collider.GetComponent<IInteractable>();
-                curInteractable.OnInteract(Runner);
+                curInteractable.OnInteract(Object.InputAuthority);
             }
             else
             {

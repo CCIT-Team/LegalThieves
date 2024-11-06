@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2981671090683695272}
   - component: {fileID: 7885124967433709949}
   - component: {fileID: 1518102390180982998}
+  - component: {fileID: 6960348084579525848}
   m_Layer: 0
   m_Name: NewRunner
   m_TagString: Untagged
@@ -84,3 +85,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerObject: {fileID: 5812171746600133511, guid: e0c6f5ecee78cae40bb95c2ca5237fdd, type: 3}
+--- !u!114 &6960348084579525848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7445552106936334212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b5a1ff9dee264bfd829a39e6542dcbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _physicsAuthority: 2
+  _physicsTiming: 3
+  ClientPhysicsSimulation: 0
+  DeltaTimeMultiplier: 1
+  SetUnityFixedTimestep: 0
