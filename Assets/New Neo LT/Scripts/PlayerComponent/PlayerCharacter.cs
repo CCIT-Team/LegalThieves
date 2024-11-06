@@ -1,16 +1,16 @@
 using Fusion;
 using Fusion.Addons.KCC;
 using LegalThieves;
-using New_Neo_LT.Scripts.Elements.Relic;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
-using System;
+using New_Neo_LT.Scripts.UI;
 using TMPro;
 using UnityEngine;
 
 using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 using RelicManager = LegalThieves.RelicManager;
+using UIManager = New_Neo_LT.Scripts.UI.UIManager;
 
 namespace New_Neo_LT.Scripts.PlayerComponent
 {
@@ -92,10 +92,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (Object.HasInputAuthority)
             {
                 Local = this;
-                InitializeCharacterComponents();
+                UIManager.Instance.SetLocalPlayerTransform(transform);
                 InitializePlayerComponents();
-                InitializePlayerNetworkedProperties();
             }
+            InitializeCharacterComponents();
+            InitializePlayerNetworkedProperties();
             
             
             NicknameChanged();
@@ -337,13 +338,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             if (Object.HasStateAuthority && inventory[slotIndex] != -1) // 서버에서만 실행
             {
-                // 현재 선택된 슬롯의 아이템을 버림
-                //렐릭 풀에서 인덱스 검사해서 가져와 오브젝트에 할당
-                Debug.Log($"Drop {inventory[slotIndex]} : {RelicManager.Instance.GetRelicData(inventory[slotIndex]).GetGoldPoint()} gold");
                 RelicManager.Instance.GetRelicData(inventory[slotIndex]).OnThrowAway(Object.InputAuthority);
                 inventory.Set(slotIndex, -1); // 인벤토리에서 제거
             }
-            else if (Object.HasInputAuthority && inventory[slotIndex] == null)
+            else if (Object.HasInputAuthority && inventory[slotIndex] == -1)
             {
                 Debug.Log("아이템이 없습니다.");
             }
@@ -366,6 +364,22 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
 
         }
+
+        #region Gold, Renown Point Add...
+
+        public void AddGoldPoint(int point)
+        {
+            goldPoint += point;
+        }
+        
+        public void AddRenownPoint(int point)
+        {
+            renownPoint += point;
+        }
+
+        #endregion
+        
+        
         #endregion
         #region RPC Methods...
 

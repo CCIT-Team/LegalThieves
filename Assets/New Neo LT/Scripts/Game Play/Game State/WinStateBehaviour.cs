@@ -5,12 +5,9 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 {
     public class WinStateBehaviour : StateBehaviour
     {
-        
-        
-        
         protected override void OnEnterState()
         {
-            
+            PlayerRegistry.ForEach(pc => pc.Teleport(NewGameManager.Instance.winMapData.GetSpawnPosition(pc.Index)));
         }
 
         protected override void OnEnterStateRender()
