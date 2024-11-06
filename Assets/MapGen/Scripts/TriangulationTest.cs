@@ -2,23 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 public class TriangulationTest : MonoBehaviour
 {
     public List<Vector3> points;
     int gizmosCount = 0;
 
-    // 삼각형을 그리기 위한 데이터
     private List<Vector3> roomVectors;
     private List<int> indices;
-    private List<Edge> edges; // 모든 삼각형의 변을 저장
-    private List<Edge> mstEdges; // 최소 신장 트리의 변을 저장
-    private List<Edge> excludedEdges; // MST에 제외된 엣지 저장
-    private List<int> leafRooms; // 끝부분 방 저장 (리프 노드)
+    private List<Edge> edges; 
+    
+    [SerializeField]
+    private List<Edge> mstEdges; 
+    private List<Edge> excludedEdges; 
+    private List<int> leafRooms;
     private Transform roadParentTransform;
     List<Vector3> roadDetectionList;
     [SerializeField] GameObject road;
     [SerializeField] GameObject crossRoad;
+
     // 삼각분할 및 기즈모 그리기 호출 함수
     public void StartTriangulation(List<Vector3> list)
     {
@@ -70,7 +73,7 @@ public class TriangulationTest : MonoBehaviour
             int vertexIndex0 = edge.point0.index;
             int vertexIndex1 = edge.point1.index;
 
-            // 사이클이 생기지 않도록 두 정점을 Union-Find로 관리
+            // 사이클 판단
             if (uf.Find(vertexIndex0) != uf.Find(vertexIndex1))
             {
                 mstEdges.Add(edge);
@@ -102,11 +105,14 @@ public class TriangulationTest : MonoBehaviour
             int randomIndex = rand.Next(excludedEdges.Count);
             Edge edgeToAdd = excludedEdges[randomIndex];
 
-            // MST에 엣지 추가
-            mstEdges.Add(edgeToAdd);
-
-            // 추가된 엣지는 제외된 엣지 리스트에서 삭제
+            if (mstEdges.Contains(edgeToAdd))
+            { continue; }
+            else { mstEdges.Add(edgeToAdd); }
+                
+               
             excludedEdges.RemoveAt(randomIndex);
+      
+
         }
         // 끝부분 방(리프 노드) 탐색
         FindLeafRooms();
@@ -290,16 +296,16 @@ public class TriangulationTest : MonoBehaviour
 // Union-Find 자료구조 (크루스칼 알고리즘에서 사용)
 public class UnionFind
     {
-        private int[] parent, rank;
+        private int[] parent, depth;
 
         public UnionFind(int size)
         {
             parent = new int[size];
-            rank = new int[size];
+            depth = new int[size];
             for (int i = 0; i < size; i++)
             {
                 parent[i] = i;
-                rank[i] = 0;
+                depth[i] = 0;
             }
         }
 
@@ -319,18 +325,18 @@ public class UnionFind
 
             if (rootX != rootY)
             {
-                if (rank[rootX] > rank[rootY])
+                if (depth[rootX] > depth[rootY])
                 {
                     parent[rootY] = rootX;
                 }
-                else if (rank[rootX] < rank[rootY])
+                else if (depth[rootX] < depth[rootY])
                 {
                     parent[rootX] = rootY;
                 }
                 else
                 {
                     parent[rootY] = rootX;
-                    rank[rootX]++;
+                    depth[rootX]++;
                 }
             }
         }
@@ -390,6 +396,7 @@ public class UnionFind
         }
     }
 
+    [Serializable]
 public class Edge
     {
         private float m_Length;
@@ -442,10 +449,7 @@ public class Edge
 
             if (other != null)
             {
-                // Check if the two first points overlap
                 bool isSame = other.point0.Equals(point0) && other.point1.Equals(point1);
-
-                // Check if the points overlap in cross
                 isSame |= other.point1.Equals(point0) && other.point0.Equals(point1);
 
                 return isSame;

@@ -34,6 +34,7 @@ public class GraphMapGen : MonoBehaviour
             Destroy(parent.gameObject);
             parent = Instantiate(Map);
             RoomDetectionList = new List<Vector3>();
+
             RoomDetectionList.Add(startPoint.position);
       
             
@@ -71,7 +72,7 @@ public class GraphMapGen : MonoBehaviour
 
                 Vector3 randomPos = new Vector3(location_x, 0, location_z);
 
-                // 리스트에 있는 다른 방들과 충분한 거리가 있는지 확인
+             
                 bool isTooClose = false;
                 foreach (var existingRoom in list)
                 {
