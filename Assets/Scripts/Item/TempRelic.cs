@@ -7,7 +7,7 @@ namespace LegalThieves
 {
     public class TempRelic : NetworkBehaviour
     {
-        public RelicData data;
+        //public RelicData data;
         [SerializeField] Transform visual;
 
         public override void Spawned()
@@ -21,10 +21,10 @@ namespace LegalThieves
         }
 
         //플레이어가 유물을 획득할 때 호출
-        public int GetNumber()
-        {
-            return data.dataIndex;
-        }
+        //public int GetNumber()
+        //{
+        //    return data.dataIndex;
+        //}
 
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void RPC_ApplyForce(Vector3 force)

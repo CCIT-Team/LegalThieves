@@ -268,7 +268,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             
             if (_rayCastHit.collider.TryGetComponent(out Scripts.Elements.Relic.Relic relic))
             {
-                relic.Interact(Object);
+                //relic.Interact(Object);
             }
         }
         
