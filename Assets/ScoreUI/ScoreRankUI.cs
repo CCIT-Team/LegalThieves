@@ -22,16 +22,26 @@ public class ScoreRankUI : MonoBehaviour {
     Color[] PlayerColors = { Color.red, Color.green, Color.blue, Color.yellow };
 
     int PlayerIndex = 0;
-    public void JoinedPlayer(int player) 
+    public void JoinedPlayer(int playerRef) 
     {
-        
+       
         GameObject slot =Instantiate(PlayerScoreBase,Vector3.zero,Quaternion.identity,transform.GetChild(0));
         ScoreComponentsList.Add(slot.GetComponent<ScoreComponents>());
         //playerRef 값 이용해서 속성들 채워넣을 예정
-        ScoreInfo.Add(new PlayerScoreInfo("pointType", "name", 1000, player, PlayerColors[PlayerIndex]));
+        ScoreInfo.Add(new PlayerScoreInfo("pointType", "name", 1000, playerRef, PlayerColors[PlayerIndex]));
         Debug.Log(ScoreInfo[PlayerIndex++].playerRef);
         RankSet();
     }
+
+    public void LeftPlayer(int player)
+    {
+        ScoreComponentsList.RemoveAt(ScoreComponentsList.Count-1);
+        ScoreInfo.Remove(ScoreInfo.FirstOrDefault(Info => Info.playerRef == player));
+          
+        RankSet();
+    }
+  
+  
 
     public void PlayerScoreSet(int player,int score)
     {
