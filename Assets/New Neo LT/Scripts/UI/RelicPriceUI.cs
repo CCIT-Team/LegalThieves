@@ -28,7 +28,7 @@ public class RelicPriceUI : MonoBehaviour
     public void SetWinPoint(bool iswin = false)
     {
         isWinGold = iswin;
-        if (isWinGold)
+        if (!isWinGold)
             goldPointLabel.transform.SetSiblingIndex(0);
         else
             goldPointLabel.transform.SetSiblingIndex(1);
@@ -46,8 +46,8 @@ public class RelicPriceUI : MonoBehaviour
         {
             var relic = RelicManager.Instance.GetRelicData(relicIndex);
             relicName.text = relic.gameObject.name;
-            goldPoint.text = "°ñµå Æ÷ÀÎÆ®   " + relic.GetGoldPoint().ToString();
-            renownPoint.text = "¸®³ª¿î Æ÷ÀÎÆ®   " + relic.GetRenownPoint().ToString();
+            goldPoint.text = "ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®   " + relic.GetGoldPoint().ToString();
+            renownPoint.text = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®   " + relic.GetRenownPoint().ToString();
         }
     }
 }

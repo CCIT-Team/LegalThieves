@@ -35,6 +35,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         
         [Networked, OnChangedRender(nameof(OnColorChanged))]
         private int               PlayerColor { get; set; }
+        
+        [Networked, OnChangedRender(nameof(OnPlayerJobChanged))]
+        public bool IsScholar { get; set; }
         [Networked]
         private int               RenownPoint { get; set; }
         [Networked]
@@ -57,8 +60,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private bool              _isSprinting;
         private bool              CanJump   => kcc.FixedData.IsGrounded;
         private bool              CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
-
-
+        
 
 
         [SerializeField] private int slotIndex = 0;
@@ -90,6 +92,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 PlayerRegistry.Server_Add(Runner, Object.InputAuthority, this);
 
                 PlayerColor = 0;
+                IsScholar = false;
                 for(var i = 0; i < 10; i++)
                 {
                     Inventory.Set(i, -1);
@@ -379,12 +382,17 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         public void SetPlayerColor(int index) => PlayerColor = index;
         public int GetPlayerColor() => PlayerColor;
 
-        public void OnColorChanged()
+        private void OnColorChanged()
         {
             Material[] materials = skinnedMeshRenderer.materials; 
             materials[1] = NewGameManager.Instance.playerClothMaterials[PlayerColor];
             materials[4] = NewGameManager.Instance.playerHairMaterials[PlayerColor];
             skinnedMeshRenderer.materials = materials;
+        }
+        
+        public void ChangeJob()
+        {
+            IsScholar = !IsScholar;
         }
 
         #endregion
@@ -397,6 +405,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         public void GetPoint()
         {
 
+        }
+
+        private void OnPlayerJobChanged()
+        {
+            
         }
 
         #region Gold, Renown Point Add...
