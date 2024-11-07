@@ -6,21 +6,21 @@ using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Map.MapObjects
 {
-    public class StateChanger : NetworkBehaviour
+    public class StateChanger : NetworkBehaviour, global::IInteractable
     {
-        [SerializeField] private Collider col;
+        private global::IInteractable _interactableImplementation;
 
-        public override void FixedUpdateNetwork()
+        public void OnServer_Interact(PlayerRef player)
         {
-            base.FixedUpdateNetwork();
-
-            if (Runner.Tick % 10 != 0) 
+            if(!HasStateAuthority)
                 return;
+
+            NewGameManager.State.Server_SetState<PlayStateBehaviour>();
+        }
+
+        public void OnClient_Interact(PlayerRef player)
+        {
             
-            if (PlayerRegistry.Where(p => col.bounds.Contains(p.transform.position)).Any())
-            {
-                NewGameManager.State.Server_SetState<PlayStateBehaviour>();
-            }
         }
     }
 }

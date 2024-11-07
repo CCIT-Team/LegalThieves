@@ -1,48 +1,57 @@
 using Fusion;
 using New_Neo_LT.Scripts.Game_Play;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using New_Neo_LT.Scripts.PlayerComponent;
 using New_Neo_LT.Scripts.Relic;
+using UnityEngine;
 
-public class Shop : NetworkBehaviour
+namespace New_Neo_LT.Scripts.Elements
 {
-    #region NetworkEvents
-    public override void Spawned()
+    public class Shop : NetworkBehaviour, global::IInteractable
     {
-        //Object.geta
-    }
-
-    public override void Render()
-    {
+        [SerializeField] private GameObject shopUI;
         
-    }
-
-    public override void Despawned(NetworkRunner runner, bool hasState)
-    {
+        private bool _isOpen;
         
-    }
-    #endregion
-
-
-    void Sell(PlayerRef pref, RelicObject[] relics)
-    {
-        var gp = 0;
-        var rp = 0;
-        foreach(var relic in relics)
+        #region NetworkEvents
+        public override void Spawned()
         {
-            if (relic == null) continue;
-            //gp += relic.goldPoint;
-            //rp += relic.renownPoint;
+            //Object.geta
         }
-        //NewGameManager.GetPlayer(pref).goldPoint += gp;
-        //NewGameManager.GetPlayer(pref).renownPoint += rp;
-    }
-    
 
-    bool checkItemSet()
-    {
+        public override void Render()
+        {
+        
+        }
 
-        return false;
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+        
+        }
+        #endregion
+
+
+        void Sell(PlayerRef pref, RelicObject[] relics)
+        {
+            var gp = 0;
+            var rp = 0;
+            foreach(var relic in relics)
+            {
+                if (relic == null) continue;
+                //gp += relic.goldPoint;
+                //rp += relic.renownPoint;
+            }
+            //NewGameManager.GetPlayer(pref).goldPoint += gp;
+            //NewGameManager.GetPlayer(pref).renownPoint += rp;
+        }
+
+        public void OnServer_Interact(PlayerRef player)
+        {
+            
+        }
+
+        public void OnClient_Interact(PlayerRef player)
+        {
+            shopUI.gameObject.SetActive(true);
+        }
     }
 }

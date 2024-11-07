@@ -1,26 +1,44 @@
 using UnityEngine;
 using Fusion;
+using New_Neo_LT.Scripts.PlayerComponent;
+using New_Neo_LT.Scripts.Relic;
 
 public interface IInteractable
 {
-    void OnInteract(PlayerRef player);
+    void OnServer_Interact(PlayerRef player);
+    void OnClient_Interact(PlayerRef player);
 }
 
 public class PlayerInteraction : NetworkBehaviour
 {
     [SerializeField] private float maxCheckDistance;
     [SerializeField] private LayerMask layerMask;
+    private Transform _camTarget;
 
-   
-    public void CheckInteraction(Transform cam)
+    public override void Spawned()
     {
-        if (!Physics.Raycast(cam.position, cam.forward, out var hit, maxCheckDistance, layerMask))
+        base.Spawned();
+        _camTarget = Object.GetComponent<PlayerCharacter>().GetCamTarget();
+    }
+
+    public void Server_CheckInteraction()
+    {
+        if (!Physics.Raycast(_camTarget.position, _camTarget.forward, out var hit, maxCheckDistance, layerMask))
             return;
         if (!hit.collider.TryGetComponent<IInteractable>(out var interactable))
             return;
-
-        interactable.OnInteract(Object.InputAuthority);
+        
+        interactable.OnServer_Interact(Object.InputAuthority);
     } 
     
+    public void CheckInteraction()
+    {
+        if (!Physics.Raycast(_camTarget.position, _camTarget.forward, out var hit, maxCheckDistance, layerMask))
+            return;
+        if (!hit.collider.TryGetComponent<IInteractable>(out var interactable))
+            return;
+        
+        interactable.OnClient_Interact(Object.InputAuthority);
+    } 
 }
 

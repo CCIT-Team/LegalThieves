@@ -3,10 +3,8 @@ using Fusion.Addons.KCC;
 using LegalThieves;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
-using New_Neo_LT.Scripts.UI;
 using TMPro;
 using UnityEngine;
-
 using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 using RelicManager = LegalThieves.RelicManager;
@@ -18,9 +16,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
     public class PlayerCharacter : Character
     {
         [Header("Player Components")]
-        [SerializeField] private Transform             camTarget;
-        [SerializeField] private TMP_Text              playerNickname;
-        [SerializeField] private PlayerInteraction     PlayerInteraction;
+        [SerializeField] private Transform              camTarget;
+        [SerializeField] private TMP_Text               playerNickname;
+        [SerializeField] private PlayerInteraction      playerInteraction;
+        [SerializeField] private SkinnedMeshRenderer    skinnedMeshRenderer;
 
         [Header("Player Setup")]
         [Range(-90, 90)]
@@ -33,19 +32,27 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         public PlayerRef          Ref        { get; set; }
         [Networked] 
         public byte               Index      { get; set; }
+        
+        [Networked, OnChangedRender(nameof(OnColorChanged))]
+        private int               PlayerColor { get; set; }
+        [Networked]
+        private int               RenownPoint { get; set; }
+        [Networked]
+        private int               GoldPoint { get; set; }
+        
         [Networked, OnChangedRender(nameof(NicknameChanged))] 
         public NetworkString<_16> Nickname   { get; set; }
+        
+        [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))] 
+        private NetworkArray<int> Inventory => default;
+        
+        private int[]             _prevInventory = new int[10];
+
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
-        [Networked]
-        private int               renownPoint { get; set; }
-        [Networked]
-        private int               goldPoint { get; set; }
         
-
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
-        private string            _playerName;
         
         private bool              _isSprinting;
         private bool              CanJump   => kcc.FixedData.IsGrounded;
@@ -54,7 +61,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
 
 
-        [Networked, Capacity(10)] private NetworkArray<int> inventory => default;
         [SerializeField] private int slotIndex = 0;
 
         private RaycastHit      _rayCastHit;
@@ -83,9 +89,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 PlayerRegistry.Server_Add(Runner, Object.InputAuthority, this);
 
+                PlayerColor = 0;
                 for(var i = 0; i < 10; i++)
                 {
-                    inventory.Set(i, -1);
+                    Inventory.Set(i, -1);
                 }
             }
 
@@ -138,12 +145,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void InitializePlayerNetworkedProperties()
         {
-           
+            skinnedMeshRenderer ??= GetComponentInChildren<SkinnedMeshRenderer>();
         }
         
         public void SetPlayerName(string playerName)
         {
-            _playerName = playerName;
+            
         }
         
         private void NicknameChanged()
@@ -280,77 +287,101 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public void CheckInteraction()
         {
-            if (HasStateAuthority)
-            {
-                PlayerInteraction.CheckInteraction(camTarget);
-
-            }
-    
+            if (HasStateAuthority) 
+                playerInteraction.Server_CheckInteraction();
+            
+            if (HasInputAuthority)
+                playerInteraction.CheckInteraction();
         }
 
         #endregion
 
 
         #region Inventory
-        public void SelectSlot(int index)
+
+        private void SelectSlot(int index)
         {
+            if (!HasStateAuthority && !HasInputAuthority) 
+                return;
+            
             slotIndex = index;
-            if (Object.HasInputAuthority) // 로컬 플레이어만 UI 업데이트
-            {
-                NewUiManager.Instance.SelectTogle(index);
-            }
+            if (!HasInputAuthority)
+                return;
+            
+            UIManager.Instance.inventorySlotController.SelectToggle(index);
         }
 
-        public bool SetSlot(int relicId)
+        public bool GetRelic(int relicId)
         {
             // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
-            if (inventory[slotIndex] == -1)
+            if (Inventory[slotIndex] == -1)
             {
-                inventory.Set(slotIndex, relicId);
-                UpdateInventoryUI(slotIndex, relicId, true);
+                Inventory.Set(slotIndex, relicId);
+                SetPreviousInventory();
                 return true;
             }
 
             // 빈 슬롯을 찾아 아이템 추가
-            for (int i = 0; i < inventory.Length; i++)
+            for (var i = 0; i < Inventory.Length; i++)
             {
-                if (inventory[i] == -1)
-                {
-                    inventory.Set(i, relicId);
-                    UpdateInventoryUI(i, relicId, true);
-                    return true;
-                }
+                if (Inventory[i] != -1) 
+                    continue;
+                
+                Inventory.Set(i, relicId);
+                SetPreviousInventory();
+                return true;
             }
-            Debug.Log("인벤토리 빈공간 없음");
+            
             return false;
         }
 
-        private void UpdateInventoryUI(int index, int relicId, bool hasItem)
+        private void SetPreviousInventory()
         {
-            if (Object.HasInputAuthority) // 로컬 플레이어 UI만 업데이트
-            {
-                NewUiManager.Instance.SetRelicSprite(index, relicId, hasItem);
-            }
+            _prevInventory = Inventory.ToArray();
         }
         
-
         public void ThrowRelic()
         {
-            if (Object.HasStateAuthority && inventory[slotIndex] != -1) // 서버에서만 실행
+            if (HasStateAuthority && Inventory[slotIndex] != -1) // 서버에서만 실행
             {
-                RelicManager.Instance.GetRelicData(inventory[slotIndex]).OnThrowAway(Object.InputAuthority);
-                inventory.Set(slotIndex, -1); // 인벤토리에서 제거
+                RelicManager.Instance.GetRelicData(Inventory[slotIndex]).OnThrowAway(Object.InputAuthority);
+                Inventory.Set(slotIndex, -1); // 인벤토리에서 제거
+                SetPreviousInventory();
             }
-            else if (Object.HasInputAuthority && inventory[slotIndex] == -1)
+        }
+
+        private void UpdateInventoryUI(int index, int relicId)
+        {
+            if (HasInputAuthority) // 로컬 플레이어 UI만 업데이트
             {
-                Debug.Log("아이템이 없습니다.");
+                UIManager.Instance.inventorySlotController.SetRelicSprite(index, relicId);
             }
-            UpdateInventoryUI(slotIndex, -1, false); // 로컬 UI 업데이트
         }
         
         public Transform GetCamTarget()
         {
             return camTarget;
+        }
+
+        public void OnInventoryChanged(NetworkBehaviourBuffer previous)
+        {
+            if(!HasInputAuthority)
+                return;
+            for (var i = 0; i < 10; i++)
+            {
+                UIManager.Instance.inventorySlotController.SetRelicSprite(i, Inventory[i]);
+            }
+        }
+
+        public void SetPlayerColor(int index) => PlayerColor = index;
+        public int GetPlayerColor() => PlayerColor;
+
+        public void OnColorChanged()
+        {
+            Material[] materials = skinnedMeshRenderer.materials; 
+            materials[1] = NewGameManager.Instance.playerClothMaterials[PlayerColor];
+            materials[4] = NewGameManager.Instance.playerHairMaterials[PlayerColor];
+            skinnedMeshRenderer.materials = materials;
         }
 
         #endregion
@@ -369,12 +400,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public void AddGoldPoint(int point)
         {
-            goldPoint += point;
+            GoldPoint += point;
         }
         
         public void AddRenownPoint(int point)
         {
-            renownPoint += point;
+            RenownPoint += point;
         }
 
         #endregion
@@ -383,6 +414,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         #endregion
         #region RPC Methods...
 
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        public void RPC_AddPoint(int gold, int renown, PlayerRef player)
+        {
+            GoldPoint += gold;
+            RenownPoint += renown;
+        }
+        
         #endregion
     }
 }

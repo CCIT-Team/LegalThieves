@@ -7,9 +7,6 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 {
     public class PlayStateBehaviour : StateBehaviour
     {
-        
-        
-        
         protected override void OnEnterState()
         {
             if(HasStateAuthority)

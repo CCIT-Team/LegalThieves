@@ -1,9 +1,8 @@
+using System;
 using LegalThieves;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SellingUITest : MonoBehaviour
 {
@@ -23,6 +22,18 @@ public class SellingUITest : MonoBehaviour
             GameObject newRellic = Instantiate(rellicIcons[randomIndex], inventoryGrid.transform);
             inventoryRellics.Append(newRellic);
         }
+    }
+
+    private void OnEnable()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    private void OnDisable()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = true;
     }
 
     private void ClearInventoryGrid()

@@ -173,7 +173,8 @@ MonoBehaviour:
   animator: {fileID: 2066540664455788372}
   camTarget: {fileID: 8898275196067250044}
   playerNickname: {fileID: 0}
-  PlayerInteraction: {fileID: 1812617601711276161}
+  playerInteraction: {fileID: 1812617601711276161}
+  skinnedMeshRenderer: {fileID: 232860714394124931}
   maxPitch: 90
   lookSensitivity: 0.15
   jumpImpulse: {x: 0, y: 3, z: 0}
@@ -868,6 +869,11 @@ PrefabInstance:
       addedObject: {fileID: 7493377761251370235}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a2eb2a2dd4a74e408d76796cdaccf36, type: 3}
+--- !u!137 &232860714394124931 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -3531930454459234234, guid: 3a2eb2a2dd4a74e408d76796cdaccf36, type: 3}
+  m_PrefabInstance: {fileID: 5604525643460627141}
+  m_PrefabAsset: {fileID: 0}
 --- !u!95 &2066540664455788372 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 3a2eb2a2dd4a74e408d76796cdaccf36, type: 3}
