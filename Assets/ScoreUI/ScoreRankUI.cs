@@ -1,12 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using New_Neo_LT.Scripts.Game_Play;
-using System;
 using System.Linq;
-using LegalThieves;
-
-using UnityEngine.SocialPlatforms.Impl;
+using Fusion;
+using New_Neo_LT.Scripts.Game_Play;
 
 public class ScoreRankUI : MonoBehaviour {
 
@@ -21,34 +17,54 @@ public class ScoreRankUI : MonoBehaviour {
     Color[] PlayerColors = { Color.red, Color.green, Color.blue, Color.yellow };
 
     int PlayerIndex = 0;
-    public void JoinedPlayer(int playerRef) 
+    public void JoinedPlayer(PlayerRef player)
     {
+        var playerId = player.PlayerId;
+        var job = PlayerRegistry.GetPlayer(player).IsScholar;
        
         GameObject slot =Instantiate(PlayerScoreBase,Vector3.zero,Quaternion.identity,transform.GetChild(0));
         ScoreComponentsList.Add(slot.GetComponent<ScoreComponents>());
+        
         //playerRef 값 이용해서 속성들 채워넣을 예정
-        ScoreInfo.Add(new PlayerScoreInfo("pointType", "name", 1000, playerRef, PlayerColors[PlayerIndex]));
+        ScoreInfo.Add(new PlayerScoreInfo(job ? "Gold" : "Renown", "name", 1000, playerId, PlayerColors[PlayerIndex]));
         Debug.Log(ScoreInfo[PlayerIndex++].playerRef);
         RankSet();
     }
 
-    public void LeftPlayer(int player)
+    public void LeftPlayer(PlayerRef player)
     {
+        var pId = player.PlayerId;
         ScoreComponentsList.RemoveAt(ScoreComponentsList.Count-1);
-        ScoreInfo.Remove(ScoreInfo.FirstOrDefault(Info => Info.playerRef == player));
-          
+        ScoreInfo.Remove(ScoreInfo.FirstOrDefault(Info => Info.playerRef == pId));
+        PlayerIndex--;
         RankSet();
     }
   
   
 
-    public void PlayerScoreSet(int player,int score)
+    public void PlayerScoreSet(PlayerRef player,int score)
     {
+        var playerId = player.PlayerId;
         for (int i = 0; i < ScoreInfo.Count; i++)
+        {
+            if (ScoreInfo[i].playerRef == playerId)
+            {
+                ScoreInfo[i].ScoreSet(score);
+                RankSet();
+                return;
+            }
+        }
+     
+        Debug.Log("플레이어 데이터를 찾을 수 없음");
+    }
+    
+    public void SetPlayerJob(int player,bool isScholar)
+    {
+        for (var i = 0; i < ScoreInfo.Count; i++)
         {
             if (ScoreInfo[i].playerRef == player)
             {
-                ScoreInfo[i].ScoreSet(score);
+                ScoreInfo[i].SetPointType(isScholar);
                 RankSet();
                 return;
             }

@@ -1,5 +1,4 @@
-﻿using New_Neo_LT.Scripts.Game_Play;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace New_Neo_LT.Scripts.UI
 {
@@ -9,7 +8,8 @@ namespace New_Neo_LT.Scripts.UI
         public InventorySlotController inventorySlotController;
         public TimerController         timerController;
         public PlayerListController    playerListController;
-        public RelicPriceUI relicPriceUI;
+        public RelicPriceUI            relicPriceUI;
+        public ScoreRankUI             scoreRankUI;
 
         public static UIManager Instance;
         

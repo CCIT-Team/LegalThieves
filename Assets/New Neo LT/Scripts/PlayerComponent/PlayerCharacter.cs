@@ -38,9 +38,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         
         [Networked, OnChangedRender(nameof(OnPlayerJobChanged))]
         public bool IsScholar { get; set; }
-        [Networked]
+        [Networked, OnChangedRender(nameof(OnPointChanged))]
         private int               RenownPoint { get; set; }
-        [Networked]
+        [Networked, OnChangedRender(nameof(OnPointChanged))]
         private int               GoldPoint { get; set; }
         
         [Networked, OnChangedRender(nameof(NicknameChanged))] 
@@ -105,6 +105,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 UIManager.Instance.SetLocalPlayerTransform(transform);
                 InitializePlayerComponents();
             }
+            
+            UIManager.Instance.scoreRankUI.JoinedPlayer(Ref);
+            
             InitializeCharacterComponents();
             InitializePlayerNetworkedProperties();
             
@@ -133,7 +136,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             animator.SetFloat(AnimLookPit     , kcc.FixedData.LookPitch);
         }
 
-        
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+            base.Despawned(runner, hasState);
+            
+            UIManager.Instance.scoreRankUI.LeftPlayer(Ref);
+        }
 
         #endregion
 
@@ -409,7 +417,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void OnPlayerJobChanged()
         {
-            
+            UIManager.Instance.scoreRankUI.SetPlayerJob(Ref.PlayerId, IsScholar);
+        }
+        
+        private void OnPointChanged()
+        {
+            UIManager.Instance.scoreRankUI.PlayerScoreSet(Ref, IsScholar ? RenownPoint : GoldPoint);
         }
 
         #region Gold, Renown Point Add...

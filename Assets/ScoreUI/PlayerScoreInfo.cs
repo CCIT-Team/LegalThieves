@@ -33,6 +33,11 @@ public class PlayerScoreInfo
     {
         _score = score;
     }
+    
+    public void SetPointType(bool IsScholar)
+    {
+        _pointType = IsScholar ? "Renown" : "Gold";
+    }
 
     public void SlotRankSet(ScoreComponents com)
     {
