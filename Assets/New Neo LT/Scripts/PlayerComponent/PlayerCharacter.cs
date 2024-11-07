@@ -386,6 +386,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             }
             UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[slotIndex]);
         }
+        
+        public int[] GetInventorys()
+        {
+            return Inventory.ToArray();
+        }
 
         public void SetPlayerColor(int index) => PlayerColor = index;
         public int GetPlayerColor() => PlayerColor;

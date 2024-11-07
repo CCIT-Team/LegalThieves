@@ -89,6 +89,9 @@ namespace New_Neo_LT.Scripts.Game_Play
 
 		public static bool HasPlayer(PlayerRef pRef)
 		{
+			Debug.Log(pRef);
+			Debug.Log(Instance.Players);
+            Debug.Log(Instance.Players.ContainsKey(pRef));
 			return Instance.Players.ContainsKey(pRef);
 		}
 
