@@ -1,7 +1,10 @@
 using Fusion;
 using Fusion.Addons.Physics;
 using New_Neo_LT.Scripts.Game_Play;
+using UI;
 using UnityEngine;
+using RelicManager = LegalThieves.RelicManager;
+using UIManager = New_Neo_LT.Scripts.UI.UIManager;
 
 namespace New_Neo_LT.Scripts.Relic
 {
@@ -10,10 +13,11 @@ namespace New_Neo_LT.Scripts.Relic
         [SerializeField] private GameObject visual;
         [SerializeField] private BoxCollider boxCollider;
         [SerializeField] private NetworkRigidbody3D networkRigidbody;
+
+        public int RelicID => RelicManager.Instance.GetRelicIndex(this);
         
         [Networked]
         private int TypeIndex { get; set; }
-        
         [Networked]
         private int GoldPoint { get; set; }
         [Networked]
@@ -48,20 +52,20 @@ namespace New_Neo_LT.Scripts.Relic
             visual.GetComponent<MeshFilter>().mesh = LegalThieves.RelicManager.Instance.GetRelicMesh(TypeIndex);
             visual.GetComponent<MeshRenderer>().materials = LegalThieves.RelicManager.Instance.GetRelicMaterial(TypeIndex);
         }
-        
-        public string GetInteractPrompt()
+
+        public void OnServer_Interact(PlayerRef player)
         {
-            return "Pick up";
+            if (!PlayerRegistry.GetPlayer(player).GetRelic(LegalThieves.RelicManager.Instance.GetRelicIndex(this)))
+                return;
+            
+            IsActivated = false;
         }
 
-        public void OnInteract(PlayerRef player)
+        public void OnClient_Interact(PlayerRef player)
         {
-            if (PlayerRegistry.GetPlayer(player).SetSlot(LegalThieves.RelicManager.Instance.GetRelicIndex(this)))
-            {
-                IsActivated = false;
-            }
+            
         }
-        
+
         public void OnThrowAway(PlayerRef player)
         {
             var ownerTf = PlayerRegistry.GetPlayer(player).GetCamTarget();

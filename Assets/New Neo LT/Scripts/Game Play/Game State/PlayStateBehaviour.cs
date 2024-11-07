@@ -1,14 +1,12 @@
 ﻿using Fusion.Addons.FSM;
 using LegalThieves;
 using UnityEngine;
+using UIManager = New_Neo_LT.Scripts.UI.UIManager;
 
 namespace New_Neo_LT.Scripts.Game_Play.Game_State
 {
     public class PlayStateBehaviour : StateBehaviour
     {
-        
-        
-        
         protected override void OnEnterState()
         {
             if(HasStateAuthority)
@@ -31,14 +29,13 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 
         protected override void OnRender()
         {
-            
-            UIManager.Singleton.SetTimer((int)NewGameManager.State.GetRemainingTime());
+            UIManager.Instance.timerController.SetTimer(NewGameManager.State.GetRemainingTime());
         }
         
         protected override void OnExitStateRender()
         {
             // UI 변경
-            UIManager.Singleton.SetTimer("Waiting");
+            UIManager.Instance.timerController.SetTimer("Waiting");
         }
     }
 }

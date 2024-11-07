@@ -13,6 +13,10 @@ namespace New_Neo_LT.Scripts.Game_Play
         [SerializeField] private NetworkPrefabRef    playerPrefab;
         [SerializeField] private float               playtime = 15;
         
+        [Header("Player Color")]
+        public Material[]                            playerClothMaterials;
+        public Material[]                            playerHairMaterials;
+        
         public static NewGameManager Instance { get; private set; }
         public static GameState State { get; private set; }
         public  ResourcesManager Rm { get; private set; }
@@ -23,6 +27,7 @@ namespace New_Neo_LT.Scripts.Game_Play
         
         public PregameStateMapData pregameMapData;
         public PlayStateMapData    playMapData;
+        public PlayStateMapData    winMapData;
         
         [Networked, Capacity(4)] 
         public NetworkDictionary<PlayerRef, PlayerCharacter> Players => default;

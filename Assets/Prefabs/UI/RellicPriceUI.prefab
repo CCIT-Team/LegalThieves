@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 300, y: 40}
+  m_SizeDelta: {x: 365, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7391164077438559
 CanvasRenderer:
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: (Display Rellic Golden Point Price Here)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 939c55edeef893645b853dd8446fa81c, type: 2}
   m_sharedMaterial: {fileID: -2162864168881482127, guid: 939c55edeef893645b853dd8446fa81c, type: 2}
@@ -146,7 +146,6 @@ GameObject:
   - component: {fileID: 567528715619923904}
   - component: {fileID: 447288348983625691}
   - component: {fileID: 3751611779244647356}
-  - component: {fileID: 2251444676479459547}
   m_Layer: 0
   m_Name: RellicPriceUI
   m_TagString: Untagged
@@ -296,20 +295,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &2251444676479459547
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3950873598827459033}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a448aede73f037f4fbe81777d1a6c61b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  goldPointLabel: {fileID: 7144092716119638041}
-  renownPointLabel: {fileID: 6322816001494801921}
 --- !u!1 &6234422985535896949
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,7 +330,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 300, y: 40}
+  m_SizeDelta: {x: 365, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8061124546745682059
 CanvasRenderer:
@@ -375,7 +360,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: (Display Rellic Renown Point Price Here)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 939c55edeef893645b853dd8446fa81c, type: 2}
   m_sharedMaterial: {fileID: -2162864168881482127, guid: 939c55edeef893645b853dd8446fa81c, type: 2}

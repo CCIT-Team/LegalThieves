@@ -1,17 +1,14 @@
 using Fusion;
 using Fusion.Addons.KCC;
 using LegalThieves;
-using New_Neo_LT.Scripts.Elements.Relic;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
-using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
-
 using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 using RelicManager = LegalThieves.RelicManager;
+using UIManager = New_Neo_LT.Scripts.UI.UIManager;
 
 namespace New_Neo_LT.Scripts.PlayerComponent
 {
@@ -19,9 +16,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
     public class PlayerCharacter : Character
     {
         [Header("Player Components")]
-        [SerializeField] private Transform             camTarget;
-        [SerializeField] private TMP_Text              playerNickname;
-        [SerializeField] private PlayerInteraction     PlayerInteraction;
+        [SerializeField] private Transform              camTarget;
+        [SerializeField] private TMP_Text               playerNickname;
+        [SerializeField] private PlayerInteraction      playerInteraction;
+        [SerializeField] private SkinnedMeshRenderer    skinnedMeshRenderer;
 
         [Header("Player Setup")]
         [Range(-90, 90)]
@@ -34,33 +32,36 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         public PlayerRef          Ref        { get; set; }
         [Networked] 
         public byte               Index      { get; set; }
+        
+        [Networked, OnChangedRender(nameof(OnColorChanged))]
+        private int               PlayerColor { get; set; }
+        [Networked]
+        private int               RenownPoint { get; set; }
+        [Networked]
+        private int               GoldPoint { get; set; }
+        
         [Networked, OnChangedRender(nameof(NicknameChanged))] 
         public NetworkString<_16> Nickname   { get; set; }
+        
+        [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))] 
+        private NetworkArray<int> Inventory => default;
+        
+        private int[]             _prevInventory = new int[10];
+
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
-        [Networked]
-        private int               renownPoint { get; set; }
-        [Networked]
-        private int               goldPoint { get; set; }
         
-
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
-        private string            _playerName;
         
         private bool              _isSprinting;
         private bool              CanJump   => kcc.FixedData.IsGrounded;
         private bool              CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
-        private bool              IsMovable = true;
 
 
 
-        [Networked, Capacity(10)] private NetworkArray<int> inventory => default;
+
         [SerializeField] private int slotIndex = 0;
-
-        private int MaxDamageTime = 10;
-        float DamageTime = 0;
-
 
         private RaycastHit      _rayCastHit;
         
@@ -88,19 +89,21 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 PlayerRegistry.Server_Add(Runner, Object.InputAuthority, this);
 
+                PlayerColor = 0;
                 for(var i = 0; i < 10; i++)
                 {
-                    inventory.Set(i, -1);
+                    Inventory.Set(i, -1);
                 }
             }
 
             if (Object.HasInputAuthority)
             {
                 Local = this;
-                InitializeCharacterComponents();
+                UIManager.Instance.SetLocalPlayerTransform(transform);
                 InitializePlayerComponents();
-                InitializePlayerNetworkedProperties();
             }
+            InitializeCharacterComponents();
+            InitializePlayerNetworkedProperties();
             
             
             NicknameChanged();
@@ -133,7 +136,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void InitializePlayerComponents()
         {
-           
             camTarget ??= transform.Find("CamTarget");
             CameraFollow.Singleton.SetTarget(camTarget);
             // kcc.Settings.ForcePredictedLookRotation = true; // 화면 끊김 발생해서 뺌
@@ -143,12 +145,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void InitializePlayerNetworkedProperties()
         {
-           
+            skinnedMeshRenderer ??= GetComponentInChildren<SkinnedMeshRenderer>();
         }
         
         public void SetPlayerName(string playerName)
         {
-            _playerName = playerName;
+            
         }
         
         private void NicknameChanged()
@@ -170,7 +172,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void SetPlayerInput(NetInput playerInput)
         {
             // Set Movement (WASD)
-          //  kcc.SetInputDirection(kcc.FixedData.TransformRotation * playerInput.Direction.X0Y());
+            kcc.SetInputDirection(kcc.FixedData.TransformRotation * playerInput.Direction.X0Y());
             
             // Set face direction by mouse pointer position delta
             kcc.AddLookRotation(playerInput.LookDelta * lookSensitivity, -maxPitch, maxPitch);
@@ -199,49 +201,33 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 CrouchSync = 0;
             if(playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Crouch))
                 CrouchSync = 1;
-       
-
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.InteractionF))
-                    CheckInteractionF();
-
-            if (IsMovable)
-            { // Set Movement (WASD)
-                kcc.SetInputDirection(kcc.FixedData.TransformRotation * playerInput.Direction.X0Y());
-
-                //getRelic
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.InteractionE))
-                    CheckInteractionE();
-                //throwRelic
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.InteractionG))
-                    ThrowRelic();
-
+            //getRelic
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction2))
+                CheckInteraction();
+            //throwRelic
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction5))
+                ThrowRelic();
                 //slot
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot1))
-                    SelectSlot(0);
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot2))
-                    SelectSlot(1);
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot3))
-                    SelectSlot(2);
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot4))
-                    SelectSlot(3);
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot5))
-                    SelectSlot(4);
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
-                    SelectSlot(5);
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot7))
-                    SelectSlot(6);
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot8))
-                    SelectSlot(7);
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot9))
-                    SelectSlot(8);
-                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot10))
-                    SelectSlot(9);
-            }
-            else
-            {
-                kcc.SetInputDirection(Vector3.zero);
-
-            }
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot1))
+                SelectSlot(0);
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot2))
+                SelectSlot(1);
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot3))
+                SelectSlot(2);
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot4))
+                SelectSlot(3);
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot5))
+                SelectSlot(4);
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
+                SelectSlot(5);
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot7))
+                SelectSlot(6);
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot8))
+                SelectSlot(7);
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot9))
+                SelectSlot(8);
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot10))
+                SelectSlot(9);
 
 
 
@@ -299,127 +285,103 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             // 현재 들고있는 아이템에 따라 바뀜 아이템 클래스 구현 후 추가 예정
         }
 
-        public void CheckInteractionE()
+        public void CheckInteraction()
         {
-            if (HasStateAuthority)
-            {
-                PlayerInteraction.CheckInteraction(camTarget);
-
-            }
-    
-        }
-        private Coroutine stayDamageCoroutine;
-
-        public void CheckInteractionF()
-        {
-            if (HasInputAuthority && inventory.Get(slotIndex) != -1)
-            {
-                if (IsMovable)
-                {
-                    DamageTime = 0;
-                    IsMovable = false;
-                    stayDamageCoroutine = StartCoroutine(StayDamageTime());
-                    NewUiManager.instance.OnProgressbar();
-                }
-                else
-                {
-                    if (stayDamageCoroutine != null) StopCoroutine(stayDamageCoroutine);
-                    NewUiManager.instance.OffProgressbar();
-                    IsMovable = true;
-                }
-            }
-            else
-            {
-                Debug.Log("아이템이 없습니다.");
-            }
+            if (HasStateAuthority) 
+                playerInteraction.Server_CheckInteraction();
+            
+            if (HasInputAuthority)
+                playerInteraction.CheckInteraction();
         }
 
-        IEnumerator StayDamageTime()
-        {
-            yield return new WaitForSeconds(10f);
-            DamageToRelic();
-        }
-
-        public void DamageToRelic()
-        {
-            if (Object.HasStateAuthority && inventory[slotIndex] != -1)
-            {
-                Debug.Log($"Damage to {inventory[slotIndex]}");
-                inventory.Set(slotIndex, -1);
-                UpdateInventoryUI(slotIndex, -1, false);
-                IsMovable = true;
-            }
-        }
         #endregion
 
 
-
-
         #region Inventory
-        public void SelectSlot(int index)
+
+        private void SelectSlot(int index)
         {
+            if (!HasStateAuthority && !HasInputAuthority) 
+                return;
+            
             slotIndex = index;
-            if (Object.HasInputAuthority) // 로컬 플레이어만 UI 업데이트
-            {
-                NewUiManager.Instance.SelectTogle(index);
-                NewUiManager.instance.DisplayRelicP(inventory[index]);
-            }
+            if (!HasInputAuthority)
+                return;
+            
+            UIManager.Instance.inventorySlotController.SelectToggle(index);
         }
 
-        public bool SetSlot(int relicId)
+        public bool GetRelic(int relicId)
         {
             // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
-            if (inventory[slotIndex] == -1)
+            if (Inventory[slotIndex] == -1)
             {
-                inventory.Set(slotIndex, relicId);
-                UpdateInventoryUI(slotIndex, relicId, true);
+                Inventory.Set(slotIndex, relicId);
+                SetPreviousInventory();
                 return true;
             }
 
             // 빈 슬롯을 찾아 아이템 추가
-            for (int i = 0; i < inventory.Length; i++)
+            for (var i = 0; i < Inventory.Length; i++)
             {
-                if (inventory[i] == -1)
-                {
-                    inventory.Set(i, relicId);
-                    UpdateInventoryUI(i, relicId, true);
-                    return true;
-                }
+                if (Inventory[i] != -1) 
+                    continue;
+                
+                Inventory.Set(i, relicId);
+                SetPreviousInventory();
+                return true;
             }
-            Debug.Log("인벤토리 빈공간 없음");
+            
             return false;
         }
 
-        private void UpdateInventoryUI(int index, int relicId, bool hasItem)
+        private void SetPreviousInventory()
         {
-            if (Object.HasInputAuthority) // 로컬 플레이어 UI만 업데이트
-            {
-                NewUiManager.Instance.SetRelicSprite(index, relicId, hasItem);
-                NewUiManager.instance.DisplayRelicP(inventory[index]);
-            }
+            _prevInventory = Inventory.ToArray();
         }
         
-
         public void ThrowRelic()
         {
-            if (Object.HasStateAuthority && inventory[slotIndex] != -1) // 서버에서만 실행
+            if (HasStateAuthority && Inventory[slotIndex] != -1) // 서버에서만 실행
             {
-                // 현재 선택된 슬롯의 아이템을 버림
-                //렐릭 풀에서 인덱스 검사해서 가져와 오브젝트에 할당
-                Debug.Log($"Drop {inventory[slotIndex]} : {RelicManager.Instance.GetRelicData(inventory[slotIndex]).GetGoldPoint()} gold");
-                RelicManager.Instance.GetRelicData(inventory[slotIndex]).OnThrowAway(Object.InputAuthority);
-                inventory.Set(slotIndex, -1); // 인벤토리에서 제거
+                RelicManager.Instance.GetRelicData(Inventory[slotIndex]).OnThrowAway(Object.InputAuthority);
+                Inventory.Set(slotIndex, -1); // 인벤토리에서 제거
+                SetPreviousInventory();
             }
-            else if (Object.HasInputAuthority && inventory[slotIndex] == -1)
+        }
+
+        private void UpdateInventoryUI(int index, int relicId)
+        {
+            if (HasInputAuthority) // 로컬 플레이어 UI만 업데이트
             {
-                Debug.Log("아이템이 없습니다.");
+                UIManager.Instance.inventorySlotController.SetRelicSprite(index, relicId);
             }
-            UpdateInventoryUI(slotIndex, -1, false); // 로컬 UI 업데이트
         }
         
         public Transform GetCamTarget()
         {
             return camTarget;
+        }
+
+        public void OnInventoryChanged(NetworkBehaviourBuffer previous)
+        {
+            if(!HasInputAuthority)
+                return;
+            for (var i = 0; i < 10; i++)
+            {
+                UIManager.Instance.inventorySlotController.SetRelicSprite(i, Inventory[i]);
+            }
+        }
+
+        public void SetPlayerColor(int index) => PlayerColor = index;
+        public int GetPlayerColor() => PlayerColor;
+
+        public void OnColorChanged()
+        {
+            Material[] materials = skinnedMeshRenderer.materials; 
+            materials[1] = NewGameManager.Instance.playerClothMaterials[PlayerColor];
+            materials[4] = NewGameManager.Instance.playerHairMaterials[PlayerColor];
+            skinnedMeshRenderer.materials = materials;
         }
 
         #endregion
@@ -433,13 +395,32 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
 
         }
-        public void ToggleShop()
+
+        #region Gold, Renown Point Add...
+
+        public void AddGoldPoint(int point)
         {
-            NewUiManager.instance.ToggleShop(inventory.ToArray());
+            GoldPoint += point;
         }
+        
+        public void AddRenownPoint(int point)
+        {
+            RenownPoint += point;
+        }
+
+        #endregion
+        
+        
         #endregion
         #region RPC Methods...
 
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        public void RPC_AddPoint(int gold, int renown, PlayerRef player)
+        {
+            GoldPoint += gold;
+            RenownPoint += renown;
+        }
+        
         #endregion
     }
 }

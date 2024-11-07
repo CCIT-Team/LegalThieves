@@ -1,25 +1,18 @@
+using System;
 using LegalThieves;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using TMPro;
-using Fusion;
+using Random = UnityEngine.Random;
 
 public class SellingUITest : MonoBehaviour
 {
     public GameObject inventoryGrid;
     public GameObject sellingTableGrid;
-    public TMP_Text sellingPoint;
 
     [SerializeField] private GameObject[] rellicIcons;
 
     private GameObject[] inventoryRellics = { };
     private GameObject[] sellingRellics = { };
-
-    [HideInInspector,Networked]
-    public Shop shop { get; set; }
 
     private void Update()
     {
@@ -27,8 +20,20 @@ public class SellingUITest : MonoBehaviour
         {
             int randomIndex = Random.Range(0, rellicIcons.Length);
             GameObject newRellic = Instantiate(rellicIcons[randomIndex], inventoryGrid.transform);
-            inventoryRellics = inventoryRellics.Append(newRellic).ToArray();
+            inventoryRellics.Append(newRellic);
         }
+    }
+
+    private void OnEnable()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    private void OnDisable()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = true;
     }
 
     private void ClearInventoryGrid()
@@ -58,8 +63,8 @@ public class SellingUITest : MonoBehaviour
     public void SetSelectedRellicToGrid(GameObject rellic, GameObject selectedGrid)
     {
         rellic.transform.SetParent(selectedGrid.transform);
-        if (selectedGrid == inventoryGrid) inventoryRellics = inventoryRellics.Append(rellic).ToArray();
-        else sellingRellics = sellingRellics.Append(rellic).ToArray();
+        if (selectedGrid == inventoryGrid) inventoryRellics.Append(rellic);
+        else sellingRellics.Append(rellic);
     }
 
     public void SetInventoryGrid(int[] rellicsInInventory)
@@ -69,27 +74,24 @@ public class SellingUITest : MonoBehaviour
             //여기서 플레이어 인벤토리로부터 UI에 해당하는 유물 아이콘을 탐색해서 인벤토리 UI에 유물 아이콘 UI를 자식으로 Instantiate하고 배열에 추가
             UnityEngine.Debug.Log(rellic);
             if (rellic == -1) continue;
-            GameObject newRellic = Instantiate(rellicIcons[RelicManager.Instance.GetRelicData(rellic).GetTypeIndex()], inventoryGrid.transform);
+            GameObject newRellic = Instantiate(rellicIcons[rellic], inventoryGrid.transform);
             newRellic.name = "RelicIcon";
             newRellic.transform.localScale = new Vector3 (1, 1, rellic);
-            inventoryRellics = inventoryRellics.Append(newRellic).ToArray();
+            inventoryRellics.Append(newRellic);
         }
     }
 
     public void SellSellingTableRellics()
     {
-        List<int> ids = new();
         var gp = 0;
         var rp = 0;
         foreach (GameObject rellic in inventoryRellics)
         {
-            ids.Add((int)rellic.transform.localScale.z);
             gp += RelicManager.Instance.GetRelicData((int)rellic.transform.localScale.z).GetGoldPoint();
             rp += RelicManager.Instance.GetRelicData((int)rellic.transform.localScale.z).GetRenownPoint();
             //여기서 테이블 위 유물들 포인트 총량 합산
         }
-        shop.AddPoint(gp,rp, ids.ToArray());
-
+        
         ClearSellingTableGrid();
         //여기서 테이블 위 유물들 포인트 총량 반환
     }
@@ -98,11 +100,5 @@ public class SellingUITest : MonoBehaviour
     {
         ClearSellingTableGrid();
         ClearInventoryGrid();
-    }
-
-    public void OffCusorSetting()
-    {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
     }
 }

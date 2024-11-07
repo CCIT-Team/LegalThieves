@@ -10,7 +10,7 @@ namespace New_Neo_LT.Scripts.Game_Play
 {
 	public class PlayerRegistry : NetworkBehaviour, INetworkRunnerCallbacks
 	{
-		public const byte Capacity = 4;
+		private const byte Capacity = 4;
 
 		public static PlayerRegistry Instance { get; private set; }
 

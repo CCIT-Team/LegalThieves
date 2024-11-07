@@ -24,6 +24,7 @@ namespace New_Neo_LT.Scripts.Player_Input
         Crouch,          // Ctrl
         Inventory,       // Tab
         Slot1, Slot2, Slot3, Slot4, Slot5, Slot6, Slot7, Slot8, Slot9,Slot10,
+        SellButton,
         InputButtonCount // 버튼 개수
     }
 
@@ -37,7 +38,7 @@ namespace New_Neo_LT.Scripts.Player_Input
     public class InputController : SimulationBehaviour, INetworkRunnerCallbacks
     {
         //public PlayerCharacter playerCharacter;
-        public Vector2 AccumulatedMouseDelta => _mouseDeltaAccumulator.AccumulatedValue;
+        public Vector2  AccumulatedMouseDelta => _mouseDeltaAccumulator.AccumulatedValue;
 
         private NetInput _accumulateInput;
         private bool _resetInput;
@@ -98,6 +99,9 @@ namespace New_Neo_LT.Scripts.Player_Input
         private Vector2 _mouseDeltaVector;
         private void MouseDelta(InputAction.CallbackContext ctx)
         {
+            if(Cursor.lockState != CursorLockMode.Locked)
+                return;
+            
             _mouseDeltaVector.x = -ctx.ReadValue<Vector2>().y;
             _mouseDeltaVector.y = ctx.ReadValue<Vector2>().x;
             _mouseDeltaAccumulator.Accumulate(_mouseDeltaVector);

@@ -1,40 +1,44 @@
 using UnityEngine;
 using Fusion;
+using New_Neo_LT.Scripts.PlayerComponent;
+using New_Neo_LT.Scripts.Relic;
 
 public interface IInteractable
 {
-    string GetInteractPrompt();
-    void OnInteract(PlayerRef player);
+    void OnServer_Interact(PlayerRef player);
+    void OnClient_Interact(PlayerRef player);
 }
 
 public class PlayerInteraction : NetworkBehaviour
 {
-    public float maxCheckDistance;
-    public LayerMask layerMask;
+    [SerializeField] private float maxCheckDistance;
+    [SerializeField] private LayerMask layerMask;
+    private Transform _camTarget;
 
-    public GameObject curInteractGameobject;
-    public IInteractable curInteractable;
-
-   
-    public void CheckInteraction(Transform camera)
+    public override void Spawned()
     {
+        base.Spawned();
+        _camTarget = Object.GetComponent<PlayerCharacter>().GetCamTarget();
+    }
+
+    public void Server_CheckInteraction()
+    {
+        if (!Physics.Raycast(_camTarget.position, _camTarget.forward, out var hit, maxCheckDistance, layerMask))
+            return;
+        if (!hit.collider.TryGetComponent<IInteractable>(out var interactable))
+            return;
         
-            // ray에 뭔가 충돌했다면 hit에 충돌한 오브젝트에 대한 정보가 넘어오게 된다.
-            if (Physics.Raycast(camera.position, camera.forward, out RaycastHit hit, maxCheckDistance, layerMask))
-            {
-                curInteractGameobject = hit.collider.gameObject;
-                curInteractable = hit.collider.GetComponent<IInteractable>();
-                curInteractable.OnInteract(Object.InputAuthority);
-            }
-            else
-            {
-               
-                // 화면의 정 중앙에 상호작용 가능한 물체가 없는 경우
-                curInteractGameobject = null;
-                curInteractable = null;
-            }
-        
+        interactable.OnServer_Interact(Object.InputAuthority);
     } 
     
+    public void CheckInteraction()
+    {
+        if (!Physics.Raycast(_camTarget.position, _camTarget.forward, out var hit, maxCheckDistance, layerMask))
+            return;
+        if (!hit.collider.TryGetComponent<IInteractable>(out var interactable))
+            return;
+        
+        interactable.OnClient_Interact(Object.InputAuthority);
+    } 
 }
 

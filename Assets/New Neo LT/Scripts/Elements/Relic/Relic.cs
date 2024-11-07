@@ -3,13 +3,15 @@ using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Elements.Relic
 {
-    public class Relic : NetworkBehaviour
+    public class Relic : Interactable
     {
         [SerializeField] private GameObject visual;
         
-        [Networked] public int Scroe { get; set; }
-        [Networked] public int Type { get; set; }
-        [Networked, OnChangedRender(nameof(SetActiveSelf))] public bool IsActivated { get; set; }
+        [Networked, OnChangedRender(nameof(OnIsActiveChange))] 
+        public NetworkBool IsActivated { get; set; }
+
+
+        private int _goldPoint;
         
         
         
@@ -17,21 +19,26 @@ namespace New_Neo_LT.Scripts.Elements.Relic
 
         public override void Spawned()
         {
-            
+            base.Spawned();
+            OnIsActiveChange();
         }
 
-        private void SetActiveSelf()
+        private void OnIsActiveChange()
         {
             visual.SetActive(IsActivated);
         }
 
-        public bool TryInteraction(Character character)
+        public override bool CanInteract(PlayerRef player)
         {
-            // var index = character.gameObject.GetComponent<PlayerInventory>().TryInsert(this);
-            // if (index == -1)
-            //     return false;
-            // IsActivated = false;
             return true;
+        }
+
+        public override void Interact(NetworkObject interacter)
+        {
+            if(!CanInteract(interacter.Runner.LocalPlayer))
+                return;
+            
+            Debug.Log($"{_goldPoint}");
         }
     }
 }
