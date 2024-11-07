@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using LegalThieves;
 
 public class NewUiManager : MonoBehaviour
 {
@@ -28,6 +29,8 @@ public class NewUiManager : MonoBehaviour
     [SerializeField] private InteractionProgressUITemp InteractionProgressUITemp;
 
     [SerializeField] private SellingUITest shopUI;
+
+    [SerializeField] private GameObject pointUI;
 
 
 
@@ -65,6 +68,18 @@ public class NewUiManager : MonoBehaviour
         progressBar.SetActive(false);
          
 
+    }
+
+    public void DisplayRelicP(int relicIndex)
+    {
+        if (relicIndex == -1)
+            pointUI.SetActive(false);
+        else
+        {
+            pointUI.SetActive(true);
+            pointUI.GetComponent<RelicPriceUI>().SetUIPoint(RelicManager.Instance.GetRelicData(relicIndex).GetGoldPoint(),
+                                                        RelicManager.Instance.GetRelicData(relicIndex).GetRenownPoint());
+        }
     }
 
     public void ToggleShop(int[] inventory, Shop shop = null)

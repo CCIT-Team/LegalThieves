@@ -362,6 +362,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (Object.HasInputAuthority) // 로컬 플레이어만 UI 업데이트
             {
                 NewUiManager.Instance.SelectTogle(index);
+                NewUiManager.instance.DisplayRelicP(inventory[index]);
             }
         }
 
@@ -394,6 +395,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (Object.HasInputAuthority) // 로컬 플레이어 UI만 업데이트
             {
                 NewUiManager.Instance.SetRelicSprite(index, relicId, hasItem);
+                NewUiManager.instance.DisplayRelicP(inventory[index]);
             }
         }
         
@@ -431,9 +433,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
 
         }
-        public void ToggleShop(Shop shop = null)
+        public void ToggleShop()
         {
-            NewUiManager.instance.ToggleShop(inventory.ToArray(), shop);
+            NewUiManager.instance.ToggleShop(inventory.ToArray());
         }
         #endregion
         #region RPC Methods...
