@@ -9,6 +9,7 @@ namespace New_Neo_LT.Scripts.UI
         public InventorySlotController inventorySlotController;
         public TimerController         timerController;
         public PlayerListController    playerListController;
+        public RelicPriceUI relicPriceUI;
 
         public static UIManager Instance;
         

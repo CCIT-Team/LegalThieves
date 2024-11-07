@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using LegalThieves;
+using New_Neo_LT.Scripts.Elements;
 
 public class NewUiManager : MonoBehaviour
 {
@@ -77,8 +78,7 @@ public class NewUiManager : MonoBehaviour
         else
         {
             pointUI.SetActive(true);
-            pointUI.GetComponent<RelicPriceUI>().SetUIPoint(RelicManager.Instance.GetRelicData(relicIndex).GetGoldPoint(),
-                                                        RelicManager.Instance.GetRelicData(relicIndex).GetRenownPoint());
+            pointUI.GetComponent<RelicPriceUI>().SetUIPoint(relicIndex);
         }
     }
 
@@ -87,8 +87,6 @@ public class NewUiManager : MonoBehaviour
         if(ToggleCusorSetting())
         {
             shopUI.gameObject.SetActive(true);
-            if(shopUI.shop == null)
-                shopUI.shop = shop;
             shopUI.SetInventoryGrid(inventory);
         }
         else

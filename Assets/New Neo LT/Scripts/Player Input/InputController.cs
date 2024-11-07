@@ -15,11 +15,11 @@ namespace New_Neo_LT.Scripts.Player_Input
         Attack1,         // 마우스 왼쪽 클릭
         Attack2,         // 마우스 왼쪽 클릭
         Jump,            // 스페이스바
-        InteractionF,    // F 
-        InteractionE,    // E skill1?
-        InteractionQ,    // Q skill2?
+        Interaction1,    // F 
+        Interaction2,    // E skill1?
+        Interaction3,    // Q skill2?
         Interaction4,    // R skill3?
-        InteractionG,    // G drop item
+        Interaction5,    // G drop item
         Sprint,          // Shift
         Crouch,          // Ctrl
         Inventory,       // Tab
@@ -139,12 +139,12 @@ namespace New_Neo_LT.Scripts.Player_Input
         
         private void InteractionQ(InputAction.CallbackContext ctx)
         {
-            _accumulateInput.Buttons.Set(EInputButton.InteractionQ, ctx.ReadValueAsButton());
+            _accumulateInput.Buttons.Set(EInputButton.Interaction3, ctx.ReadValueAsButton());
         }
         
         private void InteractionE(InputAction.CallbackContext ctx)
         {
-            _accumulateInput.Buttons.Set(EInputButton.InteractionE, ctx.ReadValueAsButton());
+            _accumulateInput.Buttons.Set(EInputButton.Interaction2, ctx.ReadValueAsButton());
         }
         
         private void InteractionR(InputAction.CallbackContext ctx)
@@ -154,12 +154,12 @@ namespace New_Neo_LT.Scripts.Player_Input
         
         private void InteractionF(InputAction.CallbackContext ctx)
         {
-            _accumulateInput.Buttons.Set(EInputButton.InteractionF, ctx.ReadValueAsButton());
+            _accumulateInput.Buttons.Set(EInputButton.Interaction1, ctx.ReadValueAsButton());
         }
         
         private void InteractionG(InputAction.CallbackContext ctx)
         {
-            _accumulateInput.Buttons.Set(EInputButton.InteractionG, ctx.ReadValueAsButton());
+            _accumulateInput.Buttons.Set(EInputButton.Interaction5, ctx.ReadValueAsButton());
         }
         
         private void Inventory(InputAction.CallbackContext ctx)

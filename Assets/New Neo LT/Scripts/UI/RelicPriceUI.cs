@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using TMPro;
+using New_Neo_LT.Scripts.Relic;
+using LegalThieves;
 
 public class RelicPriceUI : MonoBehaviour
 {
@@ -11,6 +10,7 @@ public class RelicPriceUI : MonoBehaviour
     [SerializeField]
     GameObject renownPointLabel;
 
+    TMP_Text relicName;
     TMP_Text goldPoint;
     TMP_Text renownPoint;
 
@@ -18,8 +18,11 @@ public class RelicPriceUI : MonoBehaviour
 
     private void Awake()
     {
-        goldPoint = goldPointLabel.transform.GetChild(0).GetComponent<TMP_Text>();
-        renownPoint = renownPointLabel.transform.GetChild(0).GetComponent<TMP_Text>();
+        //goldPoint = goldPointLabel.transform.GetChild(0).GetComponent<TMP_Text>();
+        //renownPoint = renownPointLabel.transform.GetChild(0).GetComponent<TMP_Text>();
+        relicName = GetComponent<TMP_Text>();
+        goldPoint = goldPointLabel.GetComponent<TMP_Text>();
+        renownPoint = renownPointLabel.GetComponent<TMP_Text>();
     }
 
     public void SetWinPoint(bool iswin = false)
@@ -31,9 +34,20 @@ public class RelicPriceUI : MonoBehaviour
             goldPointLabel.transform.SetSiblingIndex(1);
     }
 
-    public void SetUIPoint(int gold, int renown)
+    public void SetUIPoint(int relicIndex)
     {
-        goldPoint.text = gold.ToString();
-        renownPoint.text = renown.ToString();
+        if(relicIndex == -1)
+        {
+            relicName.text = "";
+            goldPoint.text = "";
+            renownPoint.text = "";
+        }
+        else
+        {
+            var relic = RelicManager.Instance.GetRelicData(relicIndex);
+            relicName.text = relic.gameObject.name;
+            goldPoint.text = "골드 포인트   " + relic.GetGoldPoint().ToString();
+            renownPoint.text = "리나운 포인트   " + relic.GetRenownPoint().ToString();
+        }
     }
 }

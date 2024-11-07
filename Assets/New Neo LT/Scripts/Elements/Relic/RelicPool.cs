@@ -21,13 +21,13 @@ namespace New_Neo_LT.Scripts.Elements.Relic
                 return;
             
             
-            for (var i = 0; i < relicCount; i++)
-            {
-                relics[i] = Runner.Spawn(relicPrefab, new Vector3(0,0,i), Quaternion.identity).GetComponent<Relic>();
-                relics[i].IsActivated = true;
-                relics[i].Scroe = Random.Range(1, 10);
-                relics[i].Type = Random.Range(0, 5);
-            }
+            //for (var i = 0; i < relicCount; i++)
+            //{
+            //    relics[i] = Runner.Spawn(relicPrefab, new Vector3(0,0,i), Quaternion.identity).GetComponent<Relic>();
+            //    relics[i].IsActivated = true;
+            //    relics[i].Scroe = Random.Range(1, 10);
+            //    relics[i].Type = Random.Range(0, 5);
+            //}
             
         }
     }

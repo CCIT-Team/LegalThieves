@@ -1,7 +1,6 @@
 using Fusion;
 using Fusion.Addons.Physics;
 using New_Neo_LT.Scripts.Game_Play;
-using UI;
 using UnityEngine;
 using RelicManager = LegalThieves.RelicManager;
 using UIManager = New_Neo_LT.Scripts.UI.UIManager;

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748171, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -242,6 +242,7 @@ MonoBehaviour:
   inventorySlotController: {fileID: 1015348298}
   timerController: {fileID: 1015348297}
   playerListController: {fileID: 0}
+  relicPriceUI: {fileID: 6727181317740544184}
 --- !u!1 &16205150
 GameObject:
   m_ObjectHideFlags: 0
@@ -3230,6 +3231,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4288599568945851170, guid: 7c553258e7ed6154d83075d7d3de457c, type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5006946116276174571, guid: 7c553258e7ed6154d83075d7d3de457c, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -3325,6 +3330,10 @@ PrefabInstance:
     - target: {fileID: 6777788756998340432, guid: 7c553258e7ed6154d83075d7d3de457c, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6867653904328675022, guid: 7c553258e7ed6154d83075d7d3de457c, type: 3}
+      propertyPath: m_text
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7119164634517724995, guid: 7c553258e7ed6154d83075d7d3de457c, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3409,6 +3418,10 @@ PrefabInstance:
     - target: {fileID: 8187825433739239598, guid: 7c553258e7ed6154d83075d7d3de457c, type: 3}
       propertyPath: m_AnchorMin.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8593003115851006205, guid: 7c553258e7ed6154d83075d7d3de457c, type: 3}
+      propertyPath: m_text
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3420,6 +3433,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6481280917048440597, guid: 7c553258e7ed6154d83075d7d3de457c, type: 3}
   m_PrefabInstance: {fileID: 6727181317740544182}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6727181317740544184 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4946278906163840195, guid: 7c553258e7ed6154d83075d7d3de457c, type: 3}
+  m_PrefabInstance: {fileID: 6727181317740544182}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a448aede73f037f4fbe81777d1a6c61b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -309,6 +309,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 return;
             
             UIManager.Instance.inventorySlotController.SelectToggle(index);
+
+            UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
         }
 
         public bool GetRelic(int relicId)
@@ -371,6 +373,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 UIManager.Instance.inventorySlotController.SetRelicSprite(i, Inventory[i]);
             }
+            UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[slotIndex]);
         }
 
         public void SetPlayerColor(int index) => PlayerColor = index;
