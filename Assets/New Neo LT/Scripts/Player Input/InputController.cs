@@ -15,11 +15,11 @@ namespace New_Neo_LT.Scripts.Player_Input
         Attack1,         // 마우스 왼쪽 클릭
         Attack2,         // 마우스 왼쪽 클릭
         Jump,            // 스페이스바
-        Interaction1,    // F 
-        Interaction2,    // E skill1?
+        InteractionF,    // F 
+        InteractionE,    // E skill1?
         InteractionQ,    // Q skill2?
         Interaction4,    // R skill3?
-        Interaction5,    // G drop item
+        InteractionG,    // G drop item
         Sprint,          // Shift
         Crouch,          // Ctrl
         Inventory,       // Tab
@@ -140,7 +140,7 @@ namespace New_Neo_LT.Scripts.Player_Input
         
         private void InteractionE(InputAction.CallbackContext ctx)
         {
-            _accumulateInput.Buttons.Set(EInputButton.Interaction2, ctx.ReadValueAsButton());
+            _accumulateInput.Buttons.Set(EInputButton.InteractionE, ctx.ReadValueAsButton());
         }
         
         private void InteractionR(InputAction.CallbackContext ctx)
@@ -150,12 +150,12 @@ namespace New_Neo_LT.Scripts.Player_Input
         
         private void InteractionF(InputAction.CallbackContext ctx)
         {
-            _accumulateInput.Buttons.Set(EInputButton.Interaction1, ctx.ReadValueAsButton());
+            _accumulateInput.Buttons.Set(EInputButton.InteractionF, ctx.ReadValueAsButton());
         }
         
         private void InteractionG(InputAction.CallbackContext ctx)
         {
-            _accumulateInput.Buttons.Set(EInputButton.Interaction5, ctx.ReadValueAsButton());
+            _accumulateInput.Buttons.Set(EInputButton.InteractionG, ctx.ReadValueAsButton());
         }
         
         private void Inventory(InputAction.CallbackContext ctx)
