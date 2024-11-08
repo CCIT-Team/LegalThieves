@@ -5,6 +5,8 @@ using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Windows;
+using System.Collections;
 using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 using RelicManager = LegalThieves.RelicManager;
@@ -53,15 +55,22 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
-        
+
+       
+        private bool              IsPickTorch { get; set; }
+
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
         
         private bool              _isSprinting;
         private bool              CanJump   => kcc.FixedData.IsGrounded;
         private bool              CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
-        
 
+
+        [SerializeField] private GameObject itemTorch;
+        [SerializeField] private Item_Torch_Temp Torch;
+        private Coroutine torchCoroutine = null;
+        private bool isTorchProcessing = false; // 코루틴 실행 상태 플래그
 
         [SerializeField] private int slotIndex = 0;
 
@@ -76,9 +85,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private static readonly int AnimIsCrouchSync  = Animator.StringToHash("IsCrouchSync");
         private static readonly int AnimLookPit       = Animator.StringToHash("LookPit");
         private static readonly int AnimJumpTrigger   = Animator.StringToHash("Jump");
-        
+        private static readonly int AnimTorch         = Animator.StringToHash("pickTorch");
         #endregion
-        
+
         /*------------------------------------------------------------------------------------------------------------*/
 
         #region NetworkBehaviour Events...
@@ -134,6 +143,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             animator.SetFloat(AnimMoveDirY    , moveVelocity.z * 2, 0.05f, Time.deltaTime);
             animator.SetFloat(AnimIsCrouchSync, CrouchSync);
             animator.SetFloat(AnimLookPit     , kcc.FixedData.LookPitch);
+            animator.SetBool(AnimTorch        , IsPickTorch);
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
@@ -196,16 +206,28 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 OnMouseLeftClick();
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Attack2))
                 OnMouseRightClick();
-            
             // Set behavior by Keyboard input
             // Sprint
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
-                kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
-            if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Sprint))
-                kcc.FixedData.KinematicSpeed = characterStats.MoveSpeed;
-            
+                ToggleSprint(true);
+            else if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Sprint) && _isSprinting)
+                ToggleSprint(false);
+
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Crouch) && kcc.Data.IsGrounded)
+            {
+                ToggleCrouch(true);
+                ToggleSprint(false);
+            }
+            else if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Crouch) && _isSprinting)
+            {
+                ToggleCrouch(false);
+            }
+
+            //torch
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction3))
+                CheckInteractionQ();
             // Jump
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump))
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump)&& CanJump)
                 OnJumpButtonPressed();
             // Crouch
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Crouch))
@@ -240,7 +262,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot10))
                 SelectSlot(9);
 
-
+            if (_isSprinting && !CanSprint)
+                ToggleSprint(false);
 
             // Previous Buttons for comparison
             _previousButtons = playerInput.Buttons;
@@ -272,9 +295,47 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
             return transform.InverseTransformVector(velocity);
         }
+  
 
+        private void ToggleSprint(bool isSprinting)
+        {
+            if (_isSprinting == isSprinting)
+                return;
+
+            if (isSprinting)
+            {
+                kcc.AddModifier(kccProcessors[1]);
+                var velocity = kcc.Data.DynamicVelocity;
+                velocity.y *= 0.25f;
+                kcc.SetDynamicVelocity(velocity);
+            }
+            else
+            {
+                kcc.RemoveModifier(kccProcessors[1]);
+            }
+            _isSprinting = isSprinting;
+        }
+
+        private void ToggleCrouch(bool isCrouching)
+        {
+            if (_isSprinting == isCrouching)
+                return;
+
+            if (isCrouching)
+            {
+                kcc.SetHeight(1f);
+                kcc.AddModifier(kccProcessors[2]);
+                _isSprinting = true;
+            }
+            else
+            {
+                kcc.SetHeight(1.6f);
+                kcc.RemoveModifier(kccProcessors[2]);
+                _isSprinting = false;
+            }
+        }
         #endregion
-        
+
         #region Interaction Methods...
 
         private void OnMouseLeftClick()
@@ -305,6 +366,44 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 playerInteraction.CheckInteraction();
         }
 
+        private void CheckInteractionQ()
+        {
+            if (torchCoroutine != null)
+            {
+                StopCoroutine(torchCoroutine); // 실행 중인 코루틴이 있으면 중지
+            }
+
+            if (!IsPickTorch)
+            {
+                torchCoroutine = StartCoroutine(WaitOn());
+            }
+            else
+            {
+                torchCoroutine = StartCoroutine(WaitOff());
+            }
+        }
+
+        private IEnumerator WaitOn()
+        {
+            Debug.Log("횃불 ON");
+            RpcSetTorchState(true);
+
+            yield return new WaitForSeconds(1f);
+            Torch.TurnOnLight();
+            IsPickTorch = true;
+            torchCoroutine = null; // 코루틴 완료 후 null로 설정
+        }
+
+        private IEnumerator WaitOff()
+        {
+           
+            IsPickTorch = false;
+            yield return new WaitForSeconds(1.0f);
+            Torch.TurnOffLight();
+            yield return new WaitForSeconds(1.0f);
+            itemTorch.SetActive(false);
+            torchCoroutine = null; // 코루틴 완료 후 null로 설정
+        }
         #endregion
 
 
@@ -386,6 +485,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             }
             UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[slotIndex]);
         }
+        
+        public int[] GetInventorys()
+        {
+            return Inventory.ToArray();
+        }
 
         public void SetPlayerColor(int index) => PlayerColor = index;
         public int GetPlayerColor() => PlayerColor;
@@ -449,7 +553,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             GoldPoint += gold;
             RenownPoint += renown;
         }
-        
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        private void RpcSetTorchState(bool state)
+        {
+            IsPickTorch = state;
+            itemTorch.SetActive(state);
+        }
+
         #endregion
     }
 }

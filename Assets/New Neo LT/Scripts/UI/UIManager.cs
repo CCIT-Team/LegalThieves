@@ -43,5 +43,10 @@ namespace New_Neo_LT.Scripts.UI
         {
             _localPlayerTransform = localPlayerTransform;
         }
+
+        public Transform GetLocalPlayerTransform()
+        {
+            return _localPlayerTransform;
+        }
     }
 }
