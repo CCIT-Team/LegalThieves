@@ -25,7 +25,7 @@ public class Item_Torch_Temp : MonoBehaviour
             var emission = p.emission;
             emission.enabled = true;
         }
-        AudioManager.instance.PlayTorchLoopSfx(true);
+       
     }
 
     public void TurnOffLight()
@@ -37,7 +37,7 @@ public class Item_Torch_Temp : MonoBehaviour
             var emission = p.emission;
             emission.enabled = false;
         }
-        AudioManager.instance.PlayTorchLoopSfx(false);
+      
     }
 
     private IEnumerator ChangeLightIntensity(float delta)

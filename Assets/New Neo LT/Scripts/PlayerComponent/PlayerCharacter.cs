@@ -6,6 +6,7 @@ using New_Neo_LT.Scripts.Player_Input;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Windows;
+using System.Collections;
 using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 using RelicManager = LegalThieves.RelicManager;
@@ -54,15 +55,22 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
-        
+
+       
+        private bool              IsPickTorch { get; set; }
+
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
         
         private bool              _isSprinting;
         private bool              CanJump   => kcc.FixedData.IsGrounded;
         private bool              CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
-        
 
+
+        [SerializeField] private GameObject itemTorch;
+        [SerializeField] private Item_Torch_Temp Torch;
+        private Coroutine torchCoroutine = null;
+        private bool isTorchProcessing = false; // 코루틴 실행 상태 플래그
 
         [SerializeField] private int slotIndex = 0;
 
@@ -77,9 +85,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private static readonly int AnimIsCrouchSync  = Animator.StringToHash("IsCrouchSync");
         private static readonly int AnimLookPit       = Animator.StringToHash("LookPit");
         private static readonly int AnimJumpTrigger   = Animator.StringToHash("Jump");
-        
+        private static readonly int AnimTorch         = Animator.StringToHash("pickTorch");
         #endregion
-        
+
         /*------------------------------------------------------------------------------------------------------------*/
 
         #region NetworkBehaviour Events...
@@ -135,6 +143,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             animator.SetFloat(AnimMoveDirY    , moveVelocity.z * 2, 0.05f, Time.deltaTime);
             animator.SetFloat(AnimIsCrouchSync, CrouchSync);
             animator.SetFloat(AnimLookPit     , kcc.FixedData.LookPitch);
+            animator.SetBool(AnimTorch        , IsPickTorch);
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
@@ -214,6 +223,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 ToggleCrouch(false);
             }
 
+            //torch
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction3))
+                CheckInteractionQ();
             // Jump
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump)&& CanJump)
                 OnJumpButtonPressed();
@@ -354,6 +366,44 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 playerInteraction.CheckInteraction();
         }
 
+        private void CheckInteractionQ()
+        {
+            if (torchCoroutine != null)
+            {
+                StopCoroutine(torchCoroutine); // 실행 중인 코루틴이 있으면 중지
+            }
+
+            if (!IsPickTorch)
+            {
+                torchCoroutine = StartCoroutine(WaitOn());
+            }
+            else
+            {
+                torchCoroutine = StartCoroutine(WaitOff());
+            }
+        }
+
+        private IEnumerator WaitOn()
+        {
+            Debug.Log("횃불 ON");
+            RpcSetTorchState(true);
+
+            yield return new WaitForSeconds(1f);
+            Torch.TurnOnLight();
+            IsPickTorch = true;
+            torchCoroutine = null; // 코루틴 완료 후 null로 설정
+        }
+
+        private IEnumerator WaitOff()
+        {
+           
+            IsPickTorch = false;
+            yield return new WaitForSeconds(1.0f);
+            Torch.TurnOffLight();
+            yield return new WaitForSeconds(1.0f);
+            itemTorch.SetActive(false);
+            torchCoroutine = null; // 코루틴 완료 후 null로 설정
+        }
         #endregion
 
 
@@ -503,7 +553,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             GoldPoint += gold;
             RenownPoint += renown;
         }
-        
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        private void RpcSetTorchState(bool state)
+        {
+            IsPickTorch = state;
+            itemTorch.SetActive(state);
+        }
+
         #endregion
     }
 }
