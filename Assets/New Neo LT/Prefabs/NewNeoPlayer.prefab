@@ -171,13 +171,25 @@ MonoBehaviour:
   - {fileID: 7556963233328221503, guid: b7147414adb9e7244be871ed37d39173, type: 3}
   - {fileID: 7556963233328221503, guid: aacff19f101670d43b45a0a4a389fd90, type: 3}
   animator: {fileID: 2066540664455788372}
+  modelParts:
+  - {fileID: 232860714394124931}
+  clothMaterials:
+  - {fileID: 2100000, guid: 2e65be87a85242a449c1947aec384d7c, type: 2}
+  - {fileID: 2100000, guid: f954086026cf4914187e2c62536e2305, type: 2}
+  - {fileID: 2100000, guid: 34a176f507fbe5b4d8c3d8c907ce1c8a, type: 2}
+  - {fileID: 2100000, guid: f057c6f66e1755b4585e0fb83e4f4309, type: 2}
+  hairMaterials:
+  - {fileID: 2100000, guid: 111d2981edcd14043b7b16daee0c2f5c, type: 2}
+  - {fileID: 2100000, guid: b17aa990b20f45b4d9f1f566f8a9eb19, type: 2}
+  - {fileID: 2100000, guid: 0d04c894b21e3394d8fceb565b5c99a0, type: 2}
+  - {fileID: 2100000, guid: c1be9947dc8b1ea42952d09c4a5db289, type: 2}
   camTarget: {fileID: 8898275196067250044}
   playerNickname: {fileID: 0}
   playerInteraction: {fileID: 1812617601711276161}
   skinnedMeshRenderer: {fileID: 232860714394124931}
   maxPitch: 90
   lookSensitivity: 0.15
-  jumpImpulse: {x: 0, y: 3, z: 0}
+  jumpImpulse: {x: 0, y: 7.5, z: 0}
   interactionRange: 3
   _Index: 0
   _IsScholar: 0
@@ -185,6 +197,7 @@ MonoBehaviour:
     _length: 0
     _data:
       Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  _IsSprinting: 0
   itemTorch: {fileID: 7833452947584548417}
   Torch: {fileID: 7764940932597659953}
   slotIndex: 0
@@ -718,6 +731,14 @@ PrefabInstance:
     - target: {fileID: 1409104942593109056, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2669160885479372796, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
+      propertyPath: Flags
+      value: 262145
+      objectReference: {fileID: 0}
+    - target: {fileID: 2669160885479372796, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
+      propertyPath: SortKey
+      value: 2526133429
       objectReference: {fileID: 0}
     - target: {fileID: 4829211096321756232, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
       propertyPath: Flags

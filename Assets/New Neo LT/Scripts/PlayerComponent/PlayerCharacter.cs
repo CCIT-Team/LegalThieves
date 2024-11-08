@@ -18,6 +18,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
     public class PlayerCharacter : Character
     {
         [Header("Player Components")]
+        [SerializeField] private SkinnedMeshRenderer[] modelParts;
+        [SerializeField] private Material[] clothMaterials;
+        [SerializeField] private Material[] hairMaterials;
         [SerializeField] private Transform              camTarget;
         [SerializeField] private TMP_Text               playerNickname;
         [SerializeField] private PlayerInteraction      playerInteraction;
@@ -30,6 +33,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private Vector3               jumpImpulse      = new(0f, 5f, 0f);
         [SerializeField] private float                 interactionRange = 5f;
         
+
         [Networked] 
         public PlayerRef          Ref        { get; set; }
         [Networked] 
@@ -50,19 +54,22 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         
         [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))] 
         private NetworkArray<int> Inventory => default;
-        
+
+        [Networked] public bool IsSprinting { get; private set; }
+        [Networked] private bool IsCrouching { get; set; }
+
         private int[]             _prevInventory = new int[10];
 
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
 
-       
+        [Networked]
         private bool              IsPickTorch { get; set; }
 
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
         
-        private bool              _isSprinting;
+     
         private bool              CanJump   => kcc.FixedData.IsGrounded;
         private bool              CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
 
@@ -70,8 +77,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private GameObject itemTorch;
         [SerializeField] private Item_Torch_Temp Torch;
         private Coroutine torchCoroutine = null;
-        private bool isTorchProcessing = false; // 코루틴 실행 상태 플래그
-
+  
         [SerializeField] private int slotIndex = 0;
 
         private RaycastHit      _rayCastHit;
@@ -113,8 +119,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 Local = this;
                 UIManager.Instance.SetLocalPlayerTransform(transform);
                 InitializePlayerComponents();
+                //입력된 스킨드메쉬를 안보이게 하는 부분.
+                //foreach (var skinnedMeshRenderer in modelParts)
+                //    skinnedMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+
             }
-            
+
             UIManager.Instance.scoreRankUI.JoinedPlayer(Ref);
             
             InitializeCharacterComponents();
@@ -207,22 +217,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Attack2))
                 OnMouseRightClick();
             // Set behavior by Keyboard input
-            // Sprint
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
-                ToggleSprint(true);
-            else if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Sprint) && _isSprinting)
-                ToggleSprint(false);
-
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Crouch) && kcc.Data.IsGrounded)
-            {
-                ToggleCrouch(true);
-                ToggleSprint(false);
-            }
-            else if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Crouch) && _isSprinting)
-            {
-                ToggleCrouch(false);
-            }
-
+            CheckSprint(playerInput);
+            CheckCrouch(playerInput);
+           
             //torch
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction3))
                 CheckInteractionQ();
@@ -262,8 +259,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot10))
                 SelectSlot(9);
 
-            if (_isSprinting && !CanSprint)
-                ToggleSprint(false);
+          
 
             // Previous Buttons for comparison
             _previousButtons = playerInput.Buttons;
@@ -295,15 +291,37 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
             return transform.InverseTransformVector(velocity);
         }
-  
 
+     
+        private void CheckSprint(NetInput input)
+        {
+            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
+                ToggleSprint(true);
+            else if (input.Buttons.WasReleased(_previousButtons, EInputButton.Sprint) && IsSprinting)
+                ToggleSprint(false);
+        }
+        private bool isCrouchPressed = false;
+
+        private void CheckCrouch(NetInput input)
+        {
+            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Crouch) && kcc.Data.IsGrounded)
+            {
+                ToggleCrouch(true);
+                ToggleSprint(false);
+            }
+            else if (input.Buttons.WasReleased(_previousButtons, EInputButton.Crouch) && IsCrouching)
+            {
+                ToggleCrouch(false);
+            }
+        }
         private void ToggleSprint(bool isSprinting)
         {
-            if (_isSprinting == isSprinting)
+            if (IsSprinting == isSprinting)
                 return;
 
             if (isSprinting)
             {
+                Debug.Log("run");
                 kcc.AddModifier(kccProcessors[1]);
                 var velocity = kcc.Data.DynamicVelocity;
                 velocity.y *= 0.25f;
@@ -312,28 +330,32 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             else
             {
                 kcc.RemoveModifier(kccProcessors[1]);
+                Debug.Log("stop");
             }
-            _isSprinting = isSprinting;
+            IsSprinting = isSprinting;
         }
 
         private void ToggleCrouch(bool isCrouching)
         {
-            if (_isSprinting == isCrouching)
+            if (IsCrouching == isCrouching)
                 return;
 
             if (isCrouching)
             {
+                Debug.Log("앉음");
                 kcc.SetHeight(1f);
                 kcc.AddModifier(kccProcessors[2]);
-                _isSprinting = true;
+                IsCrouching = true;
             }
             else
             {
+                Debug.Log("일어서기");
                 kcc.SetHeight(1.6f);
                 kcc.RemoveModifier(kccProcessors[2]);
-                _isSprinting = false;
+                IsCrouching = false;
             }
         }
+
         #endregion
 
         #region Interaction Methods...
@@ -391,18 +413,19 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             yield return new WaitForSeconds(1f);
             Torch.TurnOnLight();
             IsPickTorch = true;
-            torchCoroutine = null; // 코루틴 완료 후 null로 설정
+            torchCoroutine = null; 
         }
 
         private IEnumerator WaitOff()
         {
-           
+        
             IsPickTorch = false;
-            yield return new WaitForSeconds(1.0f);
+        
+            yield return new WaitForSeconds(1.3f);
             Torch.TurnOffLight();
-            yield return new WaitForSeconds(1.0f);
+
             itemTorch.SetActive(false);
-            torchCoroutine = null; // 코루틴 완료 후 null로 설정
+            torchCoroutine = null; 
         }
         #endregion
 
@@ -506,7 +529,18 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             IsScholar = !IsScholar;
         }
-
+        //public void SetClothMaterial(int index)
+        //{
+        //    Debug.Log("Function Call" + index);
+        //    foreach (var skinnedMeshRenderer in modelParts)
+        //    {
+        //        Debug.Log("Function Run" + index);
+        //        Material[] materials = skinnedMeshRenderer.materials;
+        //        materials[1] = clothMaterials[index];
+        //        materials[4] = hairMaterials[index];
+        //        skinnedMeshRenderer.materials = materials;
+        //    }
+        //}
         #endregion
 
         #region PointSystem
