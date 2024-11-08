@@ -5,6 +5,7 @@ using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Windows;
 using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 using RelicManager = LegalThieves.RelicManager;
@@ -196,16 +197,25 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 OnMouseLeftClick();
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Attack2))
                 OnMouseRightClick();
-            
             // Set behavior by Keyboard input
             // Sprint
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
-                kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
-            if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Sprint))
-                kcc.FixedData.KinematicSpeed = characterStats.MoveSpeed;
-            
+                ToggleSprint(true);
+            else if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Sprint) && _isSprinting)
+                ToggleSprint(false);
+
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Crouch) && kcc.Data.IsGrounded)
+            {
+                ToggleCrouch(true);
+                ToggleSprint(false);
+            }
+            else if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Crouch) && _isSprinting)
+            {
+                ToggleCrouch(false);
+            }
+
             // Jump
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump))
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump)&& CanJump)
                 OnJumpButtonPressed();
             // Crouch
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Crouch))
@@ -240,7 +250,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot10))
                 SelectSlot(9);
 
-
+            if (_isSprinting && !CanSprint)
+                ToggleSprint(false);
 
             // Previous Buttons for comparison
             _previousButtons = playerInput.Buttons;
@@ -272,9 +283,47 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
             return transform.InverseTransformVector(velocity);
         }
+  
 
+        private void ToggleSprint(bool isSprinting)
+        {
+            if (_isSprinting == isSprinting)
+                return;
+
+            if (isSprinting)
+            {
+                kcc.AddModifier(kccProcessors[1]);
+                var velocity = kcc.Data.DynamicVelocity;
+                velocity.y *= 0.25f;
+                kcc.SetDynamicVelocity(velocity);
+            }
+            else
+            {
+                kcc.RemoveModifier(kccProcessors[1]);
+            }
+            _isSprinting = isSprinting;
+        }
+
+        private void ToggleCrouch(bool isCrouching)
+        {
+            if (_isSprinting == isCrouching)
+                return;
+
+            if (isCrouching)
+            {
+                kcc.SetHeight(1f);
+                kcc.AddModifier(kccProcessors[2]);
+                _isSprinting = true;
+            }
+            else
+            {
+                kcc.SetHeight(1.6f);
+                kcc.RemoveModifier(kccProcessors[2]);
+                _isSprinting = false;
+            }
+        }
         #endregion
-        
+
         #region Interaction Methods...
 
         private void OnMouseLeftClick()
