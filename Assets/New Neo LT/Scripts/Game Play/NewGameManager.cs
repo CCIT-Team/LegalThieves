@@ -117,7 +117,10 @@ namespace New_Neo_LT.Scripts.Game_Play
         
         public Vector3 GetPregameSpawnPosition(int pIndex)
         {
-            return pregameMapData.GetSpawnPosition(pIndex);
+            if (pIndex <= 0)
+                return pregameMapData.GetSpawnPosition(Random.Range(0, 3));
+           
+            return pregameMapData.GetSpawnPosition(pIndex-1);
         }
         
         public static void Server_Add(NetworkRunner runner, PlayerRef pRef, PlayerCharacter pObj)
