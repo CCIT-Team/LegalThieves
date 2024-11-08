@@ -15,7 +15,7 @@ namespace New_Neo_LT.Scripts.Map.MapObjects
         public void OnClient_Interact(PlayerRef player)
         {
             var pc = PlayerRegistry.GetPlayer(player);
-            UIManager.Instance.relicPriceUI.SetWinPoint(pc.IsScholar);
+            //UIManager.Instance.relicPriceUI.SetWinPoint(pc.IsScholar);
         }
     }
 }

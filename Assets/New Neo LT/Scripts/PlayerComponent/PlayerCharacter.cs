@@ -1,8 +1,10 @@
+using System.Linq;
 using Fusion;
 using Fusion.Addons.KCC;
 using LegalThieves;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
+using New_Neo_LT.Scripts.Relic;
 using TMPro;
 using UnityEngine;
 using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
@@ -28,7 +30,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private Vector3               jumpImpulse      = new(0f, 5f, 0f);
         [SerializeField] private float                 interactionRange = 5f;
         
-        [Networked] 
+        [Networked, OnChangedRender(nameof(OnRefChanged))] 
         public PlayerRef          Ref        { get; set; }
         [Networked] 
         public byte               Index      { get; set; }
@@ -37,7 +39,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private int               PlayerColor { get; set; }
         
         [Networked, OnChangedRender(nameof(OnPlayerJobChanged))]
-        public bool IsScholar { get; set; }
+        public bool               IsScholar { get; set; }
         [Networked, OnChangedRender(nameof(OnPointChanged))]
         private int               RenownPoint { get; set; }
         [Networked, OnChangedRender(nameof(OnPointChanged))]
@@ -45,14 +47,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         
         [Networked, OnChangedRender(nameof(NicknameChanged))] 
         public NetworkString<_16> Nickname   { get; set; }
+
+        [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))]
+        public NetworkArray<int> Inventory => default;
         
-        [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))] 
-        private NetworkArray<int> Inventory => default;
-        
-        private int[]             _prevInventory = new int[10];
 
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
+        
         
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
@@ -60,7 +62,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private bool              _isSprinting;
         private bool              CanJump   => kcc.FixedData.IsGrounded;
         private bool              CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
-        
+
+        public int GetGoldPoint => GoldPoint;
+        public int GetRenownPoint => RenownPoint;
 
 
         [SerializeField] private int slotIndex = 0;
@@ -76,6 +80,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private static readonly int AnimIsCrouchSync  = Animator.StringToHash("IsCrouchSync");
         private static readonly int AnimLookPit       = Animator.StringToHash("LookPit");
         private static readonly int AnimJumpTrigger   = Animator.StringToHash("Jump");
+        private static readonly int SnapGround        = Animator.StringToHash("SnapGround");
         
         #endregion
         
@@ -91,9 +96,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 PlayerRegistry.Server_Add(Runner, Object.InputAuthority, this);
 
-                PlayerColor = 0;
-                IsScholar = false;
-                for(var i = 0; i < 10; i++)
+                PlayerColor = Object.InputAuthority.AsIndex - 1;
+                IsScholar = PlayerColor % 2 == 0;
+
+                for (var i = 0; i < Inventory.Length;i++)
                 {
                     Inventory.Set(i, -1);
                 }
@@ -102,11 +108,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (Object.HasInputAuthority)
             {
                 Local = this;
-                UIManager.Instance.SetLocalPlayerTransform(transform);
                 InitializePlayerComponents();
+                UIManager.Instance.InitializeInGameUI();
+                skinnedMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
             }
             
-            UIManager.Instance.scoreRankUI.JoinedPlayer(Ref);
+            UIManager.Instance.playerListController.PlayerJoined(this);
             
             InitializeCharacterComponents();
             InitializePlayerNetworkedProperties();
@@ -129,18 +136,20 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             kcc.SetLookRotation(kcc.GetLookRotation() + _accumulatedMouseDelta * lookSensitivity);
             camTarget.localRotation = Quaternion.Euler(kcc.GetLookRotation().x, 0f, 0f);
             
+            if(kcc.FixedData.IsSnappingToGround)
+                animator.SetTrigger(SnapGround);
+            
             var moveVelocity = GetAnimationMoveVelocity();
             animator.SetFloat(AnimMoveDirX    , moveVelocity.x, 0.05f, Time.deltaTime);
             animator.SetFloat(AnimMoveDirY    , moveVelocity.z * 2, 0.05f, Time.deltaTime);
             animator.SetFloat(AnimIsCrouchSync, CrouchSync);
-            animator.SetFloat(AnimLookPit     , kcc.FixedData.LookPitch);
+            animator.SetFloat(AnimLookPit     , kcc.FixedData.LookPitch * -0.9f);
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             base.Despawned(runner, hasState);
-            
-            UIManager.Instance.scoreRankUI.LeftPlayer(Ref);
+            UIManager.Instance.playerListController.PlayerLeft(this);
         }
 
         #endregion
@@ -205,7 +214,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 kcc.FixedData.KinematicSpeed = characterStats.MoveSpeed;
             
             // Jump
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump))
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump) && CanJump)
                 OnJumpButtonPressed();
             // Crouch
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Crouch))
@@ -239,8 +248,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 SelectSlot(8);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot10))
                 SelectSlot(9);
-
-
 
             // Previous Buttons for comparison
             _previousButtons = playerInput.Buttons;
@@ -330,7 +337,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (Inventory[slotIndex] == -1)
             {
                 Inventory.Set(slotIndex, relicId);
-                SetPreviousInventory();
                 return true;
             }
 
@@ -341,16 +347,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                     continue;
                 
                 Inventory.Set(i, relicId);
-                SetPreviousInventory();
                 return true;
             }
             
             return false;
-        }
-
-        private void SetPreviousInventory()
-        {
-            _prevInventory = Inventory.ToArray();
         }
         
         public void ThrowRelic()
@@ -359,8 +359,17 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 RelicManager.Instance.GetRelicData(Inventory[slotIndex]).OnThrowAway(Object.InputAuthority);
                 Inventory.Set(slotIndex, -1); // 인벤토리에서 제거
-                SetPreviousInventory();
             }
+        }
+        
+        public RelicObject RemoveRelicFromInventory(int index)
+        {
+            if (Inventory[index] == -1)
+                return null;
+            
+            var relic = RelicManager.Instance.GetRelicData(Inventory[index]);
+            Inventory.Set(index, -1);
+            return relic;
         }
 
         private void UpdateInventoryUI(int index, int relicId)
@@ -385,6 +394,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 UIManager.Instance.inventorySlotController.SetRelicSprite(i, Inventory[i]);
             }
             UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[slotIndex]);
+            UIManager.Instance.shopController.SetLocalPlayerInventory(Inventory.ToArray());
         }
 
         public void SetPlayerColor(int index) => PlayerColor = index;
@@ -404,25 +414,20 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
 
         #endregion
-
-        #region PointSystem
-        public void SellRelic()
-        {
-            NewGameManager.Instance.SellRelic(Runner.LocalPlayer, slotIndex);
-        }
-        public void GetPoint()
-        {
-
-        }
-
+        
         private void OnPlayerJobChanged()
         {
-            UIManager.Instance.scoreRankUI.SetPlayerJob(Ref.PlayerId, IsScholar);
+            UIManager.Instance.playerListController.UpdatePlayerPointType(Index, IsScholar);
         }
         
         private void OnPointChanged()
         {
-            UIManager.Instance.scoreRankUI.PlayerScoreSet(Ref, IsScholar ? RenownPoint : GoldPoint);
+            UIManager.Instance.playerListController.UpdatePlayerScore(Index, IsScholar, GoldPoint, RenownPoint);
+        }
+
+        private void OnRefChanged()
+        {
+            
         }
 
         #region Gold, Renown Point Add...
@@ -440,15 +445,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         #endregion
         
         
-        #endregion
         #region RPC Methods...
 
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-        public void RPC_AddPoint(int gold, int renown, PlayerRef player)
-        {
-            GoldPoint += gold;
-            RenownPoint += renown;
-        }
+        
         
         #endregion
     }

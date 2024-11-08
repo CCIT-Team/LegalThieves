@@ -39,6 +39,7 @@ namespace New_Neo_LT.Scripts.Player_Input
     {
         //public PlayerCharacter playerCharacter;
         public Vector2  AccumulatedMouseDelta => _mouseDeltaAccumulator.AccumulatedValue;
+        private Vector2 _mouseDeltaVector;
 
         private NetInput _accumulateInput;
         private bool _resetInput;
@@ -62,6 +63,12 @@ namespace New_Neo_LT.Scripts.Player_Input
         private void OnDisable()
         {
             _inputActions.Disable();
+        }
+
+        private void OnApplicationQuit()
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
 
         #endregion
@@ -96,7 +103,6 @@ namespace New_Neo_LT.Scripts.Player_Input
 
         }
 
-        private Vector2 _mouseDeltaVector;
         private void MouseDelta(InputAction.CallbackContext ctx)
         {
             if(Cursor.lockState != CursorLockMode.Locked)
@@ -206,6 +212,10 @@ namespace New_Neo_LT.Scripts.Player_Input
         private void Slot10(InputAction.CallbackContext ctx)
         {
             _accumulateInput.Buttons.Set(EInputButton.Slot10, ctx.ReadValueAsButton());
+        }
+        public void Button_Sell()
+        {
+            _accumulateInput.Buttons.Set(EInputButton.SellButton, true);
         }
         #endregion
 

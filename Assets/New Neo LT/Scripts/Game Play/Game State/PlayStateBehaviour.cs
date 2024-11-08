@@ -9,9 +9,11 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
     {
         protected override void OnEnterState()
         {
-            if(HasStateAuthority)
-                PlayerRegistry.ForEach(pc => pc.Teleport(NewGameManager.Instance.playMapData.GetSpawnPosition(pc.Index)));
-                
+            if(!HasStateAuthority)
+                return; 
+            
+            PlayerRegistry.ForEach(pc => pc.Teleport(NewGameManager.Instance.playMapData.GetSpawnPosition(pc.Index)));
+            LegalThieves.RelicManager.Instance.SpawnAllRelics();
         }
 
         protected override void OnEnterStateRender()

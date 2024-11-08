@@ -7,7 +7,17 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
     {
         protected override void OnEnterState()
         {
+            if (!HasStateAuthority)
+                return;
             PlayerRegistry.ForEach(pc => pc.Teleport(NewGameManager.Instance.winMapData.GetSpawnPosition(pc.Index)));
+            PlayerRegistry.ForEach(pc =>
+            {
+                for (var i = 0; i < 10; i++)
+                {
+                    pc.Inventory.Set(i, -1);
+                }
+            });
+            LegalThieves.RelicManager.Instance.DespawnAllRelics();
         }
 
         protected override void OnEnterStateRender()

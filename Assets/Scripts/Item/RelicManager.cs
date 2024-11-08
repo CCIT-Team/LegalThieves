@@ -1,5 +1,4 @@
 using Fusion;
-using JetBrains.Annotations;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Relic;
 using UnityEngine;
@@ -16,9 +15,11 @@ namespace LegalThieves
         
         [Header("Relic Data")]
         [Header("Gold Relics")]
+        [SerializeField] private string[]            goldRelicNames;
         [SerializeField] private GameObject[]        goldRelicVisuals;
         [SerializeField] private Sprite[]            goldRelicSprites;
         [Header("Renown Relics")]
+        [SerializeField] private string[]            renownRelicNames;
         [SerializeField] private GameObject[]        renownRelicVisuals;
         [SerializeField] private Sprite[]            renownRelicSprites;
         
@@ -27,7 +28,7 @@ namespace LegalThieves
         [Networked, Capacity(200)]
         NetworkLinkedList<RelicObject> Relics => default;
 
-        private void Awake()
+        private void Start()
         {
             if (Instance == null)
                 Instance = this;
@@ -39,7 +40,12 @@ namespace LegalThieves
         {
             if (!HasStateAuthority)
                 return;
-            
+
+            //SpawnAllRelics();
+        }
+        
+        public void SpawnAllRelics()
+        {
             for(var i = 0; i < NewGameManager.Instance.playMapData.RelicSpawnPointCount; i++)
                 SpawnRelic(NewGameManager.Instance.playMapData.GetRelicSpawnPosition(i));
         }
@@ -61,7 +67,7 @@ namespace LegalThieves
 
         public RelicObject GetRelicData(int index)
         {
-            return Relics[index];
+            return Relics.Get(index);
         }
         
         public int GetRelicIndex(RelicObject relic)
@@ -88,6 +94,20 @@ namespace LegalThieves
             return index < goldRelicVisuals.Length ? 
                 goldRelicSprites[index] : 
                 renownRelicSprites[index - goldRelicVisuals.Length];
+        }
+        
+        public string GetRelicName(int index)
+        {
+            return index < goldRelicVisuals.Length ? 
+                goldRelicNames[index] : 
+                renownRelicNames[index - goldRelicVisuals.Length];
+        }
+        
+        public void DespawnAllRelics()
+        {
+            foreach (var relic in Relics)
+                Runner.Despawn(relic.Object);
+            Relics.Clear();
         }
     }
 }

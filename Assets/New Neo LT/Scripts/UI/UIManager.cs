@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using New_Neo_LT.Scripts.PlayerComponent;
+using UnityEngine;
 
 namespace New_Neo_LT.Scripts.UI
 {
@@ -9,10 +10,10 @@ namespace New_Neo_LT.Scripts.UI
         public TimerController         timerController;
         public PlayerListController    playerListController;
         public RelicPriceUI            relicPriceUI;
-        public ScoreRankUI             scoreRankUI;
+        public ShopController          shopController;
 
         public static UIManager Instance;
-        
+
         private Transform _localPlayerTransform;
 
         private void Start()
@@ -36,12 +37,12 @@ namespace New_Neo_LT.Scripts.UI
         // 게임 접속 시 UI 초기화
         public void InitializeInGameUI()
         {
-            
+            _localPlayerTransform = PlayerCharacter.Local.transform;
         }
         
-        public void SetLocalPlayerTransform(Transform localPlayerTransform)
+        public Transform GetLocalPlayerTransform()
         {
-            _localPlayerTransform = localPlayerTransform;
+            return _localPlayerTransform;
         }
     }
 }

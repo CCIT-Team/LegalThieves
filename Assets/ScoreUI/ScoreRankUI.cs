@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Linq;
 using Fusion;
 using New_Neo_LT.Scripts.Game_Play;
+using New_Neo_LT.Scripts.PlayerComponent;
 
 public class ScoreRankUI : MonoBehaviour {
 
@@ -17,37 +18,33 @@ public class ScoreRankUI : MonoBehaviour {
     Color[] PlayerColors = { Color.red, Color.green, Color.blue, Color.yellow };
 
     int PlayerIndex = 0;
-    public void JoinedPlayer(PlayerRef player)
+    public void JoinedPlayer(int player)
     {
-        var playerId = player.PlayerId;
-        var job = PlayerRegistry.GetPlayer(player).IsScholar;
-       
+        
+        
         GameObject slot =Instantiate(PlayerScoreBase,Vector3.zero,Quaternion.identity,transform.GetChild(0));
         ScoreComponentsList.Add(slot.GetComponent<ScoreComponents>());
         
         //playerRef 값 이용해서 속성들 채워넣을 예정
-        ScoreInfo.Add(new PlayerScoreInfo(job ? "Gold" : "Renown", "name", 1000, playerId, PlayerColors[PlayerIndex]));
-        Debug.Log(ScoreInfo[PlayerIndex++].playerRef);
+        ScoreInfo.Add(new PlayerScoreInfo("Gold", "Player", 1000, player, PlayerColors[PlayerIndex]));
         RankSet();
     }
 
-    public void LeftPlayer(PlayerRef player)
+    public void LeftPlayer(int player)
     {
-        var pId = player.PlayerId;
         ScoreComponentsList.RemoveAt(ScoreComponentsList.Count-1);
-        ScoreInfo.Remove(ScoreInfo.FirstOrDefault(Info => Info.playerRef == pId));
+        ScoreInfo.Remove(ScoreInfo.FirstOrDefault(Info => Info.playerRef == player));
         PlayerIndex--;
         RankSet();
     }
   
   
 
-    public void PlayerScoreSet(PlayerRef player,int score)
+    public void PlayerScoreSet(int player,int score)
     {
-        var playerId = player.PlayerId;
         for (int i = 0; i < ScoreInfo.Count; i++)
         {
-            if (ScoreInfo[i].playerRef == playerId)
+            if (ScoreInfo[i].playerRef == player)
             {
                 ScoreInfo[i].ScoreSet(score);
                 RankSet();
@@ -65,7 +62,6 @@ public class ScoreRankUI : MonoBehaviour {
             if (ScoreInfo[i].playerRef == player)
             {
                 ScoreInfo[i].SetPointType(isScholar);
-                RankSet();
                 return;
             }
         }
@@ -80,6 +76,15 @@ public class ScoreRankUI : MonoBehaviour {
         for (int i = 0;i < ScoreComponentsList.Count; i++)
         {
             ScoreInfo[i].SlotRankSet(ScoreComponentsList[i]);
+        }
+    }
+
+    public void SetJoinedPlayer(NetworkDictionary<PlayerRef,PlayerCharacter> players)
+    {
+        foreach (var player in players)
+        {
+            var pc = player.Value;
+            //JoinedPlayer();
         }
     }
 }

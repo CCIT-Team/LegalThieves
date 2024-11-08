@@ -15,8 +15,9 @@ namespace New_Neo_LT.Scripts.Relic
 
         public int RelicID => RelicManager.Instance.GetRelicIndex(this);
         
-        [Networked]
+        [Networked, OnChangedRender(nameof(OnTypeIndexChange))]
         private int TypeIndex { get; set; }
+        public int typeIndex;
         [Networked]
         private int GoldPoint { get; set; }
         [Networked]
@@ -34,6 +35,7 @@ namespace New_Neo_LT.Scripts.Relic
                 InitRelic();
 
             SetVisual();
+            typeIndex = TypeIndex;
         }
         
         private void InitRelic()
@@ -44,6 +46,7 @@ namespace New_Neo_LT.Scripts.Relic
                 SetPoints(tempPoint, 1000 - tempPoint);
             else
                 SetPoints(1000 - tempPoint, tempPoint);
+            
         }
         
         private void SetVisual()
@@ -76,7 +79,9 @@ namespace New_Neo_LT.Scripts.Relic
 
         public void OnApplyRelic(PlayerRef player)
         {
-            
+            var pc = PlayerRegistry.GetPlayer(player);
+            pc.AddGoldPoint(GoldPoint);
+            pc.AddRenownPoint(RenownPoint);
         }
 
         private void OnIsActiveChange()
@@ -109,7 +114,13 @@ namespace New_Neo_LT.Scripts.Relic
         
         public int GetTypeIndex()
         {
-            return TypeIndex;
+            return typeIndex;
+        }
+        
+        
+        private void OnTypeIndexChange()
+        {
+            typeIndex = TypeIndex;
         }
     }
 }

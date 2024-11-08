@@ -3,6 +3,7 @@ using System.Linq;
 using Fusion;
 using Fusion.Sockets;
 using New_Neo_LT.Scripts.PlayerComponent;
+using New_Neo_LT.Scripts.UI;
 using New_Neo_LT.Scripts.Utilities;
 using UnityEngine;
 
@@ -16,9 +17,10 @@ namespace New_Neo_LT.Scripts.Game_Play
 
 		public static int Count => Instance.Players.Count;
 
-		[Networked, Capacity(Capacity)]
-		public NetworkDictionary<PlayerRef, PlayerCharacter> Players { get; }
+		[Networked, Capacity(Capacity), OnChangedRender(nameof(OnPlayerRegistryChange))]
+		NetworkDictionary<PlayerRef, PlayerCharacter> Players => default;
 
+		
 		public override void Spawned()
 		{
 			base.Spawned();
@@ -168,12 +170,15 @@ namespace New_Neo_LT.Scripts.Game_Play
 			return players.Grab(count).ToArray();
 		}
 
+		public void OnPlayerRegistryChange()
+		{
+			//UIManager.Instance.scoreRankUI.SetJoinedPlayer(Players);
+		}
+
 		void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player)
 		{
 			if (runner.IsServer) Server_Remove(runner, player);
 		}
-
-		
 
 		#region INetworkRunnerCallbacks
 		void INetworkRunnerCallbacks.OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
