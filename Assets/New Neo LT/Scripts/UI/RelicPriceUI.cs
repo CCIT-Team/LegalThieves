@@ -46,8 +46,8 @@ public class RelicPriceUI : MonoBehaviour
         {
             var relic = RelicManager.Instance.GetRelicData(relicIndex);
             relicName.text = RelicManager.Instance.GetRelicName(relic.GetTypeIndex());
-            goldPoint.text = "골드 포인트   " + relic.GetGoldPoint().ToString();
-            renownPoint.text = "리나운 포인트   " + relic.GetRenownPoint().ToString();
+            goldPoint.text = "Gold Point   " + relic.GetGoldPoint().ToString();
+            renownPoint.text = "Renown Point   " + relic.GetRenownPoint().ToString();
         }
     }
 }
