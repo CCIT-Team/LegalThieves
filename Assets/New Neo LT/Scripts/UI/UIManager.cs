@@ -38,11 +38,24 @@ namespace New_Neo_LT.Scripts.UI
         public void InitializeInGameUI()
         {
             _localPlayerTransform = PlayerCharacter.Local.transform;
+            shopController.InitShopUI();
         }
         
         public Transform GetLocalPlayerTransform()
         {
             return _localPlayerTransform;
+        }
+
+        public void OpenShop()
+        {
+            shopController.gameObject.SetActive(true);
+            shopController.OnShopOpen();
+        }
+        
+        public void CloseShop()
+        {
+            shopController.gameObject.SetActive(false);
+            shopController.OnShopClose();
         }
     }
 }

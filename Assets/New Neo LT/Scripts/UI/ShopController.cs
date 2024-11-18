@@ -19,8 +19,8 @@ namespace New_Neo_LT.Scripts.UI
         
         private List<ShopItemIcon>      _inventory = new ();
         private List<ShopItemIcon>      _sellTable = new ();
-        
-        private void Start()
+
+        public void InitShopUI()
         {
             for (var i = 0; i < _items.Length; i++)
             {
@@ -29,10 +29,12 @@ namespace New_Neo_LT.Scripts.UI
                 _items[i] = item;
                 ReturnItemToPool(item);
             }
+            OnShopOpen();
+            OnShopClose();
             gameObject.SetActive(false);
         }
-
-        private void OnEnable()
+        
+        public void OnShopOpen()
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -50,8 +52,8 @@ namespace New_Neo_LT.Scripts.UI
                 AddItemToInventoryGrid(_items[i]);
             }
         }
-
-        private void OnDisable()
+        
+        public void OnShopClose()
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -77,25 +79,6 @@ namespace New_Neo_LT.Scripts.UI
             }
         }
         
-        private void AddItemToInventoryGrid(ShopItemIcon item)
-        {
-            _inventory.Add(item);
-            item.transform.SetParent(inventoryGrid.transform);
-        }
-        
-        private void AddItemToShopGrid(ShopItemIcon item)
-        {
-            _sellTable.Add(item);
-            _inventory.Remove(item);
-            item.transform.SetParent(shopGrid.transform);
-        }
-        
-        private void ReturnItemToPool(ShopItemIcon item)
-        {
-            item.transform.SetParent(itemImagePool.transform);
-            item.transform.localPosition = Vector3.zero;
-        }
-        
         public void OnSellButtonClick()
         {
             if(_sellTable.Count == 0)
@@ -118,6 +101,25 @@ namespace New_Neo_LT.Scripts.UI
         public void SetLocalPlayerInventory(int[] inventory)
         {
             _localPlayerInventory = inventory;
+        }
+        
+        private void AddItemToInventoryGrid(ShopItemIcon item)
+        {
+            _inventory.Add(item);
+            item.transform.SetParent(inventoryGrid.transform);
+        }
+        
+        private void AddItemToShopGrid(ShopItemIcon item)
+        {
+            _sellTable.Add(item);
+            _inventory.Remove(item);
+            item.transform.SetParent(shopGrid.transform);
+        }
+        
+        private void ReturnItemToPool(ShopItemIcon item)
+        {
+            item.transform.SetParent(itemImagePool.transform);
+            item.transform.localPosition = Vector3.zero;
         }
     }
 }

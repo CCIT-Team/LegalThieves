@@ -16,11 +16,6 @@ namespace New_Neo_LT.Scripts.UI
         private int _inventoryIndex;
         private int _relicId;
 
-        private void Start()
-        {
-            _icon = GetComponent<Image>();
-        }
-
         public void SetShopController(ShopController shopController)
         {
             _shopController = shopController;
@@ -38,16 +33,7 @@ namespace New_Neo_LT.Scripts.UI
             
             var typ = RelicManager.Instance.GetRelicData(relicId).GetTypeIndex();
             
-            Debug.Log(typ);
-
-            if (RelicManager.Instance == null)
-            {
-                Debug.Log("tq");
-            }
-            
-            
-            
-            _icon.sprite = RelicManager.Instance.GetRelicSprite(typ);
+            GetComponent<Image>().sprite = RelicManager.Instance.GetRelicSprite(typ);
         }
     }
 }

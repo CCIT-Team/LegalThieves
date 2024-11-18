@@ -1384,22 +1384,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: SellingUITest, Assembly-CSharp
-        m_MethodName: ClearUI
+      - m_Target: {fileID: 6772838969069147423, guid: da194c35a1571834f99a8f44f5631bc8, type: 3}
+        m_TargetAssemblyTypeName: New_Neo_LT.Scripts.UI.UIManager, Assembly-CSharp
+        m_MethodName: CloseShop
         m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 4931387695130004508}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2261,10 +2249,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7885124967433709949, guid: cf03885db9ad6a1469ce1d537c7b00ca, type: 3}
-        m_TargetAssemblyTypeName: New_Neo_LT.Scripts.Player_Input.InputController,
-          Assembly-CSharp
-        m_MethodName: Button_Sell
+      - m_Target: {fileID: 6550221164263796489}
+        m_TargetAssemblyTypeName: New_Neo_LT.Scripts.UI.ShopController, Assembly-CSharp
+        m_MethodName: OnSellButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3242,7 +3229,7 @@ GameObject:
   - component: {fileID: 4688816293658253073}
   - component: {fileID: 6550221164263796489}
   m_Layer: 5
-  m_Name: SellingUI#2
+  m_Name: ShopUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

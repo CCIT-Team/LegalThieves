@@ -25,10 +25,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         [Header("Player Setup")]
         [Range(-90, 90)]
-        [SerializeField] private float                 maxPitch         = 85f; 
-        [SerializeField] private float                 lookSensitivity  = 0.15f;
-        [SerializeField] private Vector3               jumpImpulse      = new(0f, 5f, 0f);
-        [SerializeField] private float                 interactionRange = 5f;
+        [SerializeField] private float                  maxPitch         = 85f; 
+        [SerializeField] private float                  lookSensitivity  = 0.15f;
+        [SerializeField] private Vector3                jumpImpulse      = new(0f, 5f, 0f);
+        [SerializeField] private float                  interactionRange = 5f;
         
         [Networked, OnChangedRender(nameof(OnRefChanged))] 
         public PlayerRef          Ref        { get; set; }
@@ -59,7 +59,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
         
-        private bool              _isSprinting;
         private bool              CanJump   => kcc.FixedData.IsGrounded;
         private bool              CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
 
@@ -124,6 +123,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         
         public override void FixedUpdateNetwork()
         {
+            base.FixedUpdateNetwork();
+            
             // Process Player Input
             if(GetInput(out NetInput playerInput))
                 SetPlayerInput(playerInput);
@@ -402,10 +403,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void OnColorChanged()
         {
-            Material[] materials = skinnedMeshRenderer.materials; 
-            materials[1] = NewGameManager.Instance.playerClothMaterials[PlayerColor];
-            materials[4] = NewGameManager.Instance.playerHairMaterials[PlayerColor];
-            skinnedMeshRenderer.materials = materials;
+            skinnedMeshRenderer.materials[1] = NewGameManager.Instance.playerClothMaterials[PlayerColor];
+            skinnedMeshRenderer.materials[4] = NewGameManager.Instance.playerHairMaterials[PlayerColor];
         }
         
         public void ChangeJob()

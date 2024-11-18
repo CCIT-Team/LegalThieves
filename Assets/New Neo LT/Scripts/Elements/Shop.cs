@@ -1,9 +1,5 @@
 using Fusion;
-using New_Neo_LT.Scripts.Game_Play;
-using New_Neo_LT.Scripts.PlayerComponent;
-using New_Neo_LT.Scripts.Relic;
 using New_Neo_LT.Scripts.UI;
-using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Elements
 {
@@ -16,7 +12,7 @@ namespace New_Neo_LT.Scripts.Elements
 
         public void OnClient_Interact(PlayerRef player)
         {
-            UIManager.Instance.shopController.gameObject.SetActive(true);
+            UIManager.Instance.OpenShop();
         }
     }
 }
