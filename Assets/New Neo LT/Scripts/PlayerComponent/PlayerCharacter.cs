@@ -58,6 +58,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
+
+        private bool              _isSprinting;
         
         private bool              CanJump   => kcc.FixedData.IsGrounded;
         private bool              CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
@@ -209,10 +211,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             
             // Set behavior by Keyboard input
             // Sprint
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
-                kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
-            if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Sprint))
-                kcc.FixedData.KinematicSpeed = characterStats.MoveSpeed;
+            SprintToggle(playerInput);
+            // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
+            //     kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
+            // if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Sprint))
+            //     kcc.FixedData.KinematicSpeed = characterStats.MoveSpeed;
             
             // Jump
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump) && CanJump)
@@ -279,6 +282,20 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             }
 
             return transform.InverseTransformVector(velocity);
+        }
+        
+        private void SprintToggle(NetInput input)
+        {
+            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Sprint))
+            {
+                _isSprinting = true;
+                kcc.AddModifier(kccProcessors[1]);
+            }
+            if(input.Buttons.WasReleased(_previousButtons, EInputButton.Sprint) && _isSprinting)
+            {
+                _isSprinting = false;
+                kcc.RemoveModifier(kccProcessors[1]);
+            }
         }
 
         #endregion

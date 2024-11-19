@@ -25,6 +25,7 @@ namespace New_Neo_LT.Scripts.Player_Input
         Inventory,       // Tab
         Slot1, Slot2, Slot3, Slot4, Slot5, Slot6, Slot7, Slot8, Slot9,Slot10,
         SellButton,
+        Escape,
         InputButtonCount // 버튼 개수
     }
 
@@ -80,16 +81,20 @@ namespace New_Neo_LT.Scripts.Player_Input
             _inputActions.Mouse.MouseDelta.performed += MouseDelta;
             _inputActions.Mouse.LeftClick.performed  += MouseLeftClick;
             _inputActions.Mouse.RightClick.performed += MouseRightClick;
+            
             _inputActions.Movement.Move.performed    += MovementDirection;
             _inputActions.Movement.Jump.performed    += Jump;
             _inputActions.Movement.Sprint.performed  += Sprint;
             _inputActions.Movement.Crouch.performed  += Crouch;
+            
             _inputActions.Skills.Q.performed         += InteractionQ;
             _inputActions.Skills.E.performed         += InteractionE;
             _inputActions.Skills.R.performed         += InteractionR;
             _inputActions.Skills.F.performed         += InteractionF;
             _inputActions.Skills.G.performed         += InteractionG;
+            
             _inputActions.UI.Tab.performed           += Inventory;
+            
             _inputActions.ItemSlot._1.performed      += Slot1;
             _inputActions.ItemSlot._2.performed      += Slot2;
             _inputActions.ItemSlot._3.performed      += Slot3;
@@ -101,6 +106,7 @@ namespace New_Neo_LT.Scripts.Player_Input
             _inputActions.ItemSlot._9.performed      += Slot9;
             _inputActions.ItemSlot._10.performed     += Slot10;
 
+            _inputActions.UI.Escape.performed        += EscapeButton;
         }
 
         private void MouseDelta(InputAction.CallbackContext ctx)
@@ -171,6 +177,15 @@ namespace New_Neo_LT.Scripts.Player_Input
         private void Inventory(InputAction.CallbackContext ctx)
         {
             _accumulateInput.Buttons.Set(EInputButton.Inventory, ctx.ReadValueAsButton());
+        }
+        
+        private void EscapeButton(InputAction.CallbackContext ctx)
+        {
+            // _accumulateInput.Buttons.Set(EInputButton.Escape, ctx.ReadValueAsButton());
+
+            Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
+
+            Cursor.visible = !Cursor.visible;
         }
 
         private void Slot1(InputAction.CallbackContext ctx)
