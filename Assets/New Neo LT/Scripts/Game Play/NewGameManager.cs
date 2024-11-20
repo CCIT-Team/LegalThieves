@@ -65,6 +65,12 @@ namespace New_Neo_LT.Scripts.Game_Play
         {
             return pregameMapData.GetSpawnPosition(pIndex);
         }
+
+        public void StartGame()
+        {
+            if(!PlayerRegistry.Any(pc => !pc.IsReady))
+                State.Server_SetState<PlayStateBehaviour>();
+        }
         
         
         #region RPC Methods...
@@ -90,6 +96,13 @@ namespace New_Neo_LT.Scripts.Game_Play
 
             playerCharacter.AddGoldPoint(goldPoint);
             playerCharacter.AddRenownPoint(renownPoint);
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
+        public void RPC_SetPlayerReady(PlayerRef player, bool ready)
+        {
+            var playerCharacter = PlayerRegistry.GetPlayer(player);
+            playerCharacter.SetReady(ready);
         }
 
         #endregion
