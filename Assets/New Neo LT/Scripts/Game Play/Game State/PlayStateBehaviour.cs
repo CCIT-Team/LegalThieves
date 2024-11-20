@@ -12,7 +12,11 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             if(!HasStateAuthority)
                 return; 
             
-            PlayerRegistry.ForEach(pc => pc.Teleport(NewGameManager.Instance.playMapData.GetSpawnPosition(pc.Index)));
+            PlayerRegistry.ForEach(pc =>
+            {
+                pc.Teleport(NewGameManager.Instance.playMapData.GetSpawnPosition(pc.Index));
+                pc.ResetPoints();
+            });
             LegalThieves.RelicManager.Instance.SpawnAllRelics();
         }
 

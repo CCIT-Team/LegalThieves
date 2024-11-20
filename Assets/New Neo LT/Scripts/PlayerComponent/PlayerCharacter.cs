@@ -107,7 +107,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (Object.HasStateAuthority)
             {
                 PlayerRegistry.Server_Add(Runner, Object.InputAuthority, this);
-                IsScholar = PlayerColor % 2 != 0;
+
+                var playerIndex = Object.InputAuthority.AsIndex - 1;
+                PlayerColor = playerIndex;
+                CurrentPlayerModelIndex = playerIndex;
+                IsScholar = playerIndex % 2 != 0;
+            
 
                 for (var i = 0; i < Inventory.Length;i++)
                 {
@@ -127,9 +132,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             
             InitializeCharacterComponents();
             InitializePlayerNetworkedProperties();
-            
-            PlayerColor = Object.InputAuthority.AsIndex - 1;
-            CurrentPlayerModelIndex = Object.InputAuthority.AsIndex - 1;
             
             NicknameChanged();
         }
@@ -522,6 +524,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             animator = curr.GetComponent<Animator>();
             
             CurrentPlayerModelIndex = index;
+        }
+
+        public void ResetPoints()
+        {
+            GoldPoint = 0;
+            RenownPoint = 0;
         }
         
         #region RPC Methods...
