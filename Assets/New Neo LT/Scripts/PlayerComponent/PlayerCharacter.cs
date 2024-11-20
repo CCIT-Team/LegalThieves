@@ -13,6 +13,8 @@ using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 using RelicManager = LegalThieves.RelicManager;
 using UIManager = New_Neo_LT.Scripts.UI.UIManager;
 
+public enum Job { Archaeologist, Linguist , BusinessCultist , Shamanist }
+
 namespace New_Neo_LT.Scripts.PlayerComponent
 {
     [RequireComponent(typeof(PlayerStats))]
@@ -23,7 +25,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private TMP_Text               playerNickname;
         [SerializeField] private PlayerInteraction      playerInteraction;
         [SerializeField] private SkinnedMeshRenderer    skinnedMeshRenderer;
-        
+       
         [Space, Header("Player Setup")]
         [Range(-90, 90)]
         [SerializeField] private float                  maxPitch         = 85f; 
@@ -56,12 +58,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))]
         public NetworkArray<int> Inventory => default;
-        
+
+        [Networked]
+        Job job { get; set; }
 
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
         
-        
+     
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
 
@@ -73,7 +77,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         public int GetGoldPoint => GoldPoint;
         public int GetRenownPoint => RenownPoint;
 
-
+      
         [SerializeField] private int slotIndex = 0;
 
         private RaycastHit      _rayCastHit;
@@ -134,8 +138,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             InitializePlayerNetworkedProperties();
             
             NicknameChanged();
+            SetPlayerTag(job.ToString());
         }
-        
+        void SetPlayerTag(string tag)
+        {
+            playerNickname.text = tag;
+        }
         public override void FixedUpdateNetwork()
         {
             base.FixedUpdateNetwork();
@@ -437,9 +445,25 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             skinnedMeshRenderer.materials[4] = NewGameManager.Instance.playerHairMaterials[PlayerColor];
         }
         
-        public void ChangeJob()
+       
+        public void ChangeJob(Job newJob)
         {
-            IsScholar = !IsScholar;
+          
+            job = newJob;
+            SetPlayerTag(job.ToString());
+            switch (job)
+            {
+                case Job.Archaeologist:
+                case Job.Linguist:
+                    IsScholar = true;
+                    break;
+
+                case Job.BusinessCultist:
+                case Job.Shamanist:
+                    IsScholar = false;
+                    break;
+            }
+            
         }
 
         #endregion

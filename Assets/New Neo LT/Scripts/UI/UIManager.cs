@@ -11,6 +11,7 @@ namespace New_Neo_LT.Scripts.UI
         public PlayerListController    playerListController;
         public RelicPriceUI            relicPriceUI;
         public ShopController          shopController;
+        public JobChangerUI            jobChangerUI;
 
         public static UIManager Instance;
 

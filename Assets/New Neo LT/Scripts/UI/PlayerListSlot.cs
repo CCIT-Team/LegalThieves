@@ -7,7 +7,7 @@ namespace New_Neo_LT.Scripts.UI
 {
     public class PlayerListSlot : MonoBehaviour
     {
-        [SerializeField] private Image    playerColor;
+        [SerializeField] private Image    playerIcon;
         [SerializeField] private TMP_Text playerScore;
         [SerializeField] private TMP_Text playerPointType;
 
@@ -15,7 +15,7 @@ namespace New_Neo_LT.Scripts.UI
 
         private void Start()
         {
-            playerColor     ??= transform.GetChild(0).GetComponent<Image>();
+            playerIcon     ??= transform.GetChild(0).GetComponent<Image>();
             playerScore     ??= transform.GetChild(1).GetComponent<TMP_Text>();
             playerPointType ??= transform.GetChild(2).GetComponent<TMP_Text>();
         }
@@ -23,7 +23,7 @@ namespace New_Neo_LT.Scripts.UI
         public void SetPlayerSlot(int pIndex, Color color , int score, string pointType)
         {
             _playerIndex = pIndex;
-            playerColor.color = color;
+            playerIcon.color = color;
             playerScore.text = score.ToString();
             playerPointType.text = pointType;
         }
