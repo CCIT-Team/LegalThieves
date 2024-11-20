@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Fusion;
 using Fusion.Addons.KCC;
@@ -22,13 +23,16 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private TMP_Text               playerNickname;
         [SerializeField] private PlayerInteraction      playerInteraction;
         [SerializeField] private SkinnedMeshRenderer    skinnedMeshRenderer;
-
-        [Header("Player Setup")]
+        
+        [Space, Header("Player Setup")]
         [Range(-90, 90)]
         [SerializeField] private float                  maxPitch         = 85f; 
         [SerializeField] private float                  lookSensitivity  = 0.15f;
         [SerializeField] private Vector3                jumpImpulse      = new(0f, 5f, 0f);
         [SerializeField] private float                  interactionRange = 5f;
+        
+        [Space, Header("Player Models")]
+        [SerializeField] private GameObject[]           playerModels;
         
         [Networked, OnChangedRender(nameof(OnRefChanged))] 
         public PlayerRef          Ref        { get; set; }
@@ -37,6 +41,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         
         [Networked, OnChangedRender(nameof(OnColorChanged))]
         private int               PlayerColor { get; set; }
+        [Networked, OnChangedRender(nameof(OnCurrentPlayerModelIndexChanged))] 
+        private int               CurrentPlayerModelIndex { get; set; }
         
         [Networked, OnChangedRender(nameof(OnPlayerJobChanged))]
         public bool               IsScholar { get; set; }
@@ -81,13 +87,18 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private static readonly int AnimIsCrouchSync  = Animator.StringToHash("IsCrouchSync");
         private static readonly int AnimLookPit       = Animator.StringToHash("LookPit");
         private static readonly int AnimJumpTrigger   = Animator.StringToHash("Jump");
-        private static readonly int SnapGround        = Animator.StringToHash("SnapGround");
+        private static readonly int AnimSnapGround    = Animator.StringToHash("SnapGround");
         
         #endregion
         
         /*------------------------------------------------------------------------------------------------------------*/
 
         #region NetworkBehaviour Events...
+
+        private void Start()
+        {
+            Client_InitPlayerModle(CurrentPlayerModelIndex);
+        }
 
         public override void Spawned()
         {
@@ -96,9 +107,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (Object.HasStateAuthority)
             {
                 PlayerRegistry.Server_Add(Runner, Object.InputAuthority, this);
-
-                PlayerColor = Object.InputAuthority.AsIndex - 1;
-                IsScholar = PlayerColor % 2 == 0;
+                IsScholar = PlayerColor % 2 != 0;
 
                 for (var i = 0; i < Inventory.Length;i++)
                 {
@@ -111,7 +120,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 Local = this;
                 InitializePlayerComponents();
                 UIManager.Instance.InitializeInGameUI();
-                skinnedMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+                InitModels();
             }
             
             UIManager.Instance.playerListController.PlayerJoined(this);
@@ -119,6 +128,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             InitializeCharacterComponents();
             InitializePlayerNetworkedProperties();
             
+            PlayerColor = Object.InputAuthority.AsIndex - 1;
+            CurrentPlayerModelIndex = Object.InputAuthority.AsIndex - 1;
             
             NicknameChanged();
         }
@@ -140,13 +151,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             camTarget.localRotation = Quaternion.Euler(kcc.GetLookRotation().x, 0f, 0f);
             
             if(kcc.FixedData.IsSnappingToGround)
-                animator.SetTrigger(SnapGround);
+                animator.SetTrigger(AnimSnapGround);
             
             var moveVelocity = GetAnimationMoveVelocity();
             animator.SetFloat(AnimMoveDirX    , moveVelocity.x, 0.05f, Time.deltaTime);
             animator.SetFloat(AnimMoveDirY    , moveVelocity.z * 2, 0.05f, Time.deltaTime);
             animator.SetFloat(AnimIsCrouchSync, CrouchSync);
-            animator.SetFloat(AnimLookPit     , kcc.FixedData.LookPitch * -0.9f);
+            animator.SetFloat(AnimLookPit     , kcc.FixedData.LookPitch * -0.01f);
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
@@ -430,6 +441,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
 
         #endregion
+
+        #region Network Porperty Changed Events...
         
         private void OnPlayerJobChanged()
         {
@@ -445,6 +458,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             
         }
+        
+        #endregion
 
         #region Gold, Renown Point Add...
 
@@ -459,7 +474,55 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
 
         #endregion
+
+        private void InitModels()
+        {
+            foreach (var model in playerModels)
+            {
+                var mesh = model.GetComponentInChildren<SkinnedMeshRenderer>();
+                mesh.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+            }
+        }
         
+        private void OnCurrentPlayerModelIndexChanged(NetworkBehaviourBuffer previous)
+        {
+            // 변경 이전 모델 비활성화
+            var prevValue = GetPropertyReader<int>(nameof(CurrentPlayerModelIndex)).Read(previous);
+            playerModels[prevValue].SetActive(false);
+            
+            // 변경 이후 모델 활성화
+            var newModel = playerModels[CurrentPlayerModelIndex];
+            newModel.SetActive(true);
+            
+            // 애니메이터를 변경된 모델의 애니메이터로 변경
+            animator = newModel.GetComponent<Animator>();
+        }
+
+        private void ChangePlayerModel(int index)
+        {
+            var prev = playerModels[CurrentPlayerModelIndex];
+            var curr = playerModels[index];
+            
+            prev.SetActive(false);
+            curr.SetActive(true);
+            
+            animator = curr.GetComponent<Animator>();
+            
+            CurrentPlayerModelIndex = index;
+        }
+
+        private void Client_InitPlayerModle(int index)
+        {
+            var prev = playerModels[0];
+            var curr = playerModels[index];
+            
+            prev.SetActive(false);
+            curr.SetActive(true);
+            
+            animator = curr.GetComponent<Animator>();
+            
+            CurrentPlayerModelIndex = index;
+        }
         
         #region RPC Methods...
 
