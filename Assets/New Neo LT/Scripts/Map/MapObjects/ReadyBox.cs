@@ -1,18 +1,17 @@
-using Fusion;
+﻿using Fusion;
 using New_Neo_LT.Scripts.Game_Play;
-using New_Neo_LT.Scripts.Game_Play.Game_State;
 
 namespace New_Neo_LT.Scripts.Map.MapObjects
 {
-    public class StateChanger : NetworkBehaviour, global::IInteractable
+    public class ReadyBox : NetworkBehaviour, global::IInteractable
     {
-
         public void OnServer_Interact(PlayerRef player)
         {
             if(!HasStateAuthority)
                 return;
-
-            NewGameManager.Instance.StartGame();
+            
+            var p = PlayerRegistry.GetPlayer(player);
+            p.SetReady(!p.IsReady);
         }
 
         public void OnClient_Interact(PlayerRef player)

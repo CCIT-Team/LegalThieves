@@ -102,6 +102,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void Start()
         {
             Client_InitPlayerModle(CurrentPlayerModelIndex);
+            
         }
 
         public override void Spawned()
@@ -554,6 +555,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             GoldPoint = 0;
             RenownPoint = 0;
+        }
+        
+        private NetworkBool Ready { get; set; } = false;
+        public bool IsReady => Ready;
+        
+        public void SetReady(bool ready)
+        {
+            Ready = ready;
         }
         
         #region RPC Methods...
