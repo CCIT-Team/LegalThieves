@@ -140,7 +140,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             InitializePlayerNetworkedProperties();
             
             NicknameChanged();
-            SetPlayerTag(job.ToString());
+            SetPlayerTag(PlayerPrefs.GetString("Photon.Menu.Username"));
         }
         public void SetPlayerTag(string tag)
         {
@@ -474,7 +474,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void OnPlayerJobChanged()
         {
             UIManager.Instance.playerListController.UpdatePlayerPointType(Index, IsScholar);
-            SetPlayerTag(job.ToString());
+            
         }
         
         private void OnPointChanged()
