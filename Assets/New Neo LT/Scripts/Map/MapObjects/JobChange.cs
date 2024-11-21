@@ -18,10 +18,10 @@ namespace New_Neo_LT.Scripts.Map.MapObjects
         public void OnClient_Interact(PlayerRef player)
         {
            
-            UIManager.Instance.jobChangerUI.gameObject.SetActive(true);
-            //UIManager.Instance.jobChangerUI.JobChangerOpen(player);
+            //UIManager.Instance.jobChangerUI.gameObject.SetActive(true);
+            ////UIManager.Instance.jobChangerUI.JobChangerOpen(player);
 
-            //UIManager.Instance.relicPriceUI.SetWinPoint(pc.IsScholar);
+            ////UIManager.Instance.relicPriceUI.SetWinPoint(pc.IsScholar);
         }
   
     }

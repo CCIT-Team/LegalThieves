@@ -59,13 +59,14 @@ namespace New_Neo_LT.Scripts.Relic
         {
             if (!PlayerRegistry.GetPlayer(player).GetRelic(LegalThieves.RelicManager.Instance.GetRelicIndex(this)))
                 return;
-            
+
+           
             IsActivated = false;
         }
 
         public void OnClient_Interact(PlayerRef player)
         {
-            
+            UIManager.Instance.scanUI.SetUIPoint(-1);
         }
 
         public void OnThrowAway(PlayerRef player)
