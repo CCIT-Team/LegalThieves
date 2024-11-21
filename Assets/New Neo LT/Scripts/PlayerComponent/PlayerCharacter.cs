@@ -245,7 +245,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             //     kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
             // if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Sprint))
             //     kcc.FixedData.KinematicSpeed = characterStats.MoveSpeed;
-            
+
             // Jump
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump) && CanJump)
                 OnJumpButtonPressed();
@@ -260,7 +260,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             //throwRelic
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction5))
                 ThrowRelic();
-                //slot
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Inventory))
+                ToggleInventory();
+            //slot
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot1))
                 SelectSlot(0);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot2))
@@ -408,7 +410,20 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 Inventory.Set(slotIndex, -1); // 인벤토리에서 제거
             }
         }
-        
+
+        public void ToggleInventory()
+        {
+            if (HasInputAuthority)
+            {
+                ToggleInventory1(Object.InputAuthority);
+            }
+        }
+
+        public void ToggleInventory1(PlayerRef player)
+        {
+            UIManager.Instance.OnToggleInventory();
+        }
+
         public RelicObject RemoveRelicFromInventory(int index)
         {
             if (Inventory[index] == -1)
