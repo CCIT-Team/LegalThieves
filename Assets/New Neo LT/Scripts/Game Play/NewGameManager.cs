@@ -97,13 +97,24 @@ namespace New_Neo_LT.Scripts.Game_Play
             playerCharacter.AddGoldPoint(goldPoint);
             playerCharacter.AddRenownPoint(renownPoint);
         }
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void RPC_JobChange(PlayerRef player, Job job)
+        {
+            var playerCharacter = PlayerRegistry.GetPlayer(player);
+            playerCharacter.ChangeJob(job);
         
+        }
+
+
         [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void RPC_SetPlayerReady(PlayerRef player, bool ready)
         {
             var playerCharacter = PlayerRegistry.GetPlayer(player);
             playerCharacter.SetReady(ready);
+           
         }
+
 
         #endregion
     }

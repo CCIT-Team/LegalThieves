@@ -7,9 +7,9 @@ using New_Neo_LT.Scripts.PlayerComponent;
 using Fusion.Addons.KCC;
 public class JobChangerUI : MonoBehaviour
 {
-    PlayerCharacter _player;
+    PlayerRef _player;
 
-    public void JobChangerInit(PlayerCharacter player)
+    public void JobChangerOpen(PlayerRef player)
     {
         _player = player;
         Cursor.lockState = CursorLockMode.None;
@@ -19,7 +19,8 @@ public class JobChangerUI : MonoBehaviour
 
     public void Archaeologist_Click()
     {
-        _player.ChangeJob(Job.Archaeologist);
+        NewGameManager.Instance.RPC_JobChange(_player, Job.Archaeologist);
+        
         Debug.Log("Archaeologist");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -27,7 +28,8 @@ public class JobChangerUI : MonoBehaviour
     }
     public void Linguist_Click()
     {
-        _player.ChangeJob(Job.Linguist);
+        NewGameManager.Instance.RPC_JobChange(_player, Job.Linguist);
+
         Debug.Log("2");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -36,7 +38,8 @@ public class JobChangerUI : MonoBehaviour
 
     public void BusinessCultist_Click()
     {
-        _player.ChangeJob(Job.BusinessCultist);
+        NewGameManager.Instance.RPC_JobChange(_player, Job.BusinessCultist);
+     
         Debug.Log("3");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -45,7 +48,8 @@ public class JobChangerUI : MonoBehaviour
 
     public void Shamanist_Click()
     {
-        _player.ChangeJob(Job.Shamanist);
+        NewGameManager.Instance.RPC_JobChange(_player, Job.Shamanist);
+     
         Debug.Log("4");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

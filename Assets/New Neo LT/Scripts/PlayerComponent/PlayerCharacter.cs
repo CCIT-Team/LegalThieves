@@ -13,7 +13,7 @@ using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 using RelicManager = LegalThieves.RelicManager;
 using UIManager = New_Neo_LT.Scripts.UI.UIManager;
 
-public enum Job { Archaeologist, Linguist , BusinessCultist , Shamanist }
+public enum Job { Null = -1, Archaeologist, Linguist , BusinessCultist , Shamanist, max }
 
 namespace New_Neo_LT.Scripts.PlayerComponent
 {
@@ -45,8 +45,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private int               PlayerColor { get; set; }
         [Networked, OnChangedRender(nameof(OnCurrentPlayerModelIndexChanged))] 
         private int               CurrentPlayerModelIndex { get; set; }
-        
+
         [Networked, OnChangedRender(nameof(OnPlayerJobChanged))]
+        Job job { get; set; }
+        [Networked]
         public bool               IsScholar { get; set; }
         [Networked, OnChangedRender(nameof(OnPointChanged))]
         private int               RenownPoint { get; set; }
@@ -59,8 +61,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))]
         public NetworkArray<int> Inventory => default;
 
-        [Networked]
-        Job job { get; set; }
+      
 
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
@@ -101,7 +102,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void Start()
         {
-            Client_InitPlayerModle(CurrentPlayerModelIndex);
+            Client_InitPlayerModel(CurrentPlayerModelIndex);
             
         }
 
@@ -117,7 +118,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 PlayerColor = playerIndex;
                 CurrentPlayerModelIndex = playerIndex;
                 IsScholar = playerIndex % 2 != 0;
-            
+                job = (Job)playerIndex;
 
                 for (var i = 0; i < Inventory.Length;i++)
                 {
@@ -141,7 +142,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             NicknameChanged();
             SetPlayerTag(job.ToString());
         }
-        void SetPlayerTag(string tag)
+        public void SetPlayerTag(string tag)
         {
             playerNickname.text = tag;
         }
@@ -449,9 +450,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
        
         public void ChangeJob(Job newJob)
         {
-          
             job = newJob;
-            SetPlayerTag(job.ToString());
+           
             switch (job)
             {
                 case Job.Archaeologist:
@@ -464,7 +464,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                     IsScholar = false;
                     break;
             }
-            
+            ChangePlayerModel(((int)job));
         }
 
         #endregion
@@ -474,6 +474,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void OnPlayerJobChanged()
         {
             UIManager.Instance.playerListController.UpdatePlayerPointType(Index, IsScholar);
+            SetPlayerTag(job.ToString());
         }
         
         private void OnPointChanged()
@@ -538,7 +539,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             CurrentPlayerModelIndex = index;
         }
 
-        private void Client_InitPlayerModle(int index)
+        private void Client_InitPlayerModel(int index)
         {
             var prev = playerModels[0];
             var curr = playerModels[index];
