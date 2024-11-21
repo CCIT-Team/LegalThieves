@@ -141,6 +141,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             
             NicknameChanged();
             SetPlayerTag(PlayerPrefs.GetString("Photon.Menu.Username"));
+            if (Object.HasInputAuthority)
+            {
+                UIManager.Instance.jobChangerUI.gameObject.SetActive(true);
+                UIManager.Instance.jobChangerUI.JobChangerOpen(Object.InputAuthority,NewGameManager.Instance.ButtonStateArray.ToArray());
+            }
         }
         public void SetPlayerTag(string tag)
         {
@@ -176,6 +181,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             base.Despawned(runner, hasState);
             UIManager.Instance.playerListController.PlayerLeft(this);
+            NewGameManager.Instance.EnableJobButton((int)job);
         }
 
         #endregion

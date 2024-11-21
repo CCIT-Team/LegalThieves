@@ -2,6 +2,8 @@ using Fusion;
 using New_Neo_LT.Scripts.Game_Play.Game_State;
 using New_Neo_LT.Scripts.Map;
 using New_Neo_LT.Scripts.PlayerComponent;
+using New_Neo_LT.Scripts.UI;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Game_Play
@@ -32,6 +34,8 @@ namespace New_Neo_LT.Scripts.Game_Play
         [Networked, Capacity(4)] 
         public NetworkDictionary<PlayerRef, PlayerCharacter> Players => default;
 
+        [Networked, Capacity(4),OnChangedRender(nameof(OnChangeJobButton))]
+        public NetworkArray<bool> ButtonStateArray { get; } = MakeInitializer(new bool[] { true, true, true, true });
         /*------------------------------------------------------------------------------------------------------------*/
 
         #region MonoBehaviour Events
@@ -97,14 +101,30 @@ namespace New_Neo_LT.Scripts.Game_Play
             playerCharacter.AddGoldPoint(goldPoint);
             playerCharacter.AddRenownPoint(renownPoint);
         }
-
+        #region Job
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-        public void RPC_JobChange(PlayerRef player, Job job)
+        public void RPC_JobChange(PlayerRef player, Job job, int i)
         {
+            //선택하면 비활성화
             var playerCharacter = PlayerRegistry.GetPlayer(player);
             playerCharacter.ChangeJob(job);
-        
+            ButtonStateArray.Set(i, false);
+            
+            Debug.Log($"{ButtonStateArray.Get(0)}, {ButtonStateArray.Get(1)}, {ButtonStateArray.Get(2)},{ButtonStateArray.Get(3 )}");
         }
+
+        public void EnableJobButton(int i) 
+        {
+            //나가면 다시킴
+            ButtonStateArray.Set(i, true);
+        }
+
+        public void OnChangeJobButton() // 갱신용
+        {
+            if (UIManager.Instance.jobChangerUI.gameObject.activeSelf == false) return;
+            UIManager.Instance.jobChangerUI.JobChangerRenew(ButtonStateArray.ToArray());
+        }
+        #endregion
 
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
@@ -114,6 +134,7 @@ namespace New_Neo_LT.Scripts.Game_Play
             playerCharacter.SetReady(ready);
            
         }
+        
 
 
         #endregion

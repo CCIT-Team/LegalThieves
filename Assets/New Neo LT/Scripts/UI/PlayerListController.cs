@@ -34,7 +34,6 @@ namespace New_Neo_LT.Scripts.UI
                 
                 var pColor = pc.Runner.LocalPlayer == pc.Ref ? Color.white : NewGameManager.Instance.playerHairMaterials[pc.GetPlayerColor()].color;
                 var pIndex = pc.Ref.AsIndex - 1;
-                Debug.Log(pIndex);
                 var pPointType = pc.IsScholar ? "Renown" : "Gold";
                 var pScore = pc.IsScholar ? pc. GetRenownPoint : pc.GetGoldPoint;
                     
