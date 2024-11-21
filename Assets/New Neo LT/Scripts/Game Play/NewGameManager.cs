@@ -1,7 +1,9 @@
 using Fusion;
+using LegalThieves;
 using New_Neo_LT.Scripts.Game_Play.Game_State;
 using New_Neo_LT.Scripts.Map;
 using New_Neo_LT.Scripts.PlayerComponent;
+using New_Neo_LT.Scripts.UI;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Game_Play
@@ -68,8 +70,11 @@ namespace New_Neo_LT.Scripts.Game_Play
 
         public void StartGame()
         {
-            if(!PlayerRegistry.Any(pc => !pc.IsReady))
+            if (!PlayerRegistry.Any(pc => !pc.IsReady))
+            {
                 State.Server_SetState<PlayStateBehaviour>();
+                UI.UIManager.Instance.readyStateUI.IsActive = !UI.UIManager.Instance.readyStateUI.IsActive;
+            }
         }
         
         

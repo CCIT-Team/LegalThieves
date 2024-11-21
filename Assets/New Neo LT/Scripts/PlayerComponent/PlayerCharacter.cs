@@ -130,7 +130,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             }
             
             UIManager.Instance.playerListController.PlayerJoined(this);
-            
+            UIManager.Instance.readyStateUI.PlayerJoined();
+
             InitializeCharacterComponents();
             InitializePlayerNetworkedProperties();
             
@@ -167,6 +168,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             base.Despawned(runner, hasState);
             UIManager.Instance.playerListController.PlayerLeft(this);
+            UIManager.Instance.readyStateUI.PlayerLeft(this);
         }
 
         #endregion
@@ -532,13 +534,20 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             GoldPoint = 0;
             RenownPoint = 0;
         }
-        
+
+        [Networked,OnChangedRender(nameof(SetReadyUI))]
         private NetworkBool Ready { get; set; } = false;
         public bool IsReady => Ready;
         
         public void SetReady(bool ready)
         {
             Ready = ready;
+        }
+
+        void SetReadyUI()
+        {
+            Debug.Log("SETUI");
+            UIManager.Instance.readyStateUI.ToggleReady(this);
         }
         
         #region RPC Methods...
