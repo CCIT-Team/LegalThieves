@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Fusion;
 using Fusion.Addons.KCC;
+using System.Collections;
 using LegalThieves;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
@@ -260,6 +261,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             //getRelic
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction2))
                 CheckInteraction();
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Inventory))
+                ToggleInventory();
             //throwRelic
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction5))
                 ThrowRelic();
@@ -411,7 +414,19 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 Inventory.Set(slotIndex, -1); // 인벤토리에서 제거
             }
         }
-        
+
+        public void ToggleInventory()
+        {
+            if (HasInputAuthority)
+            {
+                ToggleInventory1(Object.InputAuthority);
+            }
+        }
+
+        public void ToggleInventory1(PlayerRef player)
+        {
+            UIManager.Instance.inventorySlotController.OnToggleInventory();
+        }
         public RelicObject RemoveRelicFromInventory(int index)
         {
             if (Inventory[index] == -1)
