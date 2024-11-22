@@ -23,17 +23,17 @@ namespace New_Neo_LT.Scripts.UI
     
     public class UIManager : MonoBehaviour
     {
-        public CompassRotate           compassRotate;
-        public InventorySlotController inventorySlotController;
-        public TimerController         timerController;
-        public PlayerListController    playerListController;
-        public RelicPriceUI            relicPriceUI;
-        public ShopController          shopController;
-        public JobChangerUI            jobChangerUI;
-        public RelicScanUI             RelicScanUI;
-        public ReadyStateUI            readyStateUI;
-        public StateLoadingUI          stateLoadingUI;
-        public ResultUIController      resultUIController;
+        public CompassNavigationUIBehavior  compassRotate;
+        public InventorySlotController      inventorySlotController;
+        public TimerController              timerController;
+        public PlayerListController         playerListController;
+        public RelicPriceUI                 relicPriceUI;
+        public ShopController               shopController;
+        public JobChangerUI                 jobChangerUI;
+        public RelicScanUI                  RelicScanUI;
+        public ReadyStateUI                 readyStateUI;
+        public StateLoadingUI               stateLoadingUI;
+        public ResultUIController           resultUIController;
         
         public static UIManager Instance;
 
@@ -55,7 +55,7 @@ namespace New_Neo_LT.Scripts.UI
             if (!_localPlayerTransform)
                 return;
             
-            compassRotate.RotateCompass(_localPlayerTransform);
+            //compassRotate.RotateCompass(_localPlayerTransform);
             
         }
 
@@ -111,9 +111,6 @@ namespace New_Neo_LT.Scripts.UI
                 case UIType.RelicScanUI:
                     RelicScanUI.gameObject.SetActive(isActive);
                     break;
-                case UIType.ReadyStateUI:
-                    readyStateUI.gameObject.SetActive(isActive);
-                    break;
                 case UIType.StateLoadingUI:
                     stateLoadingUI.gameObject.SetActive(isActive);
                     break;
@@ -126,7 +123,6 @@ namespace New_Neo_LT.Scripts.UI
                         break;
                     resultUIController.gameObject.SetActive(false);
                     stateLoadingUI.gameObject.SetActive(false);
-                    readyStateUI.gameObject.SetActive(false);
                     RelicScanUI.gameObject.SetActive(false);
                     jobChangerUI.gameObject.SetActive(false);
                     shopController.gameObject.SetActive(false);

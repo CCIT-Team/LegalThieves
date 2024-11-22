@@ -83,7 +83,6 @@ namespace New_Neo_LT.Scripts.Game_Play
             if (!PlayerRegistry.Any(pc => !pc.IsReady))
             {
                 State.Server_SetState<LoadingStateBehaviour>();
-                UIManager.Instance.readyStateUI.ToggleUI();
                 UIManager.Instance.timerController.SetRound(currentRound);
             }
         }
@@ -143,7 +142,8 @@ namespace New_Neo_LT.Scripts.Game_Play
         {
             //선택하면 비활성화
             var playerCharacter = PlayerRegistry.GetPlayer(player);
-            ButtonStateArray.Set(playerCharacter.GetJobIndex(), true);
+            if(playerCharacter.GetJobIndex() != (int)Job.Null)
+                ButtonStateArray.Set(playerCharacter.GetJobIndex(), true);
             playerCharacter.ChangeJob(job);
             playerCharacter.SetReady(true);
             ButtonStateArray.Set(i, false);

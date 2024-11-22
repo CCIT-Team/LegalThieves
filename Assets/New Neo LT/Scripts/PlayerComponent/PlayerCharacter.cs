@@ -119,7 +119,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 PlayerColor = playerIndex;
                 CurrentPlayerModelIndex = playerIndex;
                 IsScholar = playerIndex % 2 != 0;
-                job = (Job)playerIndex;
+                job = Job.Null;
 
                 for (var i = 0; i < Inventory.Length;i++)
                 {
@@ -146,7 +146,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             }
             
             UIManager.Instance.playerListController.PlayerJoined(this);
-            UIManager.Instance.readyStateUI.PlayerJoined();
 
 
             InitializeCharacterComponents();
@@ -154,6 +153,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             
             if (Object.HasInputAuthority)
             {
+                UIManager.Instance.compassRotate.SetPlayerTransform(transform);
                 UIManager.Instance.stateLoadingUI.SetYPos();
                 UIManager.Instance.jobChangerUI.gameObject.SetActive(true);
                 UIManager.Instance.jobChangerUI.JobChangerOpen(Object.InputAuthority,NewGameManager.Instance.ButtonStateArray.ToArray());
@@ -190,7 +190,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             base.Despawned(runner, hasState);
             UIManager.Instance.playerListController.PlayerLeft(this);
-            UIManager.Instance.readyStateUI.PlayerLeft(this);
         }
 
         #endregion
@@ -604,19 +603,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             RenownPoint = 0;
         }
 
-        [Networked, OnChangedRender(nameof(SetReadyUI))]
+        [Networked]
         private NetworkBool Ready { get; set; } = false;
         public bool IsReady => Ready;
         
         public void SetReady(bool ready)
         {
             Ready = ready;
-        }
-
-        void SetReadyUI()
-        {
-            Debug.Log("SETUI");
-            UIManager.Instance.readyStateUI.ToggleReady(this);
         }
 
         #region RPC Methods...
