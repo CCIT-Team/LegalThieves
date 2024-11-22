@@ -55,9 +55,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private int               RenownPoint { get; set; }
         [Networked, OnChangedRender(nameof(OnPointChanged))]
         private int               GoldPoint { get; set; }
-        
-        [Networked, OnChangedRender(nameof(NicknameChanged))] 
-        public NetworkString<_16> Nickname   { get; set; }
 
         [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))]
         public NetworkArray<int> Inventory => default;
@@ -70,6 +67,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
      
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
+        
+        private string            _nickname;
 
         private bool              _isSprinting;
         
@@ -133,6 +132,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 InitializePlayerComponents();
                 UIManager.Instance.InitializeInGameUI();
                 InitModels();
+
+                RPC_SetPlayerNickname(Runner.LocalPlayer, PlayerPrefs.GetString("Photon.Menu.Username"));
             }
             
             UIManager.Instance.playerListController.PlayerJoined(this);
@@ -142,8 +143,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             InitializeCharacterComponents();
             InitializePlayerNetworkedProperties();
             
-            NicknameChanged();
-            SetPlayerTag(PlayerPrefs.GetString("Photon.Menu.Username"));
             if (Object.HasInputAuthority)
             {
                 UIManager.Instance.jobChangerUI.gameObject.SetActive(true);
@@ -154,6 +153,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             playerNickname.text = tag;
         }
+        
         public override void FixedUpdateNetwork()
         {
             base.FixedUpdateNetwork();
@@ -205,7 +205,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         
         public void SetPlayerName(string playerName)
         {
-            
+            _nickname = playerName;
+        }
+        
+        public string GetPlayerName()
+        {
+            return _nickname;
         }
         
         private void NicknameChanged()
@@ -603,8 +608,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
 
         #region RPC Methods...
-
-
+        
+        [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
+        public void RPC_SetPlayerNickname(PlayerRef player, string nickname)
+        {
+            var playerCharacter = PlayerRegistry.GetPlayer(player);
+            playerCharacter.SetPlayerName(nickname);
+        }
 
         #endregion
     }

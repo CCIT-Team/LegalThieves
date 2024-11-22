@@ -169,6 +169,17 @@ namespace New_Neo_LT.Scripts.Game_Play
 		
 			return players.Grab(count).ToArray();
 		}
+		
+		public static PlayerCharacter[] GetAllPlayers()
+		{
+			var players = new List<PlayerCharacter>();
+			foreach (var kvp in Instance.Players)
+			{
+				players.Add(kvp.Value);
+			}
+		
+			return players.ToArray();
+		}
 
 		public void OnPlayerRegistryChange()
 		{

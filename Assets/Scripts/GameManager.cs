@@ -49,8 +49,8 @@ public class GameManager : MonoBehaviour
 
     int[] goldScore = new int[4];
     int[] renownScore = new int[4];
-    [SerializeField]
-    int maxScore = 5000;
+    //[SerializeField]
+    //int maxScore = 5000;
 
     public void GetScore(int player, int goldPoint = 0, int renownPoint = 0)
     {
