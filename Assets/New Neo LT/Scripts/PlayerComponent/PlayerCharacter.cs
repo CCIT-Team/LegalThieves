@@ -13,6 +13,8 @@ using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 using RelicManager = LegalThieves.RelicManager;
 using UIManager = New_Neo_LT.Scripts.UI.UIManager;
+using UnityEngine.InputSystem;
+using System.Runtime.CompilerServices;
 
 public enum Job { Null = -1, Archaeologist, Linguist , BusinessCultist , Shamanist, max }
 
@@ -36,7 +38,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         
         [Space, Header("Player Models")]
         [SerializeField] private GameObject[]           playerModels;
-        
+        [SerializeField] private Item_Torch_Temp[] TorchScript;
+
         [Networked, OnChangedRender(nameof(OnRefChanged))] 
         public PlayerRef          Ref        { get; set; }
         [Networked] 
@@ -62,7 +65,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))]
         public NetworkArray<int> Inventory => default;
 
-      
+        [Networked, OnChangedRender(nameof(OnTorchChanged))]
+        private bool _isPikedTorch { get; set; }
+
+        [Networked, OnChangedRender(nameof(OnTorchStateChanged))]
+        public bool IsTorchActive { get; set; }
 
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
@@ -94,9 +101,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private static readonly int AnimLookPit       = Animator.StringToHash("LookPit");
         private static readonly int AnimJumpTrigger   = Animator.StringToHash("Jump");
         private static readonly int AnimSnapGround    = Animator.StringToHash("SnapGround");
-        
+        private static readonly int AnimPickTorch     = Animator.StringToHash("pickTorch");
+
         #endregion
-        
+
         /*------------------------------------------------------------------------------------------------------------*/
 
         #region NetworkBehaviour Events...
@@ -244,6 +252,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             // Set behavior by Keyboard input
             // Sprint
             SprintToggle(playerInput);
+
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction3))
+                TorchToggle(playerInput);
+            //CrouchToggle(playerInput);
             // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
             //     kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
             // if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Sprint))
@@ -253,10 +265,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump) && CanJump)
                 OnJumpButtonPressed();
             // Crouch
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Crouch))
-                CrouchSync = 0;
-            if(playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Crouch))
-                CrouchSync = 1;
             //getRelic
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction2))
                 CheckInteraction();
@@ -317,7 +325,49 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
             return transform.InverseTransformVector(velocity);
         }
-        
+
+        private void TorchToggle(NetInput input)
+        {
+            if (!IsTorchActive)
+            {
+                _isPikedTorch = true;
+                IsTorchActive = true;
+                TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchActive);
+                TorchScript[CurrentPlayerModelIndex].TurnOnLight();
+            }
+            else
+            {
+                _isPikedTorch = false;
+                StartCoroutine(TorchTurnOff());
+                TorchScript[CurrentPlayerModelIndex].TurnOffLight();
+            }
+        }
+
+        public IEnumerator TorchTurnOff()
+        {
+            yield return animator.GetCurrentAnimatorClipInfo(2).Length; // 이거 이상함 너무 빨리 꺼짐;
+            IsTorchActive = false;
+        }
+
+      
+
+        //private void CrouchToggle(NetInput input)
+        //{
+
+        //    if (input.Buttons.WasPressed(_previousButtons, EInputButton.Crouch))
+        //    {
+
+        //        kcc.AddModifier(kccProcessors[2]);
+        //        CrouchSync = 0;
+        //    }
+        //    if (input.Buttons.WasReleased(_previousButtons, EInputButton.Crouch))
+        //    {
+        //        kcc.AddModifier(kccProcessors[2]);
+        //        CrouchSync = 1;
+        //    }
+
+        //}
+
         private void SprintToggle(NetInput input)
         {
             if (input.Buttons.WasPressed(_previousButtons, EInputButton.Sprint))
@@ -510,7 +560,16 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             
         }
-        
+        void OnTorchChanged()
+        {
+            animator.SetBool(AnimPickTorch, _isPikedTorch);
+           
+        }
+        private void OnTorchStateChanged()
+        {
+            TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchActive);
+        }
+
         #endregion
 
         #region Gold, Renown Point Add...
