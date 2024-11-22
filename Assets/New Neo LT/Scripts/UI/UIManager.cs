@@ -45,6 +45,8 @@ namespace New_Neo_LT.Scripts.UI
                 Instance = this;
             else if(Instance != this)
                 Destroy(gameObject);
+            
+            SetActiveUI(UIType.ResultUIController, false);
         }
 
         private void LateUpdate()

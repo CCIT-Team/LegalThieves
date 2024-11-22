@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace New_Neo_LT.Scripts.UI
 {
-    public enum CharacterType
+    public enum ECharacterType
     {
         None = -1,
         Archaeologist, 
@@ -15,18 +15,30 @@ namespace New_Neo_LT.Scripts.UI
         TypeCount
     }
     
+    public enum EResultType
+    {
+        None = -1,
+        Victory,
+        Defeat,
+        TypeCount
+    }
+    
     public class ResultUIController : MonoBehaviour
     {
         [SerializeField] private ResultUISlot[] slots;
         [SerializeField] private Camera[]       cameras;
-
-        private void Start()
-        {
-            InitCameras();
-        }
+        [SerializeField] private Animator[]     animators;
+        
+        private bool _isInit;
+        
+        private static readonly int IsVictory = Animator.StringToHash("IsVictory");
 
         private void OnEnable()
         {
+            if (_isInit)
+                return;
+            InitCameras();
+            
             Init();
         }
 
@@ -52,8 +64,6 @@ namespace New_Neo_LT.Scripts.UI
             {
                 SetSlot(i, sortedPlayers[i]);
             }
-            
-            
         }
 
         private void SetSlot(int index, PlayerCharacter player)
@@ -61,12 +71,14 @@ namespace New_Neo_LT.Scripts.UI
             var slot  = slots[index];
             var type  = player.GetJobIndex();
             
+            animators[type].SetFloat(IsVictory, index);
             slot.gameObject.SetActive(true);
             slot.SetSlot(player.GetPlayerName(), player.GetGoldPoint, player.GetRenownPoint, cameras[type].targetTexture);
         }
         
         private void InitCameras()
         {
+            _isInit = true;
             foreach (var cam in cameras)
             {
                 var textureSize = slots[0].GetRawImageSize();

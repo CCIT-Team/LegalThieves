@@ -68,7 +68,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
         
-        private string            _nickname;
+        [Networked, Capacity(24), OnChangedRender(nameof(OnNicknameChanged))]
+        private string            Nickname { get => default; set { }}
 
         private bool              _isSprinting;
         
@@ -149,10 +150,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 UIManager.Instance.jobChangerUI.JobChangerOpen(Object.InputAuthority,NewGameManager.Instance.ButtonStateArray.ToArray());
             }
         }
-        public void SetPlayerTag(string tag)
-        {
-            playerNickname.text = tag;
-        }
         
         public override void FixedUpdateNetwork()
         {
@@ -205,17 +202,17 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         
         public void SetPlayerName(string playerName)
         {
-            _nickname = playerName;
+            Nickname = playerName;
         }
         
         public string GetPlayerName()
         {
-            return _nickname;
+            return Nickname;
         }
         
-        private void NicknameChanged()
+        private void OnNicknameChanged()
         {
-            // playerNickname.text = Nickname.Value;
+            SetPlayerTag(Nickname);
         }
         
         public void Server_Init(PlayerRef pRef, byte index)
@@ -581,6 +578,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             CurrentPlayerModelIndex = index;
         }
         
+        public void SetPlayerTag(string pTag)
+        {
+            playerNickname.text = pTag;
+        }
+        
         public int GetJobIndex()
         {
             return (int)job;
@@ -609,7 +611,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         #region RPC Methods...
         
-        [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void RPC_SetPlayerNickname(PlayerRef player, string nickname)
         {
             var playerCharacter = PlayerRegistry.GetPlayer(player);
