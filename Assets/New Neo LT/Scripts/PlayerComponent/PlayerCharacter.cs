@@ -154,6 +154,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             
             if (Object.HasInputAuthority)
             {
+                UIManager.Instance.stateLoadingUI.SetYPos();
                 UIManager.Instance.jobChangerUI.gameObject.SetActive(true);
                 UIManager.Instance.jobChangerUI.JobChangerOpen(Object.InputAuthority,NewGameManager.Instance.ButtonStateArray.ToArray());
             }
@@ -468,6 +469,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 UIManager.Instance.inventorySlotController.SetRelicSprite(i, Inventory[i]);
             }
             UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[slotIndex]);
+            UIManager.Instance.relicPriceUI.SetTotalPoint(Inventory.ToArray());
             UIManager.Instance.RelicScanUI.SetUIPoint(-1);
             UIManager.Instance.shopController.SetLocalPlayerInventory(Inventory.ToArray());
         }
