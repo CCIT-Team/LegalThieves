@@ -12,7 +12,7 @@ namespace New_Neo_LT.Scripts.UI
         public RelicPriceUI            relicPriceUI;
         public ShopController          shopController;
         public JobChangerUI            jobChangerUI;
-
+        public RelicScanUI             RelicScanUI;
         public static UIManager Instance;
 
         private Transform _localPlayerTransform;

@@ -7,32 +7,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using New_Neo_LT.Scripts.Game_Play;
-public class PlayerRelicScan : MonoBehaviour
+public class PlayerRelicScan : NetworkBehaviour
 {
-    PlayerCharacter character;
 
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-       
-        if (other.CompareTag("Relics"))
+        if (HasStateAuthority && other.CompareTag("Relics")) // Host
         {
-            if (!Application.isFocused) return;
-            
-            //  UIManager.Instance.scanUI.OnScanUI();
-            UIManager.Instance.scanUI.SetUIPoint(other.GetComponent<RelicObject>().RelicID);
-        
+            int relicID = other.GetComponent<RelicObject>().RelicID;
+            RPC_SetRelicUI(relicID);
         }
     }
-    void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Relics"))
-        {
-            if (!Application.isFocused) return;
 
-            UIManager.Instance.scanUI.SetUIPoint(-1);
-          //  UIManager.Instance.scanUI.OffScanUI();
+    private void OnTriggerExit(Collider other)
+    {
+        if (HasStateAuthority && other.CompareTag("Relics")) // Host
+        {
+            RPC_ClearRelicUI();
         }
     }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    private void RPC_SetRelicUI(int relicID)
+    {
   
+        UIManager.Instance.RelicScanUI.SetUIPoint(relicID);
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    private void RPC_ClearRelicUI()
+    {
+   
+        UIManager.Instance.RelicScanUI.SetUIPoint(-1);
+    }
 }
+  
+

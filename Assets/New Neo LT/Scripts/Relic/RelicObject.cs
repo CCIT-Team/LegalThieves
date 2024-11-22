@@ -66,7 +66,7 @@ namespace New_Neo_LT.Scripts.Relic
 
         public void OnClient_Interact(PlayerRef player)
         {
-            UIManager.Instance.scanUI.SetUIPoint(-1);
+          
         }
 
         public void OnThrowAway(PlayerRef player)

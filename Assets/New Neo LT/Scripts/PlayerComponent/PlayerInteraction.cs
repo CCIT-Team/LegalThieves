@@ -13,14 +13,27 @@ public class PlayerInteraction : NetworkBehaviour
 {
     [SerializeField] private float maxCheckDistance;
     [SerializeField] private LayerMask layerMask;
+    [SerializeField] private CapsuleCollider ScanCollider;
     private Transform _camTarget;
 
     public override void Spawned()
     {
         base.Spawned();
         _camTarget = Object.GetComponent<PlayerCharacter>().GetCamTarget();
+        UpdateColliderSize();
     }
 
+    private void UpdateColliderSize()
+    {
+        if (ScanCollider == null) return;
+
+        // CapsuleCollider의 높이를 Ray 길이에 맞춤
+        ScanCollider.height = maxCheckDistance;
+
+        // CapsuleCollider의 중심을 Raycast 방향에 맞춰 설정
+        ScanCollider.center = new Vector3(0, 0, maxCheckDistance / 2);
+
+    }
     public void Server_CheckInteraction()
     {
         if (!Physics.Raycast(_camTarget.position, _camTarget.forward, out var hit, maxCheckDistance, layerMask))
