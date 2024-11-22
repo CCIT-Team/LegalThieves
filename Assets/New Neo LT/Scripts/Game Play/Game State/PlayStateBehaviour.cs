@@ -29,7 +29,8 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             // 딜레이 시간은 게임 메니저 인스펙터로 관리
             if (HasStateAuthority)
             {
-                NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Playtime);
+                //UIManager.Instance.stateLoadingUI.ChangeState(false)
+                NewGameManager.State.Server_DelaySetState<LoadingStateBehaviour>(NewGameManager.Playtime);
             }
         }
 
@@ -41,7 +42,14 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         protected override void OnExitStateRender()
         {
             // UI 변경
-            UIManager.Instance.timerController.SetTimer("Waiting");
+            if (HasStateAuthority)
+            {
+                //UIManager.Instance.stateLoadingUI.ChangeState(false)
+                if (NewGameManager.Instance.RoundOver())
+                    NewGameManager.State.Server_DelaySetState<EndStateBehaviour>(NewGameManager.Loadtime);
+                else
+                    NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Loadtime);
+            }
         }
     }
 }

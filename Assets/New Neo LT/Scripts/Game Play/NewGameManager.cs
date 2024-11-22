@@ -14,6 +14,9 @@ namespace New_Neo_LT.Scripts.Game_Play
         [Header("Components & References")]
         [SerializeField] private NetworkPrefabRef    playerPrefab;
         [SerializeField] private float               playtime = 15;
+        [SerializeField] private float               resttime = 30;
+        [SerializeField] private float               loadtime = 30;
+        [SerializeField] private int                 rounds = 3;
         
         [Header("Player Color")]
         public Material[]                            playerClothMaterials;
@@ -27,10 +30,16 @@ namespace New_Neo_LT.Scripts.Game_Play
         // public static VoiceManager Vm { get; private set; }
         
         public static float Playtime => Instance.playtime;
+        public static float Resttime => Instance.resttime;
+        public static float Loadtime => Instance.loadtime;
+        public static float Rounds => Instance.rounds;
         
         public PregameStateMapData pregameMapData;
         public PlayStateMapData    playMapData;
         public PlayStateMapData    winMapData;
+
+        [Networked]
+        int currentRound { get; set; } = 1;
 
         [Networked, Capacity(4), OnChangedRender(nameof(OnChangeJobButton))]
         public NetworkArray<bool> ButtonStateArray => default; // MakeInitializer(new bool[] { true, true, true, true });
@@ -72,9 +81,18 @@ namespace New_Neo_LT.Scripts.Game_Play
         {
             if (!PlayerRegistry.Any(pc => !pc.IsReady))
             {
-                State.Server_SetState<PlayStateBehaviour>();
-                UI.UIManager.Instance.readyStateUI.IsActive = !UI.UIManager.Instance.readyStateUI.IsActive;
+                State.Server_SetState<LoadingStateBehaviour>();
+                UIManager.Instance.readyStateUI.ToggleUI();
             }
+        }
+
+        public bool RoundOver()
+        {
+            if (currentRound >= rounds)
+                return true;
+
+            currentRound++;
+            return false;
         }
         
         #region Job

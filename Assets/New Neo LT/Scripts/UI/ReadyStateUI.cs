@@ -13,8 +13,8 @@ public class ReadyStateUI : MonoBehaviour
     GameObject UI;
 
     List<GameObject> readyUIs = new List<GameObject>();
-    [Networked, OnChangedRender(nameof(ToggleUI))]
-    public NetworkBool IsActive { get; set; } = false;
+
+    private bool isActive = true;
 
     public void ToggleReady(PlayerCharacter pc)
     {
@@ -45,12 +45,10 @@ public class ReadyStateUI : MonoBehaviour
         Destroy(ui);
     }
 
-    void ToggleUI()
+    public void ToggleUI()
     {
-        transform.GetChild(0).gameObject.SetActive(IsActive);
-        foreach(var ui in readyUIs)
-        {
-            ui.transform.GetChild(0).GetComponent<TMP_Text>().text = "Ready";
-        }
+        PlayerRegistry.ForEach(pc => { readyUIs[pc.Index].transform.GetChild(0).GetComponent<TMP_Text>().text = pc.IsReady ? "Ready" : "Wait"; });
+        transform.GetChild(0).gameObject.SetActive(!transform.GetChild(0).gameObject.activeSelf);
+        isActive = !isActive;
     }
 }

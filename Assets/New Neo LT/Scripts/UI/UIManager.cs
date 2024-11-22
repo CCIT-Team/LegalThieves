@@ -13,7 +13,8 @@ namespace New_Neo_LT.Scripts.UI
         public ShopController          shopController;
         public JobChangerUI            jobChangerUI;
         public RelicScanUI             RelicScanUI;
-        public ReadyStateUI              readyStateUI;
+        public ReadyStateUI            readyStateUI;
+        public StateLoadingUI          stateLoadingUI;
         public static UIManager Instance;
 
         private Transform _localPlayerTransform;

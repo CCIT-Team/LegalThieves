@@ -18,7 +18,11 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         public PregameStateBehaviour          pregameState;
         public PlayStateBehaviour             playState;
         public WinStateBehaviour              winState;
-        
+        public LoadingStateBehaviour          loadingState;
+        public EndStateBehaviour              endState;
+
+        // PreGame (-> Loading -> Play -> Loading -> Win) * 3 -> End
+
         private StateMachine<StateBehaviour>  _stateMachine;
 
         public override void FixedUpdateNetwork()
@@ -59,7 +63,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 
         public void CollectStateMachines(List<IStateMachine> stateMachines)
         {
-            _stateMachine = new StateMachine<StateBehaviour>("Game_State", pregameState, playState, winState);
+            _stateMachine = new StateMachine<StateBehaviour>("Game_State", pregameState, playState, winState, loadingState, endState);
             stateMachines.Add(_stateMachine);
         }
     }
