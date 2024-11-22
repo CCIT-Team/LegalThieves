@@ -14,6 +14,8 @@ namespace New_Neo_LT.Scripts.Player_Input
     {
         Attack1,         // 마우스 왼쪽 클릭
         Attack2,         // 마우스 왼쪽 클릭
+        MouseScrollOnUp,   // 마우스 스크롤 업
+        MouseScrollOnDown, // 마우스 스크롤 다운
         Jump,            // 스페이스바
         Interaction1,    // F 
         Interaction2,    // E skill1?
@@ -81,6 +83,8 @@ namespace New_Neo_LT.Scripts.Player_Input
             _inputActions.Mouse.MouseDelta.performed += MouseDelta;
             _inputActions.Mouse.LeftClick.performed  += MouseLeftClick;
             _inputActions.Mouse.RightClick.performed += MouseRightClick;
+            _inputActions.Mouse.MouseScrollYUp.performed += MoouseScrollUp;
+            _inputActions.Mouse.MouseScrollYDown.performed += MouseScrollDown;
             
             _inputActions.Movement.Move.performed    += MovementDirection;
             _inputActions.Movement.Jump.performed    += Jump;
@@ -128,7 +132,15 @@ namespace New_Neo_LT.Scripts.Player_Input
         {
             _accumulateInput.Buttons.Set(EInputButton.Attack2, ctx.ReadValueAsButton());
         }
-        
+        private void MoouseScrollUp(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.MouseScrollOnUp, ctx.ReadValueAsButton());
+        }
+        private void MouseScrollDown(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.MouseScrollOnDown, ctx.ReadValueAsButton());
+        }
+
         private void MovementDirection(InputAction.CallbackContext ctx)
         {
             _accumulateInput.Direction = ctx.ReadValue<Vector2>();

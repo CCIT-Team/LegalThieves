@@ -36,7 +36,7 @@ public class RelicPriceUI : MonoBehaviour
 
     public void SetUIPoint(int relicIndex)
     {
-        if(relicIndex == -1)
+        if(relicIndex == -1 || New_Neo_LT.Scripts.UI.UIManager.Instance.inventorySlotController.inventoryclose == 0)
         {
             relicName.text = "";
             goldPoint.text = "";

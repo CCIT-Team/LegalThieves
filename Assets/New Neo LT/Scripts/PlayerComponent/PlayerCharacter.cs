@@ -13,6 +13,7 @@ using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 using RelicManager = LegalThieves.RelicManager;
 using UIManager = New_Neo_LT.Scripts.UI.UIManager;
+using UnityEngine.InputSystem;
 
 public enum Job { Null = -1, Archaeologist, Linguist , BusinessCultist , Shamanist, max }
 
@@ -241,7 +242,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 OnMouseLeftClick();
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Attack2))
                 OnMouseRightClick();
-            
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.MouseScrollOnUp))
+                OnMouseScrollOnUp();
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.MouseScrollOnDown))
+                OnMouseScrollOnDown();
+
+
             // Set behavior by Keyboard input
             // Sprint
             SprintToggle(playerInput);
@@ -365,6 +371,27 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 playerInteraction.CheckInteraction();
         }
 
+        private void OnMouseScrollOnUp() 
+        {
+            var mouse = Mouse.current;
+            if(mouse.scroll.up.IsPressed())
+            {
+                UIManager.Instance.inventorySlotController.MoveCurrentSlot(true);
+                int index = UIManager.Instance.inventorySlotController.CurrentIndex; // _prevIndex 값을 접근할 수 있도록 CurrentIndex 
+                UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
+            }
+        }
+        private void OnMouseScrollOnDown()
+        {
+            var mouse = Mouse.current;
+            if(mouse.scroll.down.IsPressed())
+            {
+                UIManager.Instance.inventorySlotController.MoveCurrentSlot(false);
+                int index = UIManager.Instance.inventorySlotController.CurrentIndex; // _prevIndex 값을 접근할 수 있도록 CurrentIndex 
+                UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
+            }
+        }
+
         #endregion
 
 
@@ -426,7 +453,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         public void ToggleInventory1(PlayerRef player)
         {
             UIManager.Instance.inventorySlotController.OnToggleInventory();
+            int abcdefg = UIManager.Instance.inventorySlotController.inventoryclose; // 
+            int index = UIManager.Instance.inventorySlotController.CurrentIndex; // _prevIndex 값을 접근할 수 있도록 CurrentIndex 
+            UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
         }
+
         public RelicObject RemoveRelicFromInventory(int index)
         {
             if (Inventory[index] == -1)

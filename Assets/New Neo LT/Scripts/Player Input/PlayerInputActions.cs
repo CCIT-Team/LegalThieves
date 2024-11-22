@@ -185,6 +185,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MouseScrollYUp"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""2614eb49-dda4-4b23-8709-13dd2baf1162"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MouseScrollYDown"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""5448132a-11b4-4e92-ad76-2798fbfdc292"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -218,6 +236,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""RightClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33c34c6e-1630-41b5-bb13-7fef1708404d"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseScrollYUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e4957901-93e6-4c00-849c-d038eb05327a"",
+                    ""path"": ""<Mouse>/scroll/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseScrollYDown"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -632,6 +672,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Mouse_MouseDelta = m_Mouse.FindAction("MouseDelta", throwIfNotFound: true);
         m_Mouse_LeftClick = m_Mouse.FindAction("LeftClick", throwIfNotFound: true);
         m_Mouse_RightClick = m_Mouse.FindAction("RightClick", throwIfNotFound: true);
+        m_Mouse_MouseScrollYUp = m_Mouse.FindAction("MouseScrollYUp", throwIfNotFound: true);
+        m_Mouse_MouseScrollYDown = m_Mouse.FindAction("MouseScrollYDown", throwIfNotFound: true);
         // Skills
         m_Skills = asset.FindActionMap("Skills", throwIfNotFound: true);
         m_Skills_Q = m_Skills.FindAction("Q", throwIfNotFound: true);
@@ -790,6 +832,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Mouse_MouseDelta;
     private readonly InputAction m_Mouse_LeftClick;
     private readonly InputAction m_Mouse_RightClick;
+    private readonly InputAction m_Mouse_MouseScrollYUp;
+    private readonly InputAction m_Mouse_MouseScrollYDown;
     public struct MouseActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -797,6 +841,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @MouseDelta => m_Wrapper.m_Mouse_MouseDelta;
         public InputAction @LeftClick => m_Wrapper.m_Mouse_LeftClick;
         public InputAction @RightClick => m_Wrapper.m_Mouse_RightClick;
+        public InputAction @MouseScrollYUp => m_Wrapper.m_Mouse_MouseScrollYUp;
+        public InputAction @MouseScrollYDown => m_Wrapper.m_Mouse_MouseScrollYDown;
         public InputActionMap Get() { return m_Wrapper.m_Mouse; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -815,6 +861,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @RightClick.started += instance.OnRightClick;
             @RightClick.performed += instance.OnRightClick;
             @RightClick.canceled += instance.OnRightClick;
+            @MouseScrollYUp.started += instance.OnMouseScrollYUp;
+            @MouseScrollYUp.performed += instance.OnMouseScrollYUp;
+            @MouseScrollYUp.canceled += instance.OnMouseScrollYUp;
+            @MouseScrollYDown.started += instance.OnMouseScrollYDown;
+            @MouseScrollYDown.performed += instance.OnMouseScrollYDown;
+            @MouseScrollYDown.canceled += instance.OnMouseScrollYDown;
         }
 
         private void UnregisterCallbacks(IMouseActions instance)
@@ -828,6 +880,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @RightClick.started -= instance.OnRightClick;
             @RightClick.performed -= instance.OnRightClick;
             @RightClick.canceled -= instance.OnRightClick;
+            @MouseScrollYUp.started -= instance.OnMouseScrollYUp;
+            @MouseScrollYUp.performed -= instance.OnMouseScrollYUp;
+            @MouseScrollYUp.canceled -= instance.OnMouseScrollYUp;
+            @MouseScrollYDown.started -= instance.OnMouseScrollYDown;
+            @MouseScrollYDown.performed -= instance.OnMouseScrollYDown;
+            @MouseScrollYDown.canceled -= instance.OnMouseScrollYDown;
         }
 
         public void RemoveCallbacks(IMouseActions instance)
@@ -1115,6 +1173,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnMouseDelta(InputAction.CallbackContext context);
         void OnLeftClick(InputAction.CallbackContext context);
         void OnRightClick(InputAction.CallbackContext context);
+        void OnMouseScrollYUp(InputAction.CallbackContext context);
+        void OnMouseScrollYDown(InputAction.CallbackContext context);
     }
     public interface ISkillsActions
     {
