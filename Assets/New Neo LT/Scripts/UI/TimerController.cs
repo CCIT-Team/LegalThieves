@@ -30,5 +30,15 @@ namespace New_Neo_LT.Scripts.UI
         {
             timer.text = time;
         }
+
+        public void SetRound(int currentRound)
+        {
+            round.text = currentRound + " Round";
+        }
+
+        public void SetRound(string currentRound)
+        {
+            round.text = currentRound + " Round";
+        }
     }
 }

@@ -125,6 +125,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 {
                     Inventory.Set(i, -1);
                 }
+
+                if (PlayerRegistry.Instance != null && PlayerRegistry.Count >= 4)
+                {
+                    for (int i = 0; i < NewGameManager.Instance.ButtonStateArray.Length; i++)
+                    {
+                        NewGameManager.Instance.EnableJobButton(i);
+                    }
+                }
             }
 
             if (Object.HasInputAuthority)

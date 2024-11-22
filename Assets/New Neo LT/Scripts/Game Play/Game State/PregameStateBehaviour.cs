@@ -27,6 +27,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         protected override void OnExitStateRender()
         {
             //직업선택 끄기
+            UIManager.Instance.SetActiveUI(UIType.JobChangerUI,false);
 
             if (HasStateAuthority)
             {

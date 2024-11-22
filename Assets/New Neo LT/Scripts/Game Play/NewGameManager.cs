@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 
 using New_Neo_LT.Scripts.Game_Play.Game_State;
@@ -83,6 +84,7 @@ namespace New_Neo_LT.Scripts.Game_Play
             {
                 State.Server_SetState<LoadingStateBehaviour>();
                 UIManager.Instance.readyStateUI.ToggleUI();
+                UIManager.Instance.timerController.SetRound(currentRound);
             }
         }
 
@@ -92,6 +94,7 @@ namespace New_Neo_LT.Scripts.Game_Play
                 return true;
 
             currentRound++;
+            UIManager.Instance.timerController.SetRound(currentRound);
             return false;
         }
         
@@ -140,7 +143,9 @@ namespace New_Neo_LT.Scripts.Game_Play
         {
             //선택하면 비활성화
             var playerCharacter = PlayerRegistry.GetPlayer(player);
+            ButtonStateArray.Set(playerCharacter.GetJobIndex(), true);
             playerCharacter.ChangeJob(job);
+            playerCharacter.SetReady(true);
             ButtonStateArray.Set(i, false);
             
             // Debug.Log($"{ButtonStateArray.Get(0)}, {ButtonStateArray.Get(1)}, {ButtonStateArray.Get(2)},{ButtonStateArray.Get(3 )}");

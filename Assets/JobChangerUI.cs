@@ -5,6 +5,7 @@ using UnityEngine;
 using Fusion;
 using New_Neo_LT.Scripts.PlayerComponent;
 using Fusion.Addons.KCC;
+using UnityEngine.UI;
 public class JobChangerUI : MonoBehaviour
 {
     PlayerRef _player;
@@ -19,49 +20,32 @@ public class JobChangerUI : MonoBehaviour
         Cursor.visible = true;
         for (int i = 0; i < buttonIndex.Length; i++)
         {
-            jobButtons[i].SetActive(buttonIndex[i]);
+            jobButtons[i].GetComponent<Button>().interactable = buttonIndex[i];
         }
     }
     public void JobChangerRenew(bool[] buttonIndex) {
         for (int i = 0; i < buttonIndex.Length; i++)
         {
-            jobButtons[i].SetActive(buttonIndex[i]);
+            jobButtons[i].GetComponent<Button>().interactable = buttonIndex[i];
         }
     }
     public void Archaeologist_Click()
     {
         NewGameManager.Instance.RPC_JobChange(_player, Job.Archaeologist, (int)Job.Archaeologist);
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-      
-        gameObject.SetActive(false);
-        
     }
     public void Linguist_Click()
     {
         NewGameManager.Instance.RPC_JobChange(_player, Job.Linguist, (int)Job.Linguist);
-
-        //  NewGameManager.Instance.RPC_JobChange(_player, Job.Linguist);
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-       
-       gameObject.SetActive(false);
     }
 
     public void BusinessCultist_Click()
     {
         NewGameManager.Instance.RPC_JobChange(_player, Job.BusinessCultist, (int)Job.BusinessCultist);
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-      gameObject.SetActive(false);
     }
 
     public void Shamanist_Click()
     {
         NewGameManager.Instance.RPC_JobChange(_player, Job.Shamanist, (int)Job.Shamanist);
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        gameObject.SetActive(false);
     }
   
 }
