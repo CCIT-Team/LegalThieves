@@ -15,7 +15,7 @@ namespace New_Neo_LT.Scripts.Game_Play
         [SerializeField] private NetworkPrefabRef    playerPrefab;
         [SerializeField] private float               playtime = 15;
         [SerializeField] private float               resttime = 30;
-        [SerializeField] private float               loadtime = 30;
+        [SerializeField] private float               loadtime = 1.5f;
         [SerializeField] private int                 rounds = 3;
         
         [Header("Player Color")]

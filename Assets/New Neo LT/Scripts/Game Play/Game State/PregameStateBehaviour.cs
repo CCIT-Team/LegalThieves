@@ -1,4 +1,5 @@
 ﻿using Fusion.Addons.FSM;
+using New_Neo_LT.Scripts.UI;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Game_Play.Game_State
@@ -8,7 +9,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 
         protected override void OnEnterState()
         {
-            
+            UIManager.Instance.stateLoadingUI.SetYPos();
         }
 
         protected override void OnEnterStateRender()

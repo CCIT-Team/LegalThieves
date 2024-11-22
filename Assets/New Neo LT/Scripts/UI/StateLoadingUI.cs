@@ -16,11 +16,14 @@ public class StateLoadingUI : MonoBehaviour
 
     bool isLooping = false;
 
+    RectTransform screenTransform;
+
     private void Awake()
     {
         if(rectTransform == null)
             rectTransform = GetComponent<RectTransform>();
-        rectTransform.position = new Vector3(Screen.width / 2, Screen.height * 1.5f);
+        screenTransform = transform.parent.GetComponent<RectTransform>();
+        SetYPos();
     }
 
     public bool ChangeState(bool isClosed)
@@ -45,28 +48,30 @@ public class StateLoadingUI : MonoBehaviour
         if (isLooping)
             yield break;
 
-        var goal = new Vector3(Screen.width / 2, Screen.height / 2);
-        rectTransform.position = new Vector3(Screen.width / 2, Screen.height * 1.5f);
+        var goal = Vector2.zero;
+        SetYPos();
 
-        while ((rectTransform.position - goal).sqrMagnitude > errorScale)
+        while ((rectTransform.anchoredPosition - goal).sqrMagnitude > errorScale)
         {
             yield return null;
-            rectTransform.position = Vector3.Lerp(rectTransform.position, goal, speed * 0.01f);
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, goal, speed * 0.01f);
         }
 
-        rectTransform.position = goal;
+        rectTransform.anchoredPosition = goal;
 
         yield return new WaitForSeconds(New_Neo_LT.Scripts.Game_Play.NewGameManager.Loadtime / 2);
 
-        goal = new Vector3(Screen.width / 2, Screen.height * 1.5f);
+        goal = new Vector2(0, GetParentUIHeight());
 
-        while ((rectTransform.position - goal).sqrMagnitude > errorScale)
+        while ((rectTransform.anchoredPosition - goal).sqrMagnitude > errorScale)
         {
             yield return null;
-            rectTransform.position = Vector3.Lerp(rectTransform.position, goal, speed * 0.01f);
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, goal, speed * 0.01f);
         }
 
-        rectTransform.position = goal;
+        rectTransform.anchoredPosition = goal;
+        Debug.Log(rectTransform.position);
+        Debug.Log(rectTransform.anchoredPosition);
         isLooping = false;
     }
 
@@ -75,15 +80,25 @@ public class StateLoadingUI : MonoBehaviour
         if (isLooping)
             yield break;
 
-        var goal = new Vector3(Screen.width/2, Screen.height*1.5f);
+        var goal = new Vector2(0, GetParentUIHeight());
 
-        while ((rectTransform.position - goal).sqrMagnitude > errorScale)
+        while ((rectTransform.anchoredPosition - goal).sqrMagnitude > errorScale)
         {
             yield return null;
-            rectTransform.position = Vector3.Lerp(rectTransform.position, goal, speed * 0.01f);
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, goal, speed * 0.01f);
         } 
 
-        rectTransform.position = goal;
+        rectTransform.anchoredPosition = goal;
         isLooping = false;
+    }
+
+    public void SetYPos()
+    {
+        rectTransform.anchoredPosition = new Vector2(0, GetParentUIHeight());
+    }
+
+    private float GetParentUIHeight()
+    {
+        return transform.parent.GetComponent<RectTransform>().rect.height;
     }
 }
