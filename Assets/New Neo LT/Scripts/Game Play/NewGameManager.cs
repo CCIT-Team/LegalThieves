@@ -31,12 +31,9 @@ namespace New_Neo_LT.Scripts.Game_Play
         public PregameStateMapData pregameMapData;
         public PlayStateMapData    playMapData;
         public PlayStateMapData    winMapData;
-        
-        [Networked, Capacity(4)] 
-        public NetworkDictionary<PlayerRef, PlayerCharacter> Players => default;
 
-        [Networked, Capacity(4),OnChangedRender(nameof(OnChangeJobButton))]
-        public NetworkArray<bool> ButtonStateArray { get; } = MakeInitializer(new bool[] { true, true, true, true });
+        [Networked, Capacity(4), OnChangedRender(nameof(OnChangeJobButton))]
+        public NetworkArray<bool> ButtonStateArray => default; // MakeInitializer(new bool[] { true, true, true, true });
         /*------------------------------------------------------------------------------------------------------------*/
 
         #region MonoBehaviour Events
@@ -80,6 +77,20 @@ namespace New_Neo_LT.Scripts.Game_Play
             }
         }
         
+        #region Job
+
+        public void EnableJobButton(int i) 
+        {
+            //나가면 다시킴
+            ButtonStateArray.Set(i, true);
+        }
+
+        public void OnChangeJobButton() // 갱신용
+        {
+            if (UIManager.Instance.jobChangerUI.gameObject.activeSelf == false) return;
+            UIManager.Instance.jobChangerUI.JobChangerRenew(ButtonStateArray.ToArray());
+        }
+        #endregion
         
         #region RPC Methods...
         
@@ -105,7 +116,7 @@ namespace New_Neo_LT.Scripts.Game_Play
             playerCharacter.AddGoldPoint(goldPoint);
             playerCharacter.AddRenownPoint(renownPoint);
         }
-        #region Job
+        
         [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
         public void RPC_JobChange(PlayerRef player, Job job, int i)
         {
@@ -114,22 +125,8 @@ namespace New_Neo_LT.Scripts.Game_Play
             playerCharacter.ChangeJob(job);
             ButtonStateArray.Set(i, false);
             
-            Debug.Log($"{ButtonStateArray.Get(0)}, {ButtonStateArray.Get(1)}, {ButtonStateArray.Get(2)},{ButtonStateArray.Get(3 )}");
+            // Debug.Log($"{ButtonStateArray.Get(0)}, {ButtonStateArray.Get(1)}, {ButtonStateArray.Get(2)},{ButtonStateArray.Get(3 )}");
         }
-
-        public void EnableJobButton(int i) 
-        {
-            //나가면 다시킴
-            ButtonStateArray.Set(i, true);
-        }
-
-        public void OnChangeJobButton() // 갱신용
-        {
-            if (UIManager.Instance.jobChangerUI.gameObject.activeSelf == false) return;
-            UIManager.Instance.jobChangerUI.JobChangerRenew(ButtonStateArray.ToArray());
-        }
-        #endregion
-
 
         [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void RPC_SetPlayerReady(PlayerRef player, bool ready)

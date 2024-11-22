@@ -185,7 +185,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             base.Despawned(runner, hasState);
             UIManager.Instance.playerListController.PlayerLeft(this);
             UIManager.Instance.readyStateUI.PlayerLeft(this);
-            NewGameManager.Instance.EnableJobButton((int)job);
         }
 
         #endregion
@@ -575,6 +574,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             animator = curr.GetComponent<Animator>();
             
             CurrentPlayerModelIndex = index;
+        }
+        
+        public int GetJobIndex()
+        {
+            return (int)job;
         }
 
         public void ResetPoints()

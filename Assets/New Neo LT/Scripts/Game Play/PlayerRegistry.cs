@@ -177,7 +177,13 @@ namespace New_Neo_LT.Scripts.Game_Play
 
 		void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player)
 		{
-			if (runner.IsServer) Server_Remove(runner, player);
+			if (runner.IsServer)
+			{
+				Server_Remove(runner, player);
+
+				var jobIndex = GetPlayer(player).GetJobIndex();
+				NewGameManager.Instance.EnableJobButton(jobIndex);
+			}
 		}
 
 		#region INetworkRunnerCallbacks
