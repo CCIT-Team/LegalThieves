@@ -1,4 +1,5 @@
 using Fusion;
+
 using New_Neo_LT.Scripts.Game_Play.Game_State;
 using New_Neo_LT.Scripts.Map;
 using New_Neo_LT.Scripts.PlayerComponent;
@@ -72,8 +73,11 @@ namespace New_Neo_LT.Scripts.Game_Play
 
         public void StartGame()
         {
-            if(!PlayerRegistry.Any(pc => !pc.IsReady))
+            if (!PlayerRegistry.Any(pc => !pc.IsReady))
+            {
                 State.Server_SetState<PlayStateBehaviour>();
+                UI.UIManager.Instance.readyStateUI.IsActive = !UI.UIManager.Instance.readyStateUI.IsActive;
+            }
         }
         
         
