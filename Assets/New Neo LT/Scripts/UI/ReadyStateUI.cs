@@ -26,7 +26,7 @@ public class ReadyStateUI : MonoBehaviour
     {
         if (PlayerRegistry.Instance == null)
             return;
-        //var pColor = pc.Runner.LocalPlayer == pc.Ref ? Color.white : NewGameManager.Instance.playerHairMaterials[pc.GetPlayerColor()].color;
+
         while(PlayerRegistry.Count > readyUIs.Count)
         {
             Debug.Log(PlayerRegistry.Count+","+ readyUIs.Count);
@@ -34,6 +34,8 @@ public class ReadyStateUI : MonoBehaviour
             ui.name = "Player" + readyUIs.Count;
             readyUIs.Add(ui);
         }
+
+        PlayerRegistry.ForEach(pc => { readyUIs[pc.Index].transform.GetChild(0).GetComponent<TMP_Text>().text = pc.IsReady ? "Ready" : "Wait"; });
     }
 
     public void PlayerLeft(PlayerCharacter pc)
