@@ -120,8 +120,8 @@ namespace New_Neo_LT.Scripts.UI
             goldPoint -= LegalThieves.RelicManager.Instance.GetRelicData(item.RelicId).GetGoldPoint();
             renownPoint -= LegalThieves.RelicManager.Instance.GetRelicData(item.RelicId).GetRenownPoint();
 
-            goldPointText.text = goldPoint.ToString();
-            renownPointText.text = renownPoint.ToString();
+            goldPointText.text = Mathf.Max(goldPoint,0).ToString();
+            renownPointText.text = Mathf.Max(renownPoint, 0).ToString();
 
             item.transform.SetParent(inventoryGrid.transform);
         }
