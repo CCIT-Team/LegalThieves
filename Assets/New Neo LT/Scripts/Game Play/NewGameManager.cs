@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 
@@ -114,6 +116,12 @@ namespace New_Neo_LT.Scripts.Game_Play
             if (UIManager.Instance.jobChangerUI.gameObject.activeSelf == false) return;
             UIManager.Instance.jobChangerUI.JobChangerRenew(ButtonStateArray.ToArray());
         }
+        
+        public IEnumerable<int> GetAvailableJobIndices()
+        {
+            return ButtonStateArray.Where((b) => b).Select((b, i) => i);
+        }
+        
         #endregion
         
         #region RPC Methods...

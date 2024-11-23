@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fusion;
 using Fusion.Sockets;
+using New_Neo_LT.Scripts.Game_Play.Game_State;
 using New_Neo_LT.Scripts.PlayerComponent;
 using New_Neo_LT.Scripts.UI;
 using New_Neo_LT.Scripts.Utilities;
@@ -71,6 +72,11 @@ namespace New_Neo_LT.Scripts.Game_Play
 			{
 				Instance.Players.Add(pRef, pObj);
 				pObj.Server_Init(pRef, index);
+				
+				if(Count == Capacity)
+				{
+					NewGameManager.State.Server_DelaySetState<PlayStateBehaviour>(20);
+				}
 			}
 			else
 			{
