@@ -140,11 +140,13 @@ namespace New_Neo_LT.Scripts.UI
 
             // 최종 위치 보정
             inventoryUI.anchoredPosition = targetPosition;
+
+            if (isInventoryOpen)
             {
                 inventorybagopenslottUI.gameObject.SetActive(true);
                 inventorybagcloseslottUI.gameObject.SetActive(false);
             }
-            if (isInventoryOpen == false)
+            else
             {
                 inventorybagopenslottUI.gameObject.SetActive(false);
                 inventorybagcloseslottUI.gameObject.SetActive(true);

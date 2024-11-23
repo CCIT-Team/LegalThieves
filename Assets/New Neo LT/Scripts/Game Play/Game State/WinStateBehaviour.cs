@@ -40,9 +40,9 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 
         protected override void OnExitStateRender()
         {
+            UI.UIManager.Instance.stateLoadingUI.SetLoadingText(NewGameManager.Instance.GetCurrentRound() + "Round");
             if (HasStateAuthority)
             {
-                UI.UIManager.Instance.stateLoadingUI.SetLoadingText(NewGameManager.Instance.GetCurrentRound() + "Round");
                 NewGameManager.State.Server_DelaySetState<PlayStateBehaviour>(NewGameManager.Loadtime * 3);
             }
         }

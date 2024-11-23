@@ -125,7 +125,7 @@ namespace New_Neo_LT.Scripts.UI
             foreach (var sellItem in _sellTable)
             {
                 goldPoint += LegalThieves.RelicManager.Instance.GetRelicData(sellItem.RelicId).GetGoldPoint();
-                renownPoint += LegalThieves.RelicManager.Instance.GetRelicData(item.RelicId).GetRenownPoint();
+                renownPoint += LegalThieves.RelicManager.Instance.GetRelicData(sellItem.RelicId).GetRenownPoint();
             }
 
             goldPointText.text = goldPoint.ToString();
@@ -145,7 +145,7 @@ namespace New_Neo_LT.Scripts.UI
             foreach (var sellItem in _sellTable)
             {
                 goldPoint += LegalThieves.RelicManager.Instance.GetRelicData(sellItem.RelicId).GetGoldPoint();
-                renownPoint += LegalThieves.RelicManager.Instance.GetRelicData(item.RelicId).GetRenownPoint();
+                renownPoint += LegalThieves.RelicManager.Instance.GetRelicData(sellItem.RelicId).GetRenownPoint();
             }
 
             goldPointText.text = goldPoint.ToString();

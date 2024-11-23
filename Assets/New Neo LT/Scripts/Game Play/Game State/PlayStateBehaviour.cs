@@ -44,21 +44,30 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         protected override void OnExitStateRender()
         {
             // UI 변경
+
+            if (NewGameManager.Instance.RoundOver())
+            {
+                UIManager.Instance.stateLoadingUI.SetLoadingText("Finish");
+            }
+            else
+            {
+                UIManager.Instance.stateLoadingUI.SetLoadingText("Round Finish");
+            }
+
             if (HasStateAuthority)
             {
                 //UIManager.Instance.stateLoadingUI.ChangeState(false)
                 if (NewGameManager.Instance.RoundOver())
                 {
-                    UIManager.Instance.stateLoadingUI.SetLoadingText("Finish");
                     NewGameManager.State.Server_DelaySetState<EndStateBehaviour>(NewGameManager.Loadtime * 3);
                 }
                 else
                 {
-                    UIManager.Instance.stateLoadingUI.SetLoadingText("Round Finish");
                     NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Loadtime * 3);
                 }
-                    
             }
+
+
         }
     }
 }
