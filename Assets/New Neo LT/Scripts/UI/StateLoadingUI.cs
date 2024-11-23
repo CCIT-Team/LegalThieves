@@ -19,6 +19,9 @@ public class StateLoadingUI : MonoBehaviour
     RectTransform rectTransform;
 
     [SerializeField]
+    RectTransform subRectTransform;
+
+    [SerializeField]
     TMP_Text loadingText;
 
     [SerializeField,Range(0,100)]
@@ -32,7 +35,7 @@ public class StateLoadingUI : MonoBehaviour
     private void Awake()
     {
         if(rectTransform == null)
-            rectTransform = GetComponent<RectTransform>();
+            rectTransform = transform.GetChild(0).GetComponent<RectTransform>();
         SetYPos();
     }
 
@@ -90,8 +93,7 @@ public class StateLoadingUI : MonoBehaviour
         }
 
         rectTransform.anchoredPosition = goal;
-        Debug.Log(rectTransform.position);
-        Debug.Log(rectTransform.anchoredPosition);
+        SetSubPos(goal.y * 2);
         isLooping = false;
     }
 
@@ -132,9 +134,20 @@ public class StateLoadingUI : MonoBehaviour
         isLooping = false;
     }
 
-    public void SetYPos()
+    public void SetYPos(float yPos = -1)
     {
-        rectTransform.anchoredPosition = new Vector2(0, GetParentUIHeight());
+        if(yPos == -1)
+        {
+            rectTransform.anchoredPosition = new Vector2(0, GetParentUIHeight());
+            return;
+        }
+
+        rectTransform.anchoredPosition = new Vector2(0, yPos);
+    }
+
+    public void SetSubPos(float yPos)
+    {
+        subRectTransform.anchoredPosition = new Vector2(0, yPos);
     }
 
     private float GetParentUIHeight()
