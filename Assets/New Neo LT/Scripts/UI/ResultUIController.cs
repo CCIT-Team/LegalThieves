@@ -2,6 +2,7 @@ using System;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace New_Neo_LT.Scripts.UI
 {
@@ -28,7 +29,8 @@ namespace New_Neo_LT.Scripts.UI
         [SerializeField] private ResultUISlot[] slots;
         [SerializeField] private Camera[]       cameras;
         [SerializeField] private Animator[]     animators;
-        
+        [SerializeField] private GameObject     backGround;
+
         public Camera GetCamera(int index) => cameras[index];
         
         // private bool _isInit;
@@ -48,11 +50,14 @@ namespace New_Neo_LT.Scripts.UI
             foreach (var slot in slots)
             {
                 slot.gameObject.SetActive(false);
+                backGround.SetActive(false);
             }
         }
 
         public void Init()
         {
+            backGround.SetActive(true);
+
             var sortedPlayers = PlayerRegistry.GetAllPlayers();
             
             // 승패 판정
