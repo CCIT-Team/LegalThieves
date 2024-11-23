@@ -28,10 +28,11 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         {
             //직업선택 끄기
             UIManager.Instance.SetActiveUI(UIType.JobChangerUI,false);
+            UIManager.Instance.stateLoadingUI.SetLoadingText(NewGameManager.Instance.GetCurrentRound() + "Round");
 
             if (HasStateAuthority)
             {
-                NewGameManager.State.Server_DelaySetState<PlayStateBehaviour>(NewGameManager.Loadtime);
+                NewGameManager.State.Server_DelaySetState<PlayStateBehaviour>(NewGameManager.Loadtime * 3);
             }
         }
     }

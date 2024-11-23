@@ -11,7 +11,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         protected override void OnEnterStateRender()
         {
             UIManager.Instance.timerController.SetRound(NewGameManager.Instance.GetCurrentRound());
-            UIManager.Instance.stateLoadingUI.ChangeState(true);
+            UIManager.Instance.stateLoadingUI.ChangeState(ELoadType.Toggle);
         }
 
         protected override void OnRender()

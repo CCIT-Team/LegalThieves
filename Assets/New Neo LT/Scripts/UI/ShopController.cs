@@ -23,9 +23,6 @@ namespace New_Neo_LT.Scripts.UI
         private List<ShopItemIcon>      _inventory = new ();
         private List<ShopItemIcon>      _sellTable = new ();
 
-        private int goldPoint = 0;
-        private int renownPoint = 0;
-
         public void InitShopUI()
         {
             for (var i = 0; i < _items.Length; i++)
@@ -122,11 +119,17 @@ namespace New_Neo_LT.Scripts.UI
         {
             _inventory.Add(item);
 
-            goldPoint -= LegalThieves.RelicManager.Instance.GetRelicData(item.RelicId).GetGoldPoint();
-            renownPoint -= LegalThieves.RelicManager.Instance.GetRelicData(item.RelicId).GetRenownPoint();
+            int goldPoint = 0;
+            int renownPoint = 0;
 
-            goldPointText.text = Mathf.Max(goldPoint,0).ToString();
-            renownPointText.text = Mathf.Max(renownPoint, 0).ToString();
+            foreach (var sellItem in _sellTable)
+            {
+                goldPoint += LegalThieves.RelicManager.Instance.GetRelicData(sellItem.RelicId).GetGoldPoint();
+                renownPoint += LegalThieves.RelicManager.Instance.GetRelicData(item.RelicId).GetRenownPoint();
+            }
+
+            goldPointText.text = goldPoint.ToString();
+            renownPointText.text = renownPoint.ToString();
 
             item.transform.SetParent(inventoryGrid.transform);
         }
@@ -136,8 +139,14 @@ namespace New_Neo_LT.Scripts.UI
             _sellTable.Add(item);
             _inventory.Remove(item);
 
-            goldPoint += LegalThieves.RelicManager.Instance.GetRelicData(item.RelicId).GetGoldPoint();
-            renownPoint += LegalThieves.RelicManager.Instance.GetRelicData(item.RelicId).GetRenownPoint();
+            int goldPoint = 0;
+            int renownPoint = 0;
+
+            foreach (var sellItem in _sellTable)
+            {
+                goldPoint += LegalThieves.RelicManager.Instance.GetRelicData(sellItem.RelicId).GetGoldPoint();
+                renownPoint += LegalThieves.RelicManager.Instance.GetRelicData(item.RelicId).GetRenownPoint();
+            }
 
             goldPointText.text = goldPoint.ToString();
             renownPointText.text = renownPoint.ToString();

@@ -42,7 +42,8 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         {
             if (HasStateAuthority)
             {
-                NewGameManager.State.Server_DelaySetState<PlayStateBehaviour>(NewGameManager.Loadtime);
+                UI.UIManager.Instance.stateLoadingUI.SetLoadingText(NewGameManager.Instance.GetCurrentRound() + "Round");
+                NewGameManager.State.Server_DelaySetState<PlayStateBehaviour>(NewGameManager.Loadtime * 3);
             }
         }
     }

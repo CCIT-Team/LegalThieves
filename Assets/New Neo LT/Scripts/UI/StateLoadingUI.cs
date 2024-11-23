@@ -1,12 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
+public enum ELoadType
+{
+    None = -1,
+    Down,
+    Toggle,
+    Up,
+    Count
+}
 
 public class StateLoadingUI : MonoBehaviour
 {
     [SerializeField]
     RectTransform rectTransform;
+
+    [SerializeField]
+    TMP_Text loadingText;
 
     [SerializeField,Range(0,100)]
     float speed = 10;
@@ -16,31 +29,38 @@ public class StateLoadingUI : MonoBehaviour
 
     bool isLooping = false;
 
-    RectTransform screenTransform;
-
     private void Awake()
     {
         if(rectTransform == null)
             rectTransform = GetComponent<RectTransform>();
-        screenTransform = transform.parent.GetComponent<RectTransform>();
         SetYPos();
     }
 
-    public bool ChangeState(bool isClosed)
+    public void SetLoadingText(string text)
     {
-        Debug.Log(isClosed);
-        if(isClosed)
+        loadingText.text = text;
+    }
+
+    public int ChangeState(ELoadType loadType)
+    {
+        switch (loadType)
         {
-            StartCoroutine(ToggleState());
-        }
-        else
-        {
-            StartCoroutine(OpenState());
+            case ELoadType.Down:
+                StartCoroutine(CloseState());
+                break;
+            case ELoadType.Toggle:
+                StartCoroutine(ToggleState());
+                break;
+            case ELoadType.Up:
+                StartCoroutine(OpenState());
+                break;
+            default:
+                break;
         }
 
         isLooping = true;
 
-        return !isClosed;
+        return (int)loadType;
     }
 
     IEnumerator ToggleState()
@@ -59,7 +79,7 @@ public class StateLoadingUI : MonoBehaviour
 
         rectTransform.anchoredPosition = goal;
 
-        yield return new WaitForSeconds(New_Neo_LT.Scripts.Game_Play.NewGameManager.Loadtime / 2);
+        yield return new WaitForSeconds(New_Neo_LT.Scripts.Game_Play.NewGameManager.Loadtime);
 
         goal = new Vector2(0, GetParentUIHeight());
 
@@ -86,9 +106,29 @@ public class StateLoadingUI : MonoBehaviour
         {
             yield return null;
             rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, goal, speed * 0.01f);
-        } 
+        }
 
         rectTransform.anchoredPosition = goal;
+
+        isLooping = false;
+    }
+
+    IEnumerator CloseState()
+    {
+        if (isLooping)
+            yield break;
+
+        var goal = new Vector2(0,-10);
+        SetYPos();
+
+        while ((rectTransform.anchoredPosition - goal).sqrMagnitude > errorScale)
+        {
+            yield return null;
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, goal, speed * 0.01f);
+        }
+
+        rectTransform.anchoredPosition = goal;
+
         isLooping = false;
     }
 
