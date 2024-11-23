@@ -29,17 +29,18 @@ namespace New_Neo_LT.Scripts.UI
         [SerializeField] private Camera[]       cameras;
         [SerializeField] private Animator[]     animators;
         
-        private bool _isInit;
+        public Camera GetCamera(int index) => cameras[index];
         
-        private static readonly int IsVictory = Animator.StringToHash("IsVictory");
+        // private bool _isInit;
+        
+        private static readonly int AnimResult = Animator.StringToHash("Result");
+        private static readonly int AnimJob    = Animator.StringToHash("Job");
+        private static readonly int AnimPlace  = Animator.StringToHash("Place");
+        private static readonly int AnimSelected = Animator.StringToHash("Selected");
 
-        private void OnEnable()
+        private void Start()
         {
-            if (_isInit)
-                return;
             InitCameras();
-            
-            Init();
         }
 
         private void OnDisable()
@@ -53,6 +54,8 @@ namespace New_Neo_LT.Scripts.UI
         public void Init()
         {
             var sortedPlayers = PlayerRegistry.GetAllPlayers();
+            
+            // 승패 판정
             Array.Sort(sortedPlayers, (a, b) =>
             {
                 var aTar = a.IsScholar ? a.GetRenownPoint : a.GetGoldPoint;
@@ -71,19 +74,33 @@ namespace New_Neo_LT.Scripts.UI
             var slot  = slots[index];
             var type  = player.GetJobIndex();
             
-            animators[type].SetFloat(IsVictory, index);
+            SetResultAnimation(type, index);
+            
             slot.gameObject.SetActive(true);
             slot.SetSlot(player.GetPlayerName(), player.GetGoldPoint, player.GetRenownPoint, cameras[type].targetTexture);
         }
         
         private void InitCameras()
         {
-            _isInit = true;
             foreach (var cam in cameras)
             {
                 var textureSize = slots[0].GetRawImageSize();
                 cam.targetTexture = new RenderTexture((int)textureSize.Item1, (int)textureSize.Item2, 24);
             }
+            
+            UIManager.Instance.jobChangerUI.SetRenderTexture(cameras);
+        }
+        
+        public void SetResultAnimation(int jobIndex, int place)
+        {
+            animators[jobIndex].SetInteger(AnimPlace, place);
+            animators[jobIndex].SetTrigger(AnimResult);
+        }
+
+        public void SetSelectAnimation(int jobIndex)
+        {
+            animators[jobIndex].SetInteger(AnimJob, jobIndex);
+            animators[jobIndex].SetTrigger(AnimSelected);
         }
     }
 }

@@ -34,8 +34,22 @@ namespace New_Neo_LT.Scripts.UI
         public ReadyStateUI                 readyStateUI;
         public StateLoadingUI               stateLoadingUI;
         public ResultUIController           resultUIController;
-        
-        public static UIManager Instance;
+
+        public static UIManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindObjectOfType<UIManager>();
+                }
+
+                return _instance;
+            }
+            private set => _instance = value;
+        }
+
+        private static UIManager _instance;
 
         private Transform _localPlayerTransform;
 
@@ -46,7 +60,7 @@ namespace New_Neo_LT.Scripts.UI
             else if(Instance != this)
                 Destroy(gameObject);
             
-            SetActiveUI(UIType.ResultUIController, false);
+            // SetActiveUI(UIType.ResultUIController, false);
         }
 
         private void LateUpdate()
@@ -116,6 +130,7 @@ namespace New_Neo_LT.Scripts.UI
                     break;
                 case UIType.ResultUIController:
                     resultUIController.gameObject.SetActive(isActive);
+                    resultUIController.Init();
                     break;
                 case UIType.Null:
                     // If isActive is false then all UIs are set to false

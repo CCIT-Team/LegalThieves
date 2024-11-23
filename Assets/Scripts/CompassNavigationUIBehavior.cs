@@ -9,7 +9,7 @@ public class CompassNavigationUIBehavior : MonoBehaviour
     [SerializeField] private RawImage CompassRawimage;
     [SerializeField] private RectTransform[] navigationElementTransforms;
 
-    private Vector2 playerRight;
+    private Vector2 playerRight = new(0, 0);
     private float uiWidth;
     private float uiWidthHalf;
 
@@ -24,6 +24,9 @@ public class CompassNavigationUIBehavior : MonoBehaviour
 
     private void Update()
     {
+        if(!localPlayerTransform)
+            return; 
+        
         playerRight = new Vector2(localPlayerTransform.right.x, localPlayerTransform.right.z).normalized;
         SetCompassDir();
         SetNavigation();
