@@ -3,11 +3,17 @@ using LegalThieves;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
+
 namespace New_Neo_LT.Scripts.UI
 {
     public class InventorySlotController : MonoBehaviour
     {
         [SerializeField] private GameObject[] slots;
+        [SerializeField] private GameObject selectSlot;
+                         private TMP_Text   goldPoint;
+                         private TMP_Text   renownPoint;
+
         private int _prevIndex;
 
         [Header("Inventory UI")]
@@ -22,14 +28,34 @@ namespace New_Neo_LT.Scripts.UI
         {
             visiblePosition = inventoryUI.GetComponent<RectTransform>().anchoredPosition ;
             hiddenPosition = visiblePosition + Vector3.left * 500;
+            goldPoint = selectSlot.transform.GetChild(4).GetComponent<TMP_Text>();
+            renownPoint = selectSlot.transform.GetChild(5).GetComponent<TMP_Text>();
             SelectToggle(0);
         }
 
         public void SelectToggle(int index)
         {
-            slots[_prevIndex].transform.GetChild(1).gameObject.SetActive(false);
-            slots[index].transform.GetChild(1).gameObject.SetActive(true);
+            //slots[_prevIndex].transform.GetChild(1).gameObject.SetActive(false);
+            selectSlot.transform.SetParent(slots[index].transform);
+            selectSlot.transform.localPosition = Vector3.zero;
+            
+            //slots[index].transform.GetChild(1).gameObject.SetActive(true);
             _prevIndex = index;
+        }
+        
+        public void SetSlotPoint(int rindex)
+        {
+            if (rindex == -1)
+            {
+                goldPoint.text = "";
+                renownPoint.text = "";
+            }
+            else
+            {
+                var relic = RelicManager.Instance.GetRelicData(rindex);
+                goldPoint.text = relic.GetGoldPoint().ToString();
+                renownPoint.text = relic.GetRenownPoint().ToString();
+            }
         }
 
         public void SetRelicSprite(int index, int relicIndex)

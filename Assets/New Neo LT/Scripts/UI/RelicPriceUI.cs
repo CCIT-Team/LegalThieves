@@ -5,10 +5,10 @@ using LegalThieves;
 
 public class RelicPriceUI : MonoBehaviour
 {
-    [SerializeField]
-    GameObject goldPointLabel;
-    [SerializeField]
-    GameObject renownPointLabel;
+    //[SerializeField]
+    //GameObject goldPointLabel;
+    //[SerializeField]
+    //GameObject renownPointLabel;
     [SerializeField]
     GameObject totalGoldPointLabel;
     [SerializeField]
@@ -26,21 +26,21 @@ public class RelicPriceUI : MonoBehaviour
     {
         //goldPoint = goldPointLabel.transform.GetChild(0).GetComponent<TMP_Text>();
         //renownPoint = renownPointLabel.transform.GetChild(0).GetComponent<TMP_Text>();
-        relicName = GetComponent<TMP_Text>();
-        goldPoint = goldPointLabel.GetComponent<TMP_Text>();
-        renownPoint = renownPointLabel.GetComponent<TMP_Text>();
+        //relicName = GetComponent<TMP_Text>();
+        //goldPoint = goldPointLabel.GetComponent<TMP_Text>();
+        //renownPoint = renownPointLabel.GetComponent<TMP_Text>();
         totalGoldPoint = totalGoldPointLabel.GetComponent<TMP_Text>();
         totalRenownPoint = totalRenownPointLabel.GetComponent<TMP_Text>();
     }
 
-    public void SetWinPoint(bool iswin = false)
-    {
-        isWinGold = iswin;
-        if (!isWinGold)
-            goldPointLabel.transform.SetSiblingIndex(0);
-        else
-            goldPointLabel.transform.SetSiblingIndex(1);
-    }
+    //public void SetWinPoint(bool iswin = false)
+    //{
+    //    isWinGold = iswin;
+    //    if (!isWinGold)
+    //        goldPointLabel.transform.SetSiblingIndex(0);
+    //    else
+    //        goldPointLabel.transform.SetSiblingIndex(1);
+    //}
 
     public void SetUIPoint(int relicIndex)
     {
@@ -54,8 +54,8 @@ public class RelicPriceUI : MonoBehaviour
         {
             var relic = RelicManager.Instance.GetRelicData(relicIndex);
             relicName.text = RelicManager.Instance.GetRelicName(relic.GetTypeIndex());
-            goldPoint.text = "Gold   " + relic.GetGoldPoint().ToString();
-            renownPoint.text = "Renown   " + relic.GetRenownPoint().ToString();
+            goldPoint.text = relic.GetGoldPoint().ToString();
+            renownPoint.text = relic.GetRenownPoint().ToString();
         }
     }
 

@@ -440,7 +440,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             
             UIManager.Instance.inventorySlotController.SelectToggle(index);
 
-            UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
+            UIManager.Instance.inventorySlotController.SetSlotPoint(Inventory[index]);
         }
 
         public bool GetRelic(int relicId)
@@ -517,7 +517,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 UIManager.Instance.inventorySlotController.SetRelicSprite(i, Inventory[i]);
             }
-            UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[slotIndex]);
+            UIManager.Instance.inventorySlotController.SetSlotPoint(Inventory[slotIndex]);
             UIManager.Instance.relicPriceUI.SetTotalPoint(Inventory.ToArray());
             UIManager.Instance.RelicScanUI.SetUIPoint(-1);
             UIManager.Instance.shopController.SetLocalPlayerInventory(Inventory.ToArray());
