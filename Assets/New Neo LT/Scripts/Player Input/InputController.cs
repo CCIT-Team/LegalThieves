@@ -5,6 +5,7 @@ using Fusion.Addons.KCC;
 using Fusion.Menu;
 using Fusion.Sockets;
 using LegalThieves.Menu;
+using New_Neo_LT.Scripts.Game_Play;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -114,6 +115,9 @@ namespace New_Neo_LT.Scripts.Player_Input
             if(Cursor.lockState != CursorLockMode.Locked)
                 return;
             
+            if(!NewGameManager.State.AllowInput)
+                return;
+            
             _mouseDeltaVector.x = -ctx.ReadValue<Vector2>().y;
             _mouseDeltaVector.y = ctx.ReadValue<Vector2>().x;
             _mouseDeltaAccumulator.Accumulate(_mouseDeltaVector);
@@ -131,6 +135,11 @@ namespace New_Neo_LT.Scripts.Player_Input
         
         private void MovementDirection(InputAction.CallbackContext ctx)
         {
+            if(!NewGameManager.State)
+                return;
+            if(!NewGameManager.State.AllowInput)
+                return;
+            Debug.Log(NewGameManager.State.ActiveState);
             _accumulateInput.Direction = ctx.ReadValue<Vector2>();
         }
         

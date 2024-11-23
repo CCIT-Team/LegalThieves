@@ -8,7 +8,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
     public class GameState : NetworkBehaviour, IStateMachineOwner
     {
         public StateBehaviour ActiveState  => _stateMachine.ActiveState;
-        public bool           AllowInput   => _stateMachine.ActiveStateId == playState.StateId || _stateMachine.ActiveStateId == pregameState.StateId;
+        public bool           AllowInput   => _stateMachine.ActiveStateId == winState.StateId || _stateMachine.ActiveStateId == playState.StateId;
         public bool           IsInGame     => _stateMachine.ActiveStateId == playState.StateId;
         
         [Networked] private TickTimer         Delay           { get; set; } 

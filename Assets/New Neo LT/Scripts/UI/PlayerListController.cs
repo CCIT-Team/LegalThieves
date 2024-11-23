@@ -88,10 +88,12 @@ namespace New_Neo_LT.Scripts.UI
         private void SortPlayerList()
         {
             Array.Sort(_playerList, (a, b) => a.GetPlayerScore().CompareTo(b.GetPlayerScore()));
+            
             foreach (var p in _playerList)
             {
                 if(p.GetPlayerIndex() == -1)
                     continue;
+                p.transform.SetParent(pool);
                 p.transform.SetParent(rankBordGrid);
             }
         }

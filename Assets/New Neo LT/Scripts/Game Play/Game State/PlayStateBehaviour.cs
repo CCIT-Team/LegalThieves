@@ -15,7 +15,9 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             PlayerRegistry.ForEach(pc =>
             {
                 pc.Teleport(NewGameManager.Instance.playMapData.GetSpawnPosition(pc.Index));
-                pc.ResetPoints();
+                // 이전 라운드의 포인트 초기화
+                // 누적 포인트를 초기화하려면 주석을 해제하세요.
+                // pc.ResetPoints();
             });
             LegalThieves.RelicManager.Instance.SpawnAllRelics();
         }
