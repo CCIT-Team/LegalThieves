@@ -83,7 +83,6 @@ namespace New_Neo_LT.Scripts.Game_Play
             if (!PlayerRegistry.Any(pc => !pc.IsReady))
             {
                 State.Server_SetState<LoadingStateBehaviour>();
-                UIManager.Instance.timerController.SetRound(currentRound);
             }
         }
 
@@ -95,6 +94,11 @@ namespace New_Neo_LT.Scripts.Game_Play
             currentRound++;
             UIManager.Instance.timerController.SetRound(currentRound);
             return false;
+        }
+        
+        public int GetCurrentRound()
+        {
+            return currentRound;
         }
         
         #region Job
@@ -158,8 +162,12 @@ namespace New_Neo_LT.Scripts.Game_Play
             playerCharacter.SetReady(ready);
            
         }
-        
 
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
+        public void RPC_StartGame()
+        {
+            StartGame();
+        }
 
         #endregion
     }

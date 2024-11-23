@@ -669,6 +669,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         public void SetReady(bool ready)
         {
             Ready = ready;
+            
+            if(!HasStateAuthority)
+                return;
+            
+            NewGameManager.Instance.StartGame();
         }
 
         #region RPC Methods...

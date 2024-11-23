@@ -107,6 +107,8 @@ namespace New_Neo_LT.Scripts.Player_Input
             _inputActions.ItemSlot._8.performed      += Slot8;
             _inputActions.ItemSlot._9.performed      += Slot9;
             _inputActions.ItemSlot._10.performed     += Slot10;
+            
+            _inputActions.Debug.F12.performed        += DebugButtonF12;
 
             _inputActions.UI.Escape.performed        += EscapeButton;
         }
@@ -240,6 +242,11 @@ namespace New_Neo_LT.Scripts.Player_Input
         {
             _accumulateInput.Buttons.Set(EInputButton.Slot10, ctx.ReadValueAsButton());
         }
+        private void DebugButtonF12(InputAction.CallbackContext ctx)
+        {
+            NewGameManager.Instance.RPC_StartGame();
+        }
+        
         public void Button_Sell()
         {
             _accumulateInput.Buttons.Set(EInputButton.SellButton, true);

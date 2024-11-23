@@ -617,6 +617,34 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Debug"",
+            ""id"": ""fe9611ba-0d48-4665-8d64-7e22dc05666e"",
+            ""actions"": [
+                {
+                    ""name"": ""F12"",
+                    ""type"": ""Button"",
+                    ""id"": ""42d8bd58-6d2e-4e71-86e6-2187772350d4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""fc5bb9ab-ca86-4b93-99eb-bbe35bbf19a6"",
+                    ""path"": ""<Keyboard>/f12"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""F12"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -656,6 +684,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_ItemSlot__8 = m_ItemSlot.FindAction("8", throwIfNotFound: true);
         m_ItemSlot__9 = m_ItemSlot.FindAction("9", throwIfNotFound: true);
         m_ItemSlot__10 = m_ItemSlot.FindAction("10", throwIfNotFound: true);
+        // Debug
+        m_Debug = asset.FindActionMap("Debug", throwIfNotFound: true);
+        m_Debug_F12 = m_Debug.FindAction("F12", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1103,6 +1134,52 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         }
     }
     public ItemSlotActions @ItemSlot => new ItemSlotActions(this);
+
+    // Debug
+    private readonly InputActionMap m_Debug;
+    private List<IDebugActions> m_DebugActionsCallbackInterfaces = new List<IDebugActions>();
+    private readonly InputAction m_Debug_F12;
+    public struct DebugActions
+    {
+        private @PlayerInputActions m_Wrapper;
+        public DebugActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @F12 => m_Wrapper.m_Debug_F12;
+        public InputActionMap Get() { return m_Wrapper.m_Debug; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DebugActions set) { return set.Get(); }
+        public void AddCallbacks(IDebugActions instance)
+        {
+            if (instance == null || m_Wrapper.m_DebugActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_DebugActionsCallbackInterfaces.Add(instance);
+            @F12.started += instance.OnF12;
+            @F12.performed += instance.OnF12;
+            @F12.canceled += instance.OnF12;
+        }
+
+        private void UnregisterCallbacks(IDebugActions instance)
+        {
+            @F12.started -= instance.OnF12;
+            @F12.performed -= instance.OnF12;
+            @F12.canceled -= instance.OnF12;
+        }
+
+        public void RemoveCallbacks(IDebugActions instance)
+        {
+            if (m_Wrapper.m_DebugActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IDebugActions instance)
+        {
+            foreach (var item in m_Wrapper.m_DebugActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_DebugActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public DebugActions @Debug => new DebugActions(this);
     public interface IMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -1142,5 +1219,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void On_8(InputAction.CallbackContext context);
         void On_9(InputAction.CallbackContext context);
         void On_10(InputAction.CallbackContext context);
+    }
+    public interface IDebugActions
+    {
+        void OnF12(InputAction.CallbackContext context);
     }
 }
