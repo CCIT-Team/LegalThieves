@@ -2,14 +2,20 @@ using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace New_Neo_LT.Scripts.Game_Play.Game_State
 {
     public class GameState : NetworkBehaviour, IStateMachineOwner
     {
         public StateBehaviour ActiveState  => _stateMachine.ActiveState;
-        public bool           AllowInput   => _stateMachine.ActiveStateId == winState.StateId || _stateMachine.ActiveStateId == playState.StateId;
+        public bool           AllowInput   => _stateMachine.ActiveStateId == winState.StateId || 
+                                              _stateMachine.ActiveStateId == playState.StateId;
         public bool           IsInGame     => _stateMachine.ActiveStateId == playState.StateId;
+
+        public bool           UIFlag => _uiFlag;
+        
+        private bool          _uiFlag = true;
         
         [Networked] private TickTimer         Delay           { get; set; } 
         [Networked] private int               DelayedStateId  { get; set; }
@@ -65,6 +71,11 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         {
             _stateMachine = new StateMachine<StateBehaviour>("Game_State", pregameState, playState, winState, loadingState, endState);
             stateMachines.Add(_stateMachine);
+        }
+        
+        public void SetUIFlag(bool flag)
+        {
+            _uiFlag = flag;
         }
     }
 }

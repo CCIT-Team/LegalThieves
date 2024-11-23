@@ -57,6 +57,9 @@ namespace New_Neo_LT.Scripts.UI
                 _items[i].SetRelic(i, rId);
                 AddItemToInventoryGrid(_items[i]);
             }
+
+            // 플레이어 이동 인풋 제한
+            NewGameManager.State.SetUIFlag(false);
         }
         
         public void OnShopClose()
@@ -70,6 +73,8 @@ namespace New_Neo_LT.Scripts.UI
                 ReturnItemToPool(_items[i]);
             }
             _sellTable.Clear();
+            
+            NewGameManager.State.SetUIFlag(true);
         }
 
         public void OnIconClick(ShopItemIcon item)
