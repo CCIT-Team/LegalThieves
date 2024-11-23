@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
-
 using New_Neo_LT.Scripts.Game_Play.Game_State;
 using New_Neo_LT.Scripts.Map;
-using New_Neo_LT.Scripts.PlayerComponent;
 using New_Neo_LT.Scripts.UI;
-using Unity.VisualScripting;
+using New_Neo_LT.Scripts.UI.Main_Menu;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Game_Play
@@ -101,6 +98,11 @@ namespace New_Neo_LT.Scripts.Game_Play
         public int GetCurrentRound()
         {
             return currentRound;
+        }
+        
+        public void Server_Shutdown()
+        {
+            MainMenuUI.Instance.ShutDownServer();
         }
         
         #region Job
