@@ -47,12 +47,16 @@ namespace New_Neo_LT.Scripts.UI
         {
             if (rindex == -1)
             {
+                selectSlot.transform.GetChild(2).gameObject.SetActive(false);
+                selectSlot.transform.GetChild(3).gameObject.SetActive(false);
                 goldPoint.text = "";
                 renownPoint.text = "";
             }
             else
             {
                 var relic = RelicManager.Instance.GetRelicData(rindex);
+                selectSlot.transform.GetChild(2).gameObject.SetActive(true);
+                selectSlot.transform.GetChild(3).gameObject.SetActive(true);
                 goldPoint.text = relic.GetGoldPoint().ToString();
                 renownPoint.text = relic.GetRenownPoint().ToString();
             }

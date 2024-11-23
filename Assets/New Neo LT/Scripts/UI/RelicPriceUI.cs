@@ -71,7 +71,7 @@ public class RelicPriceUI : MonoBehaviour
             goldPoint += relic.GetGoldPoint();
             renownPoint += relic.GetRenownPoint();
         }
-        totalGoldPoint.text =   "Gold     " + goldPoint.ToString();
-        totalRenownPoint.text = "Renown   " + renownPoint.ToString();
+        totalGoldPoint.text =  goldPoint.ToString();
+        totalRenownPoint.text = renownPoint.ToString();
     }
 }
