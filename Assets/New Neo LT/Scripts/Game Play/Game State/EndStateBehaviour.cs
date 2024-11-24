@@ -33,6 +33,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             UIManager.Instance.SetActiveUI(UIType.ResultUIController, false);
             
             NewGameManager.Instance.Server_Shutdown();
+            AudioManager.instance.SetSoundPack(AudioManager.instance.themes[(int)EField.Main]);
         }
     }
 }

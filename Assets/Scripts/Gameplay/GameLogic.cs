@@ -45,7 +45,7 @@ namespace LegalThieves
             //UIManager.Singleton.SetWaitUI(State, Winner);
             Runner.SetIsSimulated(Object, true);
 
-            AudioManager.instance.PlayJungleBgm(true);
+            //AudioManager.instance.PlayJungleBgm(true);
             if (!HasStateAuthority) 
                 return;
         }
