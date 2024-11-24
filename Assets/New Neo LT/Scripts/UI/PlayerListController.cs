@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Fusion;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
@@ -19,7 +21,7 @@ namespace New_Neo_LT.Scripts.UI
             for(var i = 0; i < 4; i++)
             {
                 var pl = Instantiate(playerListElementPrefab, pool).GetComponent<PlayerListSlot>();
-                pl.SetPlayerSlot(-1, Color.white, 0, "Gold");
+                pl.SetPlayerSlot(-1);
                 _playerList[i] = pl;
                 ReturnToPool(pl);
             }
@@ -37,7 +39,7 @@ namespace New_Neo_LT.Scripts.UI
                 var pPointType = pc.IsScholar ? "Renown" : "Gold";
                 var pScore = pc.IsScholar ? pc. GetRenownPoint : pc.GetGoldPoint;
                     
-                _playerList[i].SetPlayerSlot(pIndex, pColor, pScore, pPointType);
+                _playerList[i].SetPlayerSlot(pc);
                 
                 MoveToGrid(_playerList[i]);
                 return;
@@ -53,7 +55,7 @@ namespace New_Neo_LT.Scripts.UI
                     continue;
                 
                 ReturnToPool(_playerList[i]);
-                _playerList[i].SetPlayerSlot(pc.Index, Color.white, 0, "Gold");
+                _playerList[i].SetPlayerSlot(-1);
                 return;
             }
         }
@@ -81,6 +83,30 @@ namespace New_Neo_LT.Scripts.UI
                 
                 var pointType = isScholar ? "Renown" : "Gold";
                 _playerList[i].SetPlayerPointType(pointType);
+
+                var player = PlayerRegistry.Where(pc => pc.Ref.AsIndex == pIndex + 1).FirstOrDefault();
+                
+                if(player == null)
+                    return;
+                
+                var jobIndex = player.GetJobIndex();
+                
+                if(jobIndex == -1)
+                    return;
+
+                var renderTexture = UIManager.Instance.resultUIController.GetCamera(jobIndex).targetTexture;
+                
+                var texture = new Texture2D(renderTexture.width, renderTexture.height, TextureFormat.RGBA32, false);
+
+                RenderTexture.active = renderTexture;
+                
+                texture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+                texture.Apply();
+                
+                RenderTexture.active = null;
+                
+                _playerList[i].SetPlayerImage(texture);
+                
                 return;
             }
         }

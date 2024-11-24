@@ -125,6 +125,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             Client_InitPlayerModel(CurrentPlayerModelIndex);
             
+            if(Nickname != null)
+                SetPlayerTag(Nickname);
         }
 
         public override void Spawned()
@@ -759,7 +761,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         #region RPC Methods...
         
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void RPC_SetPlayerNickname(PlayerRef player, string nickname)
         {
             var playerCharacter = PlayerRegistry.GetPlayer(player);
