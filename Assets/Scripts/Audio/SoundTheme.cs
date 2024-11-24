@@ -20,4 +20,11 @@ public class SoundTheme : ScriptableObject
         audioSource.clip = audioClips[(int)soundType];
         audioSource.Play();
     }
+    public void Stop(AudioSource audioSource, ESoundType soundType)
+    {
+        if (audioSource.loop && audioSource.clip == audioClips[(int)soundType])
+        {
+            audioSource.Stop();
+        }
+    }
 }

@@ -359,17 +359,19 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void TorchToggle(NetInput input)
         {
-            if (IsFlashVisibility) return;
+            if (IsFlashVisibility && _isPikedFlash) return;
 
             if (!IsTorchVisibility)
             {
                 _isPikedTorch = true;
                 IsTorchVisibility = true;
                 TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchVisibility);
+              //  AudioManager.instance.PlayLoop(ESoundType.TorchIdle);
                 TorchScript[CurrentPlayerModelIndex].TurnOnLight();
             }
             else
             {
+             //   AudioManager.instance.Stop(ESoundType.TorchIdle) ;
                 _isPikedTorch = false;
                 StartCoroutine(TorchTurnOff());
                 TorchScript[CurrentPlayerModelIndex].TurnOffLight();
@@ -378,16 +380,17 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public IEnumerator TorchTurnOff()
         {
-            yield return animator.GetCurrentAnimatorClipInfo(2).Length; // 이거 이상함 너무 빨리 꺼짐;
+            yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
             IsTorchVisibility = false;
         }
         private void FlashToggle(NetInput input)
         {
-            if (IsTorchVisibility) return;
+            if (IsTorchVisibility && _isPikedTorch) return;
 
             if (!IsFlashVisibility)
             {
-               
+             //   AudioManager.instance.PlaySound(ESoundType.FlashOn);
+
                 _isPikedFlash = true;
                 IsFlashVisibility = true;
                 FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
@@ -402,7 +405,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
         public IEnumerator FlashTurnOff()
         {
-            yield return animator.GetCurrentAnimatorClipInfo(2).Length; // 이거 이상함 너무 빨리 꺼짐;
+        //   AudioManager.instance.PlaySound(ESoundType.FlashOff);
+            yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
             IsFlashVisibility = false;
         }
 
@@ -471,30 +475,15 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 playerInteraction.CheckInteraction();
         }
 
-        private void OnMouseWheelUp() 
+        private void OnMouseWheelUp()
         {
-            var mouse = Mouse.current;
-            if (mouse != null)
-            {
-                if (mouse.scroll.up.IsPressed())
-                {
-                    int index = Mathf.Max(0, UIManager.Instance.inventorySlotController.CurrentIndex - 1);
-                    SelectSlot(index);
-                }
-            }
+            SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
         }
         private void OnMouseWheelDown()
         {
-            var mouse = Mouse.current;
-            if (mouse != null)
-            {
-                if (mouse.scroll.down.IsPressed())
-                {
-                    int index = Mathf.Min(9, UIManager.Instance.inventorySlotController.CurrentIndex + 1);
-                    SelectSlot(index);
-                }
-            }
+            SelectSlot(slotIndex - 1 > 9 ? 9 : slotIndex - 1);
         }
+   
 
         #endregion
 

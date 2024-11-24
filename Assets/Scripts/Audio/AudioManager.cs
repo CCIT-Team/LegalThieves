@@ -18,6 +18,9 @@ public enum ESoundType
     ItemBuy,
     ItemSell,
     Loading,
+    FlashOn,
+    FlashOff,
+    TorchIdle,
     Count
 }
 
@@ -97,5 +100,9 @@ public class AudioManager : MonoBehaviour
     {
         Debug.Log("LoopSet");
         theme.PlayLoop(mainSource, soundType);
+    }
+    public void Stop(ESoundType soundType)
+    {
+        theme.Stop(mainSource, soundType);
     }
 }
