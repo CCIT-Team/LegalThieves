@@ -41,8 +41,8 @@ namespace New_Neo_LT.Scripts.UI
             
             if (pIndex == -1)
             {
-                playerName.text = "";
-                playerScore.text = "";
+                playerName.text = "?";
+                playerScore.text = "0";
                 playerPointType.transform.GetChild(0).gameObject.SetActive(false);
                 playerPointType.transform.GetChild(1).gameObject.SetActive(false);
                 return;
@@ -101,6 +101,11 @@ namespace New_Neo_LT.Scripts.UI
         public void SetPlayerImage(Texture renderTexture)
         {
             playerIcon.texture = renderTexture;
+        }
+        
+        public void SetPlayerName(string name)
+        {
+            playerName.text = name;
         }
     }
 }

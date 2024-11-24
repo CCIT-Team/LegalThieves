@@ -16,6 +16,8 @@ namespace New_Neo_LT.Scripts.UI
         
         private PlayerListSlot[] _playerList = new PlayerListSlot[4];
 
+        // private Texture2D[] _playerImages = new Texture2D[4];
+        
         private void Start()
         {
             for(var i = 0; i < 4; i++)
@@ -34,10 +36,10 @@ namespace New_Neo_LT.Scripts.UI
                 if (_playerList[i].GetPlayerIndex() != -1) 
                     continue;
                 
-                var pColor = pc.Runner.LocalPlayer == pc.Ref ? Color.white : NewGameManager.Instance.playerHairMaterials[pc.GetPlayerColor()].color;
-                var pIndex = pc.Ref.AsIndex - 1;
-                var pPointType = pc.IsScholar ? "Renown" : "Gold";
-                var pScore = pc.IsScholar ? pc. GetRenownPoint : pc.GetGoldPoint;
+                // var pColor = pc.Runner.LocalPlayer == pc.Ref ? Color.white : NewGameManager.Instance.playerHairMaterials[pc.GetPlayerColor()].color;
+                // var pIndex = pc.Ref.AsIndex - 1;
+                // var pPointType = pc.IsScholar ? "Renown" : "Gold";
+                // var pScore = pc.IsScholar ? pc. GetRenownPoint : pc.GetGoldPoint;
                     
                 _playerList[i].SetPlayerSlot(pc);
                 
@@ -104,10 +106,27 @@ namespace New_Neo_LT.Scripts.UI
                 texture.Apply();
                 
                 RenderTexture.active = null;
+
+                // _playerImages ??= new Texture2D[4];
+                //
+                // _playerImages[i] = texture;
                 
                 _playerList[i].SetPlayerImage(texture);
                 
                 return;
+            }
+        }
+
+        public void InitPlayersName()
+        {
+            foreach (var slot in _playerList)
+            {
+                var player = PlayerRegistry.Where(p => p.Index == slot.GetPlayerIndex()).FirstOrDefault();
+                
+                if(player == null)
+                    continue;
+                
+                slot.SetPlayerName(player.GetPlayerName());
             }
         }
 
