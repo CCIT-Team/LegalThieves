@@ -10,7 +10,7 @@ public class CaveJungleBGM : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.root.TryGetComponent(out PlayerCharacter player))
+        if (!other.transform.TryGetComponent(out PlayerRelicScan scan) && other.transform.root.TryGetComponent(out PlayerCharacter player))
         {
             if (!player.HasInputAuthority)
                 return;
