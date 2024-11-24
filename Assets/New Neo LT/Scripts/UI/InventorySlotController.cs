@@ -86,14 +86,26 @@ namespace New_Neo_LT.Scripts.UI
             switch (isLeft)
             {
                 case true when _prevIndex > 0:
-                    slots[_prevIndex].transform.GetChild(1).gameObject.SetActive(false);
-                    _prevIndex -= 1;
-                    slots[_prevIndex].transform.GetChild(1).gameObject.SetActive(true);
+                    //slots[_prevIndex].transform.GetChild(1).gameObject.SetActive(false);
+                    //_prevIndex -= 1;
+                    //slots[_prevIndex].transform.GetChild(1).gameObject.SetActive(true);
+                    if (_prevIndex != 0) 
+                    { 
+                        _prevIndex -= 1;
+                        selectSlot.transform.SetParent(slots[_prevIndex].transform);
+                        selectSlot.transform.localPosition = Vector3.zero;
+                    }
                     break;
                 case false when _prevIndex < 9:
-                    slots[_prevIndex].transform.GetChild(1).gameObject.SetActive(false);
-                    _prevIndex += 1;
-                    slots[_prevIndex].transform.GetChild(1).gameObject.SetActive(true);
+                    //slots[_prevIndex].transform.GetChild(1).gameObject.SetActive(false);
+                    //_prevIndex += 1;
+                    //slots[_prevIndex].transform.GetChild(1).gameObject.SetActive(true);
+                    if (_prevIndex != 9)
+                    {
+                        _prevIndex += 1;
+                        selectSlot.transform.SetParent(slots[_prevIndex].transform);
+                        selectSlot.transform.localPosition = Vector3.zero;
+                    }
                     break;
             }
         }
@@ -116,16 +128,18 @@ namespace New_Neo_LT.Scripts.UI
             float duration = 0.3f; // 애니메이션 지속 시간
             float elapsedTime = 0f; // 경과 시간
 
-            Debug.Log($"Inventory is now {(isInventoryOpen ? "open" : "closed")}.");
+            Debug.Log($"Inventory is now {(isInventoryOpen ? "open" : "closed")}.");     
 
 
             if (isInventoryOpen == false)
             {
                 inventoryonoff = 0;
+                Debug.Log("지금 인벤토리 상태0");
             }
             else if (isInventoryOpen == true)
             {
                 inventoryonoff = 1;
+                Debug.Log("지금 인벤토리 상태1");
             }
 
 

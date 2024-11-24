@@ -16,6 +16,8 @@ namespace New_Neo_LT.Scripts.Player_Input
     {
         Attack1,         // 마우스 왼쪽 클릭
         Attack2,         // 마우스 왼쪽 클릭
+        WheelUp,         // 마우스 휠 다운
+        WheellDown,      // 마우스 휠 다운
         Jump,            // 스페이스바
         Interaction1,    // F 
         Interaction2,    // E skill1?
@@ -83,6 +85,8 @@ namespace New_Neo_LT.Scripts.Player_Input
             _inputActions.Mouse.MouseDelta.performed += MouseDelta;
             _inputActions.Mouse.LeftClick.performed  += MouseLeftClick;
             _inputActions.Mouse.RightClick.performed += MouseRightClick;
+            _inputActions.Mouse.MouseScrollYUp.performed += MouseScrollUp;
+            _inputActions.Mouse.MouseScrollYDown.performed += MouseScrollDown;
             
             _inputActions.Movement.Move.performed    += MovementDirection;
             _inputActions.Movement.Jump.performed    += Jump;
@@ -137,7 +141,17 @@ namespace New_Neo_LT.Scripts.Player_Input
         {
             _accumulateInput.Buttons.Set(EInputButton.Attack2, ctx.ReadValueAsButton());
         }
-        
+        private void MouseScrollUp(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.WheelUp, ctx.ReadValueAsButton());
+        }
+
+        private void MouseScrollDown(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.WheellDown, ctx.ReadValueAsButton());
+        }
+
+
         private void MovementDirection(InputAction.CallbackContext ctx)
         {
             if(!NewGameManager.State)

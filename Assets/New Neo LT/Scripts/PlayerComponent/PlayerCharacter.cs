@@ -258,6 +258,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 OnMouseLeftClick();
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Attack2))
                 OnMouseRightClick();
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.WheelUp))
+                OnMouseWheelUp();
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.WheellDown))
+                OnMouseWheelDown();
+
             
             // Set behavior by Keyboard input
             // Sprint
@@ -422,6 +427,33 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             
             if (HasInputAuthority)
                 playerInteraction.CheckInteraction();
+        }
+
+        private void OnMouseWheelUp() 
+        {
+            var mouse = Mouse.current;
+            if (mouse != null)
+            {
+                if (mouse.scroll.up.IsPressed())
+                {
+                    UIManager.Instance.inventorySlotController.MoveCurrentSlot(true);
+                    int index = UIManager.Instance.inventorySlotController.CurrentIndex; // _prevIndex 값을 접근할 수 있도록 CurrentIndex 
+                    UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
+                }
+            }
+        }
+        private void OnMouseWheelDown()
+        {
+            var mouse = Mouse.current;
+            if (mouse != null)
+            {
+                if (mouse.scroll.down.IsPressed())
+                {
+                    UIManager.Instance.inventorySlotController.MoveCurrentSlot(false);
+                    int index = UIManager.Instance.inventorySlotController.CurrentIndex; // _prevIndex 값을 접근할 수 있도록 CurrentIndex 
+                    UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
+                }
+            }
         }
 
         #endregion

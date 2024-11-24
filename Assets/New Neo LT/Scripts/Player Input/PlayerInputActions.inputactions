@@ -163,6 +163,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "MouseScrollYUp",
+                    "type": "PassThrough",
+                    "id": "460071ba-194e-4a55-9bc8-342968e7057e",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "MouseScrollYDown",
+                    "type": "PassThrough",
+                    "id": "ca7e33ec-32cf-4a99-85e3-03af5d01abe4",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -196,6 +214,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "RightClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1f061ee1-b7f9-495f-b0cc-d36d306167a0",
+                    "path": "<Mouse>/scroll/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseScrollYUp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "446eb23b-bf9d-4b96-bd79-eedbd965a683",
+                    "path": "<Mouse>/scroll/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseScrollYDown",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

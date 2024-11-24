@@ -26,7 +26,7 @@ public class RelicPriceUI : MonoBehaviour
     {
         //goldPoint = goldPointLabel.transform.GetChild(0).GetComponent<TMP_Text>();
         //renownPoint = renownPointLabel.transform.GetChild(0).GetComponent<TMP_Text>();
-        //relicName = GetComponent<TMP_Text>();
+        relicName = GetComponent<TMP_Text>();
         //goldPoint = goldPointLabel.GetComponent<TMP_Text>();
         //renownPoint = renownPointLabel.GetComponent<TMP_Text>();
         totalGoldPoint = totalGoldPointLabel.GetComponent<TMP_Text>();
@@ -44,7 +44,7 @@ public class RelicPriceUI : MonoBehaviour
 
     public void SetUIPoint(int relicIndex)
     {
-        if(relicIndex == -1)
+        if(relicIndex == -1 || New_Neo_LT.Scripts.UI.UIManager.Instance.inventorySlotController.inventoryclose == 0)
         {
             relicName.text = "";
             goldPoint.text = "";
