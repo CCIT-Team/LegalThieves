@@ -114,7 +114,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private static readonly int AnimJumpTrigger   = Animator.StringToHash("Jump");
         private static readonly int AnimSnapGround    = Animator.StringToHash("SnapGround");
         private static readonly int AnimPickTorch     = Animator.StringToHash("pickTorch");
-
+        private static readonly int AnimPickFlash     = Animator.StringToHash("pickFlash");
         #endregion
 
         /*------------------------------------------------------------------------------------------------------------*/
@@ -654,7 +654,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
         void OnFlashChanged()
         {
-            animator.SetBool(AnimPickTorch, _isPikedFlash); //Flash로 변경해야함
+            animator.SetBool(AnimPickFlash, _isPikedFlash); 
 
         }
         private void OnFlashStateChanged()
