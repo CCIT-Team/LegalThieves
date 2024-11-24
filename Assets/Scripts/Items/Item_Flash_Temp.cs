@@ -6,16 +6,16 @@ using UnityEngine;
 public class Item_Flash_Temp : MonoBehaviour
 {
    
-    [SerializeField] GameObject flashLight;
+    [SerializeField] Light flashLight;
     public void TurnOnLight()
     {
-        flashLight.SetActive(true);
+        flashLight.enabled = true;
    
     }
 
     public void TurnOffLight()
     {
-        flashLight.SetActive(false);
+        flashLight.enabled = false;
     }
 
 }
