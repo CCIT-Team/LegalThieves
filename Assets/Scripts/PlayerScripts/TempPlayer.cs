@@ -382,22 +382,6 @@ namespace LegalThieves
                 var velocity = kcc.Data.DynamicVelocity;
                 velocity.y *= 0.25f;
                 kcc.SetDynamicVelocity(velocity);
-                if (CaveJungleBGM.cavein == 1)
-                {
-                    //AudioManager.instance.PlayBreathSfx(true);
-                    //AudioManager.instance.PlayHRGFSfx(true);
-                    //AudioManager.instance.PlayHRDFSfx(false);
-                    //AudioManager.instance.PlayDFSfx(false);
-                    //AudioManager.instance.PlayGFSfx(false);
-                }
-                else
-                {
-                    //AudioManager.instance.PlayBreathSfx(true);
-                    //AudioManager.instance.PlayHRGFSfx(false);
-                    //AudioManager.instance.PlayHRDFSfx(true);
-                    //AudioManager.instance.PlayDFSfx(false);
-                    //AudioManager.instance.PlayGFSfx(false);
-                }
             }
             else
             {
