@@ -39,7 +39,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Space, Header("Player Models")]
         [SerializeField] private GameObject[]           playerModels;
         [SerializeField] private Item_Torch_Temp[] TorchScript;
-
+        [SerializeField] private Item_Torch_Temp[] FlashScript;
         [Networked, OnChangedRender(nameof(OnRefChanged))] 
         public PlayerRef          Ref        { get; set; }
         [Networked] 
@@ -68,9 +68,19 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Networked, OnChangedRender(nameof(OnTorchChanged))]
         private bool _isPikedTorch { get; set; }
 
-        [Networked, OnChangedRender(nameof(OnTorchStateChanged))]
-        public bool IsTorchActive { get; set; }
 
+        [Networked, OnChangedRender(nameof(OnTorchStateChanged))]
+        private bool IsTorchVisibility { get; set; }
+
+        [Networked, OnChangedRender(nameof(OnFlashChanged))]
+        private bool _isPikedFlash { get; set; }
+
+
+        [Networked, OnChangedRender(nameof(OnFlashStateChanged))]
+        private bool IsFlashVisibility { get; set; }
+
+        private bool canPickItem;
+    
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
         
@@ -255,12 +265,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction3))
                 TorchToggle(playerInput);
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction4))
+                FlashToggle(playerInput);
             //CrouchToggle(playerInput);
             // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
             //     kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
             // if (playerInput.Buttons.WasReleased(_previousButtons, EInputButton.Sprint))
             //     kcc.FixedData.KinematicSpeed = characterStats.MoveSpeed;
-            
+
             // Jump
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Jump) && CanJump)
                 OnJumpButtonPressed();
@@ -328,11 +340,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void TorchToggle(NetInput input)
         {
-            if (!IsTorchActive)
+            if (IsFlashVisibility) return;
+
+            if (!IsTorchVisibility)
             {
                 _isPikedTorch = true;
-                IsTorchActive = true;
-                TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchActive);
+                IsTorchVisibility = true;
+                TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchVisibility);
                 TorchScript[CurrentPlayerModelIndex].TurnOnLight();
             }
             else
@@ -346,10 +360,34 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         public IEnumerator TorchTurnOff()
         {
             yield return animator.GetCurrentAnimatorClipInfo(2).Length; // 이거 이상함 너무 빨리 꺼짐;
-            IsTorchActive = false;
+            IsTorchVisibility = false;
+        }
+        private void FlashToggle(NetInput input)
+        {
+            if (IsTorchVisibility) return;
+
+            if (!IsFlashVisibility)
+            {
+               
+                _isPikedFlash = true;
+                IsFlashVisibility = true;
+                FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
+                FlashScript[CurrentPlayerModelIndex].TurnOnLight();
+            }
+            else
+            {
+                _isPikedFlash = false;
+                StartCoroutine(FlashTurnOff());
+                FlashScript[CurrentPlayerModelIndex].TurnOffLight();
+            }
+        }
+        public IEnumerator FlashTurnOff()
+        {
+            yield return animator.GetCurrentAnimatorClipInfo(2).Length; // 이거 이상함 너무 빨리 꺼짐;
+            IsFlashVisibility = false;
         }
 
-      
+
 
         //private void CrouchToggle(NetInput input)
         //{
@@ -567,7 +605,16 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
         private void OnTorchStateChanged()
         {
-            TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchActive);
+            TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchVisibility);
+        }
+        void OnFlashChanged()
+        {
+            animator.SetBool(AnimPickTorch, _isPikedFlash); //Flash로 변경해야함
+
+        }
+        private void OnFlashStateChanged()
+        {
+            FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
         }
 
         #endregion
