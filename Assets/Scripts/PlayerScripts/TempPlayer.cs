@@ -27,8 +27,8 @@ namespace LegalThieves
         [SerializeField] private float                 maxPitch        = 85f;                   //현재 최대 피치에서 싱크가 맞지않음
         [SerializeField] private float                 lookSensitivity = 0.15f;
         [SerializeField] private Vector3               jumpImpulse     = new(0f, 5f, 0f);
-        [SerializeField] private float                 maxHealth       = 100f;
-        [SerializeField] private float                 maxStemina      = 100f;
+        // [SerializeField] private float                 maxHealth       = 100f;
+        // [SerializeField] private float                 maxStemina      = 100f;
         [field: SerializeField] public float           AbilityRange { get; private set; } = 5f;
         
         public double  Score => Math.Round(transform.position.y, 1);        //스코어 제거 or 변경 예정

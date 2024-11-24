@@ -15,7 +15,9 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             PlayerRegistry.ForEach(pc =>
             {
                 pc.Teleport(NewGameManager.Instance.playMapData.GetSpawnPosition(pc.Index));
-                pc.ResetPoints();
+                // 이전 라운드의 포인트 초기화
+                // 누적 포인트를 초기화하려면 주석을 해제하세요.
+                // pc.ResetPoints();
             });
             LegalThieves.RelicManager.Instance.SpawnAllRelics();
         }
@@ -25,6 +27,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 #if UNITY_EDITOR
             Debug.Log("게임 플레이 상태 진입");
 #endif
+            UIManager.Instance.stateLoadingUI.SetSubPos(1000000);
             // WinState로 게임 상태 전환 예약
             // 딜레이 시간은 게임 메니저 인스펙터로 관리
             if (HasStateAuthority)
@@ -42,14 +45,30 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         protected override void OnExitStateRender()
         {
             // UI 변경
+
+            if (NewGameManager.Instance.RoundOver())
+            {
+                UIManager.Instance.stateLoadingUI.SetLoadingText("Finish");
+            }
+            else
+            {
+                UIManager.Instance.stateLoadingUI.SetLoadingText("Round Finish");
+            }
+
             if (HasStateAuthority)
             {
                 //UIManager.Instance.stateLoadingUI.ChangeState(false)
                 if (NewGameManager.Instance.RoundOver())
-                    NewGameManager.State.Server_DelaySetState<EndStateBehaviour>(NewGameManager.Loadtime);
+                {
+                    NewGameManager.State.Server_DelaySetState<EndStateBehaviour>(NewGameManager.Loadtime * 3);
+                }
                 else
-                    NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Loadtime);
+                {
+                    NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Loadtime * 3);
+                }
             }
+
+
         }
     }
 }

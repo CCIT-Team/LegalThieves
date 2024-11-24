@@ -9,7 +9,7 @@ namespace New_Neo_LT.Scripts.UI
     {
         [SerializeField] private Image    playerIcon;
         [SerializeField] private TMP_Text playerScore;
-        [SerializeField] private TMP_Text playerPointType;
+        [SerializeField] private GameObject playerPointType;
 
         private int _playerIndex = -1;
 
@@ -17,7 +17,7 @@ namespace New_Neo_LT.Scripts.UI
         {
             playerIcon     ??= transform.GetChild(0).GetComponent<Image>();
             playerScore     ??= transform.GetChild(1).GetComponent<TMP_Text>();
-            playerPointType ??= transform.GetChild(2).GetComponent<TMP_Text>();
+            playerPointType ??= transform.GetChild(2).gameObject;
         }
 
         public void SetPlayerSlot(int pIndex, Color color , int score, string pointType)
@@ -25,7 +25,16 @@ namespace New_Neo_LT.Scripts.UI
             _playerIndex = pIndex;
             playerIcon.color = color;
             playerScore.text = score.ToString();
-            playerPointType.text = pointType;
+            if(pointType == "Gold")
+            {
+                playerPointType.transform.GetChild(0).gameObject.SetActive(true);
+                playerPointType.transform.GetChild(1).gameObject.SetActive(false);
+            }
+            else
+            {
+                playerPointType.transform.GetChild(0).gameObject.SetActive(false);
+                playerPointType.transform.GetChild(1).gameObject.SetActive(true);
+            }
         }
         
         public void SetPlayerIndex(int pIndex)
@@ -45,7 +54,16 @@ namespace New_Neo_LT.Scripts.UI
         
         public void SetPlayerPointType(string pointType)
         {
-            playerPointType.text = pointType;
+            if (pointType == "Gold")
+            {
+                playerPointType.transform.GetChild(0).gameObject.SetActive(true);
+                playerPointType.transform.GetChild(1).gameObject.SetActive(false);
+            }
+            else
+            {
+                playerPointType.transform.GetChild(0).gameObject.SetActive(false);
+                playerPointType.transform.GetChild(1).gameObject.SetActive(true);
+            }
         }
 
         public int GetPlayerScore()

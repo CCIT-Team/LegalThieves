@@ -5,6 +5,8 @@ using Fusion.Addons.KCC;
 using Fusion.Menu;
 using Fusion.Sockets;
 using LegalThieves.Menu;
+using New_Neo_LT.Scripts.Game_Play;
+using New_Neo_LT.Scripts.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,6 +16,8 @@ namespace New_Neo_LT.Scripts.Player_Input
     {
         Attack1,         // 마우스 왼쪽 클릭
         Attack2,         // 마우스 왼쪽 클릭
+        WheelUp,         // 마우스 휠 다운
+        WheellDown,      // 마우스 휠 다운
         Jump,            // 스페이스바
         Interaction1,    // F 
         Interaction2,    // E skill1?
@@ -81,6 +85,8 @@ namespace New_Neo_LT.Scripts.Player_Input
             _inputActions.Mouse.MouseDelta.performed += MouseDelta;
             _inputActions.Mouse.LeftClick.performed  += MouseLeftClick;
             _inputActions.Mouse.RightClick.performed += MouseRightClick;
+            _inputActions.Mouse.MouseScrollYUp.performed += MouseScrollUp;
+            _inputActions.Mouse.MouseScrollYDown.performed += MouseScrollDown;
             
             _inputActions.Movement.Move.performed    += MovementDirection;
             _inputActions.Movement.Jump.performed    += Jump;
@@ -105,6 +111,8 @@ namespace New_Neo_LT.Scripts.Player_Input
             _inputActions.ItemSlot._8.performed      += Slot8;
             _inputActions.ItemSlot._9.performed      += Slot9;
             _inputActions.ItemSlot._10.performed     += Slot10;
+            
+            _inputActions.Debug.F12.performed        += DebugButtonF12;
 
             _inputActions.UI.Escape.performed        += EscapeButton;
         }
@@ -112,6 +120,11 @@ namespace New_Neo_LT.Scripts.Player_Input
         private void MouseDelta(InputAction.CallbackContext ctx)
         {
             if(Cursor.lockState != CursorLockMode.Locked)
+                return;
+            
+            if(!NewGameManager.State)
+                return;
+            if(!NewGameManager.State.AllowInput || !NewGameManager.State.UIFlag)
                 return;
             
             _mouseDeltaVector.x = -ctx.ReadValue<Vector2>().y;
@@ -128,9 +141,24 @@ namespace New_Neo_LT.Scripts.Player_Input
         {
             _accumulateInput.Buttons.Set(EInputButton.Attack2, ctx.ReadValueAsButton());
         }
-        
+        private void MouseScrollUp(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.WheelUp, ctx.ReadValueAsButton());
+        }
+
+        private void MouseScrollDown(InputAction.CallbackContext ctx)
+        {
+            _accumulateInput.Buttons.Set(EInputButton.WheellDown, ctx.ReadValueAsButton());
+        }
+
+
         private void MovementDirection(InputAction.CallbackContext ctx)
         {
+            if(!NewGameManager.State)
+                return;
+            if(!NewGameManager.State.AllowInput || !NewGameManager.State.UIFlag)
+                return;
+            
             _accumulateInput.Direction = ctx.ReadValue<Vector2>();
         }
         
@@ -228,6 +256,11 @@ namespace New_Neo_LT.Scripts.Player_Input
         {
             _accumulateInput.Buttons.Set(EInputButton.Slot10, ctx.ReadValueAsButton());
         }
+        private void DebugButtonF12(InputAction.CallbackContext ctx)
+        {
+            NewGameManager.Instance.RPC_StartGame();
+        }
+        
         public void Button_Sell()
         {
             _accumulateInput.Buttons.Set(EInputButton.SellButton, true);

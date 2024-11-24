@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5925955778728275897}
-  - component: {fileID: 9148075465953581446}
   - component: {fileID: -4211245515912915846}
+  - component: {fileID: 9148075465953581446}
   m_Layer: 0
   m_Name: EndState
   m_TagString: Untagged
@@ -33,20 +33,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9148075465953581446
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 546501229993459493}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f020a6debfe3ce42be8ea50105d6e7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _priority: 0
-  _checkPriorityOnExit: 1
 --- !u!114 &-4211245515912915846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,3 +51,17 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 9148075465953581446}
+--- !u!114 &9148075465953581446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 546501229993459493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f020a6debfe3ce42be8ea50105d6e7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _priority: 0
+  _checkPriorityOnExit: 1

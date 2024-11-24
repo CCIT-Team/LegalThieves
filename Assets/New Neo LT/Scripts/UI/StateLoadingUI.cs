@@ -1,12 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
+public enum ELoadType
+{
+    None = -1,
+    Down,
+    Toggle,
+    Up,
+    Count
+}
 
 public class StateLoadingUI : MonoBehaviour
 {
     [SerializeField]
     RectTransform rectTransform;
+
+    [SerializeField]
+    RectTransform subRectTransform;
+
+    [SerializeField]
+    TMP_Text loadingText;
 
     [SerializeField,Range(0,100)]
     float speed = 10;
@@ -19,25 +35,35 @@ public class StateLoadingUI : MonoBehaviour
     private void Awake()
     {
         if(rectTransform == null)
-            rectTransform = GetComponent<RectTransform>();
-        rectTransform.position = new Vector3(Screen.width / 2, Screen.height * 1.5f);
+            rectTransform = transform.GetChild(0).GetComponent<RectTransform>();
+        SetYPos();
     }
 
-    public bool ChangeState(bool isClosed)
+    public void SetLoadingText(string text)
     {
-        Debug.Log(isClosed);
-        if(isClosed)
+        loadingText.text = text;
+    }
+
+    public int ChangeState(ELoadType loadType)
+    {
+        switch (loadType)
         {
-            StartCoroutine(ToggleState());
-        }
-        else
-        {
-            StartCoroutine(OpenState());
+            case ELoadType.Down:
+                StartCoroutine(CloseState());
+                break;
+            case ELoadType.Toggle:
+                StartCoroutine(ToggleState());
+                break;
+            case ELoadType.Up:
+                StartCoroutine(OpenState());
+                break;
+            default:
+                break;
         }
 
         isLooping = true;
 
-        return !isClosed;
+        return (int)loadType;
     }
 
     IEnumerator ToggleState()
@@ -45,28 +71,29 @@ public class StateLoadingUI : MonoBehaviour
         if (isLooping)
             yield break;
 
-        var goal = new Vector3(Screen.width / 2, Screen.height / 2);
-        rectTransform.position = new Vector3(Screen.width / 2, Screen.height * 1.5f);
+        var goal = Vector2.zero;
+        SetYPos();
 
-        while ((rectTransform.position - goal).sqrMagnitude > errorScale)
+        while ((rectTransform.anchoredPosition - goal).sqrMagnitude > errorScale)
         {
             yield return null;
-            rectTransform.position = Vector3.Lerp(rectTransform.position, goal, speed * 0.01f);
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, goal, speed * 0.01f);
         }
 
-        rectTransform.position = goal;
+        rectTransform.anchoredPosition = goal;
 
-        yield return new WaitForSeconds(New_Neo_LT.Scripts.Game_Play.NewGameManager.Loadtime / 2);
+        yield return new WaitForSeconds(New_Neo_LT.Scripts.Game_Play.NewGameManager.Loadtime);
 
-        goal = new Vector3(Screen.width / 2, Screen.height * 1.5f);
+        goal = new Vector2(0, GetParentUIHeight());
 
-        while ((rectTransform.position - goal).sqrMagnitude > errorScale)
+        while ((rectTransform.anchoredPosition - goal).sqrMagnitude > errorScale)
         {
             yield return null;
-            rectTransform.position = Vector3.Lerp(rectTransform.position, goal, speed * 0.01f);
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, goal, speed * 0.01f);
         }
 
-        rectTransform.position = goal;
+        rectTransform.anchoredPosition = goal;
+        SetSubPos(goal.y * 2);
         isLooping = false;
     }
 
@@ -75,15 +102,56 @@ public class StateLoadingUI : MonoBehaviour
         if (isLooping)
             yield break;
 
-        var goal = new Vector3(Screen.width/2, Screen.height*1.5f);
+        var goal = new Vector2(0, GetParentUIHeight());
 
-        while ((rectTransform.position - goal).sqrMagnitude > errorScale)
+        while ((rectTransform.anchoredPosition - goal).sqrMagnitude > errorScale)
         {
             yield return null;
-            rectTransform.position = Vector3.Lerp(rectTransform.position, goal, speed * 0.01f);
-        } 
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, goal, speed * 0.01f);
+        }
 
-        rectTransform.position = goal;
+        rectTransform.anchoredPosition = goal;
+
         isLooping = false;
+    }
+
+    IEnumerator CloseState()
+    {
+        if (isLooping)
+            yield break;
+
+        var goal = new Vector2(0,-10);
+        SetYPos();
+
+        while ((rectTransform.anchoredPosition - goal).sqrMagnitude > errorScale)
+        {
+            yield return null;
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, goal, speed * 0.01f);
+        }
+
+        rectTransform.anchoredPosition = goal;
+
+        isLooping = false;
+    }
+
+    public void SetYPos(float yPos = -1)
+    {
+        if(yPos == -1)
+        {
+            rectTransform.anchoredPosition = new Vector2(0, GetParentUIHeight());
+            return;
+        }
+
+        rectTransform.anchoredPosition = new Vector2(0, yPos);
+    }
+
+    public void SetSubPos(float yPos)
+    {
+        subRectTransform.anchoredPosition = new Vector2(0, yPos);
+    }
+
+    private float GetParentUIHeight()
+    {
+        return transform.parent.GetComponent<RectTransform>().rect.height;
     }
 }

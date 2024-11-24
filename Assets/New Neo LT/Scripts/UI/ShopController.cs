@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
+using TMPro;
 
 namespace New_Neo_LT.Scripts.UI
 {
@@ -10,7 +11,9 @@ namespace New_Neo_LT.Scripts.UI
         [SerializeField] private GameObject itemImagePool;
         [SerializeField] private GameObject inventoryGrid;
         [SerializeField] private GameObject shopGrid;
-        
+        [SerializeField] private TMP_Text   goldPointText;
+        [SerializeField] private TMP_Text   renownPointText;
+
         [SerializeField] private GameObject itemPrefab;
         
         private int[] _localPlayerInventory = new int[10] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
@@ -51,6 +54,9 @@ namespace New_Neo_LT.Scripts.UI
                 _items[i].SetRelic(i, rId);
                 AddItemToInventoryGrid(_items[i]);
             }
+
+            // 플레이어 이동 인풋 제한
+            NewGameManager.State.SetUIFlag(false);
         }
         
         public void OnShopClose()
@@ -64,6 +70,8 @@ namespace New_Neo_LT.Scripts.UI
                 ReturnItemToPool(_items[i]);
             }
             _sellTable.Clear();
+            
+            NewGameManager.State.SetUIFlag(true);
         }
 
         public void OnIconClick(ShopItemIcon item)
@@ -95,6 +103,10 @@ namespace New_Neo_LT.Scripts.UI
             }
             
             NewGameManager.Instance.RPC_SellRelics(playerRef, sellTable);
+
+            goldPointText.text = "0";
+            renownPointText.text = "0";
+
             _sellTable.Clear();
         }
         
@@ -106,6 +118,19 @@ namespace New_Neo_LT.Scripts.UI
         private void AddItemToInventoryGrid(ShopItemIcon item)
         {
             _inventory.Add(item);
+
+            int goldPoint = 0;
+            int renownPoint = 0;
+
+            foreach (var sellItem in _sellTable)
+            {
+                goldPoint += LegalThieves.RelicManager.Instance.GetRelicData(sellItem.RelicId).GetGoldPoint();
+                renownPoint += LegalThieves.RelicManager.Instance.GetRelicData(sellItem.RelicId).GetRenownPoint();
+            }
+
+            goldPointText.text = goldPoint.ToString();
+            renownPointText.text = renownPoint.ToString();
+
             item.transform.SetParent(inventoryGrid.transform);
         }
         
@@ -113,6 +138,19 @@ namespace New_Neo_LT.Scripts.UI
         {
             _sellTable.Add(item);
             _inventory.Remove(item);
+
+            int goldPoint = 0;
+            int renownPoint = 0;
+
+            foreach (var sellItem in _sellTable)
+            {
+                goldPoint += LegalThieves.RelicManager.Instance.GetRelicData(sellItem.RelicId).GetGoldPoint();
+                renownPoint += LegalThieves.RelicManager.Instance.GetRelicData(sellItem.RelicId).GetRenownPoint();
+            }
+
+            goldPointText.text = goldPoint.ToString();
+            renownPointText.text = renownPoint.ToString();
+
             item.transform.SetParent(shopGrid.transform);
         }
         

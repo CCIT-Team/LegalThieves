@@ -193,8 +193,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   relicScanUIGroup: {fileID: 6380047038081628784}
-  scanGoldenPointLabel: {fileID: 5506207560783878783}
-  scanRenownPointLabel: {fileID: 2184965883898728313}
+  relicName: {fileID: 6920156180357251984}
+  goldPoint: {fileID: 4553990178241975013}
+  renownPoint: {fileID: 4218465580633124139}
 --- !u!1 &5506207560783878783
 GameObject:
   m_ObjectHideFlags: 0
@@ -364,9 +365,9 @@ RectTransform:
   - {fileID: 8251785021756729423}
   m_Father: {fileID: 6698061413268555780}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 182.5, y: -20}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 320, y: 0}
   m_SizeDelta: {x: 365, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &265515315495952642
@@ -431,7 +432,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0

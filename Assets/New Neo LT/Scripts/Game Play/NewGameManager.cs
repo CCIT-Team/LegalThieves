@@ -1,10 +1,10 @@
+using System.Collections.Generic;
+using System.Linq;
 using Fusion;
-
 using New_Neo_LT.Scripts.Game_Play.Game_State;
 using New_Neo_LT.Scripts.Map;
-using New_Neo_LT.Scripts.PlayerComponent;
 using New_Neo_LT.Scripts.UI;
-using Unity.VisualScripting;
+using New_Neo_LT.Scripts.UI.Main_Menu;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.Game_Play
@@ -15,7 +15,7 @@ namespace New_Neo_LT.Scripts.Game_Play
         [SerializeField] private NetworkPrefabRef    playerPrefab;
         [SerializeField] private float               playtime = 15;
         [SerializeField] private float               resttime = 30;
-        [SerializeField] private float               loadtime = 30;
+        [SerializeField] private float               loadtime = 1.5f;
         [SerializeField] private int                 rounds = 3;
         
         [Header("Player Color")]
@@ -82,7 +82,6 @@ namespace New_Neo_LT.Scripts.Game_Play
             if (!PlayerRegistry.Any(pc => !pc.IsReady))
             {
                 State.Server_SetState<LoadingStateBehaviour>();
-                UIManager.Instance.readyStateUI.ToggleUI();
             }
         }
 
@@ -92,7 +91,18 @@ namespace New_Neo_LT.Scripts.Game_Play
                 return true;
 
             currentRound++;
+            UIManager.Instance.timerController.SetRound(currentRound);
             return false;
+        }
+        
+        public int GetCurrentRound()
+        {
+            return currentRound;
+        }
+        
+        public void Server_Shutdown()
+        {
+            MainMenuUI.Instance.ShutDownServer();
         }
         
         #region Job
@@ -108,6 +118,12 @@ namespace New_Neo_LT.Scripts.Game_Play
             if (UIManager.Instance.jobChangerUI.gameObject.activeSelf == false) return;
             UIManager.Instance.jobChangerUI.JobChangerRenew(ButtonStateArray.ToArray());
         }
+        
+        public IEnumerable<int> GetAvailableJobIndices()
+        {
+            return ButtonStateArray.Where((b) => b).Select((b, i) => i);
+        }
+        
         #endregion
         
         #region RPC Methods...
@@ -140,7 +156,10 @@ namespace New_Neo_LT.Scripts.Game_Play
         {
             //선택하면 비활성화
             var playerCharacter = PlayerRegistry.GetPlayer(player);
+            if(playerCharacter.GetJobIndex() != (int)Job.Null)
+                ButtonStateArray.Set(playerCharacter.GetJobIndex(), true);
             playerCharacter.ChangeJob(job);
+            playerCharacter.SetReady(true);
             ButtonStateArray.Set(i, false);
             
             // Debug.Log($"{ButtonStateArray.Get(0)}, {ButtonStateArray.Get(1)}, {ButtonStateArray.Get(2)},{ButtonStateArray.Get(3 )}");
@@ -153,8 +172,12 @@ namespace New_Neo_LT.Scripts.Game_Play
             playerCharacter.SetReady(ready);
            
         }
-        
 
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
+        public void RPC_StartGame()
+        {
+            StartGame();
+        }
 
         #endregion
     }

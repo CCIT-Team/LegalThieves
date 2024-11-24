@@ -185,6 +185,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MouseScrollYUp"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""460071ba-194e-4a55-9bc8-342968e7057e"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MouseScrollYDown"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""ca7e33ec-32cf-4a99-85e3-03af5d01abe4"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -218,6 +236,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""RightClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1f061ee1-b7f9-495f-b0cc-d36d306167a0"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseScrollYUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""446eb23b-bf9d-4b96-bd79-eedbd965a683"",
+                    ""path"": ""<Mouse>/scroll/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseScrollYDown"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -617,6 +657,34 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Debug"",
+            ""id"": ""fe9611ba-0d48-4665-8d64-7e22dc05666e"",
+            ""actions"": [
+                {
+                    ""name"": ""F12"",
+                    ""type"": ""Button"",
+                    ""id"": ""42d8bd58-6d2e-4e71-86e6-2187772350d4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""fc5bb9ab-ca86-4b93-99eb-bbe35bbf19a6"",
+                    ""path"": ""<Keyboard>/f12"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""F12"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -632,6 +700,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Mouse_MouseDelta = m_Mouse.FindAction("MouseDelta", throwIfNotFound: true);
         m_Mouse_LeftClick = m_Mouse.FindAction("LeftClick", throwIfNotFound: true);
         m_Mouse_RightClick = m_Mouse.FindAction("RightClick", throwIfNotFound: true);
+        m_Mouse_MouseScrollYUp = m_Mouse.FindAction("MouseScrollYUp", throwIfNotFound: true);
+        m_Mouse_MouseScrollYDown = m_Mouse.FindAction("MouseScrollYDown", throwIfNotFound: true);
         // Skills
         m_Skills = asset.FindActionMap("Skills", throwIfNotFound: true);
         m_Skills_Q = m_Skills.FindAction("Q", throwIfNotFound: true);
@@ -656,6 +726,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_ItemSlot__8 = m_ItemSlot.FindAction("8", throwIfNotFound: true);
         m_ItemSlot__9 = m_ItemSlot.FindAction("9", throwIfNotFound: true);
         m_ItemSlot__10 = m_ItemSlot.FindAction("10", throwIfNotFound: true);
+        // Debug
+        m_Debug = asset.FindActionMap("Debug", throwIfNotFound: true);
+        m_Debug_F12 = m_Debug.FindAction("F12", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -790,6 +863,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Mouse_MouseDelta;
     private readonly InputAction m_Mouse_LeftClick;
     private readonly InputAction m_Mouse_RightClick;
+    private readonly InputAction m_Mouse_MouseScrollYUp;
+    private readonly InputAction m_Mouse_MouseScrollYDown;
     public struct MouseActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -797,6 +872,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @MouseDelta => m_Wrapper.m_Mouse_MouseDelta;
         public InputAction @LeftClick => m_Wrapper.m_Mouse_LeftClick;
         public InputAction @RightClick => m_Wrapper.m_Mouse_RightClick;
+        public InputAction @MouseScrollYUp => m_Wrapper.m_Mouse_MouseScrollYUp;
+        public InputAction @MouseScrollYDown => m_Wrapper.m_Mouse_MouseScrollYDown;
         public InputActionMap Get() { return m_Wrapper.m_Mouse; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -815,6 +892,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @RightClick.started += instance.OnRightClick;
             @RightClick.performed += instance.OnRightClick;
             @RightClick.canceled += instance.OnRightClick;
+            @MouseScrollYUp.started += instance.OnMouseScrollYUp;
+            @MouseScrollYUp.performed += instance.OnMouseScrollYUp;
+            @MouseScrollYUp.canceled += instance.OnMouseScrollYUp;
+            @MouseScrollYDown.started += instance.OnMouseScrollYDown;
+            @MouseScrollYDown.performed += instance.OnMouseScrollYDown;
+            @MouseScrollYDown.canceled += instance.OnMouseScrollYDown;
         }
 
         private void UnregisterCallbacks(IMouseActions instance)
@@ -828,6 +911,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @RightClick.started -= instance.OnRightClick;
             @RightClick.performed -= instance.OnRightClick;
             @RightClick.canceled -= instance.OnRightClick;
+            @MouseScrollYUp.started -= instance.OnMouseScrollYUp;
+            @MouseScrollYUp.performed -= instance.OnMouseScrollYUp;
+            @MouseScrollYUp.canceled -= instance.OnMouseScrollYUp;
+            @MouseScrollYDown.started -= instance.OnMouseScrollYDown;
+            @MouseScrollYDown.performed -= instance.OnMouseScrollYDown;
+            @MouseScrollYDown.canceled -= instance.OnMouseScrollYDown;
         }
 
         public void RemoveCallbacks(IMouseActions instance)
@@ -1103,6 +1192,52 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         }
     }
     public ItemSlotActions @ItemSlot => new ItemSlotActions(this);
+
+    // Debug
+    private readonly InputActionMap m_Debug;
+    private List<IDebugActions> m_DebugActionsCallbackInterfaces = new List<IDebugActions>();
+    private readonly InputAction m_Debug_F12;
+    public struct DebugActions
+    {
+        private @PlayerInputActions m_Wrapper;
+        public DebugActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @F12 => m_Wrapper.m_Debug_F12;
+        public InputActionMap Get() { return m_Wrapper.m_Debug; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DebugActions set) { return set.Get(); }
+        public void AddCallbacks(IDebugActions instance)
+        {
+            if (instance == null || m_Wrapper.m_DebugActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_DebugActionsCallbackInterfaces.Add(instance);
+            @F12.started += instance.OnF12;
+            @F12.performed += instance.OnF12;
+            @F12.canceled += instance.OnF12;
+        }
+
+        private void UnregisterCallbacks(IDebugActions instance)
+        {
+            @F12.started -= instance.OnF12;
+            @F12.performed -= instance.OnF12;
+            @F12.canceled -= instance.OnF12;
+        }
+
+        public void RemoveCallbacks(IDebugActions instance)
+        {
+            if (m_Wrapper.m_DebugActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IDebugActions instance)
+        {
+            foreach (var item in m_Wrapper.m_DebugActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_DebugActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public DebugActions @Debug => new DebugActions(this);
     public interface IMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -1115,6 +1250,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnMouseDelta(InputAction.CallbackContext context);
         void OnLeftClick(InputAction.CallbackContext context);
         void OnRightClick(InputAction.CallbackContext context);
+        void OnMouseScrollYUp(InputAction.CallbackContext context);
+        void OnMouseScrollYDown(InputAction.CallbackContext context);
     }
     public interface ISkillsActions
     {
@@ -1142,5 +1279,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void On_8(InputAction.CallbackContext context);
         void On_9(InputAction.CallbackContext context);
         void On_10(InputAction.CallbackContext context);
+    }
+    public interface IDebugActions
+    {
+        void OnF12(InputAction.CallbackContext context);
     }
 }

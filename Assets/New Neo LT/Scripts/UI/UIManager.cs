@@ -1,21 +1,55 @@
-﻿using New_Neo_LT.Scripts.PlayerComponent;
+﻿using System;
+using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.UI
 {
+    public enum UIType
+    {
+        Null = -1,
+        CompassRotate,
+        InventorySlotController,
+        TimerController,
+        PlayerListController,
+        RelicPriceUI,
+        ShopController,
+        JobChangerUI,
+        RelicScanUI,
+        ReadyStateUI,
+        StateLoadingUI,
+        ResultUIController,
+        UITypeCount
+    }
+    
     public class UIManager : MonoBehaviour
     {
-        public CompassRotate           compassRotate;
-        public InventorySlotController inventorySlotController;
-        public TimerController         timerController;
-        public PlayerListController    playerListController;
-        public RelicPriceUI            relicPriceUI;
-        public ShopController          shopController;
-        public JobChangerUI            jobChangerUI;
-        public RelicScanUI             RelicScanUI;
-        public ReadyStateUI            readyStateUI;
-        public StateLoadingUI          stateLoadingUI;
-        public static UIManager Instance;
+        public CompassNavigationUIBehavior  compassRotate;
+        public InventorySlotController      inventorySlotController;
+        public TimerController              timerController;
+        public PlayerListController         playerListController;
+        public RelicPriceUI                 relicPriceUI;
+        public ShopController               shopController;
+        public JobChangerUI                 jobChangerUI;
+        public RelicScanUI                  RelicScanUI;
+        public ReadyStateUI                 readyStateUI;
+        public StateLoadingUI               stateLoadingUI;
+        public ResultUIController           resultUIController;
+
+        public static UIManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindObjectOfType<UIManager>();
+                }
+
+                return _instance;
+            }
+            private set => _instance = value;
+        }
+
+        private static UIManager _instance;
 
         private Transform _localPlayerTransform;
 
@@ -25,6 +59,8 @@ namespace New_Neo_LT.Scripts.UI
                 Instance = this;
             else if(Instance != this)
                 Destroy(gameObject);
+            
+            // SetActiveUI(UIType.ResultUIController, false);
         }
 
         private void LateUpdate()
@@ -33,7 +69,7 @@ namespace New_Neo_LT.Scripts.UI
             if (!_localPlayerTransform)
                 return;
             
-            compassRotate.RotateCompass(_localPlayerTransform);
+            //compassRotate.RotateCompass(_localPlayerTransform);
             
         }
 
@@ -59,6 +95,64 @@ namespace New_Neo_LT.Scripts.UI
         {
             shopController.gameObject.SetActive(false);
             shopController.OnShopClose();
+        }
+
+        public void SetActiveUI(UIType type, bool isActive)
+        {
+            switch (type)
+            {
+                case UIType.CompassRotate:
+                    compassRotate.gameObject.SetActive(isActive);
+                    break;
+                case UIType.InventorySlotController:
+                    inventorySlotController.gameObject.SetActive(isActive);
+                    break;
+                case UIType.TimerController:
+                    timerController.gameObject.SetActive(isActive);
+                    break;
+                case UIType.PlayerListController:
+                    playerListController.gameObject.SetActive(isActive);
+                    break;
+                case UIType.RelicPriceUI:
+                    relicPriceUI.gameObject.SetActive(isActive);
+                    break;
+                case UIType.ShopController:
+                    shopController.gameObject.SetActive(isActive);
+                    break;
+                case UIType.JobChangerUI:
+                    jobChangerUI.gameObject.SetActive(isActive);
+                    break;
+                case UIType.RelicScanUI:
+                    RelicScanUI.gameObject.SetActive(isActive);
+                    break;
+                case UIType.StateLoadingUI:
+                    stateLoadingUI.gameObject.SetActive(isActive);
+                    break;
+                case UIType.ResultUIController:
+                    resultUIController.gameObject.SetActive(isActive);
+                    resultUIController.Init();
+                    break;
+                case UIType.Null:
+                    // If isActive is false then all UIs are set to false
+                    if(isActive)
+                        break;
+                    resultUIController.gameObject.SetActive(false);
+                    stateLoadingUI.gameObject.SetActive(false);
+                    RelicScanUI.gameObject.SetActive(false);
+                    jobChangerUI.gameObject.SetActive(false);
+                    shopController.gameObject.SetActive(false);
+                    relicPriceUI.gameObject.SetActive(false);
+                    playerListController.gameObject.SetActive(false);
+                    timerController.gameObject.SetActive(false);
+                    inventorySlotController.gameObject.SetActive(false);
+                    compassRotate.gameObject.SetActive(false);
+                    break;
+                case UIType.UITypeCount:
+                    // Do nothing
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
         }
     }
 }

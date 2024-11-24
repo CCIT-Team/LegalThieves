@@ -58,9 +58,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private int               RenownPoint { get; set; }
         [Networked, OnChangedRender(nameof(OnPointChanged))]
         private int               GoldPoint { get; set; }
-        
-        [Networked, OnChangedRender(nameof(NicknameChanged))] 
-        public NetworkString<_16> Nickname   { get; set; }
 
         [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))]
         public NetworkArray<int> Inventory => default;
@@ -87,6 +84,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
      
         private NetworkButtons    _previousButtons;
         private Vector2           _accumulatedMouseDelta;
+        
+        [Networked, Capacity(24), OnChangedRender(nameof(OnNicknameChanged))]
+        private string            Nickname { get => default; set { }}
 
         private bool              _isSprinting;
         
@@ -137,11 +137,19 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 PlayerColor = playerIndex;
                 CurrentPlayerModelIndex = playerIndex;
                 IsScholar = playerIndex % 2 != 0;
-                job = (Job)playerIndex;
+                job = Job.Null;
 
                 for (var i = 0; i < Inventory.Length;i++)
                 {
                     Inventory.Set(i, -1);
+                }
+
+                if (PlayerRegistry.Instance != null && PlayerRegistry.Count >= 4)
+                {
+                    for (int i = 0; i < NewGameManager.Instance.ButtonStateArray.Length; i++)
+                    {
+                        NewGameManager.Instance.EnableJobButton(i);
+                    }
                 }
             }
 
@@ -151,27 +159,25 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 InitializePlayerComponents();
                 UIManager.Instance.InitializeInGameUI();
                 InitModels();
+
+                RPC_SetPlayerNickname(Runner.LocalPlayer, PlayerPrefs.GetString("Photon.Menu.Username"));
             }
             
             UIManager.Instance.playerListController.PlayerJoined(this);
-            UIManager.Instance.readyStateUI.PlayerJoined();
 
 
             InitializeCharacterComponents();
             InitializePlayerNetworkedProperties();
             
-            NicknameChanged();
-            SetPlayerTag(PlayerPrefs.GetString("Photon.Menu.Username"));
             if (Object.HasInputAuthority)
             {
+                UIManager.Instance.compassRotate.SetPlayerTransform(transform);
+                UIManager.Instance.stateLoadingUI.SetYPos();
                 UIManager.Instance.jobChangerUI.gameObject.SetActive(true);
                 UIManager.Instance.jobChangerUI.JobChangerOpen(Object.InputAuthority,NewGameManager.Instance.ButtonStateArray.ToArray());
             }
         }
-        public void SetPlayerTag(string tag)
-        {
-            playerNickname.text = tag;
-        }
+        
         public override void FixedUpdateNetwork()
         {
             base.FixedUpdateNetwork();
@@ -202,7 +208,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             base.Despawned(runner, hasState);
             UIManager.Instance.playerListController.PlayerLeft(this);
-            UIManager.Instance.readyStateUI.PlayerLeft(this);
         }
 
         #endregion
@@ -223,12 +228,17 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         
         public void SetPlayerName(string playerName)
         {
-            
+            Nickname = playerName;
         }
         
-        private void NicknameChanged()
+        public string GetPlayerName()
         {
-            // playerNickname.text = Nickname.Value;
+            return Nickname;
+        }
+        
+        private void OnNicknameChanged()
+        {
+            SetPlayerTag(Nickname);
         }
         
         public void Server_Init(PlayerRef pRef, byte index)
@@ -258,6 +268,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 OnMouseLeftClick();
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Attack2))
                 OnMouseRightClick();
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.WheelUp))
+                OnMouseWheelUp();
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.WheellDown))
+                OnMouseWheelDown();
+
             
             // Set behavior by Keyboard input
             // Sprint
@@ -452,6 +467,33 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 playerInteraction.CheckInteraction();
         }
 
+        private void OnMouseWheelUp() 
+        {
+            var mouse = Mouse.current;
+            if (mouse != null)
+            {
+                if (mouse.scroll.up.IsPressed())
+                {
+                    UIManager.Instance.inventorySlotController.MoveCurrentSlot(true);
+                    int index = UIManager.Instance.inventorySlotController.CurrentIndex; // _prevIndex 값을 접근할 수 있도록 CurrentIndex 
+                    UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
+                }
+            }
+        }
+        private void OnMouseWheelDown()
+        {
+            var mouse = Mouse.current;
+            if (mouse != null)
+            {
+                if (mouse.scroll.down.IsPressed())
+                {
+                    UIManager.Instance.inventorySlotController.MoveCurrentSlot(false);
+                    int index = UIManager.Instance.inventorySlotController.CurrentIndex; // _prevIndex 값을 접근할 수 있도록 CurrentIndex 
+                    UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
+                }
+            }
+        }
+
         #endregion
 
 
@@ -468,7 +510,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             
             UIManager.Instance.inventorySlotController.SelectToggle(index);
 
-            UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
+            UIManager.Instance.inventorySlotController.SetSlotPoint(Inventory[index]);
         }
 
         public bool GetRelic(int relicId)
@@ -545,7 +587,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 UIManager.Instance.inventorySlotController.SetRelicSprite(i, Inventory[i]);
             }
-            UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[slotIndex]);
+            UIManager.Instance.inventorySlotController.SetSlotPoint(Inventory[slotIndex]);
+            UIManager.Instance.relicPriceUI.SetTotalPoint(Inventory.ToArray());
             UIManager.Instance.RelicScanUI.SetUIPoint(-1);
             UIManager.Instance.shopController.SetLocalPlayerInventory(Inventory.ToArray());
         }
@@ -682,6 +725,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             CurrentPlayerModelIndex = index;
         }
         
+        public void SetPlayerTag(string pTag)
+        {
+            playerNickname.text = pTag;
+        }
+        
         public int GetJobIndex()
         {
             return (int)job;
@@ -693,24 +741,28 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             RenownPoint = 0;
         }
 
-        [Networked, OnChangedRender(nameof(SetReadyUI))]
+        [Networked]
         private NetworkBool Ready { get; set; } = false;
         public bool IsReady => Ready;
         
         public void SetReady(bool ready)
         {
             Ready = ready;
-        }
-
-        void SetReadyUI()
-        {
-            Debug.Log("SETUI");
-            UIManager.Instance.readyStateUI.ToggleReady(this);
+            
+            if(!HasStateAuthority)
+                return;
+            
+            NewGameManager.Instance.StartGame();
         }
 
         #region RPC Methods...
-
-
+        
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
+        public void RPC_SetPlayerNickname(PlayerRef player, string nickname)
+        {
+            var playerCharacter = PlayerRegistry.GetPlayer(player);
+            playerCharacter.SetPlayerName(nickname);
+        }
 
         #endregion
     }
