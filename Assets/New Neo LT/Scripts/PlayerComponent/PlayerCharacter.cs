@@ -378,7 +378,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public IEnumerator TorchTurnOff()
         {
-            yield return animator.GetCurrentAnimatorClipInfo(2).Length; // 이거 이상함 너무 빨리 꺼짐;
+            yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
             IsTorchVisibility = false;
         }
         private void FlashToggle(NetInput input)
@@ -402,7 +402,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
         public IEnumerator FlashTurnOff()
         {
-            yield return animator.GetCurrentAnimatorClipInfo(2).Length; // 이거 이상함 너무 빨리 꺼짐;
+            yield return 1f;// 이거 이상함 너무 빨리 꺼짐;
             IsFlashVisibility = false;
         }
 
