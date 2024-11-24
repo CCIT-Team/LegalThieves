@@ -165,16 +165,16 @@ namespace LegalThieves
             if (input.Direction.sqrMagnitude > 0 && !walkingSounds)
             {
                 walkingSounds = true; // 소리 재생 상태로 설정
-                if (CaveJungleBGM.cavein == 1)
-                {
-                    // 동굴 안에서의 사운드
-                    //AudioManager.instance.PlayGFSfx(true);
-                }
-                else
-                {
-                    // 동굴 밖에서의 사운드
-                    //AudioManager.instance.PlayDFSfx(true);
-                }
+                //if (CaveJungleBGM.cavein == 1)
+                //{
+                //    // 동굴 안에서의 사운드
+                //    //AudioManager.instance.PlayGFSfx(true);
+                //}
+                //else
+                //{
+                //    // 동굴 밖에서의 사운드
+                //    //AudioManager.instance.PlayDFSfx(true);
+                //}
             }
             else 
             {
