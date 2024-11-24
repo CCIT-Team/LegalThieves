@@ -378,7 +378,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public IEnumerator TorchTurnOff()
         {
-            yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
+            yield return animator.GetCurrentAnimatorClipInfo(2).Length; // 이거 이상함 너무 빨리 꺼짐;
             IsTorchVisibility = false;
         }
         private void FlashToggle(NetInput input)
@@ -402,7 +402,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
         public IEnumerator FlashTurnOff()
         {
-            yield return 1f;// 이거 이상함 너무 빨리 꺼짐;
+            yield return animator.GetCurrentAnimatorClipInfo(2).Length; // 이거 이상함 너무 빨리 꺼짐;
             IsFlashVisibility = false;
         }
 
@@ -478,9 +478,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 if (mouse.scroll.up.IsPressed())
                 {
-                    UIManager.Instance.inventorySlotController.MoveCurrentSlot(true);
-                    int index = UIManager.Instance.inventorySlotController.CurrentIndex; // _prevIndex 값을 접근할 수 있도록 CurrentIndex 
-                    UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
+                    int index = Mathf.Max(0, UIManager.Instance.inventorySlotController.CurrentIndex - 1);
+                    SelectSlot(index);
                 }
             }
         }
@@ -491,9 +490,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 if (mouse.scroll.down.IsPressed())
                 {
-                    UIManager.Instance.inventorySlotController.MoveCurrentSlot(false);
-                    int index = UIManager.Instance.inventorySlotController.CurrentIndex; // _prevIndex 값을 접근할 수 있도록 CurrentIndex 
-                    UIManager.Instance.relicPriceUI.SetUIPoint(Inventory[index]);
+                    int index = Mathf.Min(9, UIManager.Instance.inventorySlotController.CurrentIndex + 1);
+                    SelectSlot(index);
                 }
             }
         }
