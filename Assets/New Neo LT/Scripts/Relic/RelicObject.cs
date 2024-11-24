@@ -59,8 +59,6 @@ namespace New_Neo_LT.Scripts.Relic
         {
             if (!PlayerRegistry.GetPlayer(player).GetRelic(LegalThieves.RelicManager.Instance.GetRelicIndex(this)))
                 return;
-
-            AudioManager.instance.PlaySound(ESoundType.ItemPick);
            
             IsActivated = false;
         }
@@ -74,8 +72,6 @@ namespace New_Neo_LT.Scripts.Relic
         {
             var ownerTf = PlayerRegistry.GetPlayer(player).GetCamTarget();
             var spawnPoint = ownerTf.forward + ownerTf.position;
-
-            AudioManager.instance.PlaySound(ESoundType.ItemDrop);
 
             transform.position = spawnPoint;
             IsActivated = true;

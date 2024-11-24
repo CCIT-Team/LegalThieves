@@ -49,7 +49,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 
             if (NewGameManager.Instance.RoundOver())
             {
-                UIManager.Instance.stateLoadingUI.SetLoadingText("Finish");
+                UIManager.Instance.stateLoadingUI.SetLoadingText("Game Finish");
                 if (HasStateAuthority)
                     NewGameManager.State.Server_DelaySetState<EndStateBehaviour>(NewGameManager.Loadtime * 3);
             }
