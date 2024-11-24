@@ -109,5 +109,10 @@ namespace LegalThieves
                 Runner.Despawn(relic.Object);
             Relics.Clear();
         }
+
+        public int GetRelicTypeCount()
+        {
+            return goldRelicVisuals.Length + renownRelicVisuals.Length;
+        }
     }
 }

@@ -66,10 +66,10 @@ namespace New_Neo_LT.Scripts.UI
                     continue;
                 
                 _playerList[i].SetPlayerScore(isScholar ? renown : gold);
+                SortPlayerList();
                 return;
             }
 
-            SortPlayerList();
         }
 
         public void UpdatePlayerPointType(int pIndex, bool isScholar)
@@ -87,14 +87,13 @@ namespace New_Neo_LT.Scripts.UI
 
         private void SortPlayerList()
         {
-            Array.Sort(_playerList, (a, b) => a.GetPlayerScore().CompareTo(b.GetPlayerScore()));
+            Array.Sort(_playerList, (a, b) => b.GetPlayerScore().CompareTo(a.GetPlayerScore()));
 
-            for (int i = 0; i < _playerList.Length; i++)
+            for (var i = 0; i < _playerList.Length; i++)
             {
                 if(_playerList[i].GetPlayerIndex() == -1)
                     continue;
                 _playerList[i].transform.SetSiblingIndex(i);
-                Debug.Log(i);
             }
         }
         
