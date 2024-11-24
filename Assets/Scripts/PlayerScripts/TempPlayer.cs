@@ -165,26 +165,26 @@ namespace LegalThieves
             if (input.Direction.sqrMagnitude > 0 && !walkingSounds)
             {
                 walkingSounds = true; // 소리 재생 상태로 설정
-                if (CaveJungleBGM.cavein == 1)
-                {
-                    // 동굴 안에서의 사운드
-                    AudioManager.instance.PlayGFSfx(true);
-                }
-                else
-                {
-                    // 동굴 밖에서의 사운드
-                    AudioManager.instance.PlayDFSfx(true);
-                }
+                //if (CaveJungleBGM.cavein == 1)
+                //{
+                //    // 동굴 안에서의 사운드
+                //    //AudioManager.instance.PlayGFSfx(true);
+                //}
+                //else
+                //{
+                //    // 동굴 밖에서의 사운드
+                //    //AudioManager.instance.PlayDFSfx(true);
+                //}
             }
             else 
             {
                 if (walkingSounds && input.Direction.sqrMagnitude == 0)
                 {
-                    AudioManager.instance.PlayBreathSfx(false);
-                    AudioManager.instance.PlayHRGFSfx(false);
-                    AudioManager.instance.PlayHRDFSfx(false);
-                    AudioManager.instance.PlayDFSfx(false);
-                    AudioManager.instance.PlayGFSfx(false);
+                    //AudioManager.instance.PlayBreathSfx(false);
+                    //AudioManager.instance.PlayHRGFSfx(false);
+                    //AudioManager.instance.PlayHRDFSfx(false);
+                    //AudioManager.instance.PlayDFSfx(false);
+                    //AudioManager.instance.PlayGFSfx(false);
                     walkingSounds = false; // 소리 재생 상태 해제
                     return;
                 }
@@ -382,29 +382,13 @@ namespace LegalThieves
                 var velocity = kcc.Data.DynamicVelocity;
                 velocity.y *= 0.25f;
                 kcc.SetDynamicVelocity(velocity);
-                if (CaveJungleBGM.cavein == 1)
-                {
-                    AudioManager.instance.PlayBreathSfx(true);
-                    AudioManager.instance.PlayHRGFSfx(true);
-                    AudioManager.instance.PlayHRDFSfx(false);
-                    AudioManager.instance.PlayDFSfx(false);
-                    AudioManager.instance.PlayGFSfx(false);
-                }
-                else
-                {
-                    AudioManager.instance.PlayBreathSfx(true);
-                    AudioManager.instance.PlayHRGFSfx(false);
-                    AudioManager.instance.PlayHRDFSfx(true);
-                    AudioManager.instance.PlayDFSfx(false);
-                    AudioManager.instance.PlayGFSfx(false);
-                }
             }
             else
             {
                 kcc.RemoveModifier(sprintProcessor);
-                AudioManager.instance.PlayBreathSfx(false);
-                AudioManager.instance.PlayHRDFSfx(false);
-                AudioManager.instance.PlayHRGFSfx(false);
+                //AudioManager.instance.PlayBreathSfx(false);
+                //AudioManager.instance.PlayHRDFSfx(false);
+                //AudioManager.instance.PlayHRGFSfx(false);
                
             }
 

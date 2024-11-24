@@ -103,6 +103,7 @@ namespace New_Neo_LT.Scripts.UI
             }
             
             NewGameManager.Instance.RPC_SellRelics(playerRef, sellTable);
+            AudioManager.instance.PlaySound(ESoundType.ItemSell);
 
             goldPointText.text = "0";
             renownPointText.text = "0";
@@ -131,6 +132,8 @@ namespace New_Neo_LT.Scripts.UI
             goldPointText.text = goldPoint.ToString();
             renownPointText.text = renownPoint.ToString();
 
+            AudioManager.instance.PlaySound(ESoundType.ItemPut);
+
             item.transform.SetParent(inventoryGrid.transform);
         }
         
@@ -150,6 +153,8 @@ namespace New_Neo_LT.Scripts.UI
 
             goldPointText.text = goldPoint.ToString();
             renownPointText.text = renownPoint.ToString();
+
+            AudioManager.instance.PlaySound(ESoundType.ItemPut);
 
             item.transform.SetParent(shopGrid.transform);
         }

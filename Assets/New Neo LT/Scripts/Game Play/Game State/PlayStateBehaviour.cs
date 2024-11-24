@@ -49,26 +49,15 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             if (NewGameManager.Instance.RoundOver())
             {
                 UIManager.Instance.stateLoadingUI.SetLoadingText("Finish");
+                if (HasStateAuthority)
+                    NewGameManager.State.Server_DelaySetState<EndStateBehaviour>(NewGameManager.Loadtime * 3);
             }
             else
             {
                 UIManager.Instance.stateLoadingUI.SetLoadingText("Round Finish");
-            }
-
-            if (HasStateAuthority)
-            {
-                //UIManager.Instance.stateLoadingUI.ChangeState(false)
-                if (NewGameManager.Instance.RoundOver())
-                {
-                    NewGameManager.State.Server_DelaySetState<EndStateBehaviour>(NewGameManager.Loadtime * 3);
-                }
-                else
-                {
+                if (HasStateAuthority)
                     NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Loadtime * 3);
-                }
             }
-
-
         }
     }
 }
