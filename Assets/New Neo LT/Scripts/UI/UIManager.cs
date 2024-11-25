@@ -18,6 +18,7 @@ namespace New_Neo_LT.Scripts.UI
         ReadyStateUI,
         StateLoadingUI,
         ResultUIController,
+        interactionUI,
         UITypeCount
     }
     
@@ -34,6 +35,7 @@ namespace New_Neo_LT.Scripts.UI
         public ReadyStateUI                 readyStateUI;
         public StateLoadingUI               stateLoadingUI;
         public ResultUIController           resultUIController;
+        public InteractionUI                interactionUI;
 
         public static UIManager Instance
         {
@@ -132,6 +134,9 @@ namespace New_Neo_LT.Scripts.UI
                     resultUIController.gameObject.SetActive(isActive);
                     resultUIController.Init();
                     break;
+                case UIType.interactionUI:
+                    interactionUI.gameObject.SetActive(isActive);
+                    break;
                 case UIType.Null:
                     // If isActive is false then all UIs are set to false
                     if(isActive)
@@ -146,6 +151,7 @@ namespace New_Neo_LT.Scripts.UI
                     timerController.gameObject.SetActive(false);
                     inventorySlotController.gameObject.SetActive(false);
                     compassRotate.gameObject.SetActive(false);
+                    interactionUI.gameObject.SetActive(false);
                     break;
                 case UIType.UITypeCount:
                     // Do nothing
