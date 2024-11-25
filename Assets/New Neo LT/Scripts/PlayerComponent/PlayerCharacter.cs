@@ -643,15 +643,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
         void OnFlashChanged()
         {
-            animator.SetBool(AnimPickFlash, _isPikedFlash);
-            FlashScript[CurrentPlayerModelIndex].TurnOnLight();
+            animator.SetBool(AnimPickFlash, _isPikedFlash); 
 
         }
         private void OnFlashStateChanged()
         {
-            FlashScript[CurrentPlayerModelIndex].TurnOffLight();
             FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
-           
         }
 
         #endregion
