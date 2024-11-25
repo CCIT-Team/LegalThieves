@@ -31,13 +31,15 @@ public class RelicScanUI : MonoBehaviour
             relicName.text = "";
             goldPoint.text = "";
             renownPoint.text = "";
+            relicScanUIGroup.gameObject.SetActive(false);
         }
         else
         {
+            relicScanUIGroup.gameObject.SetActive(true);
             var relic = RelicManager.Instance.GetRelicData(relicIndex);
             relicName.text = RelicManager.Instance.GetRelicName(relic.GetTypeIndex());
-            goldPoint.text = "골드 포인트   " + relic.GetGoldPoint().ToString();
-            renownPoint.text = "리나운 포인트   " + relic.GetRenownPoint().ToString();
+            goldPoint.text = relic.GetGoldPoint().ToString();
+            renownPoint.text = relic.GetRenownPoint().ToString();
         }
     }
 }
