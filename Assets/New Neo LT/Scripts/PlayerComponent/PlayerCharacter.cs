@@ -477,15 +477,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void OnMouseWheelUp()
         {
-            Debug.Log("1");
             SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
-            Debug.Log("2");
         }
         private void OnMouseWheelDown()
         {
-            Debug.Log("3");
             SelectSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
-            Debug.Log("4");
         }
    
 
