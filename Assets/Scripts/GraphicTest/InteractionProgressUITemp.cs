@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class InteractionProgressUITemp : MonoBehaviour
 {
-    [SerializeField] private string middleOfProcessMessage = "유물 훼손 중"; //UI 메세지 
+    [SerializeField] private string middleOfProcessMessages = "유물 훼손 중"; //UI 메세지 
     [SerializeField] private string processingCompleteMessage = "유물 훼손 완료!"; //UI 종료 메세지 
 
     [SerializeField] private float duration = 10.0f; //UI 지속 시간 
@@ -50,7 +50,7 @@ public class InteractionProgressUITemp : MonoBehaviour
     {
         if (textCommaCount == 3)
         {
-            progressText.text = middleOfProcessMessage;
+            progressText.text = middleOfProcessMessages;
             textCommaCount = 0;
         }
         else
@@ -98,11 +98,11 @@ public class InteractionProgressUITemp : MonoBehaviour
     public void StartProgress(float duration, string middleOfProgressMessage, string progressCompleteMessage)
     {
         this.duration = duration;
-        this.middleOfProcessMessage = middleOfProgressMessage;
+        this.middleOfProcessMessages = middleOfProgressMessage;
         this.processingCompleteMessage = progressCompleteMessage;
         timeCount = 0;
         progressBar.fillAmount = 0f;
-        progressText.text = middleOfProcessMessage;
+        progressText.text = middleOfProcessMessages;
         StartCoroutine(OnStart());
     }
 }
