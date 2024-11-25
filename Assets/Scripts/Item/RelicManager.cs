@@ -1,8 +1,17 @@
 using Fusion;
+using New_Neo_LT.Scripts.Elements.Relic;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Relic;
 using UnityEngine;
+public enum ERelic
+{
+    Null = -1,
 
+    Gold,
+    Renown,
+
+    Count
+}
 namespace LegalThieves
 {
     public class RelicManager : NetworkBehaviour

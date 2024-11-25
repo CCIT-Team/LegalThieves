@@ -1,5 +1,6 @@
 using Fusion;
 using Fusion.Addons.Physics;
+using New_Neo_LT.Scripts.Elements.Relic;
 using New_Neo_LT.Scripts.Game_Play;
 using UnityEngine;
 using RelicManager = LegalThieves.RelicManager;
@@ -18,6 +19,9 @@ namespace New_Neo_LT.Scripts.Relic
         [Networked, OnChangedRender(nameof(OnTypeIndexChange))]
         private int TypeIndex { get; set; }
         public int typeIndex;
+
+        [Networked]
+        private ERelic relicType { get; set; }
         [Networked]
         private int GoldPoint { get; set; }
         [Networked]
@@ -46,7 +50,8 @@ namespace New_Neo_LT.Scripts.Relic
                 SetPoints(tempPoint, 1000 - tempPoint);
             else
                 SetPoints(1000 - tempPoint, tempPoint);
-            
+            SetRelicType();
+            SetRelicScale();
         }
         
         private void SetVisual()
@@ -116,11 +121,41 @@ namespace New_Neo_LT.Scripts.Relic
         {
             return typeIndex;
         }
-        
-        
+
+        public ERelic GetRelicType()
+        {
+            return relicType;
+        }
+        private void SetRelicType()
+        {
+            if (GoldPoint > RenownPoint)
+            {
+                relicType = ERelic.Gold;
+            }
+            else
+            {
+                relicType = ERelic.Renown;
+            }
+        }
+        private void SetRelicScale()
+        {
+            float factor = 0;
+            if (relicType == ERelic.Gold)
+            {
+                factor = GoldPoint / 500f;
+            }
+            else
+            {
+                factor = RenownPoint / 500f;
+            }
+
+            transform.localScale *= factor;
+        }
+
         private void OnTypeIndexChange()
         {
             typeIndex = TypeIndex;
         }
+
     }
 }
