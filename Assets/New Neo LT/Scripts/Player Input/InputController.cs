@@ -211,6 +211,9 @@ namespace New_Neo_LT.Scripts.Player_Input
         {
             // _accumulateInput.Buttons.Set(EInputButton.Escape, ctx.ReadValueAsButton());
 
+            if(UIManager.Instance.shopController.gameObject.activeSelf)
+                UIManager.Instance.CloseShop();
+
             Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
 
             Cursor.visible = !Cursor.visible;

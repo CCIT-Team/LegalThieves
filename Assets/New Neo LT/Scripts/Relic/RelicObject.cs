@@ -42,7 +42,7 @@ namespace New_Neo_LT.Scripts.Relic
         {
             TypeIndex = Random.Range(0, RelicManager.Instance.GetRelicTypeCount());
             var tempPoint = Random.Range(501, 1000);
-            if( TypeIndex < 3)
+            if( TypeIndex < RelicManager.Instance.GetGoldRelicCount())
                 SetPoints(tempPoint, 1000 - tempPoint);
             else
                 SetPoints(1000 - tempPoint, tempPoint);

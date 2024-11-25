@@ -28,6 +28,9 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         
         protected override void OnEnterStateRender()
         {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
             UIManager.Instance.timerController.SetRound(NewGameManager.Instance.GetCurrentRound());
             UIManager.Instance.stateLoadingUI.ChangeState(ELoadType.Toggle);
         }

@@ -13,18 +13,18 @@ public class CaveJungleBGM : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.transform.TryGetComponent(out PlayerRelicScan scan) && other.transform.root.TryGetComponent(out PlayerCharacter player))
+        if (other.transform.root.TryGetComponent(out PlayerCharacter player))
         {
             if (!player.HasInputAuthority)
                 return;
 
-            changeTrigger += Random.Range(-2,2) < 0? 1:-1;
+            ChangeSoundPack(player);
         }
     }
 
-    private void ChangeSoundPack()
+    private void ChangeSoundPack(PlayerCharacter player)
     {
-        if (!PlayerCharacter.Local.HasInputAuthority)
+        if (!player.HasInputAuthority)
             return;
 
         if (isInCave)

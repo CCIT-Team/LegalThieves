@@ -54,7 +54,7 @@ namespace LegalThieves
           
             if (keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame || keyboard.escapeKey.wasPressedThisFrame))
             {
-                if (Cursor.lockState == CursorLockMode.Locked)
+                if (Cursor.lockState == CursorLockMode.Locked || Cursor.lockState == CursorLockMode.Confined)
                 {
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible   = true;

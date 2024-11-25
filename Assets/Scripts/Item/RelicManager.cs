@@ -114,5 +114,15 @@ namespace LegalThieves
         {
             return goldRelicVisuals.Length + renownRelicVisuals.Length;
         }
+
+        public int GetGoldRelicCount()
+        {
+            return goldRelicVisuals.Length;
+        }
+
+        public int GetRenownRelicCount()
+        {
+            return renownRelicVisuals.Length;
+        }
     }
 }

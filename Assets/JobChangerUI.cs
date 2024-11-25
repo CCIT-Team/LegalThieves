@@ -26,8 +26,10 @@ public class JobChangerUI : MonoBehaviour
     public void JobChangerOpen(PlayerRef player, bool[] buttonIndex)
     {
         _player = player;
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
         for (int i = 0; i < buttonIndex.Length; i++)
         {
             jobButtons[i].GetComponent<Button>().interactable = buttonIndex[i];
