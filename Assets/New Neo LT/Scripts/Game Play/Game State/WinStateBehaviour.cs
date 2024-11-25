@@ -1,14 +1,23 @@
-﻿using Fusion.Addons.FSM;
+﻿using Fusion;
+using Fusion.Addons.FSM;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace New_Neo_LT.Scripts.Game_Play.Game_State
 {
     public class WinStateBehaviour : StateBehaviour
     {
+        [SerializeField] private NetworkPrefabRef barricadeTransform;
+        [SerializeField] private Transform winStateTransform;
+
+        private NetworkObject spawnedBarricade;
+
         protected override void OnEnterState()
         {
             if (!HasStateAuthority)
                 return;
+            spawnedBarricade = Runner.Spawn(barricadeTransform);
+            spawnedBarricade.transform.SetParent(winStateTransform);
             PlayerRegistry.ForEach(pc => pc.Teleport(NewGameManager.Instance.winMapData.GetSpawnPosition(pc.Index)));
             PlayerRegistry.ForEach(pc =>
             {
@@ -45,6 +54,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             {
                 NewGameManager.State.Server_DelaySetState<PlayStateBehaviour>(NewGameManager.Loadtime * 3);
             }
+            Runner.Despawn(spawnedBarricade);
         }
     }
 }
