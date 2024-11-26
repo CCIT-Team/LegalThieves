@@ -30,7 +30,9 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             UIManager.Instance.EnterPlayState();
             
             UIManager.Instance.stateLoadingUI.SetSubPos(1000000);
-            
+
+            UIManager.Instance.inventorySlotController.SetSlotPoint(-1);
+
             // WinState로 게임 상태 전환 예약
             // 딜레이 시간은 게임 메니저 인스펙터로 관리
             if (HasStateAuthority)

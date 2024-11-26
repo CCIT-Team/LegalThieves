@@ -82,8 +82,6 @@ namespace New_Neo_LT.Scripts.Relic
             var ownerTf = PlayerRegistry.GetPlayer(player).GetCamTarget();
             var spawnPoint = ownerTf.forward + ownerTf.position;
 
-            audioSource.PlayOneShot(sounds[1]);
-
             transform.position = spawnPoint;
             IsActivated = true;
         }
@@ -98,6 +96,7 @@ namespace New_Neo_LT.Scripts.Relic
         private void OnIsActiveChange()
         {
             visual.SetActive(IsActivated);
+            audioSource.PlayOneShot(sounds[1]);
             boxCollider.enabled = IsActivated;
             networkRigidbody.RBIsKinematic = !IsActivated;
         }

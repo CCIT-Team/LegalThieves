@@ -22,7 +22,7 @@ public class PlayerRelicScan : NetworkBehaviour
             }
             else if(other.CompareTag("Shop"))
             {
-                UIManager.Instance.SetActiveUI(UIType.interactionUI, true);
+                RPC_SetShopUI(true);
             }
         } 
     }
@@ -37,7 +37,7 @@ public class PlayerRelicScan : NetworkBehaviour
             }
             else if (other.CompareTag("Shop"))
             {
-                UIManager.Instance.SetActiveUI(UIType.interactionUI, false);
+                RPC_SetShopUI(false);
             }
         }
     }
@@ -54,6 +54,12 @@ public class PlayerRelicScan : NetworkBehaviour
     {
    
         UIManager.Instance.RelicScanUI.SetUIPoint(-1);
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    private void RPC_SetShopUI(bool isEnabled)
+    {
+        UIManager.Instance.SetActiveUI(UIType.interactionUI, isEnabled);
     }
 }
   
