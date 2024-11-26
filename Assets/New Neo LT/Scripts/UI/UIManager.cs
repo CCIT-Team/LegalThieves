@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
 
@@ -86,14 +88,14 @@ namespace New_Neo_LT.Scripts.UI
 
         public void EnterPreGameState()
         {
-            SetActiveUI(UIType.Null, false);
+            SetActiveUI(UIType.WaitingUI, false);
             
             SetActiveUI(UIType.JobChangerUI, true);
         }
 
         public void EnterPlayState()
         {
-            SetActiveUI(UIType.Null, false);
+            SetActiveUI(UIType.JobChangerUI, false);
             
             SetActiveUI(UIType.InventorySlotController, true);
             SetActiveUI(UIType.CompassRotate, true);
@@ -104,14 +106,12 @@ namespace New_Neo_LT.Scripts.UI
 
         public void EnterWaitingState()
         {
-            SetActiveUI(UIType.Null, false);
             
             SetActiveUI(UIType.WaitingUI, true);
         }
         
         public void EnterEndGameState()
         {
-            SetActiveUI(UIType.Null, false);
             
             SetActiveUI(UIType.ResultUIController, true);
         }
@@ -172,7 +172,7 @@ namespace New_Neo_LT.Scripts.UI
                     interactionUI.gameObject.SetActive(isActive);
                     break;
                 case UIType.WaitingUI:
-                    waitingUIController.gameObject.SetActive(isActive);
+                    StartCoroutine(nameof(FinishWaitingUI));
                     break;
                 case UIType.Null:
                     compassRotate.gameObject.SetActive(isActive);
@@ -195,6 +195,14 @@ namespace New_Neo_LT.Scripts.UI
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
+        }
+
+        private IEnumerable FinishWaitingUI()
+        {
+            waitingUIController.StartEndofProgress();
+            yield return new WaitForSeconds(4);
+            
+            SetActiveUI(UIType.WaitingUI, false);
         }
     }
 }
