@@ -13,6 +13,7 @@ namespace New_Neo_LT.Scripts.UI
         [SerializeField] private Transform pool;
         [SerializeField] private Transform rankBordGrid;
         [SerializeField] private GameObject playerListElementPrefab;
+        [SerializeField] private Transform[] rankUIList;
         
         private PlayerListSlot[] _playerList = new PlayerListSlot[4];
 
@@ -140,6 +141,15 @@ namespace New_Neo_LT.Scripts.UI
                     continue;
                 _playerList[i].transform.SetSiblingIndex(i);
             }
+
+            for (var i = 0; i < _playerList.Length; i++)
+            {
+                int score = _playerList[i].GetPlayerScore();
+                if (!rankUIList[i].gameObject.activeInHierarchy && score != 0)
+                {
+                    rankUIList[i].gameObject.SetActive(true);
+                }
+            }
         }
         
         private void MoveToGrid(PlayerListSlot playerListSlot)
@@ -152,6 +162,11 @@ namespace New_Neo_LT.Scripts.UI
         {
             playerListSlot.transform.SetParent(pool);
             playerListSlot.transform.localPosition = Vector3.zero;
+        }
+
+        public Transform[] GetRankUIList()
+        {
+            return rankUIList;
         }
     }
 }

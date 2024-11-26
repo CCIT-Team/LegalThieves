@@ -1,5 +1,7 @@
 ﻿using Fusion;
 using Fusion.Addons.FSM;
+using LegalThieves;
+using New_Neo_LT.Scripts.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -18,6 +20,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
                 return;
             spawnedBarricade = Runner.Spawn(barricadeTransform);
             spawnedBarricade.transform.SetParent(winStateTransform);
+            UI.UIManager.Instance.SetActiveUI(UIType.RankUI, false);
             PlayerRegistry.ForEach(pc => pc.Teleport(NewGameManager.Instance.winMapData.GetSpawnPosition(pc.Index)));
             PlayerRegistry.ForEach(pc =>
             {
