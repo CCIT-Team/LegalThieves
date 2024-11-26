@@ -74,6 +74,8 @@ namespace New_Neo_LT.Scripts.Game_Play
 			{
 				Instance.Players.Add(pRef, pObj);
 				pObj.Server_Init(pRef, index);
+				
+				UIManager.Instance.waitingUIController.SetPlayerCount(Instance.Players.Count);
 			}
 			else
 			{

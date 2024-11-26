@@ -1,4 +1,6 @@
-﻿using TMPro;
+﻿using System;
+using New_Neo_LT.Scripts.Game_Play;
+using TMPro;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.UI
@@ -8,11 +10,14 @@ namespace New_Neo_LT.Scripts.UI
         [SerializeField] private TMP_Text  playerCountText;
         [SerializeField] private LoadingUI loadingUI;
 
-        public float endTime;
-        
+        private void Start()
+        {
+            Init();
+        }
+
         public void Init()
         {
-            
+            SetPlayerCount(PlayerRegistry.Count);
         }
 
         public void StartEndOfProgress()

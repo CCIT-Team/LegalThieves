@@ -14,6 +14,7 @@ namespace New_Neo_LT.Scripts.UI
         [SerializeField] private TMP_Text   playerName;
         [SerializeField] private TMP_Text   playerScore;
         [SerializeField] private GameObject playerPointType;
+        [SerializeField] private GameObject highlightFrame;
 
         private int _playerIndex = -1;
 
@@ -53,7 +54,8 @@ namespace New_Neo_LT.Scripts.UI
             if(player == null) 
                 return;
             
-            playerName.text = player.GetPlayerName();;
+            highlightFrame.SetActive(player.Ref == PlayerCharacter.Local.Ref);
+            playerName.text = player.GetPlayerName();
             
             var pointType = player.IsScholar ? "Renown" : "Gold";
             SetPlayerPointType(pointType);
