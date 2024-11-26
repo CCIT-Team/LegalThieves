@@ -79,7 +79,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private bool IsFlashVisibility { get; set; }
 
         private bool canPickItem;
-    
+         
+        private bool isWheelCooldown;
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
         
@@ -475,6 +476,26 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 playerInteraction.CheckInteraction();
         }
 
+  
+        private void OnMouseWheelHandle(bool isUp)
+        {
+            if (isWheelCooldown)
+                return;
+
+            isWheelCooldown = true;
+            StartCoroutine(WheelCooldownRoutine());
+
+            if (isUp)
+                OnMouseWheelUp();
+            else
+                OnMouseWheelDown();
+        }
+        private IEnumerator WheelCooldownRoutine()
+        {
+            yield return new WaitForSeconds(0.1f);
+            isWheelCooldown = false;
+        }
+
         private void OnMouseWheelUp()
         {
             SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
@@ -483,7 +504,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             SelectSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
         }
-   
+
 
         #endregion
 
