@@ -7,10 +7,10 @@ using UnityEngine.UI;
 public class JobChangerUI : MonoBehaviour
 {
     PlayerRef _player;
-    
-   
-    [SerializeField]
+
     private GameObject[] jobButtons;
+
+    [SerializeField] private Transform[] selectedStamp;
 
     public void SetRenderTexture(Camera[] cameras)
     {
@@ -63,5 +63,9 @@ public class JobChangerUI : MonoBehaviour
         NewGameManager.Instance.RPC_JobChange(_player, Job.Shamanist, (int)Job.Shamanist);
         UIManager.Instance.resultUIController.SetSelectAnimation((int)Job.Shamanist);
     }
-  
+
+    public Transform[] GetSelectedStamp()
+    {
+        return selectedStamp;
+    }
 }
