@@ -15,7 +15,7 @@ namespace New_Neo_LT.Scripts.UI
             
         }
 
-        public void StartEndofProgress()
+        public void StartEndOfProgress()
         {
             loadingUI.StartEndOfProgress();
         }

@@ -197,12 +197,12 @@ namespace New_Neo_LT.Scripts.UI
             }
         }
 
-        private IEnumerable FinishWaitingUI()
+        private IEnumerator FinishWaitingUI()
         {
-            waitingUIController.StartEndofProgress();
+            waitingUIController.StartEndOfProgress();
             yield return new WaitForSeconds(4);
             
-            SetActiveUI(UIType.WaitingUI, false);
+            waitingUIController.gameObject.SetActive(false);
         }
     }
 }
