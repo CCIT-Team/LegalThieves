@@ -51,13 +51,22 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 
             if (NewGameManager.Instance.RoundOver())
             {
-                UIManager.Instance.stateLoadingUI.SetLoadingText("Game Finish");
+                UIManager.Instance.stateLoadingUI.SetLoadingText("​Discovery Completed!");
                 if (HasStateAuthority)
                     NewGameManager.State.Server_DelaySetState<EndStateBehaviour>(NewGameManager.Loadtime * 3);
             }
             else
             {
-                UIManager.Instance.stateLoadingUI.SetLoadingText("Round Finish");
+                string roundTag = "";
+                if (NewGameManager.Instance.GetCurrentRound() == 1)
+                {
+                    roundTag = "1st ";
+                }
+                else if (NewGameManager.Instance.GetCurrentRound() == 2)
+                {
+                    roundTag = "2nd ";
+                }
+                UIManager.Instance.stateLoadingUI.SetLoadingText(roundTag + "Discovery Ended");
                 if (HasStateAuthority)
                     NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Loadtime * 3);
             }
