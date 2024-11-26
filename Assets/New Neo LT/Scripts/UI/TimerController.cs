@@ -33,12 +33,12 @@ namespace New_Neo_LT.Scripts.UI
 
         public void SetRound(int currentRound)
         {
-            round.text = currentRound + " Round";
+            round.text = "Round " + currentRound;
         }
 
         public void SetRound(string currentRound)
         {
-            round.text = currentRound + " Round";
+            round.text = "Round " + currentRound;
         }
     }
 }
