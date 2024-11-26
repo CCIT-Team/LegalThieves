@@ -22,7 +22,6 @@ namespace New_Neo_LT.Scripts.UI
         ResultUIController,
         interactionUI,
         WaitingUI,
-        RankUI,
         UITypeCount
     }
     
@@ -180,13 +179,6 @@ namespace New_Neo_LT.Scripts.UI
                         StartCoroutine(nameof(FinishWaitingUI));
                     else
                         waitingUIController.gameObject.SetActive(true);
-                    break;
-                case UIType.RankUI:
-                    int numberOfRankUI = playerListController.GetRankUIList().Length;
-                    for (int i = 0; i < numberOfRankUI; i++)
-                    {
-                        playerListController.GetRankUIList()[i].gameObject.SetActive(isActive);
-                    }
                     break;
                 case UIType.Null:
                     compassRotate.gameObject.SetActive(isActive);
