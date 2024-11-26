@@ -13,18 +13,32 @@ public class PlayerRelicScan : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (HasStateAuthority && other.CompareTag("Relics")) // Host
+        if (HasStateAuthority) // Host
         {
-            int relicID = other.GetComponent<RelicObject>().RelicID;
-            RPC_SetRelicUI(relicID);
-        }
+            if(other.CompareTag("Relics"))
+            {
+                int relicID = other.GetComponent<RelicObject>().RelicID;
+                RPC_SetRelicUI(relicID);
+            }
+            else if(other.CompareTag("Shop"))
+            {
+                UIManager.Instance.SetActiveUI(UIType.interactionUI, true);
+            }
+        } 
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (HasStateAuthority && other.CompareTag("Relics")) // Host
         {
-            RPC_ClearRelicUI();
+            if(other.CompareTag("Relics"))
+            {
+                RPC_ClearRelicUI();
+            }
+            else if (other.CompareTag("Shop"))
+            {
+                UIManager.Instance.SetActiveUI(UIType.interactionUI, false);
+            }
         }
     }
 

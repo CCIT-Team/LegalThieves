@@ -13,6 +13,8 @@ namespace New_Neo_LT.Scripts.Relic
         [SerializeField] private GameObject visual;
         [SerializeField] private BoxCollider boxCollider;
         [SerializeField] private NetworkRigidbody3D networkRigidbody;
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioClip[] sounds;
 
         public int RelicID => RelicManager.Instance.GetRelicIndex(this);
         
@@ -64,7 +66,9 @@ namespace New_Neo_LT.Scripts.Relic
         {
             if (!PlayerRegistry.GetPlayer(player).GetRelic(LegalThieves.RelicManager.Instance.GetRelicIndex(this)))
                 return;
-           
+
+            audioSource.PlayOneShot(sounds[0]);
+
             IsActivated = false;
         }
 
@@ -77,6 +81,8 @@ namespace New_Neo_LT.Scripts.Relic
         {
             var ownerTf = PlayerRegistry.GetPlayer(player).GetCamTarget();
             var spawnPoint = ownerTf.forward + ownerTf.position;
+
+            audioSource.PlayOneShot(sounds[1]);
 
             transform.position = spawnPoint;
             IsActivated = true;

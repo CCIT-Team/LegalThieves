@@ -142,6 +142,10 @@ MonoBehaviour:
   visual: {fileID: 5800319504266149050}
   boxCollider: {fileID: -3465168707152328655}
   networkRigidbody: {fileID: 5229808701036583911}
+  audioSource: {fileID: 7119632057004447791}
+  sounds:
+  - {fileID: 8300000, guid: 0e271f54a4b72ba42a592ac0fd419e4b, type: 3}
+  - {fileID: 8300000, guid: bebd5300610ef6e4f8839f4a1c6fc66c, type: 3}
   typeIndex: 0
 --- !u!82 &7119632057004447791
 AudioSource:
@@ -164,7 +168,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 2
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
