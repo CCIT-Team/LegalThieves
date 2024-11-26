@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
+using New_Neo_LT.Scripts.UI;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace New_Neo_LT.Scripts.Game_Play.Game_State
 {
@@ -21,6 +21,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         [Networked] private int               DelayedStateId  { get; set; }
         
         [Header("Game State References")]
+        public WaitingStateBehaviour          waitingState;
         public PregameStateBehaviour          pregameState;
         public PlayStateBehaviour             playState;
         public WinStateBehaviour              winState;
@@ -69,13 +70,30 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 
         public void CollectStateMachines(List<IStateMachine> stateMachines)
         {
-            _stateMachine = new StateMachine<StateBehaviour>("Game_State", pregameState, playState, winState, loadingState, endState);
+            // Set up transitions
+            var waitingTransition = new Transition<StateBehaviour>(CanTransitionToPreGame);
+            var waitingStateTransition = new TransitionData<StateBehaviour>(pregameState, waitingTransition, true);
+            waitingState.AddTransition(waitingStateTransition);
+
+            // var pregameTransition = new Transition<StateBehaviour>();
+            // var pregameStateTransition = new TransitionData<StateBehaviour>(playState, pregameTransition, true);
+            // pregameState.AddTransition(pregameStateTransition);
+            
+            _stateMachine = new StateMachine<StateBehaviour>(
+                "Game_State", 
+                waitingState, pregameState, playState, winState, loadingState, endState
+                );
             stateMachines.Add(_stateMachine);
         }
         
         public void SetUIFlag(bool flag)
         {
             _uiFlag = flag;
+        }
+
+        private static bool CanTransitionToPreGame(StateBehaviour sb1, StateBehaviour sb2)
+        {
+            return PlayerRegistry.Count == PlayerRegistry.Instance.Cap;
         }
     }
 }
