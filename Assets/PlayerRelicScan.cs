@@ -29,7 +29,7 @@ public class PlayerRelicScan : NetworkBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (HasStateAuthority && other.CompareTag("Relics")) // Host
+        if (HasStateAuthority) // Host
         {
             if(other.CompareTag("Relics"))
             {
