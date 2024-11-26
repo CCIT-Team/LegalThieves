@@ -159,13 +159,13 @@ namespace New_Neo_LT.Scripts.Game_Play
             //선택하면 비활성화
             var playerCharacter = PlayerRegistry.GetPlayer(player);
             if(playerCharacter.GetJobIndex() != (int)Job.Null)
+            {
                 ButtonStateArray.Set(playerCharacter.GetJobIndex(), true);
-                UIManager.Instance.jobChangerUI.GetSelectedStamp()[playerCharacter.GetJobIndex()].gameObject.SetActive(false);
+            }
             playerCharacter.ChangeJob(job);
             playerCharacter.SetReady(true);
             ButtonStateArray.Set(i, false);
-            UIManager.Instance.jobChangerUI.GetSelectedStamp()[i].GetComponent<SelectedUI>().SetPlayerNameText(PlayerRegistry.GetPlayer(player).GetPlayerName()); 
-            UIManager.Instance.jobChangerUI.GetSelectedStamp()[i].gameObject.SetActive(true);
+            UIManager.Instance.jobChangerUI.GetSelectedStamp()[i].GetComponent<SelectedUI>().SetPlayerNameText(PlayerRegistry.GetPlayer(player).GetPlayerName());
 
             // Debug.Log($"{ButtonStateArray.Get(0)}, {ButtonStateArray.Get(1)}, {ButtonStateArray.Get(2)},{ButtonStateArray.Get(3 )}");
         }

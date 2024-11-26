@@ -3,12 +3,13 @@ using UnityEngine;
 using Fusion;
 using New_Neo_LT.Scripts.UI;
 using UnityEngine.UI;
+using New_Neo_LT.Scripts.PlayerComponent;
 
 public class JobChangerUI : MonoBehaviour
 {
     PlayerRef _player;
 
-    private GameObject[] jobButtons;
+    [SerializeField] private GameObject[] jobButtons;
 
     [SerializeField] private Transform[] selectedStamp;
 
@@ -39,6 +40,7 @@ public class JobChangerUI : MonoBehaviour
         for (int i = 0; i < buttonIndex.Length; i++)
         {
             jobButtons[i].GetComponent<Button>().interactable = buttonIndex[i];
+            UIManager.Instance.jobChangerUI.GetSelectedStamp()[i].gameObject.SetActive(!buttonIndex[i]);
         }
     }
     public void Archaeologist_Click()
