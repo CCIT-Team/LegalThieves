@@ -16,6 +16,7 @@ namespace New_Neo_LT.Scripts.Game_Play
         [SerializeField] private float               playtime = 15;
         [SerializeField] private float               resttime = 30;
         [SerializeField] private float               loadtime = 1.5f;
+        [SerializeField] private float               picktime = 20;
         [SerializeField] private int                 rounds = 3;
         
         [Header("Player Color")]
@@ -32,6 +33,7 @@ namespace New_Neo_LT.Scripts.Game_Play
         public static float Playtime => Instance.playtime;
         public static float Resttime => Instance.resttime;
         public static float Loadtime => Instance.loadtime;
+        public static float Picktime => Instance.picktime;
         public static float Rounds => Instance.rounds;
         
         public PregameStateMapData pregameMapData;
@@ -151,7 +153,7 @@ namespace New_Neo_LT.Scripts.Game_Play
             playerCharacter.AddRenownPoint(renownPoint);
         }
         
-        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void RPC_JobChange(PlayerRef player, Job job, int i)
         {
             //선택하면 비활성화

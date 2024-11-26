@@ -19,6 +19,7 @@ namespace New_Neo_LT.Scripts.UI
         StateLoadingUI,
         ResultUIController,
         interactionUI,
+        WaitingUI,
         UITypeCount
     }
     
@@ -36,6 +37,7 @@ namespace New_Neo_LT.Scripts.UI
         public StateLoadingUI               stateLoadingUI;
         public ResultUIController           resultUIController;
         public InteractionUI                interactionUI;
+        public WaitingUIController          waitingUIController;
 
         public static UIManager Instance
         {
@@ -80,6 +82,38 @@ namespace New_Neo_LT.Scripts.UI
         {
             _localPlayerTransform = PlayerCharacter.Local.transform;
             shopController.InitShopUI();
+        }
+
+        public void EnterPreGameState()
+        {
+            SetActiveUI(UIType.Null, false);
+            
+            SetActiveUI(UIType.JobChangerUI, true);
+        }
+
+        public void EnterPlayState()
+        {
+            SetActiveUI(UIType.Null, false);
+            
+            SetActiveUI(UIType.InventorySlotController, true);
+            SetActiveUI(UIType.CompassRotate, true);
+            SetActiveUI(UIType.TimerController, true);
+            SetActiveUI(UIType.PlayerListController, true);
+            SetActiveUI(UIType.RelicPriceUI, true);
+        }
+
+        public void EnterWaitingState()
+        {
+            SetActiveUI(UIType.Null, false);
+            
+            SetActiveUI(UIType.WaitingUI, true);
+        }
+        
+        public void EnterEndGameState()
+        {
+            SetActiveUI(UIType.Null, false);
+            
+            SetActiveUI(UIType.ResultUIController, true);
         }
         
         public Transform GetLocalPlayerTransform()
@@ -137,21 +171,23 @@ namespace New_Neo_LT.Scripts.UI
                 case UIType.interactionUI:
                     interactionUI.gameObject.SetActive(isActive);
                     break;
+                case UIType.WaitingUI:
+                    waitingUIController.gameObject.SetActive(isActive);
+                    break;
                 case UIType.Null:
-                    // If isActive is false then all UIs are set to false
-                    if(isActive)
-                        break;
-                    resultUIController.gameObject.SetActive(false);
-                    stateLoadingUI.gameObject.SetActive(false);
-                    RelicScanUI.gameObject.SetActive(false);
-                    jobChangerUI.gameObject.SetActive(false);
-                    shopController.gameObject.SetActive(false);
-                    relicPriceUI.gameObject.SetActive(false);
-                    playerListController.gameObject.SetActive(false);
-                    timerController.gameObject.SetActive(false);
-                    inventorySlotController.gameObject.SetActive(false);
-                    compassRotate.gameObject.SetActive(false);
-                    interactionUI.gameObject.SetActive(false);
+                    compassRotate.gameObject.SetActive(isActive);
+                    inventorySlotController.gameObject.SetActive(isActive);
+                    timerController.gameObject.SetActive(isActive);
+                    playerListController.gameObject.SetActive(isActive);
+                    relicPriceUI.gameObject.SetActive(isActive);
+                    shopController.gameObject.SetActive(isActive);
+                    jobChangerUI.gameObject.SetActive(isActive);
+                    RelicScanUI.gameObject.SetActive(isActive);
+                    readyStateUI.gameObject.SetActive(isActive);
+                    stateLoadingUI.gameObject.SetActive(isActive);
+                    resultUIController.gameObject.SetActive(isActive);
+                    interactionUI.gameObject.SetActive(isActive);
+                    waitingUIController.gameObject.SetActive(isActive);
                     break;
                 case UIType.UITypeCount:
                     // Do nothing

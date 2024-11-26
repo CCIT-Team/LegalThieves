@@ -14,6 +14,8 @@ namespace New_Neo_LT.Scripts.Game_Play
 	{
 		private const byte Capacity = 4;
 
+		public int Cap => Capacity;
+
 		public static PlayerRegistry Instance { get; private set; }
 
 		public static int Count => Instance.Players.Count;
@@ -72,11 +74,6 @@ namespace New_Neo_LT.Scripts.Game_Play
 			{
 				Instance.Players.Add(pRef, pObj);
 				pObj.Server_Init(pRef, index);
-				
-				if(Count == Capacity)
-				{
-					NewGameManager.State.Server_DelaySetState<PlayStateBehaviour>(20);
-				}
 			}
 			else
 			{

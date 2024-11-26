@@ -15,7 +15,9 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         protected override void OnEnterStateRender()
         {
             //결과화면 켜기
-            UI.UIManager.Instance.SetActiveUI(UIType.ResultUIController, true);
+            UIManager.Instance.EnterEndGameState();
+            
+            
             if(!HasStateAuthority)
                 return;
             

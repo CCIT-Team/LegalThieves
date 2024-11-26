@@ -174,6 +174,9 @@ MonoBehaviour:
   playerPrefab:
     RawGuidValue: e0c6f5ecee78cae40bb95c2ca5237fdd
   playtime: 300
+  resttime: 30
+  loadtime: 1.5
+  picktime: 20
   rounds: 3
   playerClothMaterials:
   - {fileID: 2100000, guid: 2e65be87a85242a449c1947aec384d7c, type: 2}
@@ -188,8 +191,6 @@ MonoBehaviour:
   pregameMapData: {fileID: 0}
   playMapData: {fileID: 0}
   winMapData: {fileID: 0}
-  _Players:
-    _items: []
   _ButtonStateArray: 01010101
 --- !u!114 &1697721941077150408
 MonoBehaviour:
@@ -203,6 +204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bcee303fbfde6045a8403757741b45a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waitingState: {fileID: 1985446720628859392, guid: c71532e45bab4b44ca151b3bcfb3ee93, type: 3}
   pregameState: {fileID: 3464885489257470049}
   playState: {fileID: 1528451406671795193}
   winState: {fileID: 8030546693033248375}
