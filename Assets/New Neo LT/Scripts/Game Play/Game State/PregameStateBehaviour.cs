@@ -21,7 +21,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             UIManager.Instance.EnterPreGameState();
             
             // UI 변경
-            UIManager.Instance.stateLoadingUI.SetSubPos(0);
+            // UIManager.Instance.stateLoadingUI.SetSubPos(0);
             
             //직업선택 켜기
             //UI.UIManager.Instance.stateLoadingUI.ChangeState(false);

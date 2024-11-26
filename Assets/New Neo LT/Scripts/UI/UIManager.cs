@@ -89,6 +89,7 @@ namespace New_Neo_LT.Scripts.UI
         public void EnterPreGameState()
         {
             SetActiveUI(UIType.WaitingUI, false);
+            // SetActiveUI(UIType.ResultUIController, false);
             
             SetActiveUI(UIType.JobChangerUI, true);
         }
@@ -96,6 +97,8 @@ namespace New_Neo_LT.Scripts.UI
         public void EnterPlayState()
         {
             SetActiveUI(UIType.JobChangerUI, false);
+            SetActiveUI(UIType.ResultUIController, false);
+            
             
             SetActiveUI(UIType.InventorySlotController, true);
             SetActiveUI(UIType.CompassRotate, true);
@@ -172,7 +175,10 @@ namespace New_Neo_LT.Scripts.UI
                     interactionUI.gameObject.SetActive(isActive);
                     break;
                 case UIType.WaitingUI:
-                    StartCoroutine(nameof(FinishWaitingUI));
+                    if(!isActive)
+                        StartCoroutine(nameof(FinishWaitingUI));
+                    else
+                        waitingUIController.gameObject.SetActive(true);
                     break;
                 case UIType.Null:
                     compassRotate.gameObject.SetActive(isActive);
@@ -200,7 +206,7 @@ namespace New_Neo_LT.Scripts.UI
         private IEnumerator FinishWaitingUI()
         {
             waitingUIController.StartEndOfProgress();
-            yield return new WaitForSeconds(4);
+            yield return new WaitForSeconds(2);
             
             waitingUIController.gameObject.SetActive(false);
         }
