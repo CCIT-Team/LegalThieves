@@ -2,6 +2,7 @@ using Fusion;
 using Fusion.Addons.Physics;
 using New_Neo_LT.Scripts.Elements.Relic;
 using New_Neo_LT.Scripts.Game_Play;
+using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
 using RelicManager = LegalThieves.RelicManager;
 using UIManager = New_Neo_LT.Scripts.UI.UIManager;
@@ -97,7 +98,9 @@ namespace New_Neo_LT.Scripts.Relic
                 visual.enabled = IsActivated;
 
             boxCollider.enabled = IsActivated;
-            audioSource.PlayOneShot(sounds[IsActivated ? 0 : 1]);
+            Debug.Log(PlayerCharacter.Local.HasInputAuthority);
+            if(PlayerCharacter.Local.HasInputAuthority)
+                audioSource.PlayOneShot(sounds[IsActivated ? 0 : 1]);
             networkRigidbody.RBIsKinematic = !IsActivated;
         }
         
