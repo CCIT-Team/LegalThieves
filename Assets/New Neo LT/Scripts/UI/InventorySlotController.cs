@@ -77,7 +77,8 @@ namespace New_Neo_LT.Scripts.UI
             }
             
             var slotImage = slots[index].transform.GetChild(2).GetComponent<Image>();
-            slotImage.sprite = RelicManager.Instance.GetRelicSprite(RelicManager.Instance.GetRelicData(relicIndex).GetTypeIndex());
+            slotImage.sprite = RelicManager.Instance.GetRelicSprite(RelicManager.Instance.GetRelicData(relicIndex).GetRelicType(),
+                                                                    RelicManager.Instance.GetRelicData(relicIndex).GetTypeIndex());
             slotImage.enabled = true;
         }
 

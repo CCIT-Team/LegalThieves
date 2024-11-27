@@ -53,7 +53,7 @@ public class RelicPriceUI : MonoBehaviour
         else
         {
             var relic = RelicManager.Instance.GetRelicData(relicIndex);
-            relicName.text = RelicManager.Instance.GetRelicName(relic.GetTypeIndex());
+            relicName.text = RelicManager.Instance.GetRelicName(relic.GetRelicType(), relic.GetTypeIndex());
             goldPoint.text = relic.GetGoldPoint().ToString();
             renownPoint.text = relic.GetRenownPoint().ToString();
         }

@@ -37,7 +37,7 @@ public class RelicScanUI : MonoBehaviour
         {
             relicScanUIGroup.gameObject.SetActive(true);
             var relic = RelicManager.Instance.GetRelicData(relicIndex);
-            relicName.text = RelicManager.Instance.GetRelicName(relic.GetTypeIndex());
+            relicName.text = RelicManager.Instance.GetRelicName(relic.GetRelicType(), relic.GetTypeIndex());
             goldPoint.text = relic.GetGoldPoint().ToString();
             renownPoint.text = relic.GetRenownPoint().ToString();
         }

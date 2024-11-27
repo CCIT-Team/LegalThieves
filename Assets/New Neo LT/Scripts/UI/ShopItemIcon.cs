@@ -30,10 +30,11 @@ namespace New_Neo_LT.Scripts.UI
         {
             _inventoryIndex = inventoryIndex;
             _relicId        = relicId;
+
+            var typ = RelicManager.Instance.GetRelicData(relicId).GetRelicType();
+            var index = RelicManager.Instance.GetRelicData(relicId).GetTypeIndex();
             
-            var typ = RelicManager.Instance.GetRelicData(relicId).GetTypeIndex();
-            
-            GetComponent<Image>().sprite = RelicManager.Instance.GetRelicSprite(typ);
+            GetComponent<Image>().sprite = RelicManager.Instance.GetRelicSprite(typ,index);
         }
     }
 }

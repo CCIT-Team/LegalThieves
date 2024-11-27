@@ -19,17 +19,17 @@ namespace LegalThieves
         public static RelicManager Instance;
 
         [Header("Components")]
-        [SerializeField] private NetworkPrefabRef    relicPrefab;
+        //[SerializeField] private NetworkPrefabRef    relicPrefab;
         [SerializeField] private Transform           relicPool;
         
         [Header("Relic Data")]
         [Header("Gold Relics")]
         [SerializeField] private string[]            goldRelicNames;
-        [SerializeField] private GameObject[]        goldRelicVisuals;
+        [SerializeField] private NetworkPrefabRef[]  goldRelicPrefabs;
         [SerializeField] private Sprite[]            goldRelicSprites;
         [Header("Renown Relics")]
         [SerializeField] private string[]            renownRelicNames;
-        [SerializeField] private GameObject[]        renownRelicVisuals;
+        [SerializeField] private NetworkPrefabRef[]  renownRelicPrefabs;
         [SerializeField] private Sprite[]            renownRelicSprites;
         
         
@@ -61,11 +61,22 @@ namespace LegalThieves
 
         public void SpawnRelic(Vector3 position = default)
         {
-            var netObj = Runner.Spawn(relicPrefab, position, Quaternion.identity, null, OnBeforeRelicSpawned);
-            netObj.transform.SetParent(relicPool);
-            var relic = netObj.GetComponent<RelicObject>();
-            
-            Relics.Add(relic);
+            var prefabIndex = Random.Range(0, GetRelicTypeCount());
+
+            if(prefabIndex < GetGoldRelicCount())
+            {
+                var netObj = Runner.Spawn(goldRelicPrefabs[prefabIndex], position, Quaternion.identity, null, OnBeforeRelicSpawned);
+                netObj.transform.SetParent(relicPool);
+                var relic = netObj.GetComponent<RelicObject>();
+                Relics.Add(relic);
+            }
+            else
+            {
+                var netObj = Runner.Spawn(renownRelicPrefabs[prefabIndex-GetGoldRelicCount()], position, Quaternion.identity, null, OnBeforeRelicSpawned);
+                netObj.transform.SetParent(relicPool);
+                var relic = netObj.GetComponent<RelicObject>();
+                Relics.Add(relic);
+            }
         }
 
         // 유물 스폰 전에 유물 데이터를 설정합니다.
@@ -84,32 +95,32 @@ namespace LegalThieves
             return Relics.IndexOf(relic);
         }
 
-        public Mesh GetRelicMesh(int index)
-        {
-            return index < goldRelicVisuals.Length ? 
-                goldRelicVisuals[index].GetComponent<MeshFilter>().sharedMesh : 
-                renownRelicVisuals[index - goldRelicVisuals.Length].GetComponent<MeshFilter>().sharedMesh;
-        }
+        //public Mesh GetRelicMesh(int index)
+        //{
+        //    return index < goldRelicVisuals.Length ? 
+        //        goldRelicVisuals[index].GetComponent<MeshFilter>().sharedMesh : 
+        //        renownRelicVisuals[index - goldRelicVisuals.Length].GetComponent<MeshFilter>().sharedMesh;
+        //}
         
-        public Material[] GetRelicMaterial(int index)
-        {
-            return index < goldRelicVisuals.Length ? 
-                goldRelicVisuals[index].GetComponent<MeshRenderer>().sharedMaterials : 
-                renownRelicVisuals[index - goldRelicVisuals.Length].GetComponent<MeshRenderer>().sharedMaterials;
-        }
+        //public Material[] GetRelicMaterial(int index)
+        //{
+        //    return index < goldRelicVisuals.Length ? 
+        //        goldRelicVisuals[index].GetComponent<MeshRenderer>().sharedMaterials : 
+        //        renownRelicVisuals[index - goldRelicVisuals.Length].GetComponent<MeshRenderer>().sharedMaterials;
+        //}
 
-        public Sprite GetRelicSprite(int index)
+        public Sprite GetRelicSprite(ERelic relicType, int index)
         {
-            return index < goldRelicVisuals.Length ? 
+            return relicType == ERelic.Gold ? 
                 goldRelicSprites[index] : 
-                renownRelicSprites[index - goldRelicVisuals.Length];
+                renownRelicSprites[index];
         }
         
-        public string GetRelicName(int index)
+        public string GetRelicName(ERelic relicType, int index)
         {
-            return index < goldRelicVisuals.Length ? 
+            return relicType == ERelic.Gold ? 
                 goldRelicNames[index] : 
-                renownRelicNames[index - goldRelicVisuals.Length];
+                renownRelicNames[index];
         }
         
         public void DespawnAllRelics()
@@ -121,17 +132,17 @@ namespace LegalThieves
 
         public int GetRelicTypeCount()
         {
-            return goldRelicVisuals.Length + renownRelicVisuals.Length;
+            return goldRelicPrefabs.Length + renownRelicPrefabs.Length;
         }
 
         public int GetGoldRelicCount()
         {
-            return goldRelicVisuals.Length;
+            return goldRelicPrefabs.Length;
         }
 
         public int GetRenownRelicCount()
         {
-            return renownRelicVisuals.Length;
+            return renownRelicPrefabs.Length;
         }
     }
 }

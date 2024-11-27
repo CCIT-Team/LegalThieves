@@ -10,19 +10,18 @@ namespace New_Neo_LT.Scripts.Relic
 {
     public class RelicObject : NetworkBehaviour, global::IInteractable
     {
-        [SerializeField] private GameObject visual;
+        [SerializeField] private MeshRenderer visual;
         [SerializeField] private BoxCollider boxCollider;
         [SerializeField] private NetworkRigidbody3D networkRigidbody;
         [SerializeField] private AudioSource audioSource;
         [SerializeField] private AudioClip[] sounds;
 
         public int RelicID => RelicManager.Instance.GetRelicIndex(this);
-        
-        [Networked, OnChangedRender(nameof(OnTypeIndexChange))]
-        private int TypeIndex { get; set; }
-        public int typeIndex;
 
-        [Networked]
+        [SerializeField]
+        private int typeIndex = 0;
+
+        [SerializeField]
         private ERelic relicType { get; set; }
         [Networked]
         private int GoldPoint { get; set; }
@@ -39,35 +38,29 @@ namespace New_Neo_LT.Scripts.Relic
             
             if(HasStateAuthority) 
                 InitRelic();
-
-            SetVisual();
-            typeIndex = TypeIndex;
         }
         
         private void InitRelic()
         {
-            TypeIndex = Random.Range(0, RelicManager.Instance.GetRelicTypeCount());
             var tempPoint = Random.Range(501, 1000);
-            if( TypeIndex < RelicManager.Instance.GetGoldRelicCount())
+            if(relicType == ERelic.Gold)
                 SetPoints(tempPoint, 1000 - tempPoint);
             else
                 SetPoints(1000 - tempPoint, tempPoint);
-            SetRelicType();
+            //SetRelicType();
             SetRelicScale();
         }
         
-        private void SetVisual()
-        {
-            visual.GetComponent<MeshFilter>().mesh = LegalThieves.RelicManager.Instance.GetRelicMesh(TypeIndex);
-            visual.GetComponent<MeshRenderer>().materials = LegalThieves.RelicManager.Instance.GetRelicMaterial(TypeIndex);
-        }
+        //private void SetVisual()
+        //{
+        //    visual.GetComponent<MeshFilter>().mesh = LegalThieves.RelicManager.Instance.GetRelicMesh(TypeIndex);
+        //    visual.GetComponent<MeshRenderer>().materials = LegalThieves.RelicManager.Instance.GetRelicMaterial(TypeIndex);
+        //}
 
         public void OnServer_Interact(PlayerRef player)
         {
             if (!PlayerRegistry.GetPlayer(player).GetRelic(LegalThieves.RelicManager.Instance.GetRelicIndex(this)))
                 return;
-
-            audioSource.PlayOneShot(sounds[0]);
 
             IsActivated = false;
         }
@@ -95,9 +88,16 @@ namespace New_Neo_LT.Scripts.Relic
 
         private void OnIsActiveChange()
         {
-            visual.SetActive(IsActivated);
-            audioSource.PlayOneShot(sounds[1]);
+            if(visual == null)
+            {
+                foreach(MeshRenderer renderer in GetComponentsInChildren<MeshRenderer>())
+                    renderer.enabled = IsActivated;
+            }
+            else
+                visual.enabled = IsActivated;
+
             boxCollider.enabled = IsActivated;
+            audioSource.PlayOneShot(sounds[IsActivated ? 0 : 1]);
             networkRigidbody.RBIsKinematic = !IsActivated;
         }
         
@@ -156,11 +156,5 @@ namespace New_Neo_LT.Scripts.Relic
 
             transform.localScale *= factor;
         }
-
-        private void OnTypeIndexChange()
-        {
-            typeIndex = TypeIndex;
-        }
-
     }
 }
