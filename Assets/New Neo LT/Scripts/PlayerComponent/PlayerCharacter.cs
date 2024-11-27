@@ -35,6 +35,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private float                  lookSensitivity  = 0.15f;
         [SerializeField] private Vector3                jumpImpulse      = new(0f, 5f, 0f);
         [SerializeField] private float                  interactionRange = 5f;
+
+        [Header("Slow Setup")]
+        [SerializeField] private float slowDuration = 0.5f;  
+        [SerializeField] private float slowScale = 0.2f; // default = 1
+        private float slowMultiplier = 1f;
+        private Coroutine slowCoroutine; 
+       
+        private bool isSlowed = false;
         
         [Space, Header("Player Models")]
         [SerializeField] private GameObject[]           playerModels;
@@ -255,12 +263,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
         
         #region Player Input Methods...
-
+        
         // Player Input to player character state
         private void SetPlayerInput(NetInput playerInput)
         {
-            // Set Movement (WASD)
-            kcc.SetInputDirection(kcc.FixedData.TransformRotation * playerInput.Direction.X0Y());
+            // 수정된 입력값으로 움직임 적용
+            kcc.SetInputDirection(kcc.FixedData.TransformRotation * (playerInput.Direction.X0Y() * slowMultiplier));
             
             // Set face direction by mouse pointer position delta
             kcc.AddLookRotation(playerInput.LookDelta * lookSensitivity, -maxPitch, maxPitch);
@@ -527,6 +535,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public bool GetRelic(int relicId)
         {
+             ApplySlow();
             // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
             if (Inventory[slotIndex] == -1)
             {
@@ -546,7 +555,34 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             
             return false;
         }
-        
+
+       
+        public void ApplySlow()
+        { 
+            if (slowCoroutine != null)
+                StopCoroutine(slowCoroutine);
+                    
+            slowCoroutine = StartCoroutine(SlowRoutine());
+        }
+
+        private IEnumerator SlowRoutine()
+        {
+            if (!isSlowed)
+            {
+                isSlowed = true;
+                
+               
+                slowMultiplier = slowScale;
+                
+                yield return new WaitForSeconds(slowDuration);
+                
+            
+                slowMultiplier = 1f;
+                isSlowed = false;
+            }
+            
+            slowCoroutine = null;
+        }
         public void ThrowRelic()
         {
             if (HasStateAuthority && Inventory[slotIndex] != -1) // 서버에서만 실행
