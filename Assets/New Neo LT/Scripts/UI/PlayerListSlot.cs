@@ -31,7 +31,8 @@ namespace New_Neo_LT.Scripts.UI
             _playerIndex = player.Ref.AsIndex - 1;
             
             playerName.text = player.GetPlayerName();
-            
+            highlightFrame.SetActive(player.Ref == PlayerCharacter.Local.Ref);
+
             var pointType = player.IsScholar ? "Renown" : "Gold";
             SetPlayerPointType(pointType);
         }

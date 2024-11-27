@@ -219,11 +219,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5065544896325388029}
   - {fileID: 3527478227959809284}
   - {fileID: 7094247680942478881}
   - {fileID: 448304223246022831}
   - {fileID: 4556421128645855482}
-  - {fileID: 5065544896325388029}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -285,6 +285,7 @@ MonoBehaviour:
   playerName: {fileID: 4849447657238953376}
   playerScore: {fileID: 3971098084100819275}
   playerPointType: {fileID: 1773496890594579330}
+  highlightFrame: {fileID: 8226883673850895454}
 --- !u!1 &5063076207141692551
 GameObject:
   m_ObjectHideFlags: 0
@@ -793,7 +794,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3527478227959809284
 RectTransform:
   m_ObjectHideFlags: 0
@@ -811,7 +812,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -35, y: 0}
-  m_SizeDelta: {x: 60, y: 60}
+  m_SizeDelta: {x: 65, y: 65}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2594695766144035543
 CanvasRenderer:
