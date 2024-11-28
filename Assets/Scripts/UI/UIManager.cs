@@ -1,186 +1,210 @@
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using Fusion;
-using TMPro;
+using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace LegalThieves
+namespace New_Neo_LT.Scripts.UI
 {
+    public enum UIType
+    {
+        Null = -1,
+        CompassRotate,
+        InventorySlotController,
+        TimerController,
+        PlayerListController,
+        RelicPriceUI,
+        ShopController,
+        JobChangerUI,
+        RelicScanUI,
+        ReadyStateUI,
+        StateLoadingUI,
+        ResultUIController,
+        interactionUI,
+        WaitingUI,
+        UITypeCount
+    }
+    
     public class UIManager : MonoBehaviour
     {
-        public static UIManager Singleton
+        public CompassNavigationUIBehavior  compassRotate;
+        public InventorySlotController      inventorySlotController;
+        public TimerController              timerController;
+        public PlayerListController         playerListController;
+        public RelicPriceUI                 relicPriceUI;
+        public ShopController               shopController;
+        public JobChangerUI                 jobChangerUI;
+        public RelicScanUI                  RelicScanUI;
+        public ReadyStateUI                 readyStateUI;
+        public StateLoadingUI               stateLoadingUI;
+        public ResultUIController           resultUIController;
+        public InteractionUI                interactionUI;
+        public WaitingUIController          waitingUIController;
+
+        public static UIManager Instance
         {
-            get => _singleton;
-            private set
+            get
             {
-                if      (value == null)        _singleton = null;
-                else if (_singleton == null)   _singleton = value;
-                else if (_singleton != value)
+                if (_instance == null)
                 {
-                    Destroy(value);
-                    Debug.LogError($"{nameof(UIManager)}는(은) 단 한번만 인스턴싱되어야 합니다!");
+                    _instance = FindObjectOfType<UIManager>();
                 }
+
+                return _instance;
             }
+            private set => _instance = value;
         }
 
-        private static UIManager _singleton;
+        private static UIManager _instance;
 
-        [SerializeField] private Image[]            inventorySlotImages;
-        [SerializeField] private GameObject[]       selectToggles;
-        [Space]
-        [SerializeField] private RectTransform compass;
-        [SerializeField] private TMP_Text timer;
-        [Space]
-        [SerializeField] private TextMeshProUGUI    gameStateText;
-        [SerializeField] private TextMeshProUGUI    instructionText;
-        [SerializeField] private Image              sprintActive;
-        [SerializeField] private LeaderboardItem[]  leaderboardItems;
+        private Transform _localPlayerTransform;
 
-        public TempPlayer  localTempPlayer;
-        public int         currentSlotIndex;
-
-        private void Awake()
+        private void Start()
         {
-            Singleton = this;
-            Init();
+            if(Instance == null)
+                Instance = this;
+            else if(Instance != this)
+                Destroy(gameObject);
+            
+            // SetActiveUI(UIType.ResultUIController, false);
         }
 
-        private void Update()
+        // 게임 접속 시 UI 초기화
+        public void InitializeInGameUI()
         {
-            if (localTempPlayer == null)
-                return;
-            compass.eulerAngles = new Vector3(0, 0, localTempPlayer.transform.eulerAngles.y);
+            _localPlayerTransform = PlayerCharacter.Local.transform;
+            shopController.InitShopUI();
         }
 
-        private void OnDestroy()
+        public void EnterWaitingState()
         {
-            if (Singleton == this)
-                Singleton = null;
-        }
-
-        private void Init()
-        {
-            selectToggles[currentSlotIndex].SetActive(true);
-        }
-
-        public void DidSetReady()
-        {
-            instructionText.text = "Waiting for other players to be ready...";
-        }
-
-        public void SetWaitUI(EGameState newState, TempPlayer winner)
-        {
-            if (newState == EGameState.Waiting)
-            {
-                if (winner == null)
-                {
-                    gameStateText.text   = "Waiting to Start";
-                    instructionText.text = "Press R when you're ready to begin!";
-                }
-                else
-                {
-                    gameStateText.text   = $"{winner.Name} Wins!";
-                    instructionText.text = "Press R when you're ready to begin!";
-                }
-            }
-
-            gameStateText.enabled   = newState == EGameState.Waiting;
-            instructionText.enabled = newState == EGameState.Waiting;
-        }
-
-        public void SetSlotImage(bool isActive, Sprite sprite = null)
-        {
-            inventorySlotImages[currentSlotIndex].sprite = sprite;
-            inventorySlotImages[currentSlotIndex].enabled = isActive;
-        }
-
-        public void MoveCurrentSlot(bool isLeft)
-        {
-            switch (isLeft)
-            {
-                case true when currentSlotIndex > 0:
-                    selectToggles[currentSlotIndex].SetActive(false);
-                    currentSlotIndex -= 1;
-                    selectToggles[currentSlotIndex].SetActive(true);
-                    break;
-                case false when currentSlotIndex < 9:
-                    selectToggles[currentSlotIndex].SetActive(false);
-                    currentSlotIndex += 1;
-                    selectToggles[currentSlotIndex].SetActive(true);
-                    break;
-            }
-        }
-
-        public void UpdateLeaderboard(KeyValuePair<PlayerRef, TempPlayer>[] players)
-        {
-            for (var i = 0; i < leaderboardItems.Length; i++)
-            {
-                var item = leaderboardItems[i];
-
-                if (i < players.Length)
-                {
-                    if (players[i].Key == localTempPlayer.Runner.LocalPlayer)
-                    {
-
-                    }
-                    item.nameText.text = players[i].Value.Name;
-                    item.heightText.text = $"{players[i].Value.Score}m";
-                }
-                else
-                {
-                    item.nameText.text = "";
-                    item.heightText.text = "";
-                }
-            }
-        }
-
-        public void SetTimer(string text)
-        {
-            timer.text = text;
+            
+            SetActiveUI(UIType.WaitingUI, true);
         }
         
-        public void SetTimer(int time)
+        public void EnterPreGameState()
         {
-            timer.text = (time / 60 < 10 ? "0" + time / 60 : time / 60) + " : " + (time % 60 < 10 ? "0" + time % 60 : time % 60);
+            SetActiveUI(UIType.WaitingUI, false);
+            // SetActiveUI(UIType.ResultUIController, false);
+            
+            SetActiveUI(UIType.JobChangerUI, true);
         }
 
-        public void ResetHUD()
+        public void EnterPlayState()
         {
-            ResetSlotToggle();
-            ResetSlotImages();
-            ResetTimerText();
+            SetActiveUI(UIType.JobChangerUI, false);
+            SetActiveUI(UIType.ResultUIController, false);
+            
+            
+            SetActiveUI(UIType.InventorySlotController, true);
+            SetActiveUI(UIType.CompassRotate, true);
+            SetActiveUI(UIType.TimerController, true);
+            SetActiveUI(UIType.PlayerListController, true);
+            SetActiveUI(UIType.RelicPriceUI, true);
         }
 
-        private void ResetSlotImages()
+        public void EnterLoadingState()
         {
-            foreach (var img in inventorySlotImages)
+            
+        }
+        
+        public void EnterEndGameState()
+        {
+            
+            SetActiveUI(UIType.ResultUIController, true);
+        }
+        
+        public Transform GetLocalPlayerTransform()
+        {
+            return _localPlayerTransform;
+        }
+
+        public void OpenShop()
+        {
+            shopController.gameObject.SetActive(true);
+            shopController.OnShopOpen();
+        }
+        
+        public void CloseShop()
+        {
+            shopController.gameObject.SetActive(false);
+            shopController.OnShopClose();
+        }
+
+        public void SetActiveUI(UIType type, bool isActive)
+        {
+            switch (type)
             {
-                img.sprite = null;
-                img.enabled = false;
+                case UIType.CompassRotate:
+                    compassRotate.gameObject.SetActive(isActive);
+                    break;
+                case UIType.InventorySlotController:
+                    inventorySlotController.gameObject.SetActive(isActive);
+                    break;
+                case UIType.TimerController:
+                    timerController.gameObject.SetActive(isActive);
+                    break;
+                case UIType.PlayerListController:
+                    playerListController.gameObject.SetActive(isActive);
+                    if(isActive) playerListController.InitPlayersName();
+                    break;
+                case UIType.RelicPriceUI:
+                    relicPriceUI.gameObject.SetActive(isActive);
+                    break;
+                case UIType.ShopController:
+                    shopController.gameObject.SetActive(isActive);
+                    break;
+                case UIType.JobChangerUI:
+                    jobChangerUI.gameObject.SetActive(isActive);
+                    break;
+                case UIType.RelicScanUI:
+                    RelicScanUI.gameObject.SetActive(isActive);
+                    break;
+                case UIType.StateLoadingUI:
+                    stateLoadingUI.gameObject.SetActive(isActive);
+                    break;
+                case UIType.ResultUIController:
+                    resultUIController.gameObject.SetActive(isActive);
+                    resultUIController.Init();
+                    break;
+                case UIType.interactionUI:
+                    interactionUI.gameObject.SetActive(isActive);
+                    break;
+                case UIType.WaitingUI:
+                    if(!isActive)
+                        StartCoroutine(nameof(FinishWaitingUI));
+                    else
+                        waitingUIController.gameObject.SetActive(true);
+                    break;
+                case UIType.Null:
+                    compassRotate.gameObject.SetActive(isActive);
+                    inventorySlotController.gameObject.SetActive(isActive);
+                    timerController.gameObject.SetActive(isActive);
+                    playerListController.gameObject.SetActive(isActive);
+                    relicPriceUI.gameObject.SetActive(isActive);
+                    shopController.gameObject.SetActive(isActive);
+                    jobChangerUI.gameObject.SetActive(isActive);
+                    RelicScanUI.gameObject.SetActive(isActive);
+                    readyStateUI.gameObject.SetActive(isActive);
+                    stateLoadingUI.gameObject.SetActive(isActive);
+                    resultUIController.gameObject.SetActive(isActive);
+                    interactionUI.gameObject.SetActive(isActive);
+                    waitingUIController.gameObject.SetActive(isActive);
+                    break;
+                case UIType.UITypeCount:
+                    // Do nothing
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
 
-        private void ResetSlotToggle()
+        private IEnumerator FinishWaitingUI()
         {
-            foreach (var obj in selectToggles)
-            {
-                obj.SetActive(false);
-            }
-            currentSlotIndex = 0;
-            selectToggles[0].SetActive(true);
-        }
-
-        private void ResetTimerText()
-        {
-            SetTimer("Waiting");
-        }
-
-        [Serializable]
-        private struct LeaderboardItem
-        {
-            public TextMeshProUGUI nameText;
-            public TextMeshProUGUI heightText;
+            waitingUIController.StartEndOfProgress();
+            yield return new WaitForSeconds(2);
+            
+            waitingUIController.gameObject.SetActive(false);
         }
     }
 }
