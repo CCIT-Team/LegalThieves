@@ -69,16 +69,6 @@ namespace New_Neo_LT.Scripts.UI
             // SetActiveUI(UIType.ResultUIController, false);
         }
 
-        private void LateUpdate()
-        {
-            // 서버 접속 확인
-            if (!_localPlayerTransform)
-                return;
-            
-            //compassRotate.RotateCompass(_localPlayerTransform);
-            
-        }
-
         // 게임 접속 시 UI 초기화
         public void InitializeInGameUI()
         {
@@ -86,6 +76,12 @@ namespace New_Neo_LT.Scripts.UI
             shopController.InitShopUI();
         }
 
+        public void EnterWaitingState()
+        {
+            
+            SetActiveUI(UIType.WaitingUI, true);
+        }
+        
         public void EnterPreGameState()
         {
             SetActiveUI(UIType.WaitingUI, false);
@@ -107,10 +103,9 @@ namespace New_Neo_LT.Scripts.UI
             SetActiveUI(UIType.RelicPriceUI, true);
         }
 
-        public void EnterWaitingState()
+        public void EnterLoadingState()
         {
             
-            SetActiveUI(UIType.WaitingUI, true);
         }
         
         public void EnterEndGameState()
@@ -151,6 +146,7 @@ namespace New_Neo_LT.Scripts.UI
                     break;
                 case UIType.PlayerListController:
                     playerListController.gameObject.SetActive(isActive);
+                    if(isActive) playerListController.InitPlayersName();
                     break;
                 case UIType.RelicPriceUI:
                     relicPriceUI.gameObject.SetActive(isActive);
