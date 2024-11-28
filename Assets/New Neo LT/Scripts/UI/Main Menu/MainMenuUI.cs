@@ -27,6 +27,8 @@ namespace New_Neo_LT.Scripts.UI.Main_Menu
         public void ShutDownServer()
         {
             menuUIController?.gameObject.SendMessage("OnDisconnectPressed");
+            var gameplayUI = menuUIController?.Get<FusionMenuUIGameplay>();
+            gameplayUI?.gameObject.SendMessage("OnDisconnectPressed");
             // mainMenu?.gameObject.SendMessage("OnDisconnectPressed");
         }
     }
