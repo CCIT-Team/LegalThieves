@@ -23,7 +23,7 @@ namespace New_Neo_LT.Scripts.Relic
         private int typeIndex = 0;
 
         [SerializeField]
-        private ERelic relicType { get; set; }
+        private ERelic relicType;
         [Networked]
         private int GoldPoint { get; set; }
         [Networked]
