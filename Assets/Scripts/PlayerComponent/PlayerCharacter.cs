@@ -535,7 +535,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public bool GetRelic(int relicId)
         {
-             ApplySlow();
+            // ApplySlow();
             // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
             if (Inventory[slotIndex] == -1)
             {
