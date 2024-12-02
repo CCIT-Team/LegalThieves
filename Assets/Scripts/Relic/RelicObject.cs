@@ -60,9 +60,10 @@ namespace New_Neo_LT.Scripts.Relic
 
         public void OnServer_Interact(PlayerRef player)
         {
-            if (!PlayerRegistry.GetPlayer(player).GetRelic(LegalThieves.RelicManager.Instance.GetRelicIndex(this)))
+            var playerCharacter = PlayerRegistry.GetPlayer(player);
+            if (!playerCharacter.GetRelic(LegalThieves.RelicManager.Instance.GetRelicIndex(this)))
                 return;
-
+            playerCharacter.inventoryRelicCount++;
             IsActivated = false;
         }
 
@@ -73,9 +74,10 @@ namespace New_Neo_LT.Scripts.Relic
 
         public void OnThrowAway(PlayerRef player)
         {
-            var ownerTf = PlayerRegistry.GetPlayer(player).GetCamTarget();
+            var playerCharacter = PlayerRegistry.GetPlayer(player);
+            var ownerTf = playerCharacter.GetCamTarget();
             var spawnPoint = ownerTf.forward + ownerTf.position;
-
+            playerCharacter.inventoryRelicCount--;
             transform.position = spawnPoint;
             IsActivated = true;
         }

@@ -69,6 +69,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))]
         public NetworkArray<int> Inventory => default;
+        [Networked]
+        public int inventoryRelicCount { get; set; }
 
         [Networked, OnChangedRender(nameof(OnTorchChanged))]
         private bool _isPikedTorch { get; set; }
@@ -290,9 +292,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             SprintToggle(playerInput);
 
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction3))
-                TorchToggle(playerInput);
+                TorchToggle();
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction4))
-                FlashToggle(playerInput);
+                FlashToggle();
             //CrouchToggle(playerInput);
             // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
             //     kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
@@ -480,11 +482,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public bool GetRelic(int relicId)
         {
-            ApplySlow();
+            
             // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
             if (Inventory[slotIndex] == -1)
             {
+                ApplySlow();
                 Inventory.Set(slotIndex, relicId);
+      
                 return true;
             }
 
@@ -493,7 +497,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 if (Inventory[i] != -1) 
                     continue;
-                
+                ApplySlow();
                 Inventory.Set(i, relicId);
                 return true;
             }
@@ -534,14 +538,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             if (HasInputAuthority)
             {
-                ToggleInventory1(Object.InputAuthority);
+                UIManager.Instance.inventorySlotController.OnToggleInventory();
             }
         }
 
-        public void ToggleInventory1(PlayerRef player)
-        {
-            UIManager.Instance.inventorySlotController.OnToggleInventory();
-        }
         public RelicObject RemoveRelicFromInventory(int index)
         {
             if (Inventory[index] == -1)
@@ -564,7 +564,17 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             return camTarget;
         }
-
+        public void SetInventoryRelicCount()
+        {
+            inventoryRelicCount = 0;
+            for (var i = 0; i < 10; i++)
+            {
+                if (Inventory[i] != -1)
+                    inventoryRelicCount++;
+            }
+            UIManager.Instance.inventorySlotController.SetBagSprite(inventoryRelicCount);
+        }
+        
         public void OnInventoryChanged(NetworkBehaviourBuffer previous)
         {
             if(!HasInputAuthority)
@@ -573,6 +583,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 UIManager.Instance.inventorySlotController.SetRelicSprite(i, Inventory[i]);
             }
+            UIManager.Instance.inventorySlotController.SetBagSprite(inventoryRelicCount);
             UIManager.Instance.inventorySlotController.SetSlotPoint(Inventory[slotIndex]);
             UIManager.Instance.relicPriceUI.SetTotalPoint(Inventory.ToArray());
             UIManager.Instance.RelicScanUI.SetUIPoint(-1);
@@ -619,7 +630,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             itemController.UseItem();
         }
-        private void TorchToggle(NetInput input)
+        private void TorchToggle()
         {
             if (IsFlashVisibility && _isPikedFlash) return;
 
@@ -645,7 +656,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
             IsTorchVisibility = false;
         }
-        private void FlashToggle(NetInput input)
+        private void FlashToggle()
         {
             if (IsTorchVisibility && _isPikedTorch) return;
 

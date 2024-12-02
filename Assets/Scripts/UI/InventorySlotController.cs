@@ -21,14 +21,17 @@ namespace New_Neo_LT.Scripts.UI
 
 
         [Header("Inventory UI")]
-        [SerializeField] private RectTransform inventorybagopenslottUI;
-        [SerializeField] private RectTransform inventorybagcloseslottUI;
+        [SerializeField] private RectTransform inventorybagopenslotUI;
+        [SerializeField] private RectTransform inventorybagcloseslotUI;
+        [SerializeField] private Sprite[] inventorybagcloseslotSprites;
+       
+
         [SerializeField] private RectTransform inventoryUI; // 인벤토리 UI RectTransform
         [SerializeField] private Vector3 hiddenPosition;// 화면 밖 위치
         [SerializeField] private Vector3 visiblePosition;
         private bool isInventoryOpen = true; // 인벤토리 열림 상태
         private bool isCooldownActive = false; // 쿨다운 상태
-        WaitForSeconds  wait_0_3=  new WaitForSeconds(0.1f);
+        WaitForSeconds  wait_0_1=  new WaitForSeconds(0.1f);
 
         private void Start()
         {
@@ -110,7 +113,43 @@ namespace New_Neo_LT.Scripts.UI
                     break;
             }
         }
+        public void SetBagSprite(int count)
+        {
+            int inventoryRelicCount = count;
+            int bagSpriteIndex;
 
+            switch (inventoryRelicCount)
+            {   
+                case 0:
+                    bagSpriteIndex = 0;
+                    break;
+                case 1:
+                case 2:
+                    bagSpriteIndex = 1;
+                    break;
+                case 3:
+                case 4:
+                    bagSpriteIndex = 2;
+                    break;
+                case 5:
+                case 6:
+                    bagSpriteIndex = 3; 
+                    break;
+                case 7:
+                case 8:
+                    bagSpriteIndex = 4; 
+                    break;
+                case 9:
+                case 10:
+                    bagSpriteIndex = 5; 
+                    break;
+                default:
+                    bagSpriteIndex = 0;
+                    break;
+            }
+                   
+            inventorybagcloseslotUI.GetComponent<Image>().sprite = inventorybagcloseslotSprites[bagSpriteIndex];
+        }
         public void OnToggleInventory()
         {
             if (!isCooldownActive) // 쿨다운 중이 아니면 동작
@@ -158,16 +197,17 @@ namespace New_Neo_LT.Scripts.UI
 
             if (isInventoryOpen)
             {
-                inventorybagopenslottUI.gameObject.SetActive(true);
-                inventorybagcloseslottUI.gameObject.SetActive(false);
+                inventorybagopenslotUI.gameObject.SetActive(true);
+                inventorybagcloseslotUI.gameObject.SetActive(false);
             }
             else
             {
-                inventorybagopenslottUI.gameObject.SetActive(false);
-                inventorybagcloseslottUI.gameObject.SetActive(true);
+                inventorybagopenslotUI.gameObject.SetActive(false);
+                inventorybagcloseslotUI.gameObject.SetActive(true);
+
             }
 
-            yield return wait_0_3;
+            yield return wait_0_1;
             isCooldownActive = false; // 쿨다운 해제   
         }
 

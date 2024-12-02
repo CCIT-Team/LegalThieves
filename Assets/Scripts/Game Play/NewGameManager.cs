@@ -148,7 +148,7 @@ namespace New_Neo_LT.Scripts.Game_Play
                 renownPoint += relic.GetRenownPoint();
                 playerCharacter.Inventory.Set(index, -1);
             }
-
+            playerCharacter.SetInventoryRelicCount();
             playerCharacter.AddGoldPoint(goldPoint);
             playerCharacter.AddRenownPoint(renownPoint);
         }
