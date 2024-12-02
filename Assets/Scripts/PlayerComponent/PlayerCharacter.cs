@@ -28,7 +28,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private TMP_Text               playerNickname;
         [SerializeField] private PlayerInteraction      playerInteraction;
         [SerializeField] private SkinnedMeshRenderer    skinnedMeshRenderer;
-       
+        [SerializeField] private ItemController         itemController;
         [Space, Header("Player Setup")]
         [Range(-90, 90)]
         [SerializeField] private float                  maxPitch         = 85f; 
@@ -364,59 +364,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             return transform.InverseTransformVector(velocity);
         }
 
-        private void TorchToggle(NetInput input)
-        {
-            if (IsFlashVisibility && _isPikedFlash) return;
-
-            if (!IsTorchVisibility)
-            {
-                _isPikedTorch = true;
-                IsTorchVisibility = true;
-                TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchVisibility);
-              //  AudioManager.instance.PlayLoop(ESoundType.TorchIdle);
-                TorchScript[CurrentPlayerModelIndex].TurnOnLight();
-            }
-            else
-            {
-             //   AudioManager.instance.Stop(ESoundType.TorchIdle) ;
-                _isPikedTorch = false;
-                StartCoroutine(TorchTurnOff());
-                TorchScript[CurrentPlayerModelIndex].TurnOffLight();
-            }
-        }
-
-        public IEnumerator TorchTurnOff()
-        {
-            yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
-            IsTorchVisibility = false;
-        }
-        private void FlashToggle(NetInput input)
-        {
-            if (IsTorchVisibility && _isPikedTorch) return;
-
-            if (!IsFlashVisibility)
-            {
-             //   AudioManager.instance.PlaySound(ESoundType.FlashOn);
-
-                _isPikedFlash = true;
-                IsFlashVisibility = true;
-                FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
-                FlashScript[CurrentPlayerModelIndex].TurnOnLight();
-            }
-            else
-            {
-                _isPikedFlash = false;
-                StartCoroutine(FlashTurnOff());
-                FlashScript[CurrentPlayerModelIndex].TurnOffLight();
-            }
-        }
-        public IEnumerator FlashTurnOff()
-        {
-        //   AudioManager.instance.PlaySound(ESoundType.FlashOff);
-            yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
-            IsFlashVisibility = false;
-        }
-
 
 
         //private void CrouchToggle(NetInput input)
@@ -662,9 +609,71 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
 
         #endregion
+        #region Item Methods...
 
+        private void EquipItem(EItemType itemType)
+        {
+            itemController.EquipItem(itemType);
+        }
+        private void UseItem()
+        {
+            itemController.UseItem();
+        }
+        private void TorchToggle(NetInput input)
+        {
+            if (IsFlashVisibility && _isPikedFlash) return;
+
+            if (!IsTorchVisibility)
+            {
+                _isPikedTorch = true;
+                IsTorchVisibility = true;
+                TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchVisibility);
+                //  AudioManager.instance.PlayLoop(ESoundType.TorchIdle);
+                TorchScript[CurrentPlayerModelIndex].TurnOnLight();
+            }
+            else
+            {
+                //   AudioManager.instance.Stop(ESoundType.TorchIdle) ;
+                _isPikedTorch = false;
+                StartCoroutine(TorchTurnOff());
+                TorchScript[CurrentPlayerModelIndex].TurnOffLight();
+            }
+        }
+
+        public IEnumerator TorchTurnOff()
+        {
+            yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
+            IsTorchVisibility = false;
+        }
+        private void FlashToggle(NetInput input)
+        {
+            if (IsTorchVisibility && _isPikedTorch) return;
+
+            if (!IsFlashVisibility)
+            {
+                //   AudioManager.instance.PlaySound(ESoundType.FlashOn);
+
+                _isPikedFlash = true;
+                IsFlashVisibility = true;
+                FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
+                FlashScript[CurrentPlayerModelIndex].TurnOnLight();
+            }
+            else
+            {
+                _isPikedFlash = false;
+                StartCoroutine(FlashTurnOff());
+                FlashScript[CurrentPlayerModelIndex].TurnOffLight();
+            }
+        }
+        public IEnumerator FlashTurnOff()
+        {
+            //   AudioManager.instance.PlaySound(ESoundType.FlashOff);
+            yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
+            IsFlashVisibility = false;
+        }
+        #endregion
         #region Network Porperty Changed Events...
-        
+
         private void OnPlayerJobChanged()
         {
             UIManager.Instance.playerListController.UpdatePlayerPointType(Index, IsScholar);
