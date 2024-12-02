@@ -41,9 +41,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private float slowScale = 0.2f; // default = 1
         private float slowMultiplier = 1f;
         private Coroutine slowCoroutine; 
-       
-        private bool isSlowed = false;
-        
+  
         [Space, Header("Player Models")]
         [SerializeField] private GameObject[]           playerModels;
         [SerializeField] private Item_Torch_Temp[] TorchScript;
@@ -535,7 +533,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public bool GetRelic(int relicId)
         {
-            // ApplySlow();
+            ApplySlow();
             // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
             if (Inventory[slotIndex] == -1)
             {
@@ -567,21 +565,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private IEnumerator SlowRoutine()
         {
-            if (!isSlowed)
-            {
-                isSlowed = true;
-                
-               
-                slowMultiplier = slowScale;
-                
-                yield return new WaitForSeconds(slowDuration);
-                
-            
-                slowMultiplier = 1f;
-                isSlowed = false;
-            }
-            
+            slowMultiplier = slowScale;
+
+            yield return new WaitForSeconds(slowDuration);
+
+            slowMultiplier = 1f;
+    
             slowCoroutine = null;
+
         }
         public void ThrowRelic()
         {
