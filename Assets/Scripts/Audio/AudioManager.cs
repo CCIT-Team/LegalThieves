@@ -70,7 +70,7 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        //PlayLoop(ESoundType.BGM);
+        PlayLoop(ESoundType.BGM);
     }
     
 

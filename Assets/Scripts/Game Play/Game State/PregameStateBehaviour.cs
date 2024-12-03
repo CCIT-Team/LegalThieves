@@ -19,15 +19,18 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             Debug.Log("게임 시작 전 상태 진입");
 #endif
             UIManager.Instance.EnterPreGameState();
-            
+
+            AudioManager.instance.SetSoundPack(AudioManager.instance.themes[(int)EField.Camp]);
+            AudioManager.instance.PlayLoop(ESoundType.BGM);
+
             // UI 변경
             // UIManager.Instance.stateLoadingUI.SetSubPos(0);
-            
+
             //직업선택 켜기
             //UI.UIManager.Instance.stateLoadingUI.ChangeState(false);
-            
-            
-            if(HasStateAuthority)
+
+
+            if (HasStateAuthority)
             {
                 NewGameManager.State.Server_DelaySetState<PlayStateBehaviour>(NewGameManager.Picktime);
             }
