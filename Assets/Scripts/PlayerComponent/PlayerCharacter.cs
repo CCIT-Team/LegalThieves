@@ -282,9 +282,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Attack2))
                 OnMouseRightClick();
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.WheelUp))
-                SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
+                OnMouseWheelUp();
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.WheellDown))
-                SelectSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
+                OnMouseWheelDown();
 
             
             // Set behavior by Keyboard input
@@ -430,16 +430,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (HasInputAuthority)
                 playerInteraction.CheckInteraction();
         }
-
-  
-        private void OnMouseWheelHandle(bool isUp)
-        {  
-            if (isUp)
-                SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
-            else
-                SelectSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
+   
+        private void OnMouseWheelUp(){
+            SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
         }
-      
+        private void OnMouseWheelDown(){
+            SelectSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
+        }
 
 
         #endregion
