@@ -88,7 +88,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private bool canPickItem;
          
-        private bool isWheelCooldown;
+      
         [Networked] 
         private float             CrouchSync { get; set; } = 1f;
         
@@ -282,9 +282,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Attack2))
                 OnMouseRightClick();
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.WheelUp))
-                OnMouseWheelUp();
+                SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.WheellDown))
-                OnMouseWheelDown();
+                SelectSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
 
             
             // Set behavior by Keyboard input
@@ -433,32 +433,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
   
         private void OnMouseWheelHandle(bool isUp)
-        {
-            if (isWheelCooldown)
-                return;
-
-            isWheelCooldown = true;
-            StartCoroutine(WheelCooldownRoutine());
-
+        {  
             if (isUp)
-                OnMouseWheelUp();
+                SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
             else
-                OnMouseWheelDown();
+                SelectSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
         }
-        private IEnumerator WheelCooldownRoutine()
-        {
-            yield return new WaitForSeconds(0.1f);
-            isWheelCooldown = false;
-        }
-
-        private void OnMouseWheelUp()
-        {
-            SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
-        }
-        private void OnMouseWheelDown()
-        {
-            SelectSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
-        }
+      
 
 
         #endregion
@@ -468,18 +449,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void SelectSlot(int index)
         {
-            if (!HasStateAuthority && !HasInputAuthority) 
-                return;
+            if (!HasInputAuthority) return;
             
-            slotIndex = index;
-            if (!HasInputAuthority)
-                return;
-            
-            UIManager.Instance.inventorySlotController.SelectToggle(index);
-
-            UIManager.Instance.inventorySlotController.SetSlotPoint(Inventory[index]);
+            // RPC를 통해 서버에 요청
+            RPC_SelectSlot(index);
         }
 
+      
         public bool GetRelic(int relicId)
         {
             
@@ -820,6 +796,18 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             var playerCharacter = PlayerRegistry.GetPlayer(player);
             playerCharacter.SetPlayerName(nickname);
+        }
+        
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        private void RPC_SelectSlot(int index)
+        {
+            slotIndex = index;
+            
+            if (HasInputAuthority)
+            {
+                UIManager.Instance.inventorySlotController.SelectToggle(index);
+                UIManager.Instance.inventorySlotController.SetSlotPoint(Inventory[index]);
+            }
         }
 
         #endregion
