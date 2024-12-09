@@ -112,7 +112,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
       
         [SerializeField] private int slotIndex = 0;
-
+        
+        [SerializeField] private int skillItemSlotIndex= 0;
         private RaycastHit      _rayCastHit;
         
         public static PlayerCharacter Local { get; set; }
@@ -427,18 +428,35 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public void CheckInteraction()
         {
-            if (HasStateAuthority) 
+            if (HasStateAuthority)
                 playerInteraction.Server_CheckInteraction();
-            
+
             if (HasInputAuthority)
                 playerInteraction.CheckInteraction();
         }
-   
-        private void OnMouseWheelUp(){
-            SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
+
+        private void OnMouseWheelUp()
+        {
+            if (UIManager.Instance.inventorySlotController.IsInventoryOpen)
+            {
+                SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
+            }
+            else
+            {
+                SelectSlot(skillItemSlotIndex - 1 < 0 ? 0 : skillItemSlotIndex - 1);
+            }
         }
-        private void OnMouseWheelDown(){
-            SelectSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
+        private void OnMouseWheelDown()
+        {
+            if (UIManager.Instance.inventorySlotController.IsInventoryOpen)
+            {
+                SelectSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
+            }
+            else
+            {
+                SelectSlot(skillItemSlotIndex + 1 > 9 ? 9 : skillItemSlotIndex - 1);
+            }
+
         }
 
 
