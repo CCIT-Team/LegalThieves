@@ -25,7 +25,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             {
                 for (var i = 0; i < 10; i++)
                 {
-                    pc.Inventory.Set(i, -1);
+                    pc.RelicInventory.Set(i, -1);
                 }
             });
             LegalThieves.RelicManager.Instance.DespawnAllRelics();

@@ -134,7 +134,7 @@ namespace New_Neo_LT.Scripts.Game_Play
         public void RPC_SellRelics(PlayerRef player, int[] inventoryIndices)
         {
             var playerCharacter = PlayerRegistry.GetPlayer(player);
-            var playerInventory = playerCharacter.Inventory.ToArray();
+            var playerInventory = playerCharacter.RelicInventory.ToArray();
             var goldPoint = 0;
             var renownPoint = 0;
             
@@ -146,7 +146,7 @@ namespace New_Neo_LT.Scripts.Game_Play
                 var relic = LegalThieves.RelicManager.Instance.GetRelicData(playerInventory[index]);
                 goldPoint += relic.GetGoldPoint();
                 renownPoint += relic.GetRenownPoint();
-                playerCharacter.Inventory.Set(index, -1);
+                playerCharacter.RelicInventory.Set(index, -1);
             }
             playerCharacter.SetInventoryRelicCount();
             playerCharacter.AddGoldPoint(goldPoint);

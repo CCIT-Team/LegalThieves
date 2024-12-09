@@ -68,7 +68,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private int               GoldPoint { get; set; }
 
         [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))]
-        public NetworkArray<int> Inventory => default;
+        public NetworkArray<int> RelicInventory => default;
+
+        [Networked, Capacity(10), OnChangedRender(nameof(OnSkillItemInventoryChanged))]
+        public NetworkArray<int> SkillItemInventory => default;
         [Networked]
         public int inventoryRelicCount { get; set; }
 
@@ -152,9 +155,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 IsScholar = playerIndex % 2 != 0;
                 job = Job.Null;
 
-                for (var i = 0; i < Inventory.Length;i++)
+                for (var i = 0; i < RelicInventory.Length;i++)
                 {
-                    Inventory.Set(i, -1);
+                    RelicInventory.Set(i, -1);
                 }
 
                 if (PlayerRegistry.Instance != null && PlayerRegistry.Count >= 4)
@@ -309,7 +312,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction2))
                 CheckInteraction();
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Inventory))
-                ToggleInventory();
+                ToggleRelicInventory();
             //throwRelic
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction5))
                 ThrowRelic();
@@ -457,21 +460,21 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             
             // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
-            if (Inventory[slotIndex] == -1)
+            if (RelicInventory[slotIndex] == -1)
             {
                 ApplySlow();
-                Inventory.Set(slotIndex, relicId);
+                RelicInventory.Set(slotIndex, relicId);
       
                 return true;
             }
 
             // 빈 슬롯을 찾아 아이템 추가
-            for (var i = 0; i < Inventory.Length; i++)
+            for (var i = 0; i < RelicInventory.Length; i++)
             {
-                if (Inventory[i] != -1) 
+                if (RelicInventory[i] != -1) 
                     continue;
                 ApplySlow();
-                Inventory.Set(i, relicId);
+                RelicInventory.Set(i, relicId);
                 return true;
             }
             
@@ -500,14 +503,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
         public void ThrowRelic()
         {
-            if (HasStateAuthority && Inventory[slotIndex] != -1) // 서버에서만 실행
+            if (HasStateAuthority && RelicInventory[slotIndex] != -1) // 서버에서만 실행
             {
-                RelicManager.Instance.GetRelicData(Inventory[slotIndex]).OnThrowAway(Object.InputAuthority);
-                Inventory.Set(slotIndex, -1); // 인벤토리에서 제거
+                RelicManager.Instance.GetRelicData(RelicInventory[slotIndex]).OnThrowAway(Object.InputAuthority);
+                RelicInventory.Set(slotIndex, -1); // 인벤토리에서 제거
             }
         }
 
-        public void ToggleInventory()
+        public void ToggleRelicInventory()
         {
             if (HasInputAuthority)
             {
@@ -517,11 +520,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public RelicObject RemoveRelicFromInventory(int index)
         {
-            if (Inventory[index] == -1)
+            if (RelicInventory[index] == -1)
                 return null;
             
-            var relic = RelicManager.Instance.GetRelicData(Inventory[index]);
-            Inventory.Set(index, -1);
+            var relic = RelicManager.Instance.GetRelicData(RelicInventory[index]);
+            RelicInventory.Set(index, -1);
             return relic;
         }
 
@@ -542,7 +545,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             inventoryRelicCount = 0;
             for (var i = 0; i < 10; i++)
             {
-                if (Inventory[i] != -1)
+                if (RelicInventory[i] != -1)
                     inventoryRelicCount++;
             }
             UIManager.Instance.inventorySlotController.SetBagSprite(inventoryRelicCount);
@@ -554,15 +557,17 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 return;
             for (var i = 0; i < 10; i++)
             {
-                UIManager.Instance.inventorySlotController.SetRelicSprite(i, Inventory[i]);
+                UIManager.Instance.inventorySlotController.SetRelicSprite(i, RelicInventory[i]);
             }
             UIManager.Instance.inventorySlotController.SetBagSprite(inventoryRelicCount);
-            UIManager.Instance.inventorySlotController.SetSlotPoint(Inventory[slotIndex]);
-            UIManager.Instance.relicPriceUI.SetTotalPoint(Inventory.ToArray());
+            UIManager.Instance.inventorySlotController.SetSlotPoint(RelicInventory[slotIndex]);
+            UIManager.Instance.relicPriceUI.SetTotalPoint(RelicInventory.ToArray());
             UIManager.Instance.RelicScanUI.SetUIPoint(-1);
-            UIManager.Instance.shopController.SetLocalPlayerInventory(Inventory.ToArray());
+            UIManager.Instance.shopController.SetLocalPlayerInventory(RelicInventory.ToArray());
         }
+        public void OnSkillItemInventoryChanged(){
 
+        }
         public void SetPlayerColor(int index) => PlayerColor = index;
         public int GetPlayerColor() => PlayerColor;
 
@@ -803,7 +808,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (HasInputAuthority)
             {
                 UIManager.Instance.inventorySlotController.SelectToggle(index);
-                UIManager.Instance.inventorySlotController.SetSlotPoint(Inventory[index]);
+                UIManager.Instance.inventorySlotController.SetSlotPoint(RelicInventory[index]);
             }
         }
 
