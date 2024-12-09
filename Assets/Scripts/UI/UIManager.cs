@@ -40,6 +40,7 @@ namespace New_Neo_LT.Scripts.UI
         public ResultUIController           resultUIController;
         public InteractionUI                interactionUI;
         public WaitingUIController          waitingUIController;
+        public ItemSkillInventoryUI         itemSkillInventoryUI;
 
         public static UIManager Instance
         {
