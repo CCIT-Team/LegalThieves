@@ -17,7 +17,6 @@ namespace New_Neo_LT.Scripts.UI
         ShopController,
         JobChangerUI,
         RelicScanUI,
-        ReadyStateUI,
         StateLoadingUI,
         ResultUIController,
         interactionUI,
@@ -35,7 +34,6 @@ namespace New_Neo_LT.Scripts.UI
         public ShopController               shopController;
         public JobChangerUI                 jobChangerUI;
         public RelicScanUI                  RelicScanUI;
-        public ReadyStateUI                 readyStateUI;
         public StateLoadingUI               stateLoadingUI;
         public ResultUIController           resultUIController;
         public InteractionUI                interactionUI;
@@ -185,7 +183,6 @@ namespace New_Neo_LT.Scripts.UI
                     shopController.gameObject.SetActive(isActive);
                     jobChangerUI.gameObject.SetActive(isActive);
                     RelicScanUI.gameObject.SetActive(isActive);
-                    readyStateUI.gameObject.SetActive(isActive);
                     stateLoadingUI.gameObject.SetActive(isActive);
                     resultUIController.gameObject.SetActive(isActive);
                     interactionUI.gameObject.SetActive(isActive);
