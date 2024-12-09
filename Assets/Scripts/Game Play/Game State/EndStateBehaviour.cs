@@ -16,9 +16,9 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
         {
             //결과화면 켜기
             UIManager.Instance.EnterEndGameState();
-            
-            
-            if(!HasStateAuthority)
+            AudioManager.instance.Stop(ESoundType.BGM);
+
+            if (!HasStateAuthority)
                 return;
             
             NewGameManager.State.Server_DelaySetState<PregameStateBehaviour>(20);

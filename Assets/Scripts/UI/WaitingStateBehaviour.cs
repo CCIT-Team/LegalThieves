@@ -36,6 +36,7 @@ namespace New_Neo_LT.Scripts.UI
 
         protected override void OnExitStateRender()
         {
+            AudioManager.instance.Stop(ESoundType.BGM);
             base.OnExitStateRender();
         }
     }
