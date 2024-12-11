@@ -2,40 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum EItemType
-{
-    Null = -1,
-    Torch,
-    Flashlight,
-    Count
-}
-public enum ESKillType
-{
-    Null = -1,
-    Torch,
-    Flashlight,
-    Count
-}
-
-public interface IItem
-{
-    public void UseItem();
-    public void EquipItem();
-    public void UnequipItem();
-}
-
-public interface ISkill
-{
-    public void UseSkill();
-}
-
 public class ItemSkillManager : MonoBehaviour
 {
-    [SerializeField] public IItem[] Items;
-    [SerializeField] public ISkill[] Skills;
+    [SerializeField] public ItemBase[] Items;
+    [SerializeField] public SkillBase[] Skills;
 
     [SerializeField] private EItemType currentItem = EItemType.Null;
-
 
     public void UseItem()
     {
