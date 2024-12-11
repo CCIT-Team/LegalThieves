@@ -30,6 +30,7 @@ namespace New_Neo_LT.Scripts.UI
         [SerializeField] private Vector3 hiddenPosition;// 화면 밖 위치
         [SerializeField] private Vector3 visiblePosition;
         private bool isInventoryOpen = true; // 인벤토리 열림 상태
+        public bool IsInventoryOpen {get {return isInventoryOpen;}}
         private bool isCooldownActive = false; // 쿨다운 상태
         WaitForSeconds  wait_0_1=  new WaitForSeconds(0.1f);
 

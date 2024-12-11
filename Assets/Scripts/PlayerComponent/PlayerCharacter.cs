@@ -71,7 +71,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         public NetworkArray<int> RelicInventory => default;
 
         [Networked, Capacity(10), OnChangedRender(nameof(OnSkillItemInventoryChanged))]
-        public NetworkArray<int> SkillItemInventory => default;
+        public NetworkArray<int> ItemSkillInventory => default;
         [Networked]
         public int inventoryRelicCount { get; set; }
 
@@ -112,7 +112,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
       
         [SerializeField] private int slotIndex = 0;
-
+        
+        [SerializeField] private int itemSkillSlotIndex= 0;
         private RaycastHit      _rayCastHit;
         
         public static PlayerCharacter Local { get; set; }
@@ -318,25 +319,18 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 ThrowRelic();
                 //slot
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot1))
-                SelectSlot(0);
+                SelectItemSkillSlot(0);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot2))
-                SelectSlot(1);
+                SelectItemSkillSlot(1);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot3))
-                SelectSlot(2);
+                SelectItemSkillSlot(2);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot4))
-                SelectSlot(3);
+                SelectItemSkillSlot(3);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot5))
-                SelectSlot(4);
+                SelectItemSkillSlot(4);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
-                SelectSlot(5);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot7))
-                SelectSlot(6);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot8))
-                SelectSlot(7);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot9))
-                SelectSlot(8);
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot10))
-                SelectSlot(9);
+                SelectItemSkillSlot(5);
+      
 
             // Previous Buttons for comparison
             _previousButtons = playerInput.Buttons;
@@ -427,18 +421,22 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         public void CheckInteraction()
         {
-            if (HasStateAuthority) 
+            if (HasStateAuthority)
                 playerInteraction.Server_CheckInteraction();
-            
+
             if (HasInputAuthority)
                 playerInteraction.CheckInteraction();
         }
-   
-        private void OnMouseWheelUp(){
-            SelectSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
+
+        private void OnMouseWheelUp()
+        {
+            SelectRelicSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
+          
         }
-        private void OnMouseWheelDown(){
-            SelectSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
+        private void OnMouseWheelDown()
+        {
+       
+            SelectRelicSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
         }
 
 
@@ -447,12 +445,20 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         #region Inventory
 
-        private void SelectSlot(int index)
+        private void SelectRelicSlot(int index)
         {
             if (!HasInputAuthority) return;
             
             // RPC를 통해 서버에 요청
-            RPC_SelectSlot(index);
+            RPC_SelectRelicSlot(index);
+        }
+
+        private void SelectItemSkillSlot(int index)
+        {
+            if (!HasInputAuthority) return;
+            
+            // RPC를 통해 서버에 요청
+            RPC_SelectItemSkillSlot(index);
         }
 
       
@@ -600,14 +606,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         #endregion
         #region Item Methods...
 
-        private void EquipItem(EItemType itemType)
-        {
-            itemController.EquipItem(itemType);
-        }
-        private void UseItem()
-        {
-            itemController.UseItem();
-        }
+       
         private void TorchToggle()
         {
             if (IsFlashVisibility && _isPikedFlash) return;
@@ -801,7 +800,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
         
         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-        private void RPC_SelectSlot(int index)
+        private void RPC_SelectRelicSlot(int index)
         {
             slotIndex = index;
             
@@ -809,6 +808,18 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 UIManager.Instance.inventorySlotController.SelectToggle(index);
                 UIManager.Instance.inventorySlotController.SetSlotPoint(RelicInventory[index]);
+            }
+        }
+
+         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        private void RPC_SelectItemSkillSlot(int index)
+        {
+            itemSkillSlotIndex = index;
+            
+            if (HasInputAuthority)
+            {
+                UIManager.Instance.itemSkillInventoryUI.SelectToggle(index);
+
             }
         }
 

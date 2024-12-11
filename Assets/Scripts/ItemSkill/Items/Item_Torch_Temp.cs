@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item_Torch_Temp : MonoBehaviour, IItem
+public class Item_Torch_Temp : SkillBase
 {
     [SerializeField] private float lightIntensity = 1f;
     [SerializeField] private float changingTime = 3f;
@@ -10,18 +10,14 @@ public class Item_Torch_Temp : MonoBehaviour, IItem
     [SerializeField] private ParticleSystem[] torchParticleSystems;
     [SerializeField] private Light torchLight;
 
-
+    
     public void UseItem(){
         TurnOnLight();
     }
+    
     public void EquipItem(){ TurnOffLight();}
     public void UnequipItem(){ }
-    //void Start()
-    //{
-    //    torchLight = this.GetComponentInChildren<Light>();
-    //    torchParticleSystems = this.GetComponentsInChildren<ParticleSystem>();
-    //}
-
+    
     public void TurnOnLight()
     {
         StartCoroutine(ChangeLightIntensity(1f));
