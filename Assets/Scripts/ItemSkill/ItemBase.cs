@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public abstract class ItemBase : MonoBehaviour
@@ -10,7 +9,7 @@ public abstract class ItemBase : MonoBehaviour
     [SerializeField] bool IsActive;
     [SerializeField] AudioSource itemSFX;
 
-    public virtual void UseItem() { }
-    public virtual void EquipItem() { }
-    public virtual void UnequipItem() { }
+    public abstract void UseItem();
+    public abstract void EquipItem();
+    public abstract void UnequipItem(); 
 }

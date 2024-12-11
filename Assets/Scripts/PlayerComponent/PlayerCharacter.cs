@@ -28,7 +28,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private TMP_Text               playerNickname;
         [SerializeField] private PlayerInteraction      playerInteraction;
         [SerializeField] private SkinnedMeshRenderer    skinnedMeshRenderer;
-        [SerializeField] private ItemController         itemController;
+        [SerializeField] private PlayerItemController   itemController;
+
         [Space, Header("Player Setup")]
         [Range(-90, 90)]
         [SerializeField] private float                  maxPitch         = 85f; 
@@ -48,7 +49,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private Item_Flash_Temp[] FlashScript;
 
 
-                [Networked, OnChangedRender(nameof(OnRefChanged))] 
+        [Networked, OnChangedRender(nameof(OnRefChanged))] 
         public PlayerRef          Ref        { get; set; }
         [Networked] 
         public byte               Index      { get; set; }
@@ -633,33 +634,33 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
             IsTorchVisibility = false;
         }
-        private void FlashToggle()
-        {
-            if (IsTorchVisibility && _isPikedTorch) return;
+        private void FlashToggle(){
+        // {
+        //     if (IsTorchVisibility && _isPikedTorch) return;
 
-            if (!IsFlashVisibility)
-            {
-                //   AudioManager.instance.PlaySound(ESoundType.FlashOn);
-
-                _isPikedFlash = true;
-                IsFlashVisibility = true;
-                FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
-                FlashScript[CurrentPlayerModelIndex].TurnOnLight();
-            }
-            else
-            {
-                _isPikedFlash = false;
-                StartCoroutine(FlashTurnOff());
-                FlashScript[CurrentPlayerModelIndex].TurnOffLight();
-            }
+        //     if (!IsFlashVisibility)
+        //     {
+        //         //   AudioManager.instance.PlaySound(ESoundType.FlashOn);
+        //         _isPikedFlash = true;
+        //         IsFlashVisibility = true;
+        //         FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
+        // 
+        //     }
+        //     else
+        //     {
+        //         _isPikedFlash = false;
+        //         StartCoroutine(FlashTurnOff());
+        //        
+        //     }
         }
         public IEnumerator FlashTurnOff()
         {
             //   AudioManager.instance.PlaySound(ESoundType.FlashOff);
-            yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
+            yield return 1f;
             IsFlashVisibility = false;
         }
         #endregion
+
         #region Network Porperty Changed Events...
 
         private void OnPlayerJobChanged()
@@ -803,7 +804,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void RPC_SelectRelicSlot(int index)
         {
             slotIndex = index;
-            
+          
             if (HasInputAuthority)
             {
                 UIManager.Instance.inventorySlotController.SelectToggle(index);
@@ -815,7 +816,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void RPC_SelectItemSkillSlot(int index)
         {
             itemSkillSlotIndex = index;
-            
+            itemController.EquipItem(itemSkillSlotIndex);
+
             if (HasInputAuthority)
             {
                 UIManager.Instance.itemSkillInventoryUI.SelectToggle(index);

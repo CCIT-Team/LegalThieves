@@ -1,24 +1,29 @@
 
+using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
 
 public class Item_Flash_Temp : ItemBase
 {
-    
-    public override void UseItem() {TurnOnLight(); }
-    public override void EquipItem() { }
-    public override void UnequipItem() { }
-
+    bool isOn;
     [SerializeField] GameObject flashLight;
 
-    public void TurnOnLight()
+    #region ItemBaseLogic
+    public override void UseItem()
     {
-        flashLight.SetActive(true);
-   
+       TurnOnOffLight();
     }
+    public override void EquipItem() {
+        
+        //FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
+    }
+    public override void UnequipItem() { }
+    #endregion
 
-    public void TurnOffLight()
+    public void TurnOnOffLight()
     {
-        flashLight.SetActive(false);
+        if (isOn)
+            flashLight.SetActive(true);
+        else
+            flashLight.SetActive(false);
     }
-
 }
