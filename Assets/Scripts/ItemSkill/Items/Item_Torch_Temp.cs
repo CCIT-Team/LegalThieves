@@ -1,8 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Item_Torch_Temp : SkillBase
+public class Item_Torch_Temp : ItemBase
 {
     [SerializeField] private float lightIntensity = 1f;
     [SerializeField] private float changingTime = 3f;
@@ -10,13 +9,13 @@ public class Item_Torch_Temp : SkillBase
     [SerializeField] private ParticleSystem[] torchParticleSystems;
     [SerializeField] private Light torchLight;
 
-    
-    public void UseItem(){
+
+    public override void UseItem(){
         TurnOnLight();
     }
     
-    public void EquipItem(){ TurnOffLight();}
-    public void UnequipItem(){ }
+    public override void EquipItem(){ TurnOffLight();}
+    public override void UnequipItem(){ }
     
     public void TurnOnLight()
     {
