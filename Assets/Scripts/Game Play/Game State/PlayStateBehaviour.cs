@@ -53,22 +53,30 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 
             if (NewGameManager.Instance.RoundOver())
             {
-                UIManager.Instance.stateLoadingUI.SetLoadingText("​Discovery Completed!");
+                UIManager.Instance.stateLoadingUI.SetLoadingText("​Excavation Completed!");
                 if (HasStateAuthority)
                     NewGameManager.State.Server_DelaySetState<EndStateBehaviour>(NewGameManager.Loadtime * 3);
             }
             else
             {
                 string roundTag = "";
-                if (NewGameManager.Instance.GetCurrentRound() == 1)
+                var round = NewGameManager.Instance.GetCurrentRound();
+                switch (round)
                 {
-                    roundTag = "1st ";
+                    default:
+                        roundTag = round + "th ";
+                        break;
+                    case 1:
+                        roundTag = "1st ";
+                        break;
+                    case 2:
+                        roundTag = "2nd ";
+                        break;
+                    case 3:
+                        roundTag = "3rd ";
+                        break;
                 }
-                else if (NewGameManager.Instance.GetCurrentRound() == 2)
-                {
-                    roundTag = "2nd ";
-                }
-                UIManager.Instance.stateLoadingUI.SetLoadingText(roundTag + "Discovery Ended");
+                UIManager.Instance.stateLoadingUI.SetLoadingText(roundTag + "Excavation Ended");
                 if (HasStateAuthority)
                     NewGameManager.State.Server_DelaySetState<WinStateBehaviour>(NewGameManager.Loadtime * 3);
             }
