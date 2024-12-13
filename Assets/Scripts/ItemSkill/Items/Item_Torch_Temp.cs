@@ -1,4 +1,5 @@
 using System.Collections;
+using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
 
 public class Item_Torch_Temp : ItemBase
@@ -9,14 +10,20 @@ public class Item_Torch_Temp : ItemBase
     [SerializeField] private ParticleSystem[] torchParticleSystems;
     [SerializeField] private Light torchLight;
 
-
-    public override void UseItem(){
+    void Start()
+    {
+        ID = (int)EItemType.Torch;
+        animator = PlayerCharacter.Local.GetAnimator();
+    }
+ #region ItemBaseLogic
+    public override void UseItem()
+    {
         TurnOnLight();
     }
-    
-    public override void EquipItem(){ TurnOffLight();}
-    public override void UnequipItem(){ }
-    
+
+    public override void EquipItem() { TurnOffLight(); }
+    public override void UnequipItem() { }
+    #endregion
     public void TurnOnLight()
     {
         StartCoroutine(ChangeLightIntensity(1f));
@@ -26,7 +33,7 @@ public class Item_Torch_Temp : ItemBase
             var emission = p.emission;
             emission.enabled = true;
         }
-     //   AudioManager.instance.PlayTorchLoopSfx(true);
+        //   AudioManager.instance.PlayTorchLoopSfx(true);
     }
 
     public void TurnOffLight()
@@ -38,7 +45,7 @@ public class Item_Torch_Temp : ItemBase
             var emission = p.emission;
             emission.enabled = false;
         }
-      //  AudioManager.instance.PlayTorchLoopSfx(false);
+        //  AudioManager.instance.PlayTorchLoopSfx(false);
     }
 
     private IEnumerator ChangeLightIntensity(float delta)

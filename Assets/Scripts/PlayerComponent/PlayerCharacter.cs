@@ -296,10 +296,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             // Sprint
             SprintToggle(playerInput);
 
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction3))
-                TorchToggle();
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction4))
-                FlashToggle();
+            // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction3))
+            //     TorchToggle();
+            // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction4))
+            //     FlashToggle();
             //CrouchToggle(playerInput);
             // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
             //     kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
@@ -404,15 +404,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void OnMouseLeftClick()
         {
             // 현재 들고있는 아이템에 따라 바뀜 아이템 클래스 구현 후 추가 예정
-            
-            // Interaction Raycast
-            if (!Physics.Raycast(camTarget.position, camTarget.forward, out _rayCastHit, interactionRange)) 
-                return;
-            
-            if (_rayCastHit.collider.TryGetComponent(out Scripts.Elements.Relic.Relic relic))
-            {
-                //relic.Interact(Object);
-            }
+            if(!HasInputAuthority)return;
+
+            itemController.UseItem();
         }
         
         private void OnMouseRightClick()
@@ -608,33 +602,33 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         #region Item Methods...
 
        
-        private void TorchToggle()
-        {
-            if (IsFlashVisibility && _isPikedFlash) return;
+        // private void TorchToggle()
+        // {
+        //     if (IsFlashVisibility && _isPikedFlash) return;
 
-            if (!IsTorchVisibility)
-            {
-                _isPikedTorch = true;
-                IsTorchVisibility = true;
-                TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchVisibility);
-                //  AudioManager.instance.PlayLoop(ESoundType.TorchIdle);
-                TorchScript[CurrentPlayerModelIndex].TurnOnLight();
-            }
-            else
-            {
-                //   AudioManager.instance.Stop(ESoundType.TorchIdle) ;
-                _isPikedTorch = false;
-                StartCoroutine(TorchTurnOff());
-                TorchScript[CurrentPlayerModelIndex].TurnOffLight();
-            }
-        }
+        //     if (!IsTorchVisibility)
+        //     {
+        //         _isPikedTorch = true;
+        //         IsTorchVisibility = true;
+        //         TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchVisibility);
+        //         //  AudioManager.instance.PlayLoop(ESoundType.TorchIdle);
+        //         TorchScript[CurrentPlayerModelIndex].TurnOnLight();
+        //     }
+        //     else
+        //     {
+        //         //   AudioManager.instance.Stop(ESoundType.TorchIdle) ;
+        //         _isPikedTorch = false;
+        //         StartCoroutine(TorchTurnOff());
+        //         TorchScript[CurrentPlayerModelIndex].TurnOffLight();
+        //     }
+        // }
 
-        public IEnumerator TorchTurnOff()
-        {
-            yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
-            IsTorchVisibility = false;
-        }
-        private void FlashToggle(){
+        // public IEnumerator TorchTurnOff()
+        // {
+        //     yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
+        //     IsTorchVisibility = false;
+        // }
+        // private void FlashToggle(){
         // {
         //     if (IsTorchVisibility && _isPikedTorch) return;
 
@@ -652,13 +646,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         //         StartCoroutine(FlashTurnOff());
         //        
         //     }
-        }
-        public IEnumerator FlashTurnOff()
-        {
-            //   AudioManager.instance.PlaySound(ESoundType.FlashOff);
-            yield return 1f;
-            IsFlashVisibility = false;
-        }
+        //}
+        // public IEnumerator FlashTurnOff()
+        // {
+        //     //   AudioManager.instance.PlaySound(ESoundType.FlashOff);
+        //     yield return 1f;
+        //     IsFlashVisibility = false;
+        // }
         #endregion
 
         #region Network Porperty Changed Events...
@@ -766,6 +760,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             playerNickname.text = pTag;
         }
         
+        public Animator GetAnimator(){
+             return animator;
+        }
         public int GetJobIndex()
         {
             return (int)job;

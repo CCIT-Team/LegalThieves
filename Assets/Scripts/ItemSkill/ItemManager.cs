@@ -1,5 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+
+using Fusion;
 using UnityEngine;
 
 
@@ -11,25 +11,45 @@ public enum EItemType
     Count
 }
 
-public class ItemManager : MonoBehaviour
+public class ItemManager : NetworkBehaviour
 {
     public static ItemManager Instance;
 
-    void Awake(){
-        if (Instance == null)
+    [SerializeField] public ItemBase[] items;
+    [SerializeField] private Sprite[] itemSprites;
+    
+    public override void Spawned()
         {
-            Instance = this;
-        }
-        else { Destroy(gameObject); }
-    }
-    [SerializeField] public ItemBase[] Items;
-    [SerializeField] private EItemType currentItem = EItemType.Empty;
+            if (!HasStateAuthority)
+                return;
 
+            //SpawnAllRelics();
+        }
+        
+    private void Start()
+        {
+            if (Instance == null)
+                Instance = this;
+            else
+                Destroy(this);
+        }
     public ItemBase GetItemClass(int itemIndex)
     {
-        return Items[itemIndex];
+        return items[itemIndex];
     }
 
-   
+    public int GetItemID(int index)
+    {
+        return items[index].ID;
+    }
+
+    public Sprite GetItemSprite(int index)
+    {
+        return items[index].itemIcon;
+    }
+    public string GetItemName(int index)
+    {
+        return items[index].itemName;
+    }
 }
 

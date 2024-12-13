@@ -4,26 +4,40 @@ using UnityEngine;
 
 public class Item_Flash_Temp : ItemBase
 {
-    bool isOn;
     [SerializeField] GameObject flashLight;
+    [SerializeField] GameObject flashRenderObject;
+    void Start()
+    {
+        ID = (int)EItemType.Flashlight;
+        animator = PlayerCharacter.Local.GetAnimator();
+    }
 
     #region ItemBaseLogic
     public override void UseItem()
     {
-       TurnOnOffLight();
+        TurnOnOffLight();
     }
-    public override void EquipItem() {
+    public override void EquipItem()
+    {
+        flashRenderObject.SetActive(true);
         
-        //FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
     }
-    public override void UnequipItem() { }
+    public override void UnequipItem() { 
+         flashRenderObject.SetActive(false);
+    }
     #endregion
 
     public void TurnOnOffLight()
     {
-        if (isOn)
+        IsActivity = !IsActivity;
+        if (IsActivity)
+        {
             flashLight.SetActive(true);
+        }
         else
+        {
             flashLight.SetActive(false);
+        }
     }
+
 }

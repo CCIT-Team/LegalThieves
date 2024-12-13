@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ItemSkillInventoryUI : MonoBehaviour
 {
@@ -29,19 +30,20 @@ public class ItemSkillInventoryUI : MonoBehaviour
         _prevIndex = index;
     }
     
-    public void SetRelicSprite(int index, int relicIndex)
+    public void SetRelicSprite(int index, int itemIndex)
     {
-        // if (relicIndex == -1)
-        // {
-        //     slots[index].transform.GetChild(2).GetComponent<Image>().enabled = false;
-        //     return;
-        // }
+        if (itemIndex == -1)
+        {
+            slots[index].transform.GetChild(2).GetComponent<Image>().enabled = false;
+            return;
+        }
 
-        // var slotImage = slots[index].transform.GetChild(2).GetComponent<Image>();
-        // slotImage.sprite = ItemSkillManager.Instance.GetRelicSprite(RelicManager.Instance.GetRelicData(relicIndex).GetRelicType(),
-        //                                                         RelicManager.Instance.GetRelicData(relicIndex).GetTypeIndex());
-        // slotImage.enabled = true;
+        var slotImage = slots[index].transform.GetChild(2).GetComponent<Image>();
+        slotImage.sprite = ItemManager.Instance.GetItemSprite(itemIndex);
+                                                                
+        slotImage.enabled = true;
     }
-
+   
+        
 
 }

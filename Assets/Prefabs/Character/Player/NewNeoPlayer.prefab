@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4847043816286522404}
   - component: {fileID: 1812617601711276161}
   - component: {fileID: 8105282239732789082}
+  - component: {fileID: 7157260663512578046}
   m_Layer: 0
   m_Name: NewNeoPlayer
   m_TagString: Player
@@ -184,6 +185,7 @@ MonoBehaviour:
   playerNickname: {fileID: 1733365668557654993}
   playerInteraction: {fileID: 1812617601711276161}
   skinnedMeshRenderer: {fileID: 232860714394124931}
+  itemController: {fileID: 7157260663512578046}
   maxPitch: 90
   lookSensitivity: 0.15
   jumpImpulse: {x: 0, y: 5, z: 0}
@@ -207,8 +209,11 @@ MonoBehaviour:
   - {fileID: 8824813004659984918}
   _Index: 0
   _IsScholar: 0
-  _Inventory: 
+  _RelicInventory: 
+  _ItemSkillInventory: 
+  _inventoryRelicCount: 0
   slotIndex: 0
+  itemSkillSlotIndex: 0
 --- !u!114 &1812617601711276161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,6 +239,20 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 854763091732172352}
   m_Enabled: 0
+--- !u!114 &7157260663512578046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854763091732172352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 330c3ef192c6662498b3a918caee3a68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsVisible: 0
+  IsActive: 0
 --- !u!1 &1842736392495960237
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,7 +630,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3490e38ee6da56248bd7da9fb66eaac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: 0
+  itemName: 
+  itemIcon: {fileID: 0}
+  IsVisiblity: 0
+  IsActivity: 0
+  itemSFX: {fileID: 0}
+  animator: {fileID: 0}
   flashLight: {fileID: 7315722622864873105}
+  flashRenderObject: {fileID: 0}
 --- !u!1 &7315722622864873105 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7161528025560346724, guid: 14ca628123104e346b7a33c23a92dce0, type: 3}
@@ -1845,7 +1872,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3490e38ee6da56248bd7da9fb66eaac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: 0
+  itemName: 
+  itemIcon: {fileID: 0}
+  IsVisiblity: 0
+  IsActivity: 0
+  itemSFX: {fileID: 0}
+  animator: {fileID: 0}
   flashLight: {fileID: 4179941208098815597}
+  flashRenderObject: {fileID: 0}
 --- !u!114 &5829990415838313081 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 686993347717444720, guid: 14ca628123104e346b7a33c23a92dce0, type: 3}
@@ -2056,7 +2091,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3490e38ee6da56248bd7da9fb66eaac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: 0
+  itemName: 
+  itemIcon: {fileID: 0}
+  IsVisiblity: 0
+  IsActivity: 0
+  itemSFX: {fileID: 0}
+  animator: {fileID: 0}
   flashLight: {fileID: 0}
+  flashRenderObject: {fileID: 0}
 --- !u!114 &8824813004659984918 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 686993347717444720, guid: 14ca628123104e346b7a33c23a92dce0, type: 3}

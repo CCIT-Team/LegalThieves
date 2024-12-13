@@ -7,14 +7,30 @@ using UnityEngine;
 public class PlayerItemController : MonoBehaviour
 {
     ItemBase currentItem;
-    Animator animator;
+
     public void UseItem(){
+        if(currentItem == null) return;
+        Debug.Log(currentItem.name);
         currentItem.UseItem();
     }
      public void EquipItem(int itemIndex) {
+        if (itemIndex==-1) 
+        {
+         currentItem.UnequipItem(); 
+         currentItem = null;
+        }
+        else
+        {
         currentItem = ItemManager.Instance.GetItemClass(itemIndex);
         currentItem.EquipItem();
+        }
+
     }
     public void UnequipItem() { 
         currentItem.UnequipItem(); }
+
+    public void ConsumingItems(){
+           currentItem = null;
+    }
+
 }
