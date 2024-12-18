@@ -2,7 +2,6 @@
 using Fusion;
 using UnityEngine;
 
-
 public enum EItemType
 {
     Empty = -1,
@@ -11,20 +10,20 @@ public enum EItemType
     Count
 }
 
-public class ItemManager : NetworkBehaviour
+public class ItemManager : MonoBehaviour
 {
     public static ItemManager Instance;
 
-    [SerializeField] public ItemBase[] items;
+    public ItemBase[] items;
     [SerializeField] private Sprite[] itemSprites;
     
-    public override void Spawned()
-        {
-            if (!HasStateAuthority)
-                return;
+    // public override void Spawned()
+    //     {
+    //         if (!HasStateAuthority)
+    //             return;
 
-            //SpawnAllRelics();
-        }
+    //         //SpawnAllRelics();
+    //     }
         
     private void Start()
         {
@@ -33,6 +32,7 @@ public class ItemManager : NetworkBehaviour
             else
                 Destroy(this);
         }
+
     public ItemBase GetItemClass(int itemIndex)
     {
         return items[itemIndex];

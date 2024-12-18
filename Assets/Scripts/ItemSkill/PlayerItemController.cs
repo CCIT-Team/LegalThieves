@@ -27,8 +27,9 @@ public class PlayerItemController : MonoBehaviour
 
     }
     public void UnequipItem() { 
-        currentItem.UnequipItem(); }
-
+        currentItem.UnequipItem(); 
+        }
+    
     public void ConsumingItems(){
            currentItem = null;
     }

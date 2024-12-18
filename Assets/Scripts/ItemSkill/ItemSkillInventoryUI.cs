@@ -43,7 +43,4 @@ public class ItemSkillInventoryUI : MonoBehaviour
                                                                 
         slotImage.enabled = true;
     }
-   
-        
-
 }
