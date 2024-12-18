@@ -12,17 +12,16 @@ public class Item_Torch_Temp : ItemBase
 
     void Start()
     {
-        ID = (int)EItemType.Torch;
-        animator = PlayerCharacter.Local.GetAnimator();
+        ID = (int)EItemType.Torch;    
     }
  #region ItemBaseLogic
-    public override void UseItem()
+    public override void UseItem(Animator animator)
     {
         TurnOnLight();
     }
 
-    public override void EquipItem() { TurnOffLight(); }
-    public override void UnequipItem() { }
+    public override void EquipItem(Animator animator) { TurnOffLight(); }
+    public override void UnequipItem(Animator animator) { }
     #endregion
     public void TurnOnLight()
     {

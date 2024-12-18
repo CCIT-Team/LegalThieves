@@ -9,20 +9,20 @@ public class Item_Flash_Temp : ItemBase
     void Start()
     {
         ID = (int)EItemType.Flashlight;
-        animator = PlayerCharacter.Local.GetAnimator();
     }
 
     #region ItemBaseLogic
-    public override void UseItem()
+    public override void UseItem(Animator animator)
     {
         TurnOnOffLight();
     }
-    public override void EquipItem()
+    public override void EquipItem(Animator animator)
     {
         flashRenderObject.SetActive(true);
         
     }
-    public override void UnequipItem() { 
+    public override void UnequipItem(Animator animator)
+     { 
          flashRenderObject.SetActive(false);
     }
     #endregion

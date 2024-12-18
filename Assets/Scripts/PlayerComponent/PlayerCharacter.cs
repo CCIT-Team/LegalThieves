@@ -16,7 +16,7 @@ using UIManager = New_Neo_LT.Scripts.UI.UIManager;
 using UnityEngine.InputSystem;
 using System.Runtime.CompilerServices;
 
-public enum Job { Null = -1, Archaeologist, Linguist , BusinessCultist , Shamanist, max }
+public enum Job { Null = -1, Archaeologist, Linguist, BusinessCultist, Shamanist, max }
 
 namespace New_Neo_LT.Scripts.PlayerComponent
 {
@@ -24,49 +24,49 @@ namespace New_Neo_LT.Scripts.PlayerComponent
     public class PlayerCharacter : Character
     {
         [Header("Player Components")]
-        [SerializeField] private Transform              camTarget;
-        [SerializeField] private TMP_Text               playerNickname;
-        [SerializeField] private PlayerInteraction      playerInteraction;
-        [SerializeField] private SkinnedMeshRenderer    skinnedMeshRenderer;
-        [SerializeField] private PlayerItemController   itemController;
+        [SerializeField] private Transform camTarget;
+        [SerializeField] private TMP_Text playerNickname;
+        [SerializeField] private PlayerInteraction playerInteraction;
+        [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
+        [SerializeField] private PlayerItemController itemController;
 
         [Space, Header("Player Setup")]
         [Range(-90, 90)]
-        [SerializeField] private float                  maxPitch         = 85f; 
-        [SerializeField] private float                  lookSensitivity  = 0.15f;
-        [SerializeField] private Vector3                jumpImpulse      = new(0f, 5f, 0f);
-        [SerializeField] private float                  interactionRange = 5f;
+        [SerializeField] private float maxPitch = 85f;
+        [SerializeField] private float lookSensitivity = 0.15f;
+        [SerializeField] private Vector3 jumpImpulse = new(0f, 5f, 0f);
+        [SerializeField] private float interactionRange = 5f;
 
         [Header("Slow Setup")]
-        [SerializeField] private float slowDuration = 0.5f;  
+        [SerializeField] private float slowDuration = 0.5f;
         [SerializeField] private float slowScale = 0.2f; // default = 1
         private float slowMultiplier = 1f;
-        private Coroutine slowCoroutine; 
-  
+        private Coroutine slowCoroutine;
+
         [Space, Header("Player Models")]
-        [SerializeField] private GameObject[]           playerModels;
+        [SerializeField] private GameObject[] playerModels;
         [SerializeField] private Item_Torch_Temp[] TorchScript;
         [SerializeField] private Item_Flash_Temp[] FlashScript;
 
 
-        [Networked, OnChangedRender(nameof(OnRefChanged))] 
-        public PlayerRef          Ref        { get; set; }
-        [Networked] 
-        public byte               Index      { get; set; }
-        
+        [Networked, OnChangedRender(nameof(OnRefChanged))]
+        public PlayerRef Ref { get; set; }
+        [Networked]
+        public byte Index { get; set; }
+
         [Networked, OnChangedRender(nameof(OnColorChanged))]
-        private int               PlayerColor { get; set; }
-        [Networked, OnChangedRender(nameof(OnCurrentPlayerModelIndexChanged))] 
-        private int               CurrentPlayerModelIndex { get; set; }
+        private int PlayerColor { get; set; }
+        [Networked, OnChangedRender(nameof(OnCurrentPlayerModelIndexChanged))]
+        private int CurrentPlayerModelIndex { get; set; }
 
         [Networked, OnChangedRender(nameof(OnPlayerJobChanged))]
         Job job { get; set; }
         [Networked]
-        public bool               IsScholar { get; set; }
+        public bool IsScholar { get; set; }
         [Networked, OnChangedRender(nameof(OnPointChanged))]
-        private int               RenownPoint { get; set; }
+        private int RenownPoint { get; set; }
         [Networked, OnChangedRender(nameof(OnPointChanged))]
-        private int               GoldPoint { get; set; }
+        private int GoldPoint { get; set; }
 
         [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))]
         public NetworkArray<int> RelicInventory => default;
@@ -91,44 +91,43 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private bool IsFlashVisibility { get; set; }
 
         private bool canPickItem;
-         
-      
-        [Networked] 
-        private float             CrouchSync { get; set; } = 1f;
-        
-     
-        private NetworkButtons    _previousButtons;
-        private Vector2           _accumulatedMouseDelta;
-        
-        [Networked, Capacity(24), OnChangedRender(nameof(OnNicknameChanged))]
-        private string            Nickname { get => default; set { }}
 
-        private bool              _isSprinting;
-        
-        private bool              CanJump   => kcc.FixedData.IsGrounded;
-        private bool              CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
+        [Networked]
+        private float CrouchSync { get; set; } = 1f;
+
+
+        private NetworkButtons _previousButtons;
+        private Vector2 _accumulatedMouseDelta;
+
+        [Networked, Capacity(24), OnChangedRender(nameof(OnNicknameChanged))]
+        private string Nickname { get => default; set { } }
+
+        private bool _isSprinting;
+
+        private bool CanJump => kcc.FixedData.IsGrounded;
+        private bool CanSprint => kcc.FixedData.IsGrounded && characterStats.CurrentStamina > 0;
 
         public int GetGoldPoint => GoldPoint;
         public int GetRenownPoint => RenownPoint;
 
-      
+
         [SerializeField] private int slotIndex = 0;
-        
-        [SerializeField] private int itemSkillSlotIndex= 0;
-        private RaycastHit      _rayCastHit;
-        
+
+        [SerializeField] private int itemSkillSlotIndex = 0;
+        private RaycastHit _rayCastHit;
+
         public static PlayerCharacter Local { get; set; }
 
         #region Animation Hashes...
 
-        private static readonly int AnimMoveDirX      = Animator.StringToHash("MoveDirX");
-        private static readonly int AnimMoveDirY      = Animator.StringToHash("MoveDirY");
-        private static readonly int AnimIsCrouchSync  = Animator.StringToHash("IsCrouchSync");
-        private static readonly int AnimLookPit       = Animator.StringToHash("LookPit");
-        private static readonly int AnimJumpTrigger   = Animator.StringToHash("Jump");
-        private static readonly int AnimSnapGround    = Animator.StringToHash("SnapGround");
-        private static readonly int AnimPickTorch     = Animator.StringToHash("pickTorch");
-        private static readonly int AnimPickFlash     = Animator.StringToHash("pickFlash");
+        private static readonly int AnimMoveDirX = Animator.StringToHash("MoveDirX");
+        private static readonly int AnimMoveDirY = Animator.StringToHash("MoveDirY");
+        private static readonly int AnimIsCrouchSync = Animator.StringToHash("IsCrouchSync");
+        private static readonly int AnimLookPit = Animator.StringToHash("LookPit");
+        private static readonly int AnimJumpTrigger = Animator.StringToHash("Jump");
+        private static readonly int AnimSnapGround = Animator.StringToHash("SnapGround");
+        private static readonly int AnimPickTorch = Animator.StringToHash("pickTorch");
+        private static readonly int AnimPickFlash = Animator.StringToHash("pickFlash");
         #endregion
 
         /*------------------------------------------------------------------------------------------------------------*/
@@ -138,8 +137,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void Start()
         {
             Client_InitPlayerModel(CurrentPlayerModelIndex);
-            
-            if(Nickname != null)
+
+            if (Nickname != null)
                 SetPlayerTag(Nickname);
         }
 
@@ -157,11 +156,15 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 IsScholar = playerIndex % 2 != 0;
                 job = Job.Null;
 
-                for (var i = 0; i < RelicInventory.Length;i++)
+                for (var i = 0; i < RelicInventory.Length; i++)
                 {
                     RelicInventory.Set(i, -1);
                 }
-
+                for (var i = 0; i < ItemSkillInventory.Length; i++)
+                {
+                    ItemSkillInventory.Set(i, -1);
+                }
+                ItemSkillInventory.Set(1, 1);
                 if (PlayerRegistry.Instance != null && PlayerRegistry.Count >= 4)
                 {
                     for (int i = 0; i < NewGameManager.Instance.ButtonStateArray.Length; i++)
@@ -180,46 +183,46 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
                 RPC_SetPlayerNickname(Runner.LocalPlayer, PlayerPrefs.GetString("Photon.Menu.Username"));
             }
-            
+
             UIManager.Instance.playerListController.PlayerJoined(this);
 
 
             InitializeCharacterComponents();
             InitializePlayerNetworkedProperties();
-            
+
             if (Object.HasInputAuthority)
             {
                 UIManager.Instance.compassRotate.SetPlayerTransform(transform);
                 UIManager.Instance.stateLoadingUI.SetYPos();
                 UIManager.Instance.jobChangerUI.gameObject.SetActive(true);
-                UIManager.Instance.jobChangerUI.JobChangerOpen(Object.InputAuthority,NewGameManager.Instance.ButtonStateArray.ToArray());
+                UIManager.Instance.jobChangerUI.JobChangerOpen(Object.InputAuthority, NewGameManager.Instance.ButtonStateArray.ToArray());
             }
         }
-        
+
         public override void FixedUpdateNetwork()
         {
             base.FixedUpdateNetwork();
-            
+
             // Process Player Input
-            if(GetInput(out NetInput playerInput))
+            if (GetInput(out NetInput playerInput))
                 SetPlayerInput(playerInput);
         }
-        
+
         public override void Render()
         {
             // Update Player facing direction
             // if(kcc.Settings.ForcePredictedLookRotation) // 화면 끊김 발생해서 뺌
             kcc.SetLookRotation(kcc.GetLookRotation() + _accumulatedMouseDelta * lookSensitivity);
             camTarget.localRotation = Quaternion.Euler(kcc.GetLookRotation().x, 0f, 0f);
-            
-            if(kcc.FixedData.IsSnappingToGround)
+
+            if (kcc.FixedData.IsSnappingToGround)
                 animator.SetTrigger(AnimSnapGround);
-            
+
             var moveVelocity = GetAnimationMoveVelocity();
-            animator.SetFloat(AnimMoveDirX    , moveVelocity.x, 0.05f, Time.deltaTime);
-            animator.SetFloat(AnimMoveDirY    , moveVelocity.z * 2, 0.05f, Time.deltaTime);
+            animator.SetFloat(AnimMoveDirX, moveVelocity.x, 0.05f, Time.deltaTime);
+            animator.SetFloat(AnimMoveDirY, moveVelocity.z * 2, 0.05f, Time.deltaTime);
             animator.SetFloat(AnimIsCrouchSync, CrouchSync);
-            animator.SetFloat(AnimLookPit     , kcc.FixedData.LookPitch * -0.01f);
+            animator.SetFloat(AnimLookPit, kcc.FixedData.LookPitch * -0.01f);
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
@@ -243,22 +246,22 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             skinnedMeshRenderer ??= GetComponentInChildren<SkinnedMeshRenderer>();
         }
-        
+
         public void SetPlayerName(string playerName)
         {
             Nickname = playerName;
         }
-        
+
         public string GetPlayerName()
         {
             return Nickname;
         }
-        
+
         private void OnNicknameChanged()
         {
             SetPlayerTag(Nickname);
         }
-        
+
         public void Server_Init(PlayerRef pRef, byte index)
         {
             Debug.Assert(Runner.IsServer);
@@ -266,21 +269,21 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             Ref = pRef;
             Index = index;
         }
-        
+
         #region Player Input Methods...
-        
+
         // Player Input to player character state
         private void SetPlayerInput(NetInput playerInput)
         {
             // 수정된 입력값으로 움직임 적용
             kcc.SetInputDirection(kcc.FixedData.TransformRotation * (playerInput.Direction.X0Y() * slowMultiplier));
-            
+
             // Set face direction by mouse pointer position delta
             kcc.AddLookRotation(playerInput.LookDelta * lookSensitivity, -maxPitch, maxPitch);
-            
+
             // Set Camera target Rotation
             //camTarget.rotation = Quaternion.Euler(kcc.GetLookRotation().x, 0f, 0f);
-            
+
             // Set behavior by mouse click input
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Attack1))
                 OnMouseLeftClick();
@@ -291,7 +294,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.WheellDown))
                 OnMouseWheelDown();
 
-            
+
             // Set behavior by Keyboard input
             // Sprint
             SprintToggle(playerInput);
@@ -318,7 +321,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             //throwRelic
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction5))
                 ThrowRelic();
-                //slot
+            //slot
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot1))
                 SelectItemSkillSlot(0);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot2))
@@ -331,7 +334,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 SelectItemSkillSlot(4);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
                 SelectItemSkillSlot(5);
-      
+
 
             // Previous Buttons for comparison
             _previousButtons = playerInput.Buttons;
@@ -346,7 +349,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             kcc.Jump(jumpImpulse);
             animator.SetTrigger(AnimJumpTrigger);
         }
-        
+
         private Vector3 GetAnimationMoveVelocity()
         {
             if (kcc.Data.RealSpeed < 0.01f)
@@ -390,7 +393,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 _isSprinting = true;
                 kcc.AddModifier(kccProcessors[1]);
             }
-            if(input.Buttons.WasReleased(_previousButtons, EInputButton.Sprint) && _isSprinting)
+            if (input.Buttons.WasReleased(_previousButtons, EInputButton.Sprint) && _isSprinting)
             {
                 _isSprinting = false;
                 kcc.RemoveModifier(kccProcessors[1]);
@@ -398,17 +401,17 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
 
         #endregion
-        
+
         #region Interaction Methods...
 
         private void OnMouseLeftClick()
         {
             // 현재 들고있는 아이템에 따라 바뀜 아이템 클래스 구현 후 추가 예정
-            if(!HasInputAuthority)return;
+            if (!HasInputAuthority) return;
 
             itemController.UseItem();
         }
-        
+
         private void OnMouseRightClick()
         {
             // 현재 들고있는 아이템에 따라 바뀜 아이템 클래스 구현 후 추가 예정
@@ -426,11 +429,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void OnMouseWheelUp()
         {
             SelectRelicSlot(slotIndex - 1 < 0 ? 0 : slotIndex - 1);
-          
+
         }
         private void OnMouseWheelDown()
         {
-       
+
             SelectRelicSlot(slotIndex + 1 > 9 ? 9 : slotIndex + 1);
         }
 
@@ -443,7 +446,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void SelectRelicSlot(int index)
         {
             if (!HasInputAuthority) return;
-            
+
             // RPC를 통해 서버에 요청
             RPC_SelectRelicSlot(index);
         }
@@ -451,43 +454,43 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void SelectItemSkillSlot(int index)
         {
             if (!HasInputAuthority) return;
-            
+
             // RPC를 통해 서버에 요청
             RPC_SelectItemSkillSlot(index);
         }
 
-      
+
         public bool GetRelic(int relicId)
         {
-            
+
             // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
             if (RelicInventory[slotIndex] == -1)
             {
                 ApplySlow();
                 RelicInventory.Set(slotIndex, relicId);
-      
+
                 return true;
             }
 
             // 빈 슬롯을 찾아 아이템 추가
             for (var i = 0; i < RelicInventory.Length; i++)
             {
-                if (RelicInventory[i] != -1) 
+                if (RelicInventory[i] != -1)
                     continue;
                 ApplySlow();
                 RelicInventory.Set(i, relicId);
                 return true;
             }
-            
+
             return false;
         }
 
-       
+
         public void ApplySlow()
-        { 
+        {
             if (slowCoroutine != null)
                 StopCoroutine(slowCoroutine);
-                    
+
             slowCoroutine = StartCoroutine(SlowRoutine());
         }
 
@@ -498,7 +501,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             yield return new WaitForSeconds(slowDuration);
 
             slowMultiplier = 1f;
-    
+
             slowCoroutine = null;
 
         }
@@ -523,7 +526,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             if (RelicInventory[index] == -1)
                 return null;
-            
+
             var relic = RelicManager.Instance.GetRelicData(RelicInventory[index]);
             RelicInventory.Set(index, -1);
             return relic;
@@ -536,7 +539,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 UIManager.Instance.inventorySlotController.SetRelicSprite(index, relicId);
             }
         }
-        
+
         public Transform GetCamTarget()
         {
             return camTarget;
@@ -551,10 +554,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             }
             UIManager.Instance.inventorySlotController.SetBagSprite(inventoryRelicCount);
         }
-        
+
         public void OnInventoryChanged(NetworkBehaviourBuffer previous)
         {
-            if(!HasInputAuthority)
+            if (!HasInputAuthority)
                 return;
             for (var i = 0; i < 10; i++)
             {
@@ -566,8 +569,15 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             UIManager.Instance.RelicScanUI.SetUIPoint(-1);
             UIManager.Instance.shopController.SetLocalPlayerInventory(RelicInventory.ToArray());
         }
-        public void OnSkillItemInventoryChanged(){
-
+        public void OnSkillItemInventoryChanged()
+        {
+            if (!HasInputAuthority)
+                return;
+            for (var i = 0; i < 10; i++)
+            {
+                UIManager.Instance.itemSkillInventoryUI.SetRelicSprite(i,ItemSkillInventory[i]);
+            }
+            
         }
         public void SetPlayerColor(int index) => PlayerColor = index;
         public int GetPlayerColor() => PlayerColor;
@@ -577,12 +587,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             skinnedMeshRenderer.materials[1] = NewGameManager.Instance.playerClothMaterials[PlayerColor];
             skinnedMeshRenderer.materials[4] = NewGameManager.Instance.playerHairMaterials[PlayerColor];
         }
-        
-       
+
+
         public void ChangeJob(Job newJob)
         {
             job = newJob;
-           
+
             switch (job)
             {
                 case Job.Archaeologist:
@@ -601,7 +611,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         #endregion
         #region Item Methods...
 
-       
+
         // private void TorchToggle()
         // {
         //     if (IsFlashVisibility && _isPikedFlash) return;
@@ -660,9 +670,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void OnPlayerJobChanged()
         {
             UIManager.Instance.playerListController.UpdatePlayerPointType(Index, IsScholar);
-            
+
         }
-        
+
         private void OnPointChanged()
         {
             UIManager.Instance.playerListController.UpdatePlayerScore(Index, IsScholar, GoldPoint, RenownPoint);
@@ -670,12 +680,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void OnRefChanged()
         {
-            
+
         }
         void OnTorchChanged()
         {
             animator.SetBool(AnimPickTorch, _isPikedTorch);
-           
+
         }
         private void OnTorchStateChanged()
         {
@@ -698,7 +708,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             GoldPoint += point;
         }
-        
+
         public void AddRenownPoint(int point)
         {
             RenownPoint += point;
@@ -714,17 +724,17 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 mesh.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
             }
         }
-        
+
         private void OnCurrentPlayerModelIndexChanged(NetworkBehaviourBuffer previous)
         {
             // 변경 이전 모델 비활성화
             var prevValue = GetPropertyReader<int>(nameof(CurrentPlayerModelIndex)).Read(previous);
             playerModels[prevValue].SetActive(false);
-            
+
             // 변경 이후 모델 활성화
             var newModel = playerModels[CurrentPlayerModelIndex];
             newModel.SetActive(true);
-            
+
             // 애니메이터를 변경된 모델의 애니메이터로 변경
             animator = newModel.GetComponent<Animator>();
         }
@@ -733,12 +743,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             var prev = playerModels[CurrentPlayerModelIndex];
             var curr = playerModels[index];
-            
+
             prev.SetActive(false);
             curr.SetActive(true);
-            
+
             animator = curr.GetComponent<Animator>();
-            
+            itemController.SetItemAnimator(animator);
             CurrentPlayerModelIndex = index;
         }
 
@@ -746,22 +756,23 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             var prev = playerModels[0];
             var curr = playerModels[index];
-            
+
             prev.SetActive(false);
             curr.SetActive(true);
-            
+            itemController.SetItemAnimator(animator);
             animator = curr.GetComponent<Animator>();
-            
+
             CurrentPlayerModelIndex = index;
         }
-        
+
         public void SetPlayerTag(string pTag)
         {
             playerNickname.text = pTag;
         }
-        
-        public Animator GetAnimator(){
-             return animator;
+
+        public Animator GetAnimator()
+        {
+            return animator;
         }
         public int GetJobIndex()
         {
@@ -777,31 +788,31 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Networked]
         private NetworkBool Ready { get; set; } = false;
         public bool IsReady => Ready;
-        
+
         public void SetReady(bool ready)
         {
             Ready = ready;
-            
-            if(!HasStateAuthority)
+
+            if (!HasStateAuthority)
                 return;
-            
+
             NewGameManager.Instance.StartGame();
         }
 
         #region RPC Methods...
-        
+
         [Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]
         public void RPC_SetPlayerNickname(PlayerRef player, string nickname)
         {
             var playerCharacter = PlayerRegistry.GetPlayer(player);
             playerCharacter.SetPlayerName(nickname);
         }
-        
+
         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         private void RPC_SelectRelicSlot(int index)
         {
             slotIndex = index;
-          
+
             if (HasInputAuthority)
             {
                 UIManager.Instance.inventorySlotController.SelectToggle(index);
@@ -809,7 +820,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             }
         }
 
-         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         private void RPC_SelectItemSkillSlot(int index)
         {
             itemSkillSlotIndex = index;
