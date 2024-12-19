@@ -30,22 +30,23 @@ public class PlayerItemController : MonoBehaviour
         else
         {
             currentItem = ItemManager.Instance.GetItemClass(itemIndex);
+          
             currentItem.IsVisiblity = true;
                   Debug.Log("equip");
             currentItem.EquipItem(animator);
         }
-
     }
     public void UnequipItem(Animator animator)
     {
         currentItem.UnequipItem(animator);
         currentItem.IsVisiblity = false;
+        
     }
     public void ConsumingItems()
     {
         currentItem = null;
     }
-     public void SetHolder(int index){
+    public void SetHolder(int index){
         currentItemHolder = itemHolders[index];
         ItemGroup.transform.parent = currentItemHolder;
         ItemGroup.transform.transform.position=Vector3.zero;

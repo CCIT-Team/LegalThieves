@@ -577,7 +577,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (!HasInputAuthority)
                 return;
                 
-                UIManager.Instance.itemSkillInventoryUI.SetRelicSprite(itemSkillSlotIndex,ItemSkillInventory[itemSkillSlotIndex]);
+                UIManager.Instance.itemSkillInventoryUI.SetItemSprite(itemSkillSlotIndex,ItemSkillInventory[itemSkillSlotIndex]);
                         
         }
         public void SetPlayerColor(int index) => PlayerColor = index;

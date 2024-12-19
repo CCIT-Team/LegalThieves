@@ -25,7 +25,7 @@ public class ItemSkillInventoryUI : MonoBehaviour
         _prevIndex = index;
     }
     
-    public void SetRelicSprite(int index, int itemIndex)
+    public void SetItemSprite(int index, int itemIndex)
     {
         if (itemIndex == -1)
         {

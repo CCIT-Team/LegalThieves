@@ -6,7 +6,7 @@ using UnityEngine.XR;
 public class Item_Flash_Temp : ItemBase
 {
     [SerializeField] GameObject flashLight;
-    [SerializeField] GameObject flashRenderObject;
+   
     void Start()
     {
         ID = (int)EItemType.Flashlight;
@@ -20,12 +20,12 @@ public class Item_Flash_Temp : ItemBase
     }
     public override void EquipItem(Animator animator)
     {
-        flashRenderObject.SetActive(true);
+        gameObject.SetActive(false); 
         
     }
     public override void UnequipItem(Animator animator)
      { 
-         flashRenderObject.SetActive(false);
+        gameObject.SetActive(true); 
     }
     #endregion
 

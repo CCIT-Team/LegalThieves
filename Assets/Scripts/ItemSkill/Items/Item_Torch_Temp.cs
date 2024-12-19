@@ -10,41 +10,50 @@ public class Item_Torch_Temp : ItemBase
     [SerializeField] private ParticleSystem[] torchParticleSystems;
     [SerializeField] private Light torchLight;
 
+    Coroutine torchCoroutine ;
+
     void Start()
     {
-        ID = (int)EItemType.Torch;    
+        ID = (int)EItemType.Torch;
     }
- #region ItemBaseLogic
+    #region ItemBaseLogic
     public override void UseItem(Animator animator)
     {
-        TurnOnLight();
+        Debug.Log("useitem");
+        TurnOnOffLight();
     }
 
-    public override void EquipItem(Animator animator) { TurnOffLight(); }
-    public override void UnequipItem(Animator animator) { }
+    public override void EquipItem(Animator animator) { gameObject.SetActive(true);}
+    public override void UnequipItem(Animator animator) {gameObject.SetActive(false); }
     #endregion
-    public void TurnOnLight()
+    public void TurnOnOffLight()
     {
-        StartCoroutine(ChangeLightIntensity(1f));
+        if (torchCoroutine !=null) return;
 
-        foreach (ParticleSystem p in torchParticleSystems)
+        IsActivity = !IsActivity;
+        if (IsActivity)
         {
-            var emission = p.emission;
-            emission.enabled = true;
+            torchCoroutine = StartCoroutine(ChangeLightIntensity(1f));
+
+            foreach (ParticleSystem p in torchParticleSystems)
+            {
+                var emission = p.emission;
+                emission.enabled = true;
+            }
+            //   AudioManager.instance.PlayTorchLoopSfx(true);
         }
-        //   AudioManager.instance.PlayTorchLoopSfx(true);
-    }
-
-    public void TurnOffLight()
-    {
-        StartCoroutine(ChangeLightIntensity(-1f));
-
-        foreach (ParticleSystem p in torchParticleSystems)
+        else
         {
-            var emission = p.emission;
-            emission.enabled = false;
+            StartCoroutine(ChangeLightIntensity(-1f));
+
+            foreach (ParticleSystem p in torchParticleSystems)
+            {
+                var emission = p.emission;
+                emission.enabled = false;
+            }
+            //  AudioManager.instance.PlayTorchLoopSfx(false);
         }
-        //  AudioManager.instance.PlayTorchLoopSfx(false);
+   
     }
 
     private IEnumerator ChangeLightIntensity(float delta)
@@ -61,6 +70,10 @@ public class Item_Torch_Temp : ItemBase
         {
             StartCoroutine(ChangeLightIntensity(delta));
         }
-        else StopCoroutine(ChangeLightIntensity(delta));
+        else {
+            StopCoroutine(ChangeLightIntensity(delta));
+            torchCoroutine = null;
+        }
+     
     }
 }
