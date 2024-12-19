@@ -65,6 +65,9 @@ public class AudioManager : MonoBehaviour
         if (mainSource == null)
             mainSource = Camera.main.GetComponent<AudioSource>();
 
+        if (BGMSource == null)
+            BGMSource = GetComponent<AudioSource>();
+
         //Init();
     }
 
@@ -99,10 +102,16 @@ public class AudioManager : MonoBehaviour
     public void PlayLoop(ESoundType soundType)
     {
         Debug.Log("LoopSet");
-        theme.PlayLoop(mainSource, soundType);
+        if (soundType == ESoundType.BGM)
+            theme.PlayLoop(BGMSource, soundType);
+        else
+            theme.PlayLoop(mainSource, soundType);
     }
     public void Stop(ESoundType soundType)
     {
-        theme.Stop(mainSource, soundType);
+        if (soundType == ESoundType.BGM)
+            theme.Stop(BGMSource, soundType);
+        else
+            theme.Stop(mainSource, soundType);
     }
 }
