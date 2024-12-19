@@ -16,13 +16,15 @@ public class PlayerItemController : NetworkBehaviour
     }
     public void UseItem(Animator animator)
     {
-        if (currentItem == null) return;
+        if (currentItem == null || currentItem.animationCoroutine != null) return;
 
         Debug.Log(currentItem.name);
         currentItem.UseItem(animator);
     }
     public void EquipItem(Animator animator, int itemIndex)
     {
+        if(currentItem != null && currentItem.animationCoroutine != null) return; //애니메이션 실행중?
+
         if ( itemIndex == -1)
         {
             if (currentItem == null) return;
@@ -33,11 +35,10 @@ public class PlayerItemController : NetworkBehaviour
         {
             currentItem = ItemGroup.GetItemClass(itemIndex);
             currentItem.IsVisiblity = true;
-                  Debug.Log("equip");
             currentItem.EquipItem(animator);
         }
     }
-    public void UnequipItem(Animator animator)
+    public void UnEquipItem(Animator animator)
     {
         currentItem.UnequipItem(animator);
         currentItem.IsVisiblity = false;

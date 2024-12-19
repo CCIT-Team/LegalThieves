@@ -1,13 +1,11 @@
 
-using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
-using UnityEngine.XR;
-
+using System.Collections;
 public class Item_Flash_Temp : ItemBase
 {
     [SerializeField] GameObject flashLight;
     [SerializeField] GameObject flashObject;
-     void Start()
+    void Start()
     {
         ID = (int)EItemType.Flashlight;
     }
@@ -15,18 +13,20 @@ public class Item_Flash_Temp : ItemBase
     #region ItemBaseLogic
     public override void UseItem(Animator animator)
     {
-        Debug.Log("useitem");
+
         TurnOnOffLight();
-        Debug.Log("0");
+
     }
     public override void EquipItem(Animator animator)
     {
-        flashObject.SetActive(true); 
-        
+        flashObject.SetActive(true);
+        animator.SetBool("pickFlash", true);
     }
     public override void UnequipItem(Animator animator)
-     { 
-        flashObject.SetActive(false); 
+    {
+
+        animator.SetBool("pickFlash", false);
+        animationCoroutine = StartCoroutine(FlashTurnOff(animator));
     }
     #endregion
 
@@ -39,9 +39,20 @@ public class Item_Flash_Temp : ItemBase
             flashLight.SetActive(true);
         }
         else
-        { 
+        {
             flashLight.SetActive(false);
         }
     }
 
+    private IEnumerator FlashTurnOff(Animator animator)
+    {
+        var animatorState = animator.GetCurrentAnimatorStateInfo(2);
+        if (animatorState.IsName("FlashUnequip"))
+        {
+            yield return new WaitForSeconds(1.0f);
+        }
+
+        flashObject.SetActive(false);
+        animationCoroutine = null;
+    }
 }

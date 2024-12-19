@@ -82,7 +82,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Networked, OnChangedRender(nameof(OnTorchStateChanged))]
         private bool IsTorchVisibility { get; set; }
 
-        [Networked, OnChangedRender(nameof(OnFlashChanged))]
+  
         private bool _isPikedFlash { get; set; }
 
 
@@ -623,57 +623,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         #region Item Methods...
 
 
-        // private void TorchToggle()
-        // {
-        //     if (IsFlashVisibility && _isPikedFlash) return;
-
-        //     if (!IsTorchVisibility)
-        //     {
-        //         _isPikedTorch = true;
-        //         IsTorchVisibility = true;
-        //         TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchVisibility);
-        //         //  AudioManager.instance.PlayLoop(ESoundType.TorchIdle);
-        //         TorchScript[CurrentPlayerModelIndex].TurnOnLight();
-        //     }
-        //     else
-        //     {
-        //         //   AudioManager.instance.Stop(ESoundType.TorchIdle) ;
-        //         _isPikedTorch = false;
-        //         StartCoroutine(TorchTurnOff());
-        //         TorchScript[CurrentPlayerModelIndex].TurnOffLight();
-        //     }
-        // }
-
-        // public IEnumerator TorchTurnOff()
-        // {
-        //     yield return 1f; // 이거 이상함 너무 빨리 꺼짐;
-        //     IsTorchVisibility = false;
-        // }
-        // private void FlashToggle(){
-        // {
-        //     if (IsTorchVisibility && _isPikedTorch) return;
-
-        //     if (!IsFlashVisibility)
-        //     {
-        //         //   AudioManager.instance.PlaySound(ESoundType.FlashOn);
-        //         _isPikedFlash = true;
-        //         IsFlashVisibility = true;
-        //         FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
-        // 
-        //     }
-        //     else
-        //     {
-        //         _isPikedFlash = false;
-        //         StartCoroutine(FlashTurnOff());
-        //        
-        //     }
-        //}
-        // public IEnumerator FlashTurnOff()
-        // {
-        //     //   AudioManager.instance.PlaySound(ESoundType.FlashOff);
-        //     yield return 1f;
-        //     IsFlashVisibility = false;
-        // }
+  
         #endregion
 
         #region Network Porperty Changed Events...
@@ -702,14 +652,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchVisibility);
         }
-        void OnFlashChanged()
-        {
-            animator.SetBool(AnimPickFlash, _isPikedFlash);
-        }
-        // private void OnFlashStateChanged()
-        // {
-        //     FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
-        // }
+    
 
         #endregion
 

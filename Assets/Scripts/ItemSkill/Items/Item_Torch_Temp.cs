@@ -58,7 +58,7 @@ public class Item_Torch_Temp : ItemBase
         }
    
     }
-
+    
     private IEnumerator ChangeLightIntensity(float delta)
     {
         torchLight.intensity += delta * lightIntensity / changingTime * Time.deltaTime;
@@ -79,4 +79,9 @@ public class Item_Torch_Temp : ItemBase
         }
      
     }
+    
+        
 }
+    
+
+       
