@@ -792,8 +792,7 @@ MonoBehaviour:
   - {fileID: 4346719546255222143}
   - {fileID: 5860940529227174088}
   - {fileID: 418295086968545828}
-  slotIndex: 
-  selectSlot: {fileID: 3951303761904098333}
+  selectSlot: {fileID: 2726138789017260641}
 --- !u!1 &1911991148859940066
 GameObject:
   m_ObjectHideFlags: 0
@@ -1007,6 +1006,42 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &2726138789017260641
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6714850698579091318}
+  m_Layer: 0
+  m_Name: SelectTogle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6714850698579091318
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2726138789017260641}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3791371014586172605}
+  m_Father: {fileID: 2688725441799895124}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 50}
+  m_SizeDelta: {x: 50, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2906446189867534919
 GameObject:
   m_ObjectHideFlags: 0
@@ -1260,7 +1295,7 @@ GameObject:
   - component: {fileID: 7257010743995177433}
   - component: {fileID: 780866959143392611}
   m_Layer: 0
-  m_Name: SelectTogle
+  m_Name: Togle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1273,16 +1308,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3951303761904098333}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2688725441799895124}
+  m_Father: {fileID: 6714850698579091318}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -25}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7257010743995177433
@@ -2142,11 +2177,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4638538921681227628}
-  - {fileID: 3791371014586172605}
   - {fileID: 467357587776053610}
   - {fileID: 6161855788683488438}
   - {fileID: 5606837686659156661}
   - {fileID: 7209269984003485628}
+  - {fileID: 6714850698579091318}
   m_Father: {fileID: 5297813820198535785}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

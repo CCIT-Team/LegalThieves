@@ -46,8 +46,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Space, Header("Player Models")]
         [SerializeField] private GameObject[] playerModels;
         [SerializeField] private Item_Torch_Temp[] TorchScript;
-        [SerializeField] private Item_Flash_Temp[] FlashScript;
-
+       
+    
 
         [Networked, OnChangedRender(nameof(OnRefChanged))]
         public PlayerRef Ref { get; set; }
@@ -73,6 +73,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         [Networked, Capacity(10), OnChangedRender(nameof(OnSkillItemInventoryChanged))]
         public NetworkArray<int> ItemSkillInventory => default;
+
         [Networked]
         public int inventoryRelicCount { get; set; }
 
@@ -87,7 +88,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private bool _isPikedFlash { get; set; }
 
 
-        [Networked, OnChangedRender(nameof(OnFlashStateChanged))]
+        // [Networked, OnChangedRender(nameof(OnFlashStateChanged))]
         private bool IsFlashVisibility { get; set; }
 
         private bool canPickItem;
@@ -114,6 +115,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private int slotIndex = 0;
 
         [SerializeField] private int itemSkillSlotIndex = 0;
+
+     
         private RaycastHit _rayCastHit;
 
         public static PlayerCharacter Local { get; set; }
@@ -164,7 +167,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 {
                     ItemSkillInventory.Set(i, -1);
                 }
-                ItemSkillInventory.Set(1, 1);
+                  ItemSkillInventory.Set(0, 1);
                 if (PlayerRegistry.Instance != null && PlayerRegistry.Count >= 4)
                 {
                     for (int i = 0; i < NewGameManager.Instance.ButtonStateArray.Length; i++)
@@ -406,10 +409,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void OnMouseLeftClick()
         {
-            // 현재 들고있는 아이템에 따라 바뀜 아이템 클래스 구현 후 추가 예정
+    
             if (!HasInputAuthority) return;
 
-            itemController.UseItem();
+            itemController.UseItem(animator);
         }
 
         private void OnMouseRightClick()
@@ -559,7 +562,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             if (!HasInputAuthority)
                 return;
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i <  RelicInventory.Length; i++)
             {
                 UIManager.Instance.inventorySlotController.SetRelicSprite(i, RelicInventory[i]);
             }
@@ -568,16 +571,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             UIManager.Instance.relicPriceUI.SetTotalPoint(RelicInventory.ToArray());
             UIManager.Instance.RelicScanUI.SetUIPoint(-1);
             UIManager.Instance.shopController.SetLocalPlayerInventory(RelicInventory.ToArray());
-        }
+        }//
         public void OnSkillItemInventoryChanged()
         {
             if (!HasInputAuthority)
                 return;
-            for (var i = 0; i < 10; i++)
-            {
-                UIManager.Instance.itemSkillInventoryUI.SetRelicSprite(i,ItemSkillInventory[i]);
-            }
-            
+                
+                UIManager.Instance.itemSkillInventoryUI.SetRelicSprite(itemSkillSlotIndex,ItemSkillInventory[itemSkillSlotIndex]);
+                        
         }
         public void SetPlayerColor(int index) => PlayerColor = index;
         public int GetPlayerColor() => PlayerColor;
@@ -695,10 +696,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             animator.SetBool(AnimPickFlash, _isPikedFlash);
         }
-        private void OnFlashStateChanged()
-        {
-            FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
-        }
+        // private void OnFlashStateChanged()
+        // {
+        //     FlashScript[CurrentPlayerModelIndex].gameObject.SetActive(IsFlashVisibility);
+        // }
 
         #endregion
 
@@ -748,7 +749,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             curr.SetActive(true);
 
             animator = curr.GetComponent<Animator>();
-            itemController.SetItemAnimator(animator);
+            itemController.SetHolder(index);
+        
             CurrentPlayerModelIndex = index;
         }
 
@@ -759,7 +761,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
             prev.SetActive(false);
             curr.SetActive(true);
-            itemController.SetItemAnimator(animator);
+      
             animator = curr.GetComponent<Animator>();
 
             CurrentPlayerModelIndex = index;
@@ -824,7 +826,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void RPC_SelectItemSkillSlot(int index)
         {
             itemSkillSlotIndex = index;
-            itemController.EquipItem(itemSkillSlotIndex);
+            itemController.EquipItem(animator, ItemSkillInventory[index]);
 
             if (HasInputAuthority)
             {
@@ -832,7 +834,6 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
             }
         }
-
         #endregion
     }
 }

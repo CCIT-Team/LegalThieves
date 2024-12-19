@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ItemSkillInventoryUI : MonoBehaviour
 {
     [SerializeField] private GameObject[] slots;
-    [SerializeField] private int[] slotIndex = new int[6];
+
     [SerializeField] private GameObject selectSlot;
     private int _prevIndex;
 
@@ -14,13 +14,7 @@ public class ItemSkillInventoryUI : MonoBehaviour
     void Start()
     {   
         //Initalize
-        for (int i = 0; i < slotIndex.Length; i++)
-        {
-            slotIndex[i] = -1;
-        }
-        slotIndex[1] = 0;
         SelectToggle(0);
-        
     }
 
     public void SelectToggle(int index)

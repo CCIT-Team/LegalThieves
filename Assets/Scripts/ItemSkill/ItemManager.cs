@@ -51,5 +51,6 @@ public class ItemManager : MonoBehaviour
     {
         return items[index].itemName;
     }
+
 }
 

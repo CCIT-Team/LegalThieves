@@ -1,6 +1,7 @@
 
 using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class Item_Flash_Temp : ItemBase
 {
@@ -14,6 +15,7 @@ public class Item_Flash_Temp : ItemBase
     #region ItemBaseLogic
     public override void UseItem(Animator animator)
     {
+        Debug.Log("useitem");
         TurnOnOffLight();
     }
     public override void EquipItem(Animator animator)

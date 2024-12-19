@@ -13,4 +13,9 @@ public abstract class ItemBase : MonoBehaviour
     public abstract void UseItem(Animator animator);
     public abstract void EquipItem(Animator animator);
     public abstract void UnequipItem(Animator animator);
+
+    public void SetItmeTransform(Transform holder){
+        transform.parent = holder.transform;
+        transform.localPosition = Vector3.zero;
+    }
 }
