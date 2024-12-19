@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using Fusion;
 using Fusion.Addons.KCC;
 using System.Collections;
@@ -13,8 +11,7 @@ using EInputButton = New_Neo_LT.Scripts.Player_Input.EInputButton;
 using NetInput = New_Neo_LT.Scripts.Player_Input.NetInput;
 using RelicManager = LegalThieves.RelicManager;
 using UIManager = New_Neo_LT.Scripts.UI.UIManager;
-using UnityEngine.InputSystem;
-using System.Runtime.CompilerServices;
+using New_Neo_LT.Scripts.Game_Play.Game_State;
 
 public enum Job { Null = -1, Archaeologist, Linguist, BusinessCultist, Shamanist, max }
 
@@ -338,6 +335,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
                 SelectItemSkillSlot(5);
 
+            // Debug Key
+            if (Runner.IsServer)
+            {
+                if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.SellButton))
+                {
+                    NewGameManager.State.Server_SetState<PregameStateBehaviour>();
+                }    
+            }
 
             // Previous Buttons for comparison
             _previousButtons = playerInput.Buttons;

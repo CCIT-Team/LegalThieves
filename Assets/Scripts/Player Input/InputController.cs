@@ -261,7 +261,7 @@ namespace New_Neo_LT.Scripts.Player_Input
         }
         private void DebugButtonF12(InputAction.CallbackContext ctx)
         {
-            NewGameManager.Instance.RPC_StartGame();
+            _accumulateInput.Buttons.Set(EInputButton.SellButton, ctx.ReadValueAsButton());
         }
         
         public void Button_Sell()

@@ -42,6 +42,12 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             
             UIManager.Instance.stateLoadingUI.SetLoadingText( "Round " + NewGameManager.Instance.GetCurrentRound());
 
+
+            Server_SetPlayerJob();
+
+            return;
+            
+            /*
             if (HasStateAuthority)
             {
                 var players = PlayerRegistry.Where(pc => pc.GetJobIndex() == (int)Job.Null);
@@ -55,6 +61,36 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
                 }
                 
                 NewGameManager.State.Server_DelaySetState<PlayStateBehaviour>(NewGameManager.Loadtime * 3);
+            }
+            */
+        }
+
+        private void Server_SetPlayerJob()
+        {
+            if (!HasStateAuthority) 
+                return;
+            
+            var hasJob = PlayerRegistry.Where(pc => pc.GetJobIndex() != (int)Job.Null).ToArray();
+
+            if (hasJob.Length == (int)Job.max)
+                return;
+            
+            // 직업이 Job.Null인 플레이어 찾기
+            var noJob = PlayerRegistry.Where(pc => pc.GetJobIndex() == (int)Job.Null).ToArray();
+            
+            // 직업을 가진 플레이어들의 직업을 제외한 직업 리스트
+            var availableJobs = NewGameManager.Instance.GetAvailableJobIndices().ToArray();
+
+#if UNITY_EDITOR
+            Debug.Log($"Available Jobs: {string.Join(", ", availableJobs)}");
+#endif
+            
+            // 직업이 없는 플레이어들에게 랜덤으로 겹치지 않는 직업을 부여
+            for (var i = 0; i < noJob.Length; i++)
+            {
+                if(availableJobs.Length <= i)
+                    noJob[i].ChangeJob((Job)1);
+                noJob[i].ChangeJob((Job)availableJobs[i]);
             }
         }
     }
