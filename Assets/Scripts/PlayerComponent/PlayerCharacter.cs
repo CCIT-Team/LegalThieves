@@ -46,7 +46,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Space, Header("Player Models")]
         [SerializeField] private GameObject[] playerModels;
         [SerializeField] private Item_Torch_Temp[] TorchScript;
-       
+
+        [SerializeField] Transform[] itemHolders = new Transform[4];
     
 
         [Networked, OnChangedRender(nameof(OnRefChanged))]
@@ -749,7 +750,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             curr.SetActive(true);
 
             animator = curr.GetComponent<Animator>();
-            itemController.SetHolder(index);
+            ItemManager.Instance.SetHolder(itemHolders[index]);
         
             CurrentPlayerModelIndex = index;
         }
@@ -763,7 +764,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             curr.SetActive(true);
       
             animator = curr.GetComponent<Animator>();
-            itemController.SetHolder(index);
+            ItemManager.Instance.SetHolder(itemHolders[index]);
             CurrentPlayerModelIndex = index;
         }
 

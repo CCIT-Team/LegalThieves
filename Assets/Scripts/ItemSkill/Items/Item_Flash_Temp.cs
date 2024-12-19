@@ -6,8 +6,8 @@ using UnityEngine.XR;
 public class Item_Flash_Temp : ItemBase
 {
     [SerializeField] GameObject flashLight;
-   
-    void Start()
+    [SerializeField] GameObject flashObject;
+     void Start()
     {
         ID = (int)EItemType.Flashlight;
     }
@@ -17,15 +17,16 @@ public class Item_Flash_Temp : ItemBase
     {
         Debug.Log("useitem");
         TurnOnOffLight();
+        Debug.Log("0");
     }
     public override void EquipItem(Animator animator)
     {
-        gameObject.SetActive(false); 
+        flashObject.SetActive(true); 
         
     }
     public override void UnequipItem(Animator animator)
      { 
-        gameObject.SetActive(true); 
+        flashObject.SetActive(false); 
     }
     #endregion
 
@@ -34,10 +35,11 @@ public class Item_Flash_Temp : ItemBase
         IsActivity = !IsActivity;
         if (IsActivity)
         {
+              Debug.Log("1");
             flashLight.SetActive(true);
         }
         else
-        {
+        { Debug.Log("12");
             flashLight.SetActive(false);
         }
     }

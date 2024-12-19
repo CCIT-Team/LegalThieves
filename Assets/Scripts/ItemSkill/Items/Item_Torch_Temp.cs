@@ -10,6 +10,9 @@ public class Item_Torch_Temp : ItemBase
     [SerializeField] private ParticleSystem[] torchParticleSystems;
     [SerializeField] private Light torchLight;
 
+    [SerializeField] private GameObject torchObject;
+
+
     Coroutine torchCoroutine ;
 
     void Start()
@@ -23,8 +26,8 @@ public class Item_Torch_Temp : ItemBase
         TurnOnOffLight();
     }
 
-    public override void EquipItem(Animator animator) { gameObject.SetActive(true);}
-    public override void UnequipItem(Animator animator) {gameObject.SetActive(false); }
+    public override void EquipItem(Animator animator) { torchObject.SetActive(true);}
+    public override void UnequipItem(Animator animator) {torchObject.SetActive(false); }
     #endregion
     public void TurnOnOffLight()
     {

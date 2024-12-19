@@ -16,8 +16,8 @@ public class ItemManager : MonoBehaviour
 
     public ItemBase[] items;
     [SerializeField] private Sprite[] itemSprites;
-    
-    // public override void Spawned()
+    [SerializeField] private GameObject ItemGroup;
+     // public override void Spawned()
     //     {
     //         if (!HasStateAuthority)
     //             return;
@@ -51,6 +51,10 @@ public class ItemManager : MonoBehaviour
     {
         return items[index].itemName;
     }
-
+    public void SetHolder(Transform itemHolder){
+ 
+        ItemGroup.transform.parent = itemHolder;
+        ItemGroup.transform.transform.position=Vector3.zero;
+     }
 }
 

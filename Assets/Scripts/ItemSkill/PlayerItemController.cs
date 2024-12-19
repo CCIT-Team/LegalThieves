@@ -5,17 +5,14 @@ using UnityEditor;
 
 public class PlayerItemController : MonoBehaviour
 {
-    [SerializeField] GameObject ItemGroup;
     ItemBase currentItem;
 
-    [SerializeField] Transform[] itemHolders = new Transform[4];
-    Transform currentItemHolder;
 
+    Transform currentItemHolder;
     public void UseItem(Animator animator)
     {
         if (currentItem == null) return;
 
-        currentItem.IsActivity = !currentItem.IsActivity;
         Debug.Log(currentItem.name);
         currentItem.UseItem(animator);
     }
@@ -30,7 +27,6 @@ public class PlayerItemController : MonoBehaviour
         else
         {
             currentItem = ItemManager.Instance.GetItemClass(itemIndex);
-          
             currentItem.IsVisiblity = true;
                   Debug.Log("equip");
             currentItem.EquipItem(animator);
@@ -46,10 +42,6 @@ public class PlayerItemController : MonoBehaviour
     {
         currentItem = null;
     }
-    public void SetHolder(int index){
-        currentItemHolder = itemHolders[index];
-        ItemGroup.transform.parent = currentItemHolder;
-        ItemGroup.transform.transform.position=Vector3.zero;
-     }
+  
     
 }
