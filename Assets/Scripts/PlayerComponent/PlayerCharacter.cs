@@ -763,7 +763,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             curr.SetActive(true);
       
             animator = curr.GetComponent<Animator>();
-
+            itemController.SetHolder(index);
             CurrentPlayerModelIndex = index;
         }
 

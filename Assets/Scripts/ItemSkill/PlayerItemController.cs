@@ -5,6 +5,7 @@ using UnityEditor;
 
 public class PlayerItemController : MonoBehaviour
 {
+    [SerializeField] GameObject ItemGroup;
     ItemBase currentItem;
 
     [SerializeField] Transform[] itemHolders = new Transform[4];
@@ -46,6 +47,8 @@ public class PlayerItemController : MonoBehaviour
     }
      public void SetHolder(int index){
         currentItemHolder = itemHolders[index];
+        ItemGroup.transform.parent = currentItemHolder;
+        ItemGroup.transform.transform.position=Vector3.zero;
      }
     
 }
