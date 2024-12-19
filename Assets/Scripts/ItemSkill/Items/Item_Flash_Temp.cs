@@ -35,11 +35,11 @@ public class Item_Flash_Temp : ItemBase
         IsActivity = !IsActivity;
         if (IsActivity)
         {
-              Debug.Log("1");
+
             flashLight.SetActive(true);
         }
         else
-        { Debug.Log("12");
+        { 
             flashLight.SetActive(false);
         }
     }

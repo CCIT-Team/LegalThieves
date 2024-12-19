@@ -2,13 +2,18 @@
 using UnityEngine;
 using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEditor;
+using Fusion;
+using Unity.Mathematics;
 
-public class PlayerItemController : MonoBehaviour
+public class PlayerItemController : NetworkBehaviour
 {
     ItemBase currentItem;
+    private ItemGroup ItemGroup;
 
-
-    Transform currentItemHolder;
+    public void SetItemGroup()
+    {
+        ItemGroup = Instantiate(ItemManager.Instance.ItemGroupOrigin,Vector3.zero,Quaternion.identity).GetComponent<ItemGroup>();
+    }
     public void UseItem(Animator animator)
     {
         if (currentItem == null) return;
@@ -26,7 +31,7 @@ public class PlayerItemController : MonoBehaviour
         }
         else
         {
-            currentItem = ItemManager.Instance.GetItemClass(itemIndex);
+            currentItem = ItemGroup.GetItemClass(itemIndex);
             currentItem.IsVisiblity = true;
                   Debug.Log("equip");
             currentItem.EquipItem(animator);
@@ -42,6 +47,10 @@ public class PlayerItemController : MonoBehaviour
     {
         currentItem = null;
     }
-  
+    public void SetHolder(Transform itemHolder){
+ 
+        ItemGroup.transform.parent = itemHolder;
+        ItemGroup.transform.transform.localPosition=Vector3.zero;
+    }
     
 }

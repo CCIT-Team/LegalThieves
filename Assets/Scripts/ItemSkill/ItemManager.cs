@@ -13,30 +13,20 @@ public enum EItemType
 public class ItemManager : MonoBehaviour
 {
     public static ItemManager Instance;
-
+   public GameObject ItemGroupOrigin;
     public ItemBase[] items;
-    [SerializeField] private Sprite[] itemSprites;
-    [SerializeField] private GameObject ItemGroup;
-     // public override void Spawned()
-    //     {
-    //         if (!HasStateAuthority)
-    //             return;
 
-    //         //SpawnAllRelics();
-    //     }
-        
+    
+
     private void Start()
         {
             if (Instance == null)
                 Instance = this;
             else
                 Destroy(this);
-        }
 
-    public ItemBase GetItemClass(int itemIndex)
-    {
-        return items[itemIndex];
-    }
+            items = ItemGroupOrigin.GetComponentsInChildren<ItemBase>();
+        }
 
     public int GetItemID(int index)
     {
@@ -51,10 +41,6 @@ public class ItemManager : MonoBehaviour
     {
         return items[index].itemName;
     }
-    public void SetHolder(Transform itemHolder){
- 
-        ItemGroup.transform.parent = itemHolder;
-        ItemGroup.transform.transform.position=Vector3.zero;
-     }
+   
 }
 

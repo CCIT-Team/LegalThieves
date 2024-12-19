@@ -137,10 +137,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void Start()
         {
+            itemController.SetItemGroup();
+
             Client_InitPlayerModel(CurrentPlayerModelIndex);
 
             if (Nickname != null)
                 SetPlayerTag(Nickname);
+                
         }
 
         public override void Spawned()
@@ -183,6 +186,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 InitModels();
 
                 RPC_SetPlayerNickname(Runner.LocalPlayer, PlayerPrefs.GetString("Photon.Menu.Username"));
+             
             }
 
             UIManager.Instance.playerListController.PlayerJoined(this);
@@ -418,7 +422,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
     
             if (!HasInputAuthority) return;
 
-            itemController.UseItem(animator);
+            RPC_UseItem();
         }
 
         private void OnMouseRightClick()
@@ -755,7 +759,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             curr.SetActive(true);
 
             animator = curr.GetComponent<Animator>();
-            ItemManager.Instance.SetHolder(itemHolders[index]);
+            itemController.SetHolder(itemHolders[index]);
         
             CurrentPlayerModelIndex = index;
         }
@@ -769,7 +773,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             curr.SetActive(true);
       
             animator = curr.GetComponent<Animator>();
-            ItemManager.Instance.SetHolder(itemHolders[index]);
+            itemController.SetHolder(itemHolders[index]);
             CurrentPlayerModelIndex = index;
         }
 
@@ -839,6 +843,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 UIManager.Instance.itemSkillInventoryUI.SelectToggle(index);
 
             }
+        }
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_UseItem()
+        {
+            itemController.UseItem(animator);
         }
         #endregion
     }
