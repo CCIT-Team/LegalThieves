@@ -832,7 +832,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             }
         }
 
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_SelectItemSkillSlot(int index)
         {
             itemSkillSlotIndex = index;
