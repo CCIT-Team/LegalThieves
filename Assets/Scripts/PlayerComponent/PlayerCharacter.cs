@@ -575,10 +575,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             if (!HasInputAuthority)
                 return;
-                Debug.Log("1");
+         
             for (var i = 0; i < ItemSkillInventory.Length; i++)
             {
-                Debug.Log("5");
                 UIManager.Instance.itemSkillInventoryUI.SetItemSprite(i,ItemSkillInventory[i]);
             }
                 

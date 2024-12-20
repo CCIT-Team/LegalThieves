@@ -40,7 +40,6 @@ public class PlayerItemController : NetworkBehaviour
 
         }
     }
-
     IEnumerator ChangeItem(Animator animator, int itemIndex)
     {
         if (currentItem.animationCoroutine == null)
@@ -54,11 +53,7 @@ public class PlayerItemController : NetworkBehaviour
                 StartCoroutine(ChangeItem(animator, itemIndex));
             }
     }
-    // public void UnEquipItem(Animator animator)
-    // {
-    //     currentItem.UnequipItem(animator);
 
-    // }
     public void ConsumingItems()
     {
         currentItem = null;
