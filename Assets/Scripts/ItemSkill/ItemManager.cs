@@ -13,10 +13,8 @@ public enum EItemType
 public class ItemManager : MonoBehaviour
 {
     public static ItemManager Instance;
-   public GameObject ItemGroupOrigin;
+    public GameObject ItemGroupOrigin;
     public ItemBase[] items;
-
-    
 
     private void Start()
         {

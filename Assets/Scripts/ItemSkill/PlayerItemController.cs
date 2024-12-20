@@ -1,18 +1,15 @@
 
 using UnityEngine;
-using New_Neo_LT.Scripts.PlayerComponent;
-using UnityEditor;
+using System.Collections;
 using Fusion;
-using Unity.Mathematics;
 
 public class PlayerItemController : NetworkBehaviour
 {
     ItemBase currentItem;
     private ItemGroup ItemGroup;
-
     public void SetItemGroup()
     {
-        ItemGroup = Instantiate(ItemManager.Instance.ItemGroupOrigin,Vector3.zero,Quaternion.identity).GetComponent<ItemGroup>();
+        ItemGroup = Instantiate(ItemManager.Instance.ItemGroupOrigin, Vector3.zero, Quaternion.identity).GetComponent<ItemGroup>();
     }
     public void UseItem(Animator animator)
     {
@@ -23,9 +20,9 @@ public class PlayerItemController : NetworkBehaviour
     }
     public void EquipItem(Animator animator, int itemIndex)
     {
-        if(currentItem != null && currentItem.animationCoroutine != null) return; //애니메이션 실행중?
+        if (currentItem != null && currentItem.animationCoroutine != null) return; 
 
-        if ( itemIndex == -1)
+        if (itemIndex == -1)
         {
             if (currentItem == null) return;
             currentItem.UnequipItem(animator);
@@ -33,25 +30,44 @@ public class PlayerItemController : NetworkBehaviour
         }
         else
         {
-            currentItem = ItemGroup.GetItemClass(itemIndex);
-            currentItem.IsVisiblity = true;
-            currentItem.EquipItem(animator);
+            if(currentItem == null){
+                currentItem = ItemGroup.GetItemClass(itemIndex);
+                currentItem.EquipItem(animator);
+            }
+            else {
+            currentItem.UnequipItem(animator);
+            StartCoroutine(ChangeItem(animator, itemIndex));}
+
         }
     }
-    public void UnEquipItem(Animator animator)
+
+    IEnumerator ChangeItem(Animator animator, int itemIndex)
     {
-        currentItem.UnequipItem(animator);
-        currentItem.IsVisiblity = false;
-        
+        if (currentItem.animationCoroutine == null)
+        {
+                currentItem = ItemGroup.GetItemClass(itemIndex);
+                currentItem.EquipItem(animator);
+                StopCoroutine(ChangeItem(animator, itemIndex));
+        }else
+            {
+                yield return new WaitForSeconds(0.5f);
+                StartCoroutine(ChangeItem(animator, itemIndex));
+            }
     }
+    // public void UnEquipItem(Animator animator)
+    // {
+    //     currentItem.UnequipItem(animator);
+
+    // }
     public void ConsumingItems()
     {
         currentItem = null;
     }
-    public void SetHolder(Transform itemHolder){
- 
+    public void SetHolder(Transform itemHolder)
+    {
+
         ItemGroup.transform.parent = itemHolder;
-        ItemGroup.transform.transform.localPosition=Vector3.zero;
+        ItemGroup.transform.transform.localPosition = Vector3.zero;
     }
-    
+
 }

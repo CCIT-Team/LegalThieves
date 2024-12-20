@@ -6,14 +6,11 @@ public class Item_Torch_Temp : ItemBase
 {
     [SerializeField] private float lightIntensity = 1f;
     [SerializeField] private float changingTime = 3f;
-
     [SerializeField] private ParticleSystem[] torchParticleSystems;
     [SerializeField] private Light torchLight;
-
     [SerializeField] private GameObject torchObject;
 
-
-    Coroutine torchCoroutine ;
+    Coroutine torchCoroutine;
 
     void Start()
     {
@@ -22,16 +19,45 @@ public class Item_Torch_Temp : ItemBase
     #region ItemBaseLogic
     public override void UseItem(Animator animator)
     {
-        Debug.Log("useitem");
         TurnOnOffLight();
     }
 
-    public override void EquipItem(Animator animator) { torchObject.SetActive(true);}
-    public override void UnequipItem(Animator animator) {torchObject.SetActive(false); }
+    public override void EquipItem(Animator animator)
+    {
+        torchObject.SetActive(true);
+        animator.SetBool("pickTorch", true);
+    }
+    public override void UnequipItem(Animator animator)
+    {
+        animator.SetBool("pickTorch", false);
+        OffLight();
+        IsActivity = false;
+        torchCoroutine = null;
+        animationCoroutine = StartCoroutine(UnequipTorch(animator));
+    }
+
+    private IEnumerator UnequipTorch(Animator animator)
+{
+    while (true)
+    {
+        var animatorState = animator.GetCurrentAnimatorStateInfo(2);
+        if (animatorState.IsName("TorchIdle"))
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+        else
+        {
+            torchObject.SetActive(false);
+            break; 
+        }
+    }
+    animationCoroutine = null; 
+}
     #endregion
+
     public void TurnOnOffLight()
     {
-        if (torchCoroutine !=null) return;
+        if (torchCoroutine != null) return;
 
         IsActivity = !IsActivity;
         if (IsActivity)
@@ -47,7 +73,7 @@ public class Item_Torch_Temp : ItemBase
         }
         else
         {
-            StartCoroutine(ChangeLightIntensity(-1f));
+            torchCoroutine = StartCoroutine(ChangeLightIntensity(-1f));
 
             foreach (ParticleSystem p in torchParticleSystems)
             {
@@ -56,10 +82,10 @@ public class Item_Torch_Temp : ItemBase
             }
             //  AudioManager.instance.PlayTorchLoopSfx(false);
         }
-   
+
     }
-    
-    private IEnumerator ChangeLightIntensity(float delta)
+
+    private IEnumerator ChangeLightIntensity(float delta, Animator animator = null)
     {
         torchLight.intensity += delta * lightIntensity / changingTime * Time.deltaTime;
 
@@ -67,21 +93,27 @@ public class Item_Torch_Temp : ItemBase
 
         if (delta == 1f && torchLight.intensity < lightIntensity)
         {
-            StartCoroutine(ChangeLightIntensity(delta));
+            StartCoroutine(ChangeLightIntensity(delta, animator));
         }
         else if (delta == -1f && torchLight.intensity > 0f)
         {
-            StartCoroutine(ChangeLightIntensity(delta));
+            StartCoroutine(ChangeLightIntensity(delta, animator));
         }
-        else {
-            StopCoroutine(ChangeLightIntensity(delta));
+        else
+        {
+            StopCoroutine(ChangeLightIntensity(delta, animator));
             torchCoroutine = null;
         }
-     
     }
-    
-        
-}
-    
+    void OffLight(){
+        torchLight.intensity = 0;
+         foreach (ParticleSystem p in torchParticleSystems)
+            {
+                var emission = p.emission;
+                emission.enabled = false;
+            }
+    }
 
-       
+}
+
+

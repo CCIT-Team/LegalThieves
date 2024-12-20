@@ -21,12 +21,14 @@ public class Item_Flash_Temp : ItemBase
     {
         flashObject.SetActive(true);
         animator.SetBool("pickFlash", true);
+
     }
     public override void UnequipItem(Animator animator)
     {
-
         animator.SetBool("pickFlash", false);
-        animationCoroutine = StartCoroutine(FlashTurnOff(animator));
+        flashLight.SetActive(false);
+        IsActivity = false;
+        animationCoroutine = StartCoroutine(FlashObjectOff(animator));
     }
     #endregion
 
@@ -35,7 +37,6 @@ public class Item_Flash_Temp : ItemBase
         IsActivity = !IsActivity;
         if (IsActivity)
         {
-
             flashLight.SetActive(true);
         }
         else
@@ -44,15 +45,22 @@ public class Item_Flash_Temp : ItemBase
         }
     }
 
-    private IEnumerator FlashTurnOff(Animator animator)
+    private IEnumerator FlashObjectOff(Animator animator)
     {
-        var animatorState = animator.GetCurrentAnimatorStateInfo(2);
-        if (animatorState.IsName("FlashUnequip"))
+        while (true)
         {
-            yield return new WaitForSeconds(1.0f);
+            var animatorState = animator.GetCurrentAnimatorStateInfo(2);
+            if (animatorState.IsName("FlashUnequip"))
+            {
+                yield return new WaitForSeconds(0.5f);
+            }
+            else
+            {
+                flashObject.SetActive(false);
+                break;
+            }
         }
-
-        flashObject.SetActive(false);
         animationCoroutine = null;
+
     }
 }

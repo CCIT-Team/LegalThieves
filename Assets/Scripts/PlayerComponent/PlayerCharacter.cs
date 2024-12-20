@@ -42,7 +42,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         [Space, Header("Player Models")]
         [SerializeField] private GameObject[] playerModels;
-        [SerializeField] private Item_Torch_Temp[] TorchScript;
+    
 
         [SerializeField] Transform[] itemHolders = new Transform[4];
     
@@ -69,20 +69,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Networked, Capacity(10), OnChangedRender(nameof(OnInventoryChanged))]
         public NetworkArray<int> RelicInventory => default;
 
-        [Networked, Capacity(10), OnChangedRender(nameof(OnSkillItemInventoryChanged))]
+        [Networked, Capacity(6), OnChangedRender(nameof(OnSkillItemInventoryChanged))]
         public NetworkArray<int> ItemSkillInventory => default;
 
         [Networked]
         public int inventoryRelicCount { get; set; }
 
-        [Networked, OnChangedRender(nameof(OnTorchChanged))]
-        private bool _isPikedTorch { get; set; }
-
-
-        [Networked, OnChangedRender(nameof(OnTorchStateChanged))]
-        private bool IsTorchVisibility { get; set; }
-
-  
+     
         private bool _isPikedFlash { get; set; }
 
 
@@ -127,8 +120,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private static readonly int AnimLookPit = Animator.StringToHash("LookPit");
         private static readonly int AnimJumpTrigger = Animator.StringToHash("Jump");
         private static readonly int AnimSnapGround = Animator.StringToHash("SnapGround");
-        private static readonly int AnimPickTorch = Animator.StringToHash("pickTorch");
-        private static readonly int AnimPickFlash = Animator.StringToHash("pickFlash");
+     
         #endregion
 
         /*------------------------------------------------------------------------------------------------------------*/
@@ -168,7 +160,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 {
                     ItemSkillInventory.Set(i, -1);
                 }
-                  ItemSkillInventory.Set(0, 1);
+                
                 if (PlayerRegistry.Instance != null && PlayerRegistry.Count >= 4)
                 {
                     for (int i = 0; i < NewGameManager.Instance.ButtonStateArray.Length; i++)
@@ -304,10 +296,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             // Sprint
             SprintToggle(playerInput);
 
-            // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction3))
-            //     TorchToggle();
-            // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction4))
-            //     FlashToggle();
+        
             //CrouchToggle(playerInput);
             // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
             //     kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
@@ -332,9 +321,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot2))
                 SelectItemSkillSlot(1);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot3))
-                SelectItemSkillSlot(2);
+                ItemSkillInventory.Set(0,0);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot4))
-                SelectItemSkillSlot(3);
+                 ItemSkillInventory.Set(1,1);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot5))
                 SelectItemSkillSlot(4);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
@@ -586,8 +575,13 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             if (!HasInputAuthority)
                 return;
+                Debug.Log("1");
+            for (var i = 0; i < ItemSkillInventory.Length; i++)
+            {
+                Debug.Log("5");
+                UIManager.Instance.itemSkillInventoryUI.SetItemSprite(i,ItemSkillInventory[i]);
+            }
                 
-                UIManager.Instance.itemSkillInventoryUI.SetItemSprite(itemSkillSlotIndex,ItemSkillInventory[itemSkillSlotIndex]);
                         
         }
         public void SetPlayerColor(int index) => PlayerColor = index;
@@ -643,16 +637,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
 
         }
-        void OnTorchChanged()
-        {
-            animator.SetBool(AnimPickTorch, _isPikedTorch);
-
-        }
-        private void OnTorchStateChanged()
-        {
-            TorchScript[CurrentPlayerModelIndex].gameObject.SetActive(IsTorchVisibility);
-        }
-    
+       
 
         #endregion
 
