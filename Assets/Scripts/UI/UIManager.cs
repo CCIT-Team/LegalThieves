@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using New_Neo_LT.Scripts.PlayerComponent;
+using UI.MarketUI;
 using UnityEngine;
 
 namespace New_Neo_LT.Scripts.UI
@@ -21,6 +22,8 @@ namespace New_Neo_LT.Scripts.UI
         ResultUIController,
         interactionUI,
         WaitingUI,
+        ItemSkillInventoryUI,
+        MarketUIController,
         UITypeCount
     }
     
@@ -39,6 +42,7 @@ namespace New_Neo_LT.Scripts.UI
         public InteractionUI                interactionUI;
         public WaitingUIController          waitingUIController;
         public ItemSkillInventoryUI         itemSkillInventoryUI;
+        public MarketUIController           marketUIController;
 
         public static UIManager Instance
         {
@@ -117,6 +121,19 @@ namespace New_Neo_LT.Scripts.UI
         {
             return _localPlayerTransform;
         }
+        
+        public void OpenMarket()
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            marketUIController.gameObject.SetActive(true);
+            marketUIController.OnMarketUIOpen();
+        }
+        
+        public void CloseMarket()
+        {
+            marketUIController.gameObject.SetActive(false);
+        }
 
         public void OpenShop()
         {
@@ -174,6 +191,13 @@ namespace New_Neo_LT.Scripts.UI
                         StartCoroutine(nameof(FinishWaitingUI));
                     else
                         waitingUIController.gameObject.SetActive(true);
+                    break;
+                case UIType.ItemSkillInventoryUI:
+
+                    break;
+                case UIType.MarketUIController:
+                    marketUIController.gameObject.SetActive(isActive);
+                    marketUIController.OnMarketUIOpen();
                     break;
                 case UIType.Null:
                     compassRotate.gameObject.SetActive(isActive);

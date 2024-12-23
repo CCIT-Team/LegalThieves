@@ -615,7 +615,15 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         #endregion
         #region Item Methods...
 
-
+        public int[] GetItemSkillInventory()
+        {
+            return ItemSkillInventory.ToArray();
+        }
+        
+        public void SetItemSkillInventory(int index, int itemIndex)
+        {
+            ItemSkillInventory.Set(index, itemIndex);
+        }
   
         #endregion
 
@@ -624,12 +632,18 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private void OnPlayerJobChanged()
         {
             UIManager.Instance.playerListController.UpdatePlayerPointType(Index, IsScholar);
-
         }
 
         private void OnPointChanged()
         {
+            // 모든 클라이언트에게 호출
             UIManager.Instance.playerListController.UpdatePlayerScore(Index, IsScholar, GoldPoint, RenownPoint);
+
+            // 로컬 플레이어에게 호출
+            if (HasInputAuthority)
+            {
+                UIManager.Instance.marketUIController.UpdatePlayerInfo(GoldPoint, RenownPoint);
+            }
         }
 
         private void OnRefChanged()

@@ -213,6 +213,9 @@ namespace New_Neo_LT.Scripts.Player_Input
 
             if(UIManager.Instance.shopController.gameObject.activeSelf)
                 UIManager.Instance.CloseShop();
+            
+            if(UIManager.Instance.marketUIController.gameObject.activeSelf)
+                UIManager.Instance.CloseMarket();
 
             Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
 
