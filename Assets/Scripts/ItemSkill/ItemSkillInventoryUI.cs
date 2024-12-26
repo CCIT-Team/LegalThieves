@@ -29,12 +29,13 @@ public class ItemSkillInventoryUI : MonoBehaviour
     {
         if (itemIndex == -1)
         {
-            slots[index].transform.GetChild(2).GetComponent<Image>().enabled = false;
+            slots[index].transform.GetChild(1).GetComponent<Image>().enabled = false;
             return;
         }
 
-        var slotImage = slots[index].transform.GetChild(2).GetComponent<Image>();
+        var slotImage = slots[index].transform.GetChild(1).GetComponent<Image>();
         slotImage.sprite = ItemManager.Instance.GetItemSprite(itemIndex);
+        Debug.Log(slotImage.name);
                                                                 
         slotImage.enabled = true;
     }
