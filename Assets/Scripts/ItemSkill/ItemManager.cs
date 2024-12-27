@@ -8,6 +8,7 @@ public enum EItemType
     Empty = -1,
     Torch,
     Flashlight,
+    WoodStick,
     Count
 }
 

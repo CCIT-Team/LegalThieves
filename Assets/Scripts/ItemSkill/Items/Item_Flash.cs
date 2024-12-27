@@ -1,7 +1,7 @@
 
 using UnityEngine;
 using System.Collections;
-public class Item_Flash_Temp : ItemBase
+public class Item_Flash: ItemBase
 {
     [SerializeField] GameObject flashLight;
     [SerializeField] GameObject flashObject;

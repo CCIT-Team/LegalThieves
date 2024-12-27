@@ -2,7 +2,7 @@ using System.Collections;
 using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
 
-public class Item_Torch_Temp : ItemBase
+public class Item_Torch : ItemBase
 {
     [SerializeField] private float lightIntensity = 1f;
     [SerializeField] private float changingTime = 3f;
