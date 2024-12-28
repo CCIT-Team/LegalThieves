@@ -1,0 +1,125 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4090256296264816756
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8799095513064120858}
+  - component: {fileID: -5277982276523178866}
+  m_Layer: 0
+  m_Name: Item_WoodStick
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8799095513064120858
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4090256296264816756}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1417613999813634586}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-5277982276523178866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4090256296264816756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe1e44a8d74114b4e848669ead7e115b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 2
+  itemPrice: 1000
+  itemName: "\uBABD\uB465\uC774"
+  itemDescription: "\uD760\uC52C \uD328\uBC84\uB824"
+  itemIcon: {fileID: 1211498523, guid: 6b94e8163e06d5449937b19f183bbfe4, type: 3}
+  IsActivity: 0
+  itemSFX: {fileID: 0}
+  hitDelay: 1
+  hitEffect: {fileID: 0}
+  SwingTrail: {fileID: 2725027876763518823}
+  stickObject: {fileID: 0}
+--- !u!1001 &470717174117747683
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8799095513064120858}
+    m_Modifications:
+    - target: {fileID: 1523398282493420025, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523398282493420025, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523398282493420025, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523398282493420025, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523398282493420025, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523398282493420025, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523398282493420025, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523398282493420025, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523398282493420025, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523398282493420025, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6562714716610307669, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+      propertyPath: m_Name
+      value: WoodStickObject
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+--- !u!4 &1417613999813634586 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1523398282493420025, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+  m_PrefabInstance: {fileID: 470717174117747683}
+  m_PrefabAsset: {fileID: 0}
+--- !u!96 &2725027876763518823 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 2547186550873001092, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+  m_PrefabInstance: {fileID: 470717174117747683}
+  m_PrefabAsset: {fileID: 0}

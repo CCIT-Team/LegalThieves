@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3533641878498278980
+--- !u!1 &3999854353465980327
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6825741439311221778}
-  - component: {fileID: 2725027876763518823}
+  - component: {fileID: 6355060016507641841}
+  - component: {fileID: 2547186550873001092}
   m_Layer: 0
   m_Name: SwingTrail
   m_TagString: Untagged
@@ -17,29 +17,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6825741439311221778
+--- !u!4 &6355060016507641841
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3533641878498278980}
+  m_GameObject: {fileID: 3999854353465980327}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.388, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8799095513064120858}
+  m_Father: {fileID: 1523398282493420025}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!96 &2725027876763518823
+--- !u!96 &2547186550873001092
 TrailRenderer:
   serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3533641878498278980}
+  m_GameObject: {fileID: 3999854353465980327}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -145,7 +145,7 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
---- !u!1 &4090256296264816756
+--- !u!1 &6562714716610307669
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -153,8 +153,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8799095513064120858}
-  - component: {fileID: -5277982276523178866}
+  - component: {fileID: 1523398282493420025}
   m_Layer: 0
   m_Name: WoodStickObject
   m_TagString: Untagged
@@ -162,52 +161,30 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8799095513064120858
+--- !u!4 &1523398282493420025
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4090256296264816756}
+  m_GameObject: {fileID: 6562714716610307669}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2758352707306986708}
-  - {fileID: 6825741439311221778}
+  - {fileID: 2364374320554432311}
+  - {fileID: 6355060016507641841}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-5277982276523178866
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4090256296264816756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe1e44a8d74114b4e848669ead7e115b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ID: 2
-  itemPrice: 1000
-  itemName: "\uBABD\uB465\uC774"
-  itemDescription: "\uD760\uC52C \uD328\uBC84\uB824"
-  itemIcon: {fileID: 1211498523, guid: 6b94e8163e06d5449937b19f183bbfe4, type: 3}
-  IsActivity: 0
-  itemSFX: {fileID: 0}
-  hitDelay: 1
-  hitEffect: {fileID: 0}
-  SwingTrail: {fileID: 2725027876763518823}
---- !u!1001 &2435631909661342527
+--- !u!1001 &2829747756834140380
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 8799095513064120858}
+    m_TransformParent: {fileID: 1523398282493420025}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 1a30753fcfa0932468f94d05cada6bfa, type: 3}
       propertyPath: m_LocalScale.x
@@ -243,11 +220,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a30753fcfa0932468f94d05cada6bfa, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a30753fcfa0932468f94d05cada6bfa, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1a30753fcfa0932468f94d05cada6bfa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -274,8 +251,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a30753fcfa0932468f94d05cada6bfa, type: 3}
---- !u!4 &2758352707306986708 stripped
+--- !u!4 &2364374320554432311 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1a30753fcfa0932468f94d05cada6bfa, type: 3}
-  m_PrefabInstance: {fileID: 2435631909661342527}
+  m_PrefabInstance: {fileID: 2829747756834140380}
   m_PrefabAsset: {fileID: 0}
