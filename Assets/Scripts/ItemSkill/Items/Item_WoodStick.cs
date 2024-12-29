@@ -10,6 +10,7 @@ public class Item_WoodStick : ItemBase
     [SerializeField] private ParticleSystem hitEffect;
     [SerializeField] private TrailRenderer SwingTrail;
     [SerializeField] private GameObject stickObject;
+    [SerializeField] private BoxCollider hitColl;
     Coroutine hitCoroutine;
     bool canSwing;
     void Start()
@@ -25,11 +26,11 @@ public class Item_WoodStick : ItemBase
     public override void EquipItem(Animator animator)
     {
         stickObject.SetActive(true);
-        animator.SetBool("pickTorch", true);
+        animator.SetBool("pickStick", true);
     }
     public override void UnequipItem(Animator animator)
     {
-        animator.SetBool("pickTorch", false);
+        animator.SetBool("pickStick", false);
 
         IsActivity = false;
         hitCoroutine = null;
@@ -42,7 +43,7 @@ public class Item_WoodStick : ItemBase
         while (true)
         {
             var animatorState = animator.GetCurrentAnimatorStateInfo(2);
-            if (animatorState.IsName("TorchIdle"))
+            if (animatorState.IsName("StickIdle"))
             {
                 yield return new WaitForSeconds(0.5f);
             }
@@ -58,9 +59,10 @@ public class Item_WoodStick : ItemBase
     private void SwingCheck(Animator animator)
     {
         var animatorState = animator.GetCurrentAnimatorStateInfo(2);
-        if (!animatorState.IsName("TorchAttack"))
+        if (!animatorState.IsName("StickAttack"))
         {
-           StartCoroutine(SwingAction(animator));
+           SwingTrail.enabled = true;
+           animationCoroutine = StartCoroutine(SwingAction(animator));
         }
     }
 
@@ -68,12 +70,10 @@ public class Item_WoodStick : ItemBase
     {
         var anim = animator.GetCurrentAnimatorStateInfo(2);
 
-        if (anim.IsName("TorchAttack")) yield return null;
+        if (anim.IsName("StickAttack")) yield return null;
 
-        animator.SetBool("Attack",true);
-        while (anim.IsName("TorchAttack")){
-             yield return new WaitForSeconds(0.5f);
-        }
+        animator.SetTrigger("Attack");
+
 
     }
 }

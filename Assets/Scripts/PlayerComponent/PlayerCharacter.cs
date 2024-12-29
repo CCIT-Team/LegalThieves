@@ -321,14 +321,17 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot2))
                 SelectItemSkillSlot(1);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot3))
-                ItemSkillInventory.Set(0,0);
+                SelectItemSkillSlot(2);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot4))
-                 ItemSkillInventory.Set(1,1);
+                SelectItemSkillSlot(3);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot5))
                 SelectItemSkillSlot(4);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
                 SelectItemSkillSlot(5);
 
+            ItemSkillInventory.Set(0, 0);
+            ItemSkillInventory.Set(1, 1);
+            ItemSkillInventory.Set(2, 2);
             // Debug Key
             if (Runner.IsServer)
             {
