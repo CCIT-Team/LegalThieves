@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4847043816286522404}
   - component: {fileID: 1812617601711276161}
   - component: {fileID: 8105282239732789082}
+  - component: {fileID: 3682756408389808221}
   m_Layer: 0
   m_Name: NewNeoPlayer
   m_TagString: Player
@@ -183,7 +184,7 @@ MonoBehaviour:
   jumpImpulse: {x: 0, y: 5, z: 0}
   interactionRange: 3
   slowDuration: 0.5
-  slowScale: 0.3
+  itemGetSlowScale: 0.2
   playerModels:
   - {fileID: 4685484899933943700}
   - {fileID: 6419828191043189009}
@@ -226,6 +227,29 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 854763091732172352}
   m_Enabled: 0
+--- !u!136 &3682756408389808221
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854763091732172352}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.2
+  m_Height: 1.8
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!1 &1695474070724991224
 GameObject:
   m_ObjectHideFlags: 0

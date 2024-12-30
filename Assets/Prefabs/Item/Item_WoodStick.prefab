@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8799095513064120858}
   - component: {fileID: -5277982276523178866}
+  - component: {fileID: 1335975332379725952}
   m_Layer: 0
   m_Name: Item_WoodStick
   m_TagString: Untagged
@@ -57,6 +58,24 @@ MonoBehaviour:
   SwingTrail: {fileID: 2725027876763518823}
   stickObject: {fileID: 6745020623413570998}
   hitColl: {fileID: 578491259211433465}
+--- !u!114 &1335975332379725952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4090256296264816756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 3276922972
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 7414917507184505491}
 --- !u!1001 &470717174117747683
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -134,3 +153,14 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6562714716610307669, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
   m_PrefabInstance: {fileID: 470717174117747683}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7414917507184505491 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6948850718584895856, guid: ad30f68e8b7aa6a4e8bc765463c0bdb8, type: 3}
+  m_PrefabInstance: {fileID: 470717174117747683}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6745020623413570998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bdd3066e99b3014fa443b028bf99348, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

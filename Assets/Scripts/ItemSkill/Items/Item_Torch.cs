@@ -24,7 +24,7 @@ public class Item_Torch : ItemBase
 
     public override void EquipItem(Animator animator)
     {
-        torchObject.SetActive(true);
+        animationCoroutine = StartCoroutine(ChangeFlashObjectAfterDelay(torchObject, true, 1f));
         animator.SetBool("pickTorch", true);
     }
     public override void UnequipItem(Animator animator)
@@ -33,26 +33,10 @@ public class Item_Torch : ItemBase
         OffLight();
         IsActivity = false;
         torchCoroutine = null;
-        animationCoroutine = StartCoroutine(UnequipTorch(animator));
+        animationCoroutine = StartCoroutine(ChangeFlashObjectAfterDelay(torchObject, false, 1f));
     }
 
-    private IEnumerator UnequipTorch(Animator animator)
-{
-    while (true)
-    {
-        var animatorState = animator.GetCurrentAnimatorStateInfo(2);
-        if (animatorState.IsName("TorchIdle"))
-        {
-            yield return new WaitForSeconds(0.5f);
-        }
-        else
-        {
-            torchObject.SetActive(false);
-            break; 
-        }
-    }
-    animationCoroutine = null; 
-}
+ 
     #endregion
 
     public void TurnOnOffLight()

@@ -1,7 +1,7 @@
 
 using UnityEngine;
 using System.Collections;
-public class Item_Flash: ItemBase
+public class Item_Flash : ItemBase
 {
     [SerializeField] GameObject flashLight;
     [SerializeField] GameObject flashObject;
@@ -19,19 +19,20 @@ public class Item_Flash: ItemBase
     }
     public override void EquipItem(Animator animator)
     {
-        flashObject.SetActive(true);
+        animationCoroutine = StartCoroutine(ChangeFlashObjectAfterDelay(flashObject, true, 1f));
         animator.SetBool("pickFlash", true);
-
     }
     public override void UnequipItem(Animator animator)
     {
-        animator.SetBool("pickFlash", false);
-        flashLight.SetActive(false);
         IsActivity = false;
-        animationCoroutine = StartCoroutine(FlashObjectOff(animator));
+        animator.SetBool("pickFlash", false);
+        animationCoroutine = StartCoroutine(ChangeFlashObjectAfterDelay(flashObject, false, 1f));
+   
+ 
     }
     #endregion
 
+   
     public void TurnOnOffLight()
     {
         IsActivity = !IsActivity;
@@ -45,22 +46,5 @@ public class Item_Flash: ItemBase
         }
     }
 
-    private IEnumerator FlashObjectOff(Animator animator)
-    {
-        while (true)
-        {
-            var animatorState = animator.GetCurrentAnimatorStateInfo(2);
-            if (animatorState.IsName("FlashUnequip"))
-            {
-                yield return new WaitForSeconds(0.5f);
-            }
-            else
-            {
-                flashObject.SetActive(false);
-                break;
-            }
-        }
-        animationCoroutine = null;
-
-    }
+   
 }

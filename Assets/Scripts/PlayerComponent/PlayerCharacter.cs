@@ -36,7 +36,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         [Header("Slow Setup")]
         [SerializeField] private float slowDuration = 0.5f;
-        [SerializeField] private float slowScale = 0.2f; // default = 1
+        [SerializeField] private float itemGetSlowScale = 0.2f; // default = 1
         private float slowMultiplier = 1f;
         private Coroutine slowCoroutine;
 
@@ -160,7 +160,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 {
                     ItemSkillInventory.Set(i, -1);
                 }
-                
+                 ItemSkillInventory.Set(1, 2);
                 if (PlayerRegistry.Instance != null && PlayerRegistry.Count >= 4)
                 {
                     for (int i = 0; i < NewGameManager.Instance.ButtonStateArray.Length; i++)
@@ -329,9 +329,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
                 SelectItemSkillSlot(5);
 
-            ItemSkillInventory.Set(0, 0);
-            ItemSkillInventory.Set(1, 1);
-            ItemSkillInventory.Set(2, 2);
+           
             // Debug Key
             if (Runner.IsServer)
             {
@@ -471,7 +469,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             // 현재 선택된 슬롯이 비어있으면 해당 슬롯에 아이템을 추가
             if (RelicInventory[slotIndex] == -1)
             {
-                ApplySlow();
+                ApplySlow(itemGetSlowScale);
                 RelicInventory.Set(slotIndex, relicId);
 
                 return true;
@@ -482,7 +480,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             {
                 if (RelicInventory[i] != -1)
                     continue;
-                ApplySlow();
+                ApplySlow(itemGetSlowScale);
                 RelicInventory.Set(i, relicId);
                 return true;
             }
@@ -491,21 +489,21 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
 
 
-        public void ApplySlow()
+        public void ApplySlow(float slowScale, float duration=1f)
         {
             if (slowCoroutine != null)
                 StopCoroutine(slowCoroutine);
 
-            slowCoroutine = StartCoroutine(SlowRoutine());
+            slowCoroutine = StartCoroutine(SlowRoutine(slowScale, duration));
         }
 
-        private IEnumerator SlowRoutine()
+        private IEnumerator SlowRoutine(float slowScale,float duration)
         {
             slowMultiplier = slowScale;
 
             yield return new WaitForSeconds(slowDuration);
 
-            slowMultiplier = 1f;
+            slowMultiplier = duration;
 
             slowCoroutine = null;
 

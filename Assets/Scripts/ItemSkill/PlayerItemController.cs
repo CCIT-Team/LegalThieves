@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using Fusion;
+using Unity.VisualScripting;
 
 public class PlayerItemController : NetworkBehaviour
 {
@@ -22,39 +23,32 @@ public class PlayerItemController : NetworkBehaviour
     {
         if (currentItem != null && currentItem.animationCoroutine != null) return; 
 
-        if (itemIndex == -1)
+        if (itemIndex == -1)//빈공간을 선택할때
         {
-            if (currentItem == null) return;
+            if (currentItem == null) return;  //지금 아이템을 안들고있다면 리턴턴
             currentItem.UnequipItem(animator);
             currentItem = null;
         }
-        else
+        else     // 아이템을 선택할떄
         {
-            if(currentItem == null){
+            if(currentItem == null){ // 지금 아이템을 안들고 있다면
                 currentItem = ItemGroup.GetItemClass(itemIndex);
                 currentItem.EquipItem(animator);
             }
-            else {
+            else {  // 들고 있다면
             currentItem.UnequipItem(animator);
-            StartCoroutine(ChangeItem(animator, itemIndex));}
-
+            ChangeItem(animator, itemIndex);
+            }
         }
     }
-    IEnumerator ChangeItem(Animator animator, int itemIndex)
+    void ChangeItem(Animator animator, int itemIndex)
     {
-        if (currentItem.animationCoroutine == null)
-        {
-                currentItem = ItemGroup.GetItemClass(itemIndex);
-                currentItem.EquipItem(animator);
-                StopCoroutine(ChangeItem(animator, itemIndex));
-        }else
-            {
-                yield return new WaitForSeconds(0.5f);
-                StartCoroutine(ChangeItem(animator, itemIndex));
-            }
+            currentItem = ItemGroup.GetItemClass(itemIndex);
+            currentItem.EquipItem(animator);
+
     }
 
-    public void ConsumingItems()
+    public void ConsumingItem()
     {
         currentItem = null;
     }
@@ -62,7 +56,8 @@ public class PlayerItemController : NetworkBehaviour
     {
 
         ItemGroup.transform.parent = itemHolder;
-        ItemGroup.transform.transform.localPosition = Vector3.zero;
+        ItemGroup.transform.localPosition = Vector3.zero;
+        ItemGroup.transform.localRotation = Quaternion.identity;
     }
 
 }

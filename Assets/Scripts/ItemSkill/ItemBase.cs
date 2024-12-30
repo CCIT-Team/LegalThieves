@@ -1,6 +1,6 @@
 
 using UnityEngine;
-
+using System.Collections;
 public abstract class ItemBase : MonoBehaviour
 {
     public int ID;
@@ -18,4 +18,11 @@ public abstract class ItemBase : MonoBehaviour
     public abstract void EquipItem(Animator animator);
     public abstract void UnequipItem(Animator animator);
 
+    protected IEnumerator ChangeFlashObjectAfterDelay(GameObject itemObject, bool isVisible,float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        
+        itemObject.SetActive(isVisible);
+        animationCoroutine = null;
+    }
 }

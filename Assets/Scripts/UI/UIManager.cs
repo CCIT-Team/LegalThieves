@@ -188,7 +188,7 @@ namespace New_Neo_LT.Scripts.UI
                     break;
                 case UIType.WaitingUI:
                     if(!isActive)
-                        StartCoroutine(nameof(FinishWaitingUI));
+                        StartCoroutine(FinishWaitingUI());
                     else
                         waitingUIController.gameObject.SetActive(true);
                     break;
