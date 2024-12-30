@@ -160,7 +160,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 {
                     ItemSkillInventory.Set(i, -1);
                 }
-                 ItemSkillInventory.Set(1, 2);
+              
                 if (PlayerRegistry.Instance != null && PlayerRegistry.Count >= 4)
                 {
                     for (int i = 0; i < NewGameManager.Instance.ButtonStateArray.Length; i++)
@@ -328,6 +328,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 SelectItemSkillSlot(4);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
                 SelectItemSkillSlot(5);
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot7))
+                ItemSkillInventory.Set(1,2);
 
            
             // Debug Key

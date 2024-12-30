@@ -8,8 +8,9 @@ public class WoodStickHitScan : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (HasStateAuthority) // Host
-        {
+        Debug.Log("1");
+
+ 
             if (other.CompareTag("Player"))
             {
                 var player = other.GetComponent<PlayerCharacter>();
