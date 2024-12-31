@@ -8,10 +8,10 @@ public class Item_WoodStick : ItemBase
 
     [SerializeField] private float hitDelay = 1f;
     [SerializeField] private ParticleSystem hitEffect;
-    [SerializeField] private TrailRenderer SwingTrail;
+    [SerializeField] private TrailRenderer swingTrail;
     [SerializeField] private GameObject stickObject;
     [SerializeField] private BoxCollider hitColl;
-    Coroutine hitCoroutine;
+
     bool canSwing=true;
     void Start()
     {
@@ -26,16 +26,15 @@ public class Item_WoodStick : ItemBase
 
     public override void EquipItem(Animator animator)
     {
-        animationCoroutine = StartCoroutine(ChangeFlashObjectAfterDelay(stickObject, true, 1f));
+        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(stickObject, true, 1f));
         animator.SetBool("pickStick", true);
     }
     public override void UnequipItem(Animator animator)
     {
         animator.SetBool("pickStick", false);
-
+         hitColl.enabled =  false;
         IsActivity = false;
-        hitCoroutine = null;
-       animationCoroutine = StartCoroutine(ChangeFlashObjectAfterDelay(stickObject, false, 1f));
+       animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(stickObject, false, 1f));
     }
     #endregion
 
@@ -50,12 +49,12 @@ public class Item_WoodStick : ItemBase
     private IEnumerator SwingAction(Animator animator){
         canSwing = false;
         hitColl.enabled = true;
-        SwingTrail.enabled = true;
+        swingTrail.enabled = true;
         animator.SetTrigger("Attack");
         yield return new WaitForSeconds(1f);
         canSwing = true;
         hitColl.enabled = false;
-        SwingTrail.enabled = false;
+        swingTrail.enabled = false;
         animationCoroutine = null;
     }
 }

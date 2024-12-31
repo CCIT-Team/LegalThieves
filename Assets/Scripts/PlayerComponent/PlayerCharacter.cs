@@ -329,9 +329,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
                 SelectItemSkillSlot(5);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot7))
-                ItemSkillInventory.Set(1,2);
-
-           
+                {ItemSkillInventory.Set(1,1);
+                 ItemSkillInventory.Set(0,0);
+                ItemSkillInventory.Set(2,2);
+                 }
             // Debug Key
             if (Runner.IsServer)
             {

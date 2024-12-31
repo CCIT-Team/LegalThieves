@@ -19,14 +19,14 @@ public class Item_Flash : ItemBase
     }
     public override void EquipItem(Animator animator)
     {
-        animationCoroutine = StartCoroutine(ChangeFlashObjectAfterDelay(flashObject, true, 1f));
+        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(flashObject, true, 1f));
         animator.SetBool("pickFlash", true);
     }
     public override void UnequipItem(Animator animator)
     {
         IsActivity = false;
         animator.SetBool("pickFlash", false);
-        animationCoroutine = StartCoroutine(ChangeFlashObjectAfterDelay(flashObject, false, 1f));
+        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(flashObject, false, 1f));
    
  
     }

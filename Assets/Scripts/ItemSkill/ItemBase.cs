@@ -18,7 +18,7 @@ public abstract class ItemBase : MonoBehaviour
     public abstract void EquipItem(Animator animator);
     public abstract void UnequipItem(Animator animator);
 
-    protected IEnumerator ChangeFlashObjectAfterDelay(GameObject itemObject, bool isVisible,float delay)
+    protected IEnumerator ChangeObjectAfterDelay(GameObject itemObject, bool isVisible,float delay)
     {
         yield return new WaitForSeconds(delay);
         

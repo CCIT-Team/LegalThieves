@@ -6,12 +6,14 @@ public class Item_Torch : ItemBase
 {
     [SerializeField] private float lightIntensity = 1f;
     [SerializeField] private float changingTime = 3f;
+    [SerializeField] private float swingDelay = 5;
     [SerializeField] private ParticleSystem[] torchParticleSystems;
     [SerializeField] private Light torchLight;
     [SerializeField] private GameObject torchObject;
+    [SerializeField] private BoxCollider hitColl;
+    [SerializeField] private TrailRenderer swingTrail;
 
-    Coroutine torchCoroutine;
-
+    bool canSwing = true;
     void Start()
     {
         ID = (int)EItemType.Torch;
@@ -19,53 +21,39 @@ public class Item_Torch : ItemBase
     #region ItemBaseLogic
     public override void UseItem(Animator animator)
     {
-        TurnOnOffLight();
+        SwingCheck(animator);
     }
 
     public override void EquipItem(Animator animator)
     {
-        animationCoroutine = StartCoroutine(ChangeFlashObjectAfterDelay(torchObject, true, 1f));
+        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(torchObject, true, 1f));
         animator.SetBool("pickTorch", true);
+        TurnOnLight();
     }
     public override void UnequipItem(Animator animator)
     {
         animator.SetBool("pickTorch", false);
-        OffLight();
-        IsActivity = false;
-        torchCoroutine = null;
-        animationCoroutine = StartCoroutine(ChangeFlashObjectAfterDelay(torchObject, false, 1f));
+        TurnOffLight();
+        hitColl.enabled =  false;
+        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(torchObject, false, 1f));
     }
 
- 
+
     #endregion
 
-    public void TurnOnOffLight()
+    public void TurnOnLight()
     {
-        if (torchCoroutine != null) return;
 
-        IsActivity = !IsActivity;
-        if (IsActivity)
+        StartCoroutine(ChangeLightIntensity(1f));
+
+        foreach (ParticleSystem p in torchParticleSystems)
         {
-            torchCoroutine = StartCoroutine(ChangeLightIntensity(1f));
-
-            foreach (ParticleSystem p in torchParticleSystems)
-            {
-                var emission = p.emission;
-                emission.enabled = true;
-            }
-            //   AudioManager.instance.PlayTorchLoopSfx(true);
+            var emission = p.emission;
+            emission.enabled = true;
         }
-        else
-        {
-            torchCoroutine = StartCoroutine(ChangeLightIntensity(-1f));
+        //   AudioManager.instance.PlayTorchLoopSfx(true);
 
-            foreach (ParticleSystem p in torchParticleSystems)
-            {
-                var emission = p.emission;
-                emission.enabled = false;
-            }
-            //  AudioManager.instance.PlayTorchLoopSfx(false);
-        }
+        IsActivity = true;
 
     }
 
@@ -86,18 +74,39 @@ public class Item_Torch : ItemBase
         else
         {
             StopCoroutine(ChangeLightIntensity(delta, animator));
-            torchCoroutine = null;
         }
     }
-    void OffLight(){
+    void TurnOffLight()
+    {
         torchLight.intensity = 0;
-         foreach (ParticleSystem p in torchParticleSystems)
-            {
-                var emission = p.emission;
-                emission.enabled = false;
-            }
+        foreach (ParticleSystem p in torchParticleSystems)
+        {
+            var emission = p.emission;
+            emission.enabled = false;
+        }
+        IsActivity = false;
+
     }
 
+    private void SwingCheck(Animator animator)
+    {
+        if (canSwing)
+            animationCoroutine = StartCoroutine(SwingAction(animator));
+    }
+
+    private IEnumerator SwingAction(Animator animator)
+    {
+        canSwing = false;
+        hitColl.enabled = true;
+        swingTrail.enabled = true;
+        animator.SetTrigger("Attack");
+        yield return new WaitForSeconds(1f);
+        hitColl.enabled = false;
+        swingTrail.enabled = false;
+        animationCoroutine = null;
+        yield return new WaitForSeconds(swingDelay);
+        canSwing = true;
+    }
 }
 
 

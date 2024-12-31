@@ -26,14 +26,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1952561562632868401}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.86069757, y: 0, z: 0, w: 0.50911653}
-  m_LocalPosition: {x: 0, y: -0.33, z: -0.08}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4399147527643719648}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 118.79, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7167256701329248996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,12 +72,15 @@ MonoBehaviour:
   itemSFX: {fileID: 0}
   lightIntensity: 1
   changingTime: 3
+  swingDelay: 5
   torchParticleSystems:
   - {fileID: 726395890534695959}
   - {fileID: 8397171773306233388}
   - {fileID: 4004073695260566960}
   torchLight: {fileID: 2433372615536781324}
   torchObject: {fileID: 3911158517117861210}
+  hitColl: {fileID: 7173935495473935207}
+  swingTrail: {fileID: 0}
 --- !u!1001 &5131917488420701668
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86,25 +89,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1142479895856421790}
     m_Modifications:
+    - target: {fileID: 2645525680269588099, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
+      propertyPath: m_Size.x
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 2645525680269588099, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
+      propertyPath: m_Size.z
+      value: 0.03
+      objectReference: {fileID: 0}
     - target: {fileID: 8178257883455289534, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
       propertyPath: m_Name
       value: TorchObject
       objectReference: {fileID: 0}
     - target: {fileID: 8805894731932606980, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.0018
       objectReference: {fileID: 0}
     - target: {fileID: 8805894731932606980, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.0738
       objectReference: {fileID: 0}
     - target: {fileID: 8805894731932606980, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.0347
       objectReference: {fileID: 0}
     - target: {fileID: 8805894731932606980, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.77982986
       objectReference: {fileID: 0}
     - target: {fileID: 8805894731932606980, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
       propertyPath: m_LocalRotation.x
@@ -116,7 +127,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8805894731932606980, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: 0.6259916
       objectReference: {fileID: 0}
     - target: {fileID: 8805894731932606980, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -128,7 +139,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8805894731932606980, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 77.51
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6740932421095200836, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
@@ -159,6 +170,11 @@ ParticleSystem:
 --- !u!4 &4399147527643719648 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8805894731932606980, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
+  m_PrefabInstance: {fileID: 5131917488420701668}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &7173935495473935207 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 2645525680269588099, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
   m_PrefabInstance: {fileID: 5131917488420701668}
   m_PrefabAsset: {fileID: 0}
 --- !u!198 &8397171773306233388 stripped

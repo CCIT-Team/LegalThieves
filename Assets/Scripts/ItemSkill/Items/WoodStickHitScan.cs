@@ -8,9 +8,6 @@ public class WoodStickHitScan : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("1");
-
- 
             if (other.CompareTag("Player"))
             {
                 var player = other.GetComponent<PlayerCharacter>();
@@ -22,8 +19,5 @@ public class WoodStickHitScan : NetworkBehaviour
             // {
             //     var player = other.GetComponent<PlayerCharacter>();
             // }
-        }
     }
-
-
 }
