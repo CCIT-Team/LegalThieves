@@ -42,15 +42,13 @@ public class Item_WoodStick : ItemBase
     {
         if(canSwing)
         animationCoroutine = StartCoroutine(SwingAction(animator));
-
     }
-
 
     private IEnumerator SwingAction(Animator animator){
         canSwing = false;
         hitColl.enabled = true;
         swingTrail.enabled = true;
-        animator.SetTrigger("Attack");
+        animator.SetTrigger("UseItem");
         yield return new WaitForSeconds(1f);
         canSwing = true;
         hitColl.enabled = false;

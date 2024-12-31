@@ -99,7 +99,7 @@ public class Item_Torch : ItemBase
         canSwing = false;
         hitColl.enabled = true;
         swingTrail.enabled = true;
-        animator.SetTrigger("Attack");
+        animator.SetTrigger("UseItem");
         yield return new WaitForSeconds(1f);
         hitColl.enabled = false;
         swingTrail.enabled = false;

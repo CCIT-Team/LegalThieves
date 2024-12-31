@@ -37,7 +37,7 @@ public class Item_Flash : ItemBase
     public void TurnOnOffLight()
     {
         IsActivity = !IsActivity;
-        if (IsActivity)
+        if (flashLight)
         {
             flashLight.SetActive(true);
         }
