@@ -25,6 +25,7 @@ public class Item_Flash : ItemBase
     public override void UnequipItem(Animator animator)
     {
         IsActivity = false;
+         flashLight.SetActive(false);
         animator.SetBool("pickFlash", false);
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(flashObject, false, 1f));
    

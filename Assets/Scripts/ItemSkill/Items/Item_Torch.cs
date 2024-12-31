@@ -56,6 +56,17 @@ public class Item_Torch : ItemBase
         IsActivity = true;
 
     }
+    void TurnOffLight()
+    {
+        torchLight.intensity = 0;
+        foreach (ParticleSystem p in torchParticleSystems)
+        {
+            var emission = p.emission;
+            emission.enabled = false;
+        }
+        IsActivity = false;
+
+    }
 
     private IEnumerator ChangeLightIntensity(float delta, Animator animator = null)
     {
@@ -75,17 +86,6 @@ public class Item_Torch : ItemBase
         {
             StopCoroutine(ChangeLightIntensity(delta, animator));
         }
-    }
-    void TurnOffLight()
-    {
-        torchLight.intensity = 0;
-        foreach (ParticleSystem p in torchParticleSystems)
-        {
-            var emission = p.emission;
-            emission.enabled = false;
-        }
-        IsActivity = false;
-
     }
 
     private void SwingCheck(Animator animator)

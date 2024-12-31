@@ -16,12 +16,16 @@ public class PlayerItemController : NetworkBehaviour
     {
         if (currentItem == null || currentItem.animationCoroutine != null) return;
 
-        Debug.Log(currentItem.name);
         currentItem.UseItem(animator);
     }
     public void EquipItem(Animator animator, int itemIndex)
     {
-        if (currentItem != null && currentItem.animationCoroutine != null) return; 
+        if (currentItem != null &&currentItem.animationCoroutine != null)
+        {
+           
+            currentItem.UnequipItem(animator);
+            ChangeItem(animator, itemIndex);
+        }
 
         if (itemIndex == -1)//빈공간을 선택할때
         {
@@ -31,20 +35,22 @@ public class PlayerItemController : NetworkBehaviour
         }
         else     // 아이템을 선택할떄
         {
-            if(currentItem == null){ // 지금 아이템을 안들고 있다면
+            if (currentItem == null)
+            { // 지금 아이템을 안들고 있다면
                 currentItem = ItemGroup.GetItemClass(itemIndex);
                 currentItem.EquipItem(animator);
             }
-            else {  // 들고 있다면
-            currentItem.UnequipItem(animator);
-            ChangeItem(animator, itemIndex);
+            else
+            {  // 들고 있다면
+                currentItem.UnequipItem(animator);
+                ChangeItem(animator, itemIndex);
             }
         }
     }
     void ChangeItem(Animator animator, int itemIndex)
     {
-            currentItem = ItemGroup.GetItemClass(itemIndex);
-            currentItem.EquipItem(animator);
+        currentItem = ItemGroup.GetItemClass(itemIndex);
+        currentItem.EquipItem(animator);
 
     }
 
