@@ -7,7 +7,7 @@ public class Item_GPSDevice : ItemBase
     [SerializeField] GameObject GPSDeviceObject;
      [SerializeField] float delay=30;
    
-    void Start()
+    public override void Init()
     {
         ID = (int)EItemType.GPSDevice;
     }

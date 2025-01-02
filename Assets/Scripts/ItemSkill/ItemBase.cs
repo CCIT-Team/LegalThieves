@@ -32,5 +32,6 @@ public abstract class ItemBase : MonoBehaviour
         yield return new WaitForSeconds(delay);
         canUse = true;
     }
+    public abstract void Init();
 
 }

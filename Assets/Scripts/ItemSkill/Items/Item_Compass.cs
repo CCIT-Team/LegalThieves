@@ -6,7 +6,7 @@ public class Item_Compass : ItemBase
 //todo 네비메쉬 이용해서 길찾기 보여주는거 구현, 아이템 목록에 추가, 애니메이션 추가
     [SerializeField] GameObject CompassObject;
      [SerializeField] float delay=10;
-    void Start()
+      public override void Init()
     {
         ID = (int)EItemType.Compass;
     }

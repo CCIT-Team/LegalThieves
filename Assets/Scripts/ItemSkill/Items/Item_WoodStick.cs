@@ -13,7 +13,7 @@ public class Item_WoodStick : ItemBase
     [SerializeField] private BoxCollider hitColl;
 
     bool canSwing=true;
-    void Start()
+    public override void Init()
     {
         ID = (int)EItemType.WoodStick;
         hitColl.enabled = false;

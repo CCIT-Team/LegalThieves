@@ -14,7 +14,7 @@ public class Item_Torch : ItemBase
     [SerializeField] private TrailRenderer swingTrail;
 
     bool canSwing = true;
-    void Start()
+      public override void Init()
     {
         ID = (int)EItemType.Torch;
     }

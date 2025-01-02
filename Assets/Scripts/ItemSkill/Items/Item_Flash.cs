@@ -5,7 +5,7 @@ public class Item_Flash : ItemBase
 {
     [SerializeField] GameObject flashLight;
     [SerializeField] GameObject flashObject;
-    void Start()
+     public override void Init()
     {
         ID = (int)EItemType.Flashlight;
     }

@@ -37,6 +37,7 @@ public class ItemManager : MonoBehaviour
 
         foreach (var ib in ig)
         {
+            ib.Init();
             _itemDictionary.Add(ib.ID, ib);
         }
         
