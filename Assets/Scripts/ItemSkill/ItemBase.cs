@@ -10,6 +10,7 @@ public abstract class ItemBase : MonoBehaviour
     public Sprite itemIcon;
 
     public bool IsActivity; // 도구 사용중 여부 ex. 손전등이 켜져있는가?
+    public bool canUse=true;
     public AudioSource itemSFX;
 
     public Coroutine animationCoroutine;
@@ -17,6 +18,7 @@ public abstract class ItemBase : MonoBehaviour
     public abstract void UseItem(Animator animator);
     public abstract void EquipItem(Animator animator);
     public abstract void UnequipItem(Animator animator);
+  
 
     protected IEnumerator ChangeObjectAfterDelay(GameObject itemObject, bool isVisible,float delay)
     {
@@ -25,4 +27,10 @@ public abstract class ItemBase : MonoBehaviour
         itemObject.SetActive(isVisible);
         animationCoroutine = null;
     }
+ 
+    protected IEnumerator Delay(float delay){
+        yield return new WaitForSeconds(delay);
+        canUse = true;
+    }
+
 }

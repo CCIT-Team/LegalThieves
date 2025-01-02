@@ -9,6 +9,8 @@ public enum EItemType
     Torch,
     Flashlight,
     WoodStick,
+    Compass,
+    GPSDevice,
     Count
 }
 
