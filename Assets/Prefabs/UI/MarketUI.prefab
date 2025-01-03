@@ -290,8 +290,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4519278549315350007}
   m_HandleRect: {fileID: 4243817766252509994}
   m_Direction: 2
-  m_Value: -0.0000036621093
-  m_Size: 0.8181459
+  m_Value: -0.0000073242186
+  m_Size: 0.8181818
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1150,7 +1150,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8039530722222470636}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6772838969069147423, guid: da194c35a1571834f99a8f44f5631bc8, type: 3}
+        m_TargetAssemblyTypeName: New_Neo_LT.Scripts.UI.UIManager, Assembly-CSharp
+        m_MethodName: CloseMarket
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1669906868681480340
 GameObject:
   m_ObjectHideFlags: 0

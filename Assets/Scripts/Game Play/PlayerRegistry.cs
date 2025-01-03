@@ -14,7 +14,7 @@ namespace New_Neo_LT.Scripts.Game_Play
 	{
 		private const byte Capacity = 4;
 
-		public int Cap => Capacity;
+		public static int Cap => Capacity;
 
 		public static PlayerRegistry Instance { get; private set; }
 

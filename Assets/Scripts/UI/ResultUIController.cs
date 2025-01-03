@@ -78,11 +78,17 @@ namespace New_Neo_LT.Scripts.UI
         {
             var slot  = slots[index];
             var type  = player.GetJobIndex();
-            
+            var isRenown = player.IsScholar;
             SetResultAnimation(type, index);
             
             slot.gameObject.SetActive(true);
-            slot.SetSlot(player.GetPlayerName(), player.GetGoldPoint, player.GetRenownPoint, cameras[type].targetTexture);
+            slot.SetSlot(
+                player.GetPlayerName(), 
+                isRenown,
+                player.GetGoldPoint, 
+                player.GetRenownPoint, 
+                cameras[type].targetTexture
+                );
         }
         
         private void InitCameras()

@@ -20,7 +20,7 @@ public class RelicPriceUI : MonoBehaviour
     TMP_Text totalGoldPoint;
     TMP_Text totalRenownPoint;
 
-    bool isWinGold = false;
+    // bool isWinGold = false;
 
     private void Awake()
     {

@@ -82,6 +82,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
             var availableJobs = NewGameManager.Instance.GetAvailableJobIndices().ToArray();
 
 #if UNITY_EDITOR
+            Debug.Log($"Available Job Count: {availableJobs.Length}");
             Debug.Log($"Available Jobs: {string.Join(", ", availableJobs)}");
 #endif
             

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Fusion;
+using ItemSkill.Skill;
 using New_Neo_LT.Scripts.Game_Play.Game_State;
 using New_Neo_LT.Scripts.Map;
 using New_Neo_LT.Scripts.UI;
@@ -25,8 +26,12 @@ namespace New_Neo_LT.Scripts.Game_Play
         
         public static NewGameManager Instance { get; private set; }
         public static GameState State { get; private set; }
+        public static NetworkRunner LocalRunner => Instance.Runner;
+        
         public  ResourcesManager Rm { get; private set; }
         public  InterfaceManager Im { get; private set; }
+        public  SkillManager     SkillManager { get; private set; }
+        
         // public static SoundManager Sm { get; private set; }
         // public static VoiceManager Vm { get; private set; }
         
@@ -57,6 +62,7 @@ namespace New_Neo_LT.Scripts.Game_Play
                 Im = GetComponent<InterfaceManager>();
                 State = GetComponent<GameState>();
                 Rm = GetComponent<ResourcesManager>();
+                SkillManager = GetComponent<SkillManager>();
                 // Sm = GetComponent<SoundManager>();
                 // Vm = GetComponent<VoiceManager>();
             }
@@ -69,7 +75,18 @@ namespace New_Neo_LT.Scripts.Game_Play
         #endregion
         
         #region NetworkBehaviour Events
-        
+
+        public override void Spawned()
+        {
+            base.Spawned();
+            if (HasStateAuthority)
+            {
+                for (var i = 0; i < ButtonStateArray.Length; i++)
+                {
+                    ButtonStateArray.Set(i, true);
+                }
+            }
+        }
 
         #endregion
         
@@ -83,7 +100,7 @@ namespace New_Neo_LT.Scripts.Game_Play
         {
             if (!PlayerRegistry.Any(pc => !pc.IsReady))
             {
-                State.Server_SetState<LoadingStateBehaviour>();
+                State.Server_SetState<PlayStateBehaviour>();
             }
         }
 
@@ -123,7 +140,15 @@ namespace New_Neo_LT.Scripts.Game_Play
         
         public IEnumerable<int> GetAvailableJobIndices()
         {
-            return ButtonStateArray.Where((b) => b).Select((b, i) => i);
+            var jobArray = ButtonStateArray.ToArray();
+            var availableJobs = new List<int>();
+            // true인 직업의 인덱스를 리스트에 추가
+            for (var i = 0; i < jobArray.Length; i++)
+            {
+                if (jobArray[i])
+                    availableJobs.Add(i);
+            }
+            return availableJobs;
         }
         
         #endregion

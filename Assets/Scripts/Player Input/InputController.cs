@@ -157,7 +157,10 @@ namespace New_Neo_LT.Scripts.Player_Input
             if(!NewGameManager.State)
                 return;
             if(!NewGameManager.State.AllowInput || !NewGameManager.State.UIFlag)
+            {
+                _accumulateInput.Direction = Vector2.zero;
                 return;
+            }
             
             _accumulateInput.Direction = ctx.ReadValue<Vector2>();
         }
