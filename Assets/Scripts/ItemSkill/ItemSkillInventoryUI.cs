@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,20 +39,23 @@ public class ItemSkillInventoryUI : MonoBehaviour
         slotImage.enabled = true;
     }
 
-    public void CoolDownSlotUI(int index, float delay){
+    public void CoolDownSlotUI(int index, float delay)
+    {
         StartCoroutine(CoolDownSlotRoutine(index, delay));
     }
     IEnumerator CoolDownSlotRoutine(int index, float delay)
     {
-        if (delay == 0) yield return null;
-        var step = 1/delay;
-        var slot =  slots[index].GetComponent<Slider>();
-        Debug.Log(slot.value);
-        for (float i = 0; i < 1; i += step)
+        if (delay != 0)
         {
+            var step = 1 / delay;
+            var slot = slots[index].GetComponent<Slider>();
             Debug.Log(slot.value);
-            slot.value = 1-i;
-            yield return new WaitForSeconds(1f);
+            for (float i = 0; i <= 1; i += step)
+            {
+                Debug.Log(slot.value);
+                slot.value = 1 - i;
+                yield return new WaitForSeconds(1f);
+            }
         }
     }
 }
