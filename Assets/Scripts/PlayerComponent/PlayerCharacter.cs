@@ -794,7 +794,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_UseItem()
         {
-            itemController.UseItem(animator);
+            itemController.UseItem(itemSkillSlotIndex,animator);
         }
         #endregion
     }

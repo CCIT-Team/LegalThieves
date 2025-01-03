@@ -4,11 +4,11 @@ using System.Collections;
 using UnityEngine.Rendering.Universal;
 using Unity.VisualScripting;
 using System;
+using New_Neo_LT.Scripts.UI;
 public class Item_GPSDevice : ItemBase
 {
 //todo 네비메쉬 이용해서 길찾기 보여주는거 구현, 아이템 목록에 추가, 애니메이션 추가
     [SerializeField] GameObject GPSDeviceObject;
-     [SerializeField] float delay=30;
      [SerializeField] float effectTime=5;
     [SerializeField] UniversalRendererData Outline;
     public override void Init()
@@ -20,9 +20,9 @@ public class Item_GPSDevice : ItemBase
     }
 
     #region ItemBaseLogic
-    public override void UseItem(Animator animator)
+        public override void UseItem(Animator animator)
     {
-        UsePlayerScan(animator);
+        UsePlayerScan(animator); 
     }
     public override void EquipItem(Animator animator)
     {
@@ -38,13 +38,12 @@ public class Item_GPSDevice : ItemBase
 
     public void UsePlayerScan(Animator animator)
     {
-        if(canUse)
-        {  
+    
             animator.SetTrigger("UseItem");
             animationCoroutine = StartCoroutine(PlayerScan());
             canUse = false;
-            StartCoroutine(CoolDownDelay(delay));
-        }
+            StartCoroutine(CoolDownDelay());
+        
     }
 
     private IEnumerator PlayerScan()

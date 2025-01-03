@@ -11,11 +11,9 @@ public class Item_Flash : ItemBase
     }
 
     #region ItemBaseLogic
-    public override void UseItem(Animator animator)
+    public override void UseItem(Animator animator = null)
     {
-
         TurnOnOffLight();
-
     }
     public override void EquipItem(Animator animator)
     {

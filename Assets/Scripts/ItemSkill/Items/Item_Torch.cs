@@ -13,15 +13,16 @@ public class Item_Torch : ItemBase
     [SerializeField] private BoxCollider hitColl;
     [SerializeField] private TrailRenderer swingTrail;
 
-    bool canSwing = true;
-      public override void Init()
+
+    public override void Init()
     {
+        canUse = true;
         ID = (int)EItemType.Torch;
     }
     #region ItemBaseLogic
     public override void UseItem(Animator animator)
     {
-        SwingCheck(animator);
+            Swing(animator);
     }
 
     public override void EquipItem(Animator animator)
@@ -34,7 +35,7 @@ public class Item_Torch : ItemBase
     {
         animator.SetBool("pickTorch", false);
         TurnOffLight();
-        hitColl.enabled =  false;
+        hitColl.enabled = false;
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(torchObject, false, 1f));
     }
 
@@ -88,15 +89,15 @@ public class Item_Torch : ItemBase
         }
     }
 
-    private void SwingCheck(Animator animator)
+    private void Swing(Animator animator)
     {
-        if (canSwing)
-            animationCoroutine = StartCoroutine(SwingAction(animator));
+        animationCoroutine = StartCoroutine(SwingAction(animator));
+        StartCoroutine(CoolDownDelay());
     }
 
     private IEnumerator SwingAction(Animator animator)
     {
-        canSwing = false;
+        canUse = false;
         hitColl.enabled = true;
         swingTrail.enabled = true;
         animator.SetTrigger("UseItem");
@@ -104,8 +105,7 @@ public class Item_Torch : ItemBase
         hitColl.enabled = false;
         swingTrail.enabled = false;
         animationCoroutine = null;
-        yield return new WaitForSeconds(swingDelay);
-        canSwing = true;
+
     }
 }
 

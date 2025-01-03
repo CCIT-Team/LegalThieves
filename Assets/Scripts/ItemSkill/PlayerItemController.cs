@@ -1,8 +1,9 @@
 
 using UnityEngine;
-using System.Collections;
+
 using Fusion;
-using Unity.VisualScripting;
+using New_Neo_LT.Scripts.UI;
+
 
 public class PlayerItemController : NetworkBehaviour
 {
@@ -12,17 +13,17 @@ public class PlayerItemController : NetworkBehaviour
     {
         ItemGroup = Instantiate(ItemManager.Instance.ItemGroupOrigin, Vector3.zero, Quaternion.identity).GetComponent<ItemGroup>();
     }
-    public void UseItem(Animator animator)
+    public void UseItem(int slotIndex, Animator animator)
     {
-        if (currentItem == null || currentItem.animationCoroutine != null) return;
-
+        if (currentItem == null || currentItem.animationCoroutine != null || !currentItem.CanUse) return;
         currentItem.UseItem(animator);
+        UIManager.Instance.itemSkillInventoryUI.CoolDownSlotUI(slotIndex, currentItem.baseDelay);
+    
     }
     public void EquipItem(Animator animator, int itemIndex)
     {
         if (currentItem != null &&currentItem.animationCoroutine != null)
         {
-           
             currentItem.UnequipItem(animator);
             ChangeItem(animator, itemIndex);
         }
@@ -53,14 +54,12 @@ public class PlayerItemController : NetworkBehaviour
         currentItem.EquipItem(animator);
 
     }
-
     public void ConsumingItem()
     {
         currentItem = null;
     }
     public void SetHolder(Transform itemHolder)
     {
-
         ItemGroup.transform.parent = itemHolder;
         ItemGroup.transform.localPosition = Vector3.zero;
         ItemGroup.transform.localRotation = Quaternion.identity;

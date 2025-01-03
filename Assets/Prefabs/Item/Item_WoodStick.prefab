@@ -51,8 +51,8 @@ MonoBehaviour:
   itemName: "\uBABD\uB465\uC774"
   itemDescription: "\uD760\uC52C \uD328\uBC84\uB824"
   itemIcon: {fileID: 1211498523, guid: 6b94e8163e06d5449937b19f183bbfe4, type: 3}
-  IsActivity: 0
   itemSFX: {fileID: 0}
+  baseDelay: 1
   hitDelay: 1
   hitEffect: {fileID: 0}
   swingTrail: {fileID: 5307666811966335768}
@@ -84,6 +84,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8799095513064120858}
     m_Modifications:
+    - target: {fileID: 2839494644900248, guid: a8422f5abece3544cb4a138eb5e1b965, type: 3}
+      propertyPath: SortKey
+      value: 551175138
+      objectReference: {fileID: 0}
     - target: {fileID: 778330030043890383, guid: a8422f5abece3544cb4a138eb5e1b965, type: 3}
       propertyPath: m_Size.x
       value: 1
@@ -186,7 +190,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4716908398490266129}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bdd3066e99b3014fa443b028bf99348, type: 3}
+  m_Script: {fileID: 11500000, guid: a23374c28a72c1f4fa2e121cbfa2d406, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &4716908398490266129 stripped
