@@ -210,7 +210,7 @@ namespace UI.MarketUI
             }
             else
             {
-                productCountParent.SetActive(false);
+                // productCountParent.SetActive(false);
             }
         }
 

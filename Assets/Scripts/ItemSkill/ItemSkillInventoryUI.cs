@@ -58,4 +58,16 @@ public class ItemSkillInventoryUI : MonoBehaviour
             }
         }
     }
+    
+    public void SetSlotImage(int index, Sprite sprite)
+    {
+        if(index < 0 || index >= slots.Length)
+            return;
+        
+        var slotImage = slots[index].transform.GetChild(1).GetComponent<Image>();
+        
+        slotImage.sprite = sprite;
+        
+        slotImage.enabled = true;
+    }
 }

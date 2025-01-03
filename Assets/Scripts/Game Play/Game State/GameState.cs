@@ -93,7 +93,7 @@ namespace New_Neo_LT.Scripts.Game_Play.Game_State
 
         private static bool CanTransitionToPreGame(StateBehaviour sb1, StateBehaviour sb2)
         {
-            return PlayerRegistry.Count == PlayerRegistry.Instance.Cap;
+            return PlayerRegistry.Count == PlayerRegistry.Cap;
         }
     }
 }

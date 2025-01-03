@@ -21,7 +21,7 @@ public class LoadingUI : MonoBehaviour
     [SerializeField] AnimationCurve progressingCurve;
     [SerializeField] AnimationCurve endingCurve;
 
-    [SerializeField] float testLoadingTime = 10f;
+    // [SerializeField] float testLoadingTime = 10f;
 
     private void Start()
     {
