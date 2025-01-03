@@ -5,7 +5,7 @@ using Fusion;
 using New_Neo_LT.Scripts.UI;
 
 
-public class PlayerItemController : MonoBehaviour
+public class PlayerItemController : NetworkBehaviour
 {
     ItemBase currentItem;
     private ItemGroup ItemGroup;

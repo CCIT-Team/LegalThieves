@@ -779,7 +779,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             }
         }
 
-        [Rpc(RpcSources.All, RpcTargets.All)]
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         private void RPC_SelectItemSkillSlot(int index)
         {
             itemSkillSlotIndex = index;
@@ -791,7 +791,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
             }
         }
-        [Rpc(RpcSources.All, RpcTargets.All)]
+        [Rpc(RpcSources.InputAuthority, RpcTargets.InputAuthority)]
         private void RPC_UseItem()
         {
             itemController.UseItem(itemSkillSlotIndex,animator);
