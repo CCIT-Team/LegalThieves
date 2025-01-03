@@ -34,7 +34,7 @@ public class Item_Compass : ItemBase
         { 
             animator.SetTrigger("UseItem");
             canUse = false;
-            StartCoroutine(Delay(delay));
+            StartCoroutine(CoolDownDelay(delay));
         }
     }   
 

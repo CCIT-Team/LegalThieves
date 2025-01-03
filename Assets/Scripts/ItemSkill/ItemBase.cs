@@ -28,7 +28,7 @@ public abstract class ItemBase : MonoBehaviour
         animationCoroutine = null;
     }
  
-    protected IEnumerator Delay(float delay){
+    protected IEnumerator CoolDownDelay(float delay){
         yield return new WaitForSeconds(delay);
         canUse = true;
     }

@@ -332,6 +332,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 {ItemSkillInventory.Set(1,1);
                  ItemSkillInventory.Set(0,0);
                 ItemSkillInventory.Set(2,2);
+                ItemSkillInventory.Set(3,3);
+                ItemSkillInventory.Set(4,4);
                  }
             // Debug Key
             if (Runner.IsServer)
