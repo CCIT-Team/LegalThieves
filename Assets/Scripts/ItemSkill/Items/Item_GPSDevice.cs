@@ -20,26 +20,29 @@ public class Item_GPSDevice : ItemBase
     }
 
     #region ItemBaseLogic
-        public override void UseItem(Animator animator)
+        public override void UseItem(Animator animator, Animator armAnimator)
     {
-        UsePlayerScan(animator); 
+        UsePlayerScan(animator, armAnimator); 
     }
-    public override void EquipItem(Animator animator)
+    public override void EquipItem(Animator animator, Animator armAnimator)
     {
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObject, true, 1f));
         animator.SetBool("pickGPS", true);
+        armAnimator.SetBool("pickGPS", true);
     }
-    public override void UnequipItem(Animator animator)
+    public override void UnequipItem(Animator animator, Animator armAnimator)
     {
         animator.SetBool("pickGPS", false);
+        armAnimator.SetBool("pickGPS", false);
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObject, false, 1f));
     }
     #endregion
 
-    public void UsePlayerScan(Animator animator)
+    public void UsePlayerScan(Animator animator,  Animator armAnimator)
     {
     
             animator.SetTrigger("UseItem");
+            armAnimator.SetTrigger("UseItem");
             animationCoroutine = StartCoroutine(PlayerScan());
             canUse = false;
             StartCoroutine(CoolDownDelay());

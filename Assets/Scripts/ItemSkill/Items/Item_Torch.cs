@@ -20,20 +20,22 @@ public class Item_Torch : ItemBase
         ID = (int)EItemType.Torch;
     }
     #region ItemBaseLogic
-    public override void UseItem(Animator animator)
+    public override void UseItem(Animator animator, Animator armAnimator)
     {
-            Swing(animator);
+            Swing(animator, armAnimator);
     }
 
-    public override void EquipItem(Animator animator)
+    public override void EquipItem(Animator animator, Animator armAnimator)
     {
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(torchObject, true, 1f));
         animator.SetBool("pickTorch", true);
+        armAnimator.SetBool("pickTorch", true);
         TurnOnLight();
     }
-    public override void UnequipItem(Animator animator)
+    public override void UnequipItem(Animator animator, Animator armAnimator)
     {
         animator.SetBool("pickTorch", false);
+        armAnimator.SetBool("pickTorch", false);
         TurnOffLight();
         hitColl.enabled = false;
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(torchObject, false, 1f));
@@ -89,18 +91,19 @@ public class Item_Torch : ItemBase
         }
     }
 
-    private void Swing(Animator animator)
+    private void Swing(Animator animator, Animator armAnimator)
     {
-        animationCoroutine = StartCoroutine(SwingAction(animator));
+        animationCoroutine = StartCoroutine(SwingAction(animator, armAnimator));
         StartCoroutine(CoolDownDelay());
     }
 
-    private IEnumerator SwingAction(Animator animator)
+    private IEnumerator SwingAction(Animator animator, Animator armAnimator)
     {
         canUse = false;
         hitColl.enabled = true;
         swingTrail.enabled = true;
         animator.SetTrigger("UseItem");
+        armAnimator.SetTrigger("UseItem");
         yield return new WaitForSeconds(1f);
         hitColl.enabled = false;
         swingTrail.enabled = false;

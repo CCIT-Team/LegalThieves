@@ -11,27 +11,28 @@ public class Item_Flash : ItemBase
     }
 
     #region ItemBaseLogic
-    public override void UseItem(Animator animator = null)
+    public override void UseItem(Animator animator, Animator armAnimator)
     {
         TurnOnOffLight();
     }
-    public override void EquipItem(Animator animator)
+    public override void EquipItem(Animator animator, Animator armAnimator)
     {
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(flashObject, true, 1f));
         animator.SetBool("pickFlash", true);
+        armAnimator.SetBool("pickFlash", true);
     }
-    public override void UnequipItem(Animator animator)
+    public override void UnequipItem(Animator animator, Animator armAnimator)
     {
         IsActivity = false;
          flashLight.SetActive(false);
         animator.SetBool("pickFlash", false);
+        armAnimator.SetBool("pickFlash", false);
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(flashObject, false, 1f));
    
  
     }
     #endregion
 
-   
     public void TurnOnOffLight()
     {
         IsActivity = !IsActivity;

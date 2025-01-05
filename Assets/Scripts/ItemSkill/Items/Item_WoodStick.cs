@@ -19,36 +19,40 @@ public class Item_WoodStick : ItemBase
         hitColl.enabled = false;
     }
     #region ItemBaseLogic
-    public override void UseItem(Animator animator)
+    public override void UseItem(Animator animator, Animator armAnimator)
     {
-        SwingCheck(animator);
+        SwingCheck(animator, armAnimator);
     }
 
-    public override void EquipItem(Animator animator)
+    public override void EquipItem(Animator animator, Animator armAnimator)
     {
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(stickObject, true, 1f));
         animator.SetBool("pickStick", true);
+        armAnimator.SetBool("pickStick", true);
     }
-    public override void UnequipItem(Animator animator)
+    public override void UnequipItem(Animator animator, Animator armAnimator)
     {
         animator.SetBool("pickStick", false);
+        armAnimator.SetBool("pickStick", false);
+
          hitColl.enabled =  false;
         IsActivity = false;
        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(stickObject, false, 1f));
     }
     #endregion
 
-    private void SwingCheck(Animator animator)
+    private void SwingCheck(Animator animator, Animator armAnimator)
     {
         if(canSwing)
-        animationCoroutine = StartCoroutine(SwingAction(animator));
+        animationCoroutine = StartCoroutine(SwingAction(animator, armAnimator));
     }
 
-    private IEnumerator SwingAction(Animator animator){
+    private IEnumerator SwingAction(Animator animator, Animator armAnimator){
         canSwing = false;
         hitColl.enabled = true;
         swingTrail.enabled = true;
         animator.SetTrigger("UseItem");
+        armAnimator.SetTrigger("UseItem");
         yield return new WaitForSeconds(1f);
         canSwing = true;
         hitColl.enabled = false;

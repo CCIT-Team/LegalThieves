@@ -9,6 +9,9 @@ public class PlayerItemController : NetworkBehaviour
 {
     ItemBase currentItem;
     private ItemGroup ItemGroup;
+
+    [SerializeField] Animator[] armAnimators;
+    [SerializeField] Animator currentArmAnimator;
     public void SetItemGroup()
     {
         ItemGroup = Instantiate(ItemManager.Instance.ItemGroupOrigin, Vector3.zero, Quaternion.identity).GetComponent<ItemGroup>();
@@ -16,7 +19,7 @@ public class PlayerItemController : NetworkBehaviour
     public void UseItem(int slotIndex, Animator animator)
     {
         if (currentItem == null || currentItem.animationCoroutine != null || !currentItem.CanUse) return;
-        currentItem.UseItem(animator);
+        currentItem.UseItem(animator,currentArmAnimator);
         UIManager.Instance.itemSkillInventoryUI.CoolDownSlotUI(slotIndex, currentItem.baseDelay);
     
     }
@@ -24,14 +27,14 @@ public class PlayerItemController : NetworkBehaviour
     {
         if (currentItem != null &&currentItem.animationCoroutine != null)
         {
-            currentItem.UnequipItem(animator);
+            currentItem.UnequipItem(animator,currentArmAnimator);
             ChangeItem(animator, itemIndex);
         }
 
         if (itemIndex == -1)//빈공간을 선택할때
         {
             if (currentItem == null) return;  //지금 아이템을 안들고있다면 리턴턴
-            currentItem.UnequipItem(animator);
+            currentItem.UnequipItem(animator,currentArmAnimator);
             currentItem = null;
         }
         else     // 아이템을 선택할떄
@@ -39,11 +42,11 @@ public class PlayerItemController : NetworkBehaviour
             if (currentItem == null)
             { // 지금 아이템을 안들고 있다면
                 currentItem = ItemGroup.GetItemClass(itemIndex);
-                currentItem.EquipItem(animator);
+                currentItem.EquipItem(animator,currentArmAnimator);
             }
             else
             {  // 들고 있다면
-                currentItem.UnequipItem(animator);
+                currentItem.UnequipItem(animator,currentArmAnimator);
                 ChangeItem(animator, itemIndex);
             }
         }
@@ -51,7 +54,7 @@ public class PlayerItemController : NetworkBehaviour
     void ChangeItem(Animator animator, int itemIndex)
     {
         currentItem = ItemGroup.GetItemClass(itemIndex);
-        currentItem.EquipItem(animator);
+        currentItem.EquipItem(animator,currentArmAnimator);
 
     }
     public void ConsumingItem()
@@ -63,6 +66,14 @@ public class PlayerItemController : NetworkBehaviour
         ItemGroup.transform.parent = itemHolder;
         ItemGroup.transform.localPosition = Vector3.zero;
         ItemGroup.transform.localRotation = Quaternion.identity;
+    }
+
+    public void SetArmAnimator(int index){
+        foreach(var anim in armAnimators){
+            anim.gameObject.SetActive(false);
+        }
+        currentArmAnimator = armAnimators[index];
+        currentArmAnimator.gameObject.SetActive(true);
     }
 
 }

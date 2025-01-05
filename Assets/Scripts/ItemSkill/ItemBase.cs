@@ -17,9 +17,9 @@ public abstract class ItemBase : MonoBehaviour
     public Coroutine animationCoroutine;
     public float baseDelay;
 
-    public abstract void UseItem(Animator animator);
-    public abstract void EquipItem(Animator animator);
-    public abstract void UnequipItem(Animator animator);
+    public abstract void UseItem(Animator animator, Animator armAnimator);
+    public abstract void EquipItem(Animator animator, Animator armAnimator);
+    public abstract void UnequipItem(Animator animator, Animator armAnimator);
 
      public abstract void Init();
      

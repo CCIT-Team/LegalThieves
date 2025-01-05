@@ -20,25 +20,29 @@ public class Item_Compass : ItemBase
     }
 
     #region ItemBaseLogic
-        public override void UseItem(Animator animator)
+        public override void UseItem(Animator animator, Animator armAnimator)
     {
-        UsePathFinding(animator);
+        UsePathFinding(animator, armAnimator);
     }
-    public override void EquipItem(Animator animator)
+    public override void EquipItem(Animator animator, Animator armAnimator)
     {
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(CompassObject, true, 1f));
         animator.SetBool("pickCompass", true);
+        armAnimator.SetBool("pickCompass",true);
+
     }
-    public override void UnequipItem(Animator animator)
+    public override void UnequipItem(Animator animator, Animator armAnimator)
     {
         animator.SetBool("pickCompass", false);
+        armAnimator.SetBool("pickCompass",false);
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(CompassObject, false, 1f));
     }
     #endregion
 
-    public void UsePathFinding(Animator animator)
+    public void UsePathFinding(Animator animator, Animator armAnimator)
     {
             animator.SetTrigger("UseItem");
+            armAnimator.SetTrigger("UseItem");
             canUse = false;
             PathFinding();
        
