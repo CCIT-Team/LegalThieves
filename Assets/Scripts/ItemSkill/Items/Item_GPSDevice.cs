@@ -9,6 +9,7 @@ public class Item_GPSDevice : ItemBase
 {
 //todo 네비메쉬 이용해서 길찾기 보여주는거 구현, 아이템 목록에 추가, 애니메이션 추가
     [SerializeField] GameObject GPSDeviceObject;
+      [SerializeField] GameObject GPSDeviceObjectLocal;
      [SerializeField] float effectTime=5;
     [SerializeField] UniversalRendererData Outline;
     public override void Init()
@@ -27,6 +28,8 @@ public class Item_GPSDevice : ItemBase
     public override void EquipItem(Animator animator, Animator armAnimator)
     {
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObject, true, 1f));
+            if (HasInputAuthority)
+        StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObjectLocal, true, 1f));
         animator.SetBool("pickGPS", true);
         armAnimator.SetBool("pickGPS", true);
     }
@@ -35,6 +38,8 @@ public class Item_GPSDevice : ItemBase
         animator.SetBool("pickGPS", false);
         armAnimator.SetBool("pickGPS", false);
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObject, false, 1f));
+            if (HasInputAuthority)
+         StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObjectLocal, false, 1f));
     }
     #endregion
 

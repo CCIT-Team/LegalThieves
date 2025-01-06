@@ -55,6 +55,7 @@ MonoBehaviour:
   baseDelay: 0
   flashLight: {fileID: 672896542481960479}
   flashObject: {fileID: 8977824602424880891}
+  flashObjectLocal: {fileID: 0}
 --- !u!114 &4660398209734438958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,7 +72,8 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours: []
+  NetworkedBehaviours:
+  - {fileID: 5315240683799256252}
 --- !u!1001 &3625614040868331601
 PrefabInstance:
   m_ObjectHideFlags: 0

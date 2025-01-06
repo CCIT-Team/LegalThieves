@@ -12,6 +12,10 @@ public class Item_WoodStick : ItemBase
     [SerializeField] private GameObject stickObject;
     [SerializeField] private BoxCollider hitColl;
 
+      [SerializeField] private TrailRenderer swingTrailLocal;
+    [SerializeField] private GameObject stickObjectLocal;
+    [SerializeField] private BoxCollider hitCollLocal;
+
     bool canSwing=true;
     public override void Init()
     {
@@ -27,17 +31,21 @@ public class Item_WoodStick : ItemBase
     public override void EquipItem(Animator animator, Animator armAnimator)
     {
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(stickObject, true, 1f));
+            if (HasInputAuthority)
+        StartCoroutine(ChangeObjectAfterDelay(stickObjectLocal, true, 1f));
         animator.SetBool("pickStick", true);
-        armAnimator.SetBool("pickStick", true);
+        armAnimator?.SetBool("pickStick", true);
     }
     public override void UnequipItem(Animator animator, Animator armAnimator)
     {
         animator.SetBool("pickStick", false);
-        armAnimator.SetBool("pickStick", false);
+        armAnimator?.SetBool("pickStick", false);
 
          hitColl.enabled =  false;
         IsActivity = false;
        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(stickObject, false, 1f));
+           if (HasInputAuthority)
+        StartCoroutine(ChangeObjectAfterDelay(stickObjectLocal, false, 1f));
     }
     #endregion
 
@@ -51,12 +59,14 @@ public class Item_WoodStick : ItemBase
         canSwing = false;
         hitColl.enabled = true;
         swingTrail.enabled = true;
+        swingTrailLocal.enabled = swingTrail.enabled;
         animator.SetTrigger("UseItem");
-        armAnimator.SetTrigger("UseItem");
+        armAnimator?.SetTrigger("UseItem");
         yield return new WaitForSeconds(1f);
         canSwing = true;
         hitColl.enabled = false;
         swingTrail.enabled = false;
+        swingTrailLocal.enabled = swingTrail.enabled;
         animationCoroutine = null;
     }
 }

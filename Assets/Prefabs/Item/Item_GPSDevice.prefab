@@ -54,6 +54,7 @@ MonoBehaviour:
   itemSFX: {fileID: 0}
   baseDelay: 10
   GPSDeviceObject: {fileID: 7848183690703407711}
+  GPSDeviceObjectLocal: {fileID: 0}
   effectTime: 5
   Outline: {fileID: 11400000, guid: c40be3174f62c4acf8c1216858c64956, type: 2}
 --- !u!114 &5933914465242340220
@@ -72,7 +73,8 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours: []
+  NetworkedBehaviours:
+  - {fileID: 2486680826020921601}
 --- !u!1 &7848183690703407711
 GameObject:
   m_ObjectHideFlags: 0

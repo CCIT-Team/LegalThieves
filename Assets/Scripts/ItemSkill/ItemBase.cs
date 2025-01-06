@@ -2,7 +2,8 @@
 using UnityEngine;
 using System.Collections;
 using New_Neo_LT.Scripts.UI;
-public abstract class ItemBase : MonoBehaviour
+using Fusion;
+public abstract class ItemBase : NetworkBehaviour
 {
     public int ID;
     public int itemPrice;

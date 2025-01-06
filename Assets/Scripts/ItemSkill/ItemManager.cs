@@ -21,7 +21,7 @@ public class ItemManager : MonoBehaviour
     public ItemBase[] items;
     
     [SerializeField] private Sprite emptySprite;
-    
+
     private readonly Dictionary<int, ItemBase> _itemDictionary = new();
     
     public ItemBase[] ItemBases => _itemDictionary.Values.ToArray();

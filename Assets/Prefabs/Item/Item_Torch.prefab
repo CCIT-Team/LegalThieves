@@ -50,7 +50,8 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours: []
+  NetworkedBehaviours:
+  - {fileID: 6983761952787866201}
 --- !u!114 &6983761952787866201
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,7 +73,6 @@ MonoBehaviour:
   baseDelay: 5
   lightIntensity: 1
   changingTime: 3
-  swingDelay: 5
   torchParticleSystems:
   - {fileID: 726395890534695959}
   - {fileID: 8397171773306233388}
@@ -81,6 +81,10 @@ MonoBehaviour:
   torchObject: {fileID: 3911158517117861210}
   hitColl: {fileID: 7173935495473935207}
   swingTrail: {fileID: 0}
+  torchLightLocal: {fileID: 0}
+  torchObjectLocal: {fileID: 0}
+  hitCollLocal: {fileID: 0}
+  swingTrailLocal: {fileID: 0}
 --- !u!1001 &5131917488420701668
 PrefabInstance:
   m_ObjectHideFlags: 0

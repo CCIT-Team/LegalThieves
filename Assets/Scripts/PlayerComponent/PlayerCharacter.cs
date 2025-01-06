@@ -42,10 +42,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         [Space, Header("Player Models")]
         [SerializeField] private GameObject[] playerModels;
-    
+
 
         [SerializeField] Transform[] itemHolders = new Transform[4];
-    
+        public Transform[] LocalitemHolder = new Transform[4];
 
         [Networked, OnChangedRender(nameof(OnRefChanged))]
         public PlayerRef Ref { get; set; }
@@ -75,7 +75,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [Networked]
         public int inventoryRelicCount { get; set; }
 
-     
+
         private bool _isPikedFlash { get; set; }
 
 
@@ -107,7 +107,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         [SerializeField] private int itemSkillSlotIndex = 0;
 
-     
+
         private RaycastHit _rayCastHit;
 
         public static PlayerCharacter Local { get; set; }
@@ -120,7 +120,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         private static readonly int AnimLookPit = Animator.StringToHash("LookPit");
         private static readonly int AnimJumpTrigger = Animator.StringToHash("Jump");
         private static readonly int AnimSnapGround = Animator.StringToHash("SnapGround");
-     
+
         #endregion
 
         /*------------------------------------------------------------------------------------------------------------*/
@@ -129,19 +129,19 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void Start()
         {
-            itemController.SetItemGroup();
+
 
             Client_InitPlayerModel(CurrentPlayerModelIndex);
 
             if (Nickname != null)
                 SetPlayerTag(Nickname);
-                
+
         }
 
         public override void Spawned()
         {
             base.Spawned();
-
+            itemController.SetItemGroup();
             if (Object.HasStateAuthority)
             {
                 PlayerRegistry.Server_Add(Runner, Object.InputAuthority, this);
@@ -160,7 +160,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 {
                     ItemSkillInventory.Set(i, -1);
                 }
-              
+
                 if (PlayerRegistry.Instance != null && PlayerRegistry.Count >= 4)
                 {
                     for (int i = 0; i < NewGameManager.Instance.ButtonStateArray.Length; i++)
@@ -178,7 +178,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 InitModels();
 
                 RPC_SetPlayerNickname(Runner.LocalPlayer, PlayerPrefs.GetString("Photon.Menu.Username"));
-             
+
             }
 
             UIManager.Instance.playerListController.PlayerJoined(this);
@@ -296,7 +296,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             // Sprint
             SprintToggle(playerInput);
 
-        
+
             //CrouchToggle(playerInput);
             // if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Sprint) && CanSprint)
             //     kcc.FixedData.KinematicSpeed = characterStats.SprintSpeed;
@@ -329,19 +329,20 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot6))
                 SelectItemSkillSlot(5);
             if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Slot7))
-                {ItemSkillInventory.Set(1,1);
-                 ItemSkillInventory.Set(0,0);
-                ItemSkillInventory.Set(2,2);
-                ItemSkillInventory.Set(3,3);
-                ItemSkillInventory.Set(4,4);
-                 }
+            {
+                ItemSkillInventory.Set(1, 1);
+                ItemSkillInventory.Set(0, 0);
+                ItemSkillInventory.Set(2, 2);
+                ItemSkillInventory.Set(3, 3);
+                ItemSkillInventory.Set(4, 4);
+            }
             // Debug Key
             if (Runner.IsServer)
             {
                 if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.SellButton))
                 {
                     NewGameManager.State.Server_SetState<PregameStateBehaviour>();
-                }    
+                }
             }
 
             // Previous Buttons for comparison
@@ -414,7 +415,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
         private void OnMouseLeftClick()
         {
-    
+
             if (!HasInputAuthority) return;
 
             RPC_UseItem();
@@ -494,7 +495,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         }
 
 
-        public void ApplySlow(float slowScale, float duration=1f)
+        public void ApplySlow(float slowScale, float duration = 1f)
         {
             if (slowCoroutine != null)
                 StopCoroutine(slowCoroutine);
@@ -502,7 +503,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             slowCoroutine = StartCoroutine(SlowRoutine(slowScale, duration));
         }
 
-        private IEnumerator SlowRoutine(float slowScale,float duration)
+        private IEnumerator SlowRoutine(float slowScale, float duration)
         {
             slowMultiplier = slowScale;
 
@@ -567,7 +568,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             if (!HasInputAuthority)
                 return;
-            for (var i = 0; i <  RelicInventory.Length; i++)
+            for (var i = 0; i < RelicInventory.Length; i++)
             {
                 UIManager.Instance.inventorySlotController.SetRelicSprite(i, RelicInventory[i]);
             }
@@ -581,13 +582,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             if (!HasInputAuthority)
                 return;
-         
+
             for (var i = 0; i < ItemSkillInventory.Length; i++)
             {
-                UIManager.Instance.itemSkillInventoryUI.SetItemSprite(i,ItemSkillInventory[i]);
+                UIManager.Instance.itemSkillInventoryUI.SetItemSprite(i, ItemSkillInventory[i]);
             }
-                
-                        
+
         }
         public void SetPlayerColor(int index) => PlayerColor = index;
         public int GetPlayerColor() => PlayerColor;
@@ -615,7 +615,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                     IsScholar = false;
                     break;
             }
-            ChangePlayerModel(((int)job));
+            ChangePlayerModel((int)job);
         }
 
         #endregion
@@ -625,12 +625,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             return ItemSkillInventory.ToArray();
         }
-        
+
         public void SetItemSkillInventory(int index, int itemIndex)
         {
             ItemSkillInventory.Set(index, itemIndex);
         }
-  
+
         #endregion
 
         #region Network Porperty Changed Events...
@@ -656,7 +656,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
 
         }
-       
+
 
         #endregion
 
@@ -695,6 +695,12 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
             // 애니메이터를 변경된 모델의 애니메이터로 변경
             animator = newModel.GetComponent<Animator>();
+
+         
+            itemController.SetHolder(itemHolders[CurrentPlayerModelIndex]);
+            itemController.SetArmAnimator(CurrentPlayerModelIndex);
+            itemController.SetLocalItemGroup();
+            
         }
 
         private void ChangePlayerModel(int index)
@@ -706,9 +712,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             curr.SetActive(true);
 
             animator = curr.GetComponent<Animator>();
-            itemController.SetArmAnimator(index);
-            itemController.SetHolder(itemHolders[index]);
-        
+       
             CurrentPlayerModelIndex = index;
         }
 
@@ -719,10 +723,11 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
             prev.SetActive(false);
             curr.SetActive(true);
-      
+            
             animator = curr.GetComponent<Animator>();
-            itemController.SetHolder(itemHolders[index]);
+     
             CurrentPlayerModelIndex = index;
+           itemController.HideItem();
         }
 
         public void SetPlayerTag(string pTag)
@@ -733,6 +738,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         public Animator GetAnimator()
         {
             return animator;
+        }
+        public Transform GetLocalItemHolder()
+        {
+            return LocalitemHolder[CurrentPlayerModelIndex];
         }
         public int GetJobIndex()
         {
@@ -780,22 +789,21 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             }
         }
 
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_SelectItemSkillSlot(int index)
         {
             itemSkillSlotIndex = index;
             itemController.EquipItem(animator, ItemSkillInventory[index]);
 
             if (HasInputAuthority)
-            {
+            { 
                 UIManager.Instance.itemSkillInventoryUI.SelectToggle(index);
-
             }
         }
-        [Rpc(RpcSources.InputAuthority, RpcTargets.InputAuthority)]
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         private void RPC_UseItem()
         {
-            itemController.UseItem(itemSkillSlotIndex,animator);
+            itemController.UseItem(itemSkillSlotIndex, animator);
         }
         #endregion
     }

@@ -6,13 +6,16 @@ public class Item_Torch : ItemBase
 {
     [SerializeField] private float lightIntensity = 1f;
     [SerializeField] private float changingTime = 3f;
-    [SerializeField] private float swingDelay = 5;
     [SerializeField] private ParticleSystem[] torchParticleSystems;
     [SerializeField] private Light torchLight;
     [SerializeField] private GameObject torchObject;
     [SerializeField] private BoxCollider hitColl;
     [SerializeField] private TrailRenderer swingTrail;
 
+    [SerializeField] private Light torchLightLocal;
+    [SerializeField] private GameObject torchObjectLocal;
+    [SerializeField] private BoxCollider hitCollLocal;
+    [SerializeField] private TrailRenderer swingTrailLocal;
 
     public override void Init()
     {
@@ -22,23 +25,28 @@ public class Item_Torch : ItemBase
     #region ItemBaseLogic
     public override void UseItem(Animator animator, Animator armAnimator)
     {
-            Swing(animator, armAnimator);
+        Swing(animator, armAnimator);
     }
 
     public override void EquipItem(Animator animator, Animator armAnimator)
     {
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(torchObject, true, 1f));
+        if (HasInputAuthority)
+            StartCoroutine(ChangeObjectAfterDelay(torchObjectLocal, true, 1f));
+
         animator.SetBool("pickTorch", true);
-        armAnimator.SetBool("pickTorch", true);
+        armAnimator?.SetBool("pickTorch", true);
         TurnOnLight();
     }
     public override void UnequipItem(Animator animator, Animator armAnimator)
     {
         animator.SetBool("pickTorch", false);
-        armAnimator.SetBool("pickTorch", false);
+        armAnimator?.SetBool("pickTorch", false);
         TurnOffLight();
         hitColl.enabled = false;
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(torchObject, false, 1f));
+        if (HasInputAuthority)
+        StartCoroutine(ChangeObjectAfterDelay(torchObjectLocal, false, 1f));
     }
 
 
@@ -62,6 +70,7 @@ public class Item_Torch : ItemBase
     void TurnOffLight()
     {
         torchLight.intensity = 0;
+        torchLightLocal.intensity = torchLight.intensity;
         foreach (ParticleSystem p in torchParticleSystems)
         {
             var emission = p.emission;
@@ -74,7 +83,7 @@ public class Item_Torch : ItemBase
     private IEnumerator ChangeLightIntensity(float delta, Animator animator = null)
     {
         torchLight.intensity += delta * lightIntensity / changingTime * Time.deltaTime;
-
+        torchLightLocal.intensity = torchLight.intensity;
         yield return null;
 
         if (delta == 1f && torchLight.intensity < lightIntensity)
@@ -102,11 +111,13 @@ public class Item_Torch : ItemBase
         canUse = false;
         hitColl.enabled = true;
         swingTrail.enabled = true;
+        swingTrailLocal.enabled = swingTrail.enabled;
         animator.SetTrigger("UseItem");
-        armAnimator.SetTrigger("UseItem");
+        armAnimator?.SetTrigger("UseItem");
         yield return new WaitForSeconds(1f);
         hitColl.enabled = false;
         swingTrail.enabled = false;
+        swingTrailLocal.enabled = swingTrail.enabled;
         animationCoroutine = null;
 
     }

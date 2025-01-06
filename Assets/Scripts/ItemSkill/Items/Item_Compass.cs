@@ -7,8 +7,9 @@ using System.Net;
 using System.IO;
 public class Item_Compass : ItemBase
 {
-//todo 네비메쉬 이용해서 길찾기 보여주는거 구현, 아이템 목록에 추가, 애니메이션 추가
+    //todo 네비메쉬 이용해서 길찾기 보여주는거 구현, 아이템 목록에 추가, 애니메이션 추가
     [SerializeField] GameObject CompassObject;
+    [SerializeField] GameObject CompassObjectLocal;
     [SerializeField] MeshFilter meshFilter;
     [SerializeField] Transform playerPos;
     [SerializeField] Transform Entrans;
@@ -20,34 +21,45 @@ public class Item_Compass : ItemBase
     }
 
     #region ItemBaseLogic
-        public override void UseItem(Animator animator, Animator armAnimator)
+    public override void UseItem(Animator animator, Animator armAnimator)
     {
         UsePathFinding(animator, armAnimator);
     }
     public override void EquipItem(Animator animator, Animator armAnimator)
     {
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(CompassObject, true, 1f));
+        if (HasInputAuthority)
+            StartCoroutine(ChangeObjectAfterDelay(CompassObjectLocal, true, 1f));
+
+        armAnimator?.SetBool("pickCompass", true);
         animator.SetBool("pickCompass", true);
-        armAnimator.SetBool("pickCompass",true);
+
 
     }
     public override void UnequipItem(Animator animator, Animator armAnimator)
     {
         animator.SetBool("pickCompass", false);
-        armAnimator.SetBool("pickCompass",false);
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(CompassObject, false, 1f));
+        if (HasInputAuthority)
+        {
+            armAnimator?.SetBool("pickCompass", false);
+            StartCoroutine(ChangeObjectAfterDelay(CompassObjectLocal, false, 1f));
+        }
     }
     #endregion
 
     public void UsePathFinding(Animator animator, Animator armAnimator)
     {
-            animator.SetTrigger("UseItem");
-            armAnimator.SetTrigger("UseItem");
-            canUse = false;
-            PathFinding();
-       
-            StartCoroutine(CoolDownDelay());
-       
+        animator.SetTrigger("UseItem");
+
+        if (HasInputAuthority)
+            armAnimator?.SetTrigger("UseItem");
+
+        canUse = false;
+        PathFinding();
+
+        StartCoroutine(CoolDownDelay());
+
     }
 
     private void PathFinding()
@@ -58,7 +70,7 @@ public class Item_Compass : ItemBase
             // 경로가 유효하면 Mesh 생성
             UpdatePathMesh(path);
         }
-   
+
     }
     void UpdatePathMesh(NavMeshPath path)
     {
