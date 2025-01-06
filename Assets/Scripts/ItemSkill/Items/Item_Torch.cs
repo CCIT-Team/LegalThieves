@@ -14,7 +14,6 @@ public class Item_Torch : ItemBase
 
     [SerializeField] private Light torchLightLocal;
     [SerializeField] private GameObject torchObjectLocal;
-    [SerializeField] private BoxCollider hitCollLocal;
     [SerializeField] private TrailRenderer swingTrailLocal;
 
     public override void Init()
@@ -30,12 +29,12 @@ public class Item_Torch : ItemBase
 
     public override void EquipItem(Animator animator, Animator armAnimator)
     {
-        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(torchObject, true, 1f));
-        if (HasInputAuthority)
-            StartCoroutine(ChangeObjectAfterDelay(torchObjectLocal, true, 1f));
-
         animator.SetBool("pickTorch", true);
         armAnimator?.SetBool("pickTorch", true);
+         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(torchObject, true, 1f));
+   
+            StartCoroutine(ChangeObjectAfterDelay(torchObjectLocal, true, 1f));
+
         TurnOnLight();
     }
     public override void UnequipItem(Animator animator, Animator armAnimator)
@@ -45,7 +44,7 @@ public class Item_Torch : ItemBase
         TurnOffLight();
         hitColl.enabled = false;
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(torchObject, false, 1f));
-        if (HasInputAuthority)
+      
         StartCoroutine(ChangeObjectAfterDelay(torchObjectLocal, false, 1f));
     }
 

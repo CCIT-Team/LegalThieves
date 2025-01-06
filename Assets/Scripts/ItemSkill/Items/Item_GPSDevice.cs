@@ -27,18 +27,20 @@ public class Item_GPSDevice : ItemBase
     }
     public override void EquipItem(Animator animator, Animator armAnimator)
     {
-        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObject, true, 1f));
-            if (HasInputAuthority)
-        StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObjectLocal, true, 1f));
         animator.SetBool("pickGPS", true);
-        armAnimator.SetBool("pickGPS", true);
+        armAnimator?.SetBool("pickGPS", true);
+        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObject, true, 1f));
+   
+        StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObjectLocal, true, 1f));
+
     }
     public override void UnequipItem(Animator animator, Animator armAnimator)
     {
         animator.SetBool("pickGPS", false);
-        armAnimator.SetBool("pickGPS", false);
+        armAnimator?.SetBool("pickGPS", false);
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObject, false, 1f));
-            if (HasInputAuthority)
+
+ 
          StartCoroutine(ChangeObjectAfterDelay(GPSDeviceObjectLocal, false, 1f));
     }
     #endregion
@@ -47,7 +49,7 @@ public class Item_GPSDevice : ItemBase
     {
     
             animator.SetTrigger("UseItem");
-            armAnimator.SetTrigger("UseItem");
+            armAnimator?.SetTrigger("UseItem");
             animationCoroutine = StartCoroutine(PlayerScan());
             canUse = false;
             StartCoroutine(CoolDownDelay());

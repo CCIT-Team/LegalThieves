@@ -1,9 +1,8 @@
 
 using UnityEngine;
 using System.Collections;
-using New_Neo_LT.Scripts.UI;
 using Fusion;
-public abstract class ItemBase : NetworkBehaviour
+public abstract class ItemBase : MonoBehaviour
 {
     public int ID;
     public int itemPrice;
@@ -37,8 +36,5 @@ public abstract class ItemBase : NetworkBehaviour
         yield return new WaitForSeconds(baseDelay);
         canUse = true;
     }
- 
-  
-
 
 }

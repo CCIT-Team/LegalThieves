@@ -700,6 +700,8 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             itemController.SetHolder(itemHolders[CurrentPlayerModelIndex]);
             itemController.SetArmAnimator(CurrentPlayerModelIndex);
             itemController.SetLocalItemGroup();
+            itemController.HideItem();
+      
             
         }
 
@@ -727,7 +729,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             animator = curr.GetComponent<Animator>();
      
             CurrentPlayerModelIndex = index;
-           itemController.HideItem();
+          
         }
 
         public void SetPlayerTag(string pTag)

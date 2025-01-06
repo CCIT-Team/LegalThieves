@@ -14,18 +14,24 @@ public class PlayerItemController : NetworkBehaviour
     [SerializeField] Animator currentArmAnimator;
     public void SetItemGroup()
     {
+        if(ItemGroup==null)
         ItemGroup = Instantiate(ItemManager.Instance.ItemGroupOrigin, Vector3.zero, Quaternion.identity).GetComponent<ItemGroup>();
     }
     public void SetLocalItemGroup()
     {
-
+        if(HasInputAuthority)
         ItemGroup.SetLocalItemGroup();
 
+
     }
+ 
     public void HideItem()
     {
         if(HasInputAuthority)
-        {ItemGroup.HideItem();}
+        ItemGroup.HideMultiItem();
+
+        if(!HasInputAuthority)
+        ItemGroup.HideLocalItem();
     }
     public void UseItem(int slotIndex, Animator animator)
     {

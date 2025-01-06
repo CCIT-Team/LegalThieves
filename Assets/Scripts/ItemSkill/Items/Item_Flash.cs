@@ -7,7 +7,7 @@ public class Item_Flash : ItemBase
     [SerializeField] GameObject flashObject;
 
     [SerializeField] GameObject flashObjectLocal;
-     public override void Init()
+    public override void Init()
     {
         ID = (int)EItemType.Flashlight;
     }
@@ -19,23 +19,25 @@ public class Item_Flash : ItemBase
     }
     public override void EquipItem(Animator animator, Animator armAnimator)
     {
-        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(flashObject, true, 1f));
-            if (HasInputAuthority)
-        StartCoroutine(ChangeObjectAfterDelay(flashObjectLocal, true, 1f));
+
         animator.SetBool("pickFlash", true);
-        armAnimator.SetBool("pickFlash", true);
+        armAnimator?.SetBool("pickFlash", true);
+
+        animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(flashObject, true, 1f));
+
+        StartCoroutine(ChangeObjectAfterDelay(flashObjectLocal, true, 1f));
+ 
     }
     public override void UnequipItem(Animator animator, Animator armAnimator)
     {
         IsActivity = false;
         flashLight.SetActive(false);
         animator.SetBool("pickFlash", false);
-
+        armAnimator?.SetBool("pickFlash", false);
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(flashObject, false, 1f));
-            if (HasInputAuthority){
+
         StartCoroutine(ChangeObjectAfterDelay(flashObjectLocal, false, 1f));
-                
-        armAnimator.SetBool("pickFlash", false);}
+      
     }
     #endregion
 
@@ -52,5 +54,5 @@ public class Item_Flash : ItemBase
         }
     }
 
-   
+
 }

@@ -28,7 +28,7 @@ public class Item_Compass : ItemBase
     public override void EquipItem(Animator animator, Animator armAnimator)
     {
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(CompassObject, true, 1f));
-        if (HasInputAuthority)
+  
             StartCoroutine(ChangeObjectAfterDelay(CompassObjectLocal, true, 1f));
 
         armAnimator?.SetBool("pickCompass", true);
@@ -39,21 +39,19 @@ public class Item_Compass : ItemBase
     public override void UnequipItem(Animator animator, Animator armAnimator)
     {
         animator.SetBool("pickCompass", false);
+        armAnimator?.SetBool("pickCompass", false);
         animationCoroutine = StartCoroutine(ChangeObjectAfterDelay(CompassObject, false, 1f));
-        if (HasInputAuthority)
-        {
-            armAnimator?.SetBool("pickCompass", false);
+       
+
             StartCoroutine(ChangeObjectAfterDelay(CompassObjectLocal, false, 1f));
-        }
+        
     }
     #endregion
 
     public void UsePathFinding(Animator animator, Animator armAnimator)
     {
         animator.SetTrigger("UseItem");
-
-        if (HasInputAuthority)
-            armAnimator?.SetTrigger("UseItem");
+        armAnimator?.SetTrigger("UseItem");
 
         canUse = false;
         PathFinding();

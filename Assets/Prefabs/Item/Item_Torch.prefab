@@ -50,8 +50,7 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 6983761952787866201}
+  NetworkedBehaviours: []
 --- !u!114 &6983761952787866201
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,11 +78,10 @@ MonoBehaviour:
   - {fileID: 4004073695260566960}
   torchLight: {fileID: 2433372615536781324}
   torchObject: {fileID: 3911158517117861210}
-  hitColl: {fileID: 7173935495473935207}
+  hitColl: {fileID: 0}
   swingTrail: {fileID: 0}
   torchLightLocal: {fileID: 0}
   torchObjectLocal: {fileID: 0}
-  hitCollLocal: {fileID: 0}
   swingTrailLocal: {fileID: 0}
 --- !u!1001 &5131917488420701668
 PrefabInstance:
@@ -147,6 +145,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6740932421095200836, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
+    - {fileID: 2645525680269588099, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -174,11 +173,6 @@ ParticleSystem:
 --- !u!4 &4399147527643719648 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8805894731932606980, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
-  m_PrefabInstance: {fileID: 5131917488420701668}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &7173935495473935207 stripped
-BoxCollider:
-  m_CorrespondingSourceObject: {fileID: 2645525680269588099, guid: f08bc515d28418b47bc2a0ed7b586383, type: 3}
   m_PrefabInstance: {fileID: 5131917488420701668}
   m_PrefabAsset: {fileID: 0}
 --- !u!198 &8397171773306233388 stripped
