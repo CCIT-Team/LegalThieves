@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 1491561011924046397}
   - component: {fileID: 5047484860921472253}
   - component: {fileID: 1439031299114180008}
+  - component: {fileID: 1608829850497532126}
   m_Layer: 0
   m_Name: RelicManager
   m_TagString: Untagged
@@ -165,3 +166,18 @@ MonoBehaviour:
   - {fileID: 21300000, guid: ceaf222c28e548f4a83497fd6ee6d7ee, type: 3}
   - {fileID: 21300000, guid: 42c78d9f42e4bde4094f044505279135, type: 3}
   - {fileID: 21300000, guid: c334bc77aef461448a2257ac738fb805, type: 3}
+  relicCount: 200
+  navMeshSpawner: {fileID: 1608829850497532126}
+--- !u!114 &1608829850497532126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5754558069560394733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f12a3758856fa704d9072df03139d694, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minDistance: 1.5

@@ -1,7 +1,7 @@
 
 using UnityEngine;
 using System.Collections;
-using Fusion;
+
 public abstract class ItemBase : MonoBehaviour
 {
     public int ID;

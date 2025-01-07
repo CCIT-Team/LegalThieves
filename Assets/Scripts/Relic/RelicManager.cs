@@ -21,8 +21,11 @@ namespace LegalThieves
         [Header("Components")]
         //[SerializeField] private NetworkPrefabRef    relicPrefab;
         [SerializeField] private Transform           relicPool;
+         [SerializeField] private NavMeshSpawner navMeshSpawner;
         
         [Header("Relic Data")]
+        [SerializeField] private int relicCount;     
+      
         [Header("Gold Relics")]
         [SerializeField] private string[]            goldRelicNames;
         [SerializeField] private NetworkPrefabRef[]  goldRelicPrefabs;
@@ -31,8 +34,7 @@ namespace LegalThieves
         [SerializeField] private string[]            renownRelicNames;
         [SerializeField] private NetworkPrefabRef[]  renownRelicPrefabs;
         [SerializeField] private Sprite[]            renownRelicSprites;
-        
-        
+     
 
         [Networked, Capacity(200)]
         NetworkLinkedList<RelicObject> Relics => default;
@@ -49,14 +51,19 @@ namespace LegalThieves
         {
             if (!HasStateAuthority)
                 return;
-
+            navMeshSpawner.Init();
             //SpawnAllRelics();
         }
         
         public void SpawnAllRelics()
         {
-            for(var i = 0; i < NewGameManager.Instance.playMapData.RelicSpawnPointCount; i++)
-                SpawnRelic(NewGameManager.Instance.playMapData.GetRelicSpawnPosition(i));
+            var relicPosList = navMeshSpawner.SpawnRelics(relicCount);
+
+            for(var i = 0; i < relicPosList.Length; i++)
+                 SpawnRelic(relicPosList[i]);
+
+            // for(var i = 0; i < NewGameManager.Instance.playMapData.RelicSpawnPointCount; i++)
+            //     SpawnRelic(NewGameManager.Instance.playMapData.GetRelicSpawnPosition(i));
         }
 
         public void SpawnRelic(Vector3 position = default)
