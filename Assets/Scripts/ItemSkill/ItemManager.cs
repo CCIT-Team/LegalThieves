@@ -19,7 +19,7 @@ public class ItemManager : MonoBehaviour
     public static ItemManager Instance;
     public GameObject ItemGroupOrigin;
     public ItemBase[] items;
-    
+    public Transform NavigationPoint;
     [SerializeField] private Sprite emptySprite;
 
     private readonly Dictionary<int, ItemBase> _itemDictionary = new();

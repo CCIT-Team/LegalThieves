@@ -696,13 +696,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             // 애니메이터를 변경된 모델의 애니메이터로 변경
             animator = newModel.GetComponent<Animator>();
 
-         
             itemController.SetHolder(itemHolders[CurrentPlayerModelIndex]);
             itemController.SetArmAnimator(CurrentPlayerModelIndex);
             itemController.SetLocalItemGroup();
             itemController.HideItem();
-      
-            
         }
 
         private void ChangePlayerModel(int index)
@@ -727,7 +724,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             curr.SetActive(true);
             
             animator = curr.GetComponent<Animator>();
-     
+            itemController.SetHolder(itemHolders[index]);
+            itemController.SetArmAnimator(index);
+            itemController.SetLocalItemGroup();
+            itemController.HideItem();
             CurrentPlayerModelIndex = index;
           
         }

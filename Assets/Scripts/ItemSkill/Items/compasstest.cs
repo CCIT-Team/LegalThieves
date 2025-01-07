@@ -3,8 +3,6 @@ using UnityEngine;
 using UnityEngine.AI;
 public class compasstest : MonoBehaviour
 {
-    [SerializeField] MeshFilter meshFilter;
-    [SerializeField] Material pathMaterial;
     [SerializeField] LineRenderer lineRenderer;
     public Transform Entrans;
     Mesh pathMesh;
@@ -36,7 +34,7 @@ public class compasstest : MonoBehaviour
         for (int i = 0; i < lineRenderer.positionCount; i++)
         {
             var temp =  Vector3.Distance(lineRenderer.GetPosition(i), lineRenderer.GetPosition(i + 1));
-            lineLength = temp;
+            lineLength += temp;
 
             
         }

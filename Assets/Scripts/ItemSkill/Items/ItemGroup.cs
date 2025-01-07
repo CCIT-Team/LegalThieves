@@ -7,7 +7,7 @@ public class ItemGroup : MonoBehaviour
 {
     [SerializeField] Transform LocalItemGroup;
     [SerializeField] ItemBase[] PlayerItems;
-
+    [SerializeField] Transform NavigationRenderer;
     void Start()
     {
         PlayerItems = GetComponentsInChildren<ItemBase>();
@@ -23,6 +23,7 @@ public class ItemGroup : MonoBehaviour
                 child.gameObject.layer = 8;
             }
         }
+        SetNavigationRenderer();
     }
     public void HideLocalItem()
     {
@@ -32,14 +33,21 @@ public class ItemGroup : MonoBehaviour
         {
             child.gameObject.layer = 8;
         }
+        SetNavigationRenderer();
+        NavigationRenderer.gameObject.layer = 8;
     }
 
-
+    public void SetNavigationRenderer(){
+        NavigationRenderer.parent=null;
+        
+       NavigationRenderer.localRotation  = Quaternion.Euler(90,0,0);
+    }
     public void SetLocalItemGroup()
     {
         LocalItemGroup.transform.parent = PlayerCharacter.Local.GetLocalItemHolder();
         LocalItemGroup.transform.localPosition = Vector3.zero;
         LocalItemGroup.transform.localRotation = Quaternion.identity;
+
     }
 
 
