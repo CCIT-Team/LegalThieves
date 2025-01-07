@@ -70,8 +70,8 @@ public class MonsterStateMachine : NetworkBehaviour, IStateMachineOwner
 
         //Attack -> Idle,Chase
         state = Array.Find(stateMachine.States, a => a.IsType<AttackState>());
-        state.AddTransition(Array.Find(stateMachine.States, a => a.IsType<IdleState>()), () => (state.Machine.StateTime >= 1.19 + 2  && state.Machine.PreviousState == state.Machine.GetState<IdleState>()));
-        state.AddTransition(Array.Find(stateMachine.States, a => a.IsType<ChaseState>()), () => (state.Machine.StateTime >= 1.19 + 3 && state.Machine.PreviousState == state.Machine.GetState<ChaseState>()));
+        state.AddTransition(Array.Find(stateMachine.States, a => a.IsType<IdleState>()), () => state.Machine.StateTime >= 1.5 + 1.5  && state.Machine.PreviousState == state.Machine.GetState<IdleState>());
+        state.AddTransition(Array.Find(stateMachine.States, a => a.IsType<ChaseState>()), () => state.Machine.StateTime >= 1.5 + 1.5 && state.Machine.PreviousState == state.Machine.GetState<ChaseState>());
 
     }
 }

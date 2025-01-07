@@ -40,6 +40,14 @@ public class Monster : NetworkBehaviour
         spawnPosition = transform.position;
     }
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, recogDistance);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, attackDistance);
+    }
+
     public override void FixedUpdateNetwork()
     {
         base.FixedUpdateNetwork();
