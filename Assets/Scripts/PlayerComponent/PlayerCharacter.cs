@@ -1,6 +1,7 @@
 using Fusion;
 using Fusion.Addons.KCC;
 using System.Collections;
+using ItemSkill.Skill.FastSkill;
 using LegalThieves;
 using New_Neo_LT.Scripts.Game_Play;
 using New_Neo_LT.Scripts.Player_Input;
@@ -26,6 +27,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         [SerializeField] private PlayerInteraction playerInteraction;
         [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
         [SerializeField] private PlayerItemController itemController;
+        [SerializeField] private SkillController skillController;
 
         [Space, Header("Player Setup")]
         [Range(-90, 90)]
@@ -344,6 +346,10 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 ItemSkillInventory.Set(3, 3);
                 ItemSkillInventory.Set(4, 4);
             }
+            
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction3))
+                skillController.UseSkill(0);
+            
             // Debug Key
             if (Runner.IsServer)
             {

@@ -1,5 +1,6 @@
 ﻿using Fusion;
 using New_Neo_LT.Scripts.Game_Play;
+using New_Neo_LT.Scripts.UI;
 using UnityEngine;
 
 namespace ItemSkill.Skill.FastSkill
@@ -9,6 +10,8 @@ namespace ItemSkill.Skill.FastSkill
         [SerializeField] private Transform destination;
         [SerializeField] private float     delay;
         [SerializeField] private string    teleportAnimation;
+        
+        [Space, SerializeField] private GameObject teleportEffect;
         
         [Networked] private TickTimer DelayTimer { get; set; }
         
@@ -58,20 +61,33 @@ namespace ItemSkill.Skill.FastSkill
         
         private void OnTeleportingStart()
         {
+            var effect = Instantiate(teleportEffect).GetComponent<ReturnEffectController>();
+            effect.Setup(delay, Player.transform.position);
+            
             if (HasInputAuthority)
             {
-                
+                UIManager.Instance.skillUIController.WriteToConsole("내가 텔레포트 사용!");
             }
-            Debug.Log($"{Player.name} Teleporting");
+            else
+            {
+                UIManager.Instance.skillUIController.WriteToConsole($"{Player.GetPlayerName()} 텔레포트 사용!");
+            }
+            
+            
         }
         
         private void OnTeleportingEnd()
         {
             if (HasInputAuthority)
             {
-                
+                UIManager.Instance.skillUIController.WriteToConsole("내가 텔레포트 완료!");
             }
-            Debug.Log($"{Player.name} Teleporting End");
+            else
+            {
+                UIManager.Instance.skillUIController.WriteToConsole($"{Player.GetPlayerName()} 텔레포트 완료!");
+            }
+            
+            
         }
     }
 }
