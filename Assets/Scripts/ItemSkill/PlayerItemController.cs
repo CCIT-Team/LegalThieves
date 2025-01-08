@@ -12,6 +12,9 @@ public class PlayerItemController : NetworkBehaviour
 
     [SerializeField] Animator[] armAnimators;
     [SerializeField] Animator currentArmAnimator;
+    public Animator ArmAnimator{
+        get {return currentArmAnimator;}
+    }
     public void SetItemGroup()
     {
         if(ItemGroup==null)

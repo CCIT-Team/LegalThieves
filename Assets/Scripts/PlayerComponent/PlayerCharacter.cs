@@ -220,6 +220,14 @@ namespace New_Neo_LT.Scripts.PlayerComponent
             animator.SetFloat(AnimMoveDirY, moveVelocity.z * 2, 0.05f, Time.deltaTime);
             animator.SetFloat(AnimIsCrouchSync, CrouchSync);
             animator.SetFloat(AnimLookPit, kcc.FixedData.LookPitch * -0.01f);
+            
+            if (itemController.ArmAnimator==null) return;
+
+            itemController.ArmAnimator.SetFloat(AnimMoveDirX, moveVelocity.x, 0.05f, Time.deltaTime);
+            itemController.ArmAnimator.SetFloat(AnimMoveDirY, moveVelocity.z * 2, 0.05f, Time.deltaTime);
+            itemController.ArmAnimator.SetFloat(AnimIsCrouchSync, CrouchSync);
+            itemController.ArmAnimator.SetFloat(AnimLookPit, kcc.FixedData.LookPitch * -0.01f);
+
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
