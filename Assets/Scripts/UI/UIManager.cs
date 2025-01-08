@@ -49,6 +49,9 @@ namespace New_Neo_LT.Scripts.UI
         
         [Space]
         public SkillUIController            skillUIController;
+        
+        [Space]
+        [SerializeField] private GameObject ingameUI;
 
         public static UIManager Instance
         {
@@ -83,6 +86,11 @@ namespace New_Neo_LT.Scripts.UI
         {
             _localPlayerTransform = PlayerCharacter.Local.transform;
             shopController.InitShopUI();
+        }
+        
+        public void TogleInGameUI()
+        {
+            ingameUI.SetActive(!ingameUI.activeSelf);
         }
 
         public void EnterWaitingState()
