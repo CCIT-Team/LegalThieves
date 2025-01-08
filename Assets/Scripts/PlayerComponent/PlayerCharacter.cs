@@ -347,7 +347,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
                 ItemSkillInventory.Set(4, 4);
             }
             
-            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction3))
+            if (playerInput.Buttons.WasPressed(_previousButtons, EInputButton.Interaction4))
                 skillController.UseSkill(0);
             
             // Debug Key
