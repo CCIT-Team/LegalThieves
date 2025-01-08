@@ -7,7 +7,7 @@ public class Item_WoodStick : ItemBase
 {
 
     [SerializeField] private float hitDelay = 1f;
-    [SerializeField] private ParticleSystem hitEffect;
+    
     [SerializeField] private TrailRenderer swingTrail;
     [SerializeField] private GameObject stickObject;
     [SerializeField] private BoxCollider hitColl;
