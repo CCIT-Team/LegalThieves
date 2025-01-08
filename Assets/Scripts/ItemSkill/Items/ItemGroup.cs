@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using LegalThieves;
 using New_Neo_LT.Scripts.PlayerComponent;
 using UnityEngine;
 
@@ -7,7 +8,8 @@ public class ItemGroup : MonoBehaviour
 {
     [SerializeField] Transform LocalItemGroup;
     [SerializeField] ItemBase[] PlayerItems;
-    [SerializeField] Transform NavigationRenderer;
+    [SerializeField] Transform CamObject;
+    [SerializeField] GameObject LightObject;
     void Start()
     {
         PlayerItems = GetComponentsInChildren<ItemBase>();
@@ -23,7 +25,7 @@ public class ItemGroup : MonoBehaviour
                 child.gameObject.layer = 8;
             }
         }
-        SetNavigationRenderer();
+        SetCamObject();
     }
     public void HideLocalItem()
     {
@@ -33,14 +35,20 @@ public class ItemGroup : MonoBehaviour
         {
             child.gameObject.layer = 8;
         }
-        SetNavigationRenderer();
-        NavigationRenderer.gameObject.layer = 8;
+
+        var temp = CamObject.GetComponentsInChildren<Transform>();
+        foreach(var g in temp){
+            g.gameObject.SetActive(false);
+        }
+     
     }
 
-    public void SetNavigationRenderer(){
-        NavigationRenderer.parent=null;
-        
-       NavigationRenderer.localRotation  = Quaternion.Euler(90,0,0);
+    public void SetCamObject()
+    {
+        CamObject.parent = CameraFollow.Singleton.Target;
+        CamObject.localPosition = Vector3.zero;      
+        CamObject.localRotation = Quaternion.identity; 
+        transform.localScale = Vector3.one;   
     }
     public void SetLocalItemGroup()
     {

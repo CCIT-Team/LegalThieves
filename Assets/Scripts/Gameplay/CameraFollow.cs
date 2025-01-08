@@ -22,7 +22,7 @@ namespace LegalThieves
         private static CameraFollow _singleton;
 
         private Transform _target;
-
+        public Transform Target { get { return _target; } }
         private void Awake()
         {
             Singleton = this;
