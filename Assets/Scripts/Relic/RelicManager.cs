@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using New_Neo_LT.Scripts.Elements.Relic;
 using New_Neo_LT.Scripts.Game_Play;
@@ -38,7 +40,7 @@ namespace LegalThieves
 
         [Networked, Capacity(200)]
         NetworkLinkedList<RelicObject> Relics => default;
-
+        
         private void Start()
         {
             if (Instance == null)
@@ -102,6 +104,9 @@ namespace LegalThieves
             return Relics.IndexOf(relic);
         }
 
+        public List<RelicObject> GetRelicList(){
+            return Relics.ToList();
+        }
         //public Mesh GetRelicMesh(int index)
         //{
         //    return index < goldRelicVisuals.Length ? 

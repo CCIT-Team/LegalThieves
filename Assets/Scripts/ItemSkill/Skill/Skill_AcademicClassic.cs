@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.Rendering.Universal;
 using System.Collections;
-public class Skill_AcademicClasic : HC_Skill
+public class Skill_AcademicClassic : HC_Skill
 { 
     [SerializeField] private int radius;
     [SerializeField] LayerMask detectionLayer;
@@ -23,7 +23,9 @@ public class Skill_AcademicClasic : HC_Skill
               SkillAcademicClasic.rendererFeatures[3].SetActive(false);
     }
     public void ScanExpensiveRelic(){
-            
+        if(!CanUse) return;
+
+        canUse=false;
             topThreeRelics = GetTopThreeRelics();
 
             Debug.Log(topThreeRelics.Count);
@@ -58,7 +60,7 @@ public class Skill_AcademicClasic : HC_Skill
 
        
         List<Collider> topThreeRelics = relics
-            .OrderByDescending(collider => collider.GetComponent<RelicObject>().GetGoldPoint()) 
+            .OrderByDescending(collider => collider.GetComponent<RelicObject>().GetRenownPoint()) 
             .Take(3) 
             .ToList();
 
@@ -77,8 +79,8 @@ public class Skill_AcademicClasic : HC_Skill
           foreach (var relic in topThreeRelics)
             {
                 relic.gameObject.layer= 7;
-                Debug.Log($"Top Relic: {relic.name}");
             }
+             canUse=true;
     }
 
 }

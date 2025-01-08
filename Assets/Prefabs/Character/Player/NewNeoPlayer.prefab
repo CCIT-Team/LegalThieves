@@ -1658,8 +1658,6 @@ MonoBehaviour:
   detectionLayer:
     serializedVersion: 2
     m_Bits: 128
-  relicHighlightLayer: Skill_RelicHighlight
-  relicTag: Relics
   effectTime: 5
   SkillAcademicClasic: {fileID: 11400000, guid: c40be3174f62c4acf8c1216858c64956, type: 2}
 --- !u!4 &5354216034443504942 stripped
@@ -2009,6 +2007,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6e49c8d858c91ca459a55ea69f98d8da, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9222838352248765823}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6e49c8d858c91ca459a55ea69f98d8da, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1778206233249618327}
   m_SourcePrefab: {fileID: 100100000, guid: 6e49c8d858c91ca459a55ea69f98d8da, type: 3}
 --- !u!4 &5934652585173230507 stripped
 Transform:
@@ -2042,6 +2043,27 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours: []
+--- !u!114 &1778206233249618327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6419828191043189009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9b490623c7004e47b089a66ca6339c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 0
+  itemName: 
+  itemDescription: 
+  itemIcon: {fileID: 0}
+  itemSFX: {fileID: 0}
+  baseDelay: 0
+  effectTime: 5
+  SkillAcademicClasic: {fileID: 11400000, guid: c40be3174f62c4acf8c1216858c64956, type: 2}
+  targetIndex: 0
 --- !u!1001 &6765879198622281568
 PrefabInstance:
   m_ObjectHideFlags: 0
