@@ -38,6 +38,6 @@ public class EscapeState : MonsterStateBase
 
     protected override bool CanExitState(StateBehaviour nextState)
     {
-        return Vector3.SqrMagnitude(realtarget.position - monster.transform.position) > monster.recogDistance * monster.recogDistance;
+        return Vector3.SqrMagnitude(realtarget.position - monster.transform.position) > monster.recogDistance * monster.recogDistance || Machine.StateTime >= 25;
     }
 }
