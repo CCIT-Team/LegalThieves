@@ -1,5 +1,6 @@
 using Fusion;
 using New_Neo_LT.Scripts.PlayerComponent;
+using New_Neo_LT.Scripts.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ public class AttackColider : MonoBehaviour
                 {
                     bat.currentRelic = player.RelicInventory.IndexOf(reliclist[UnityEngine.Random.Range(0, reliclist.Count)]);
                     player.RemoveRelicFromInventory(bat.currentRelic);
+                    CallBatUI(player);
                 }
             }
             else
@@ -35,6 +37,18 @@ public class AttackColider : MonoBehaviour
                 player.AddRenownPoint(-300);
             }
             gameObject.SetActive(false);
+        }
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.All, Channel = RpcChannel.Reliable)]
+    void CallBatUI(PlayerCharacter player)
+    {
+        Debug.Log("IN");
+        if(player.HasInputAuthority)
+        {
+            Debug.Log("INPUT");
+            UIManager.Instance.SetActiveUI(UIType.BatAttackUI, false);
+            UIManager.Instance.SetActiveUI(UIType.BatAttackUI, true);
         }
     }
 }

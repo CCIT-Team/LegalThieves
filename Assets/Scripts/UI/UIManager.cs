@@ -24,6 +24,7 @@ namespace New_Neo_LT.Scripts.UI
         WaitingUI,
         ItemSkillInventoryUI,
         MarketUIController,
+        BatAttackUI,
         UITypeCount
     }
     
@@ -43,6 +44,7 @@ namespace New_Neo_LT.Scripts.UI
         public WaitingUIController          waitingUIController;
         public ItemSkillInventoryUI         itemSkillInventoryUI;
         public MarketUIController           marketUIController;
+        public GameObject                   batAttackUI;
 
         public static UIManager Instance
         {
@@ -198,6 +200,9 @@ namespace New_Neo_LT.Scripts.UI
                 case UIType.MarketUIController:
                     marketUIController.gameObject.SetActive(isActive);
                     marketUIController.OnMarketUIOpen();
+                    break;
+                case UIType.BatAttackUI:
+                    batAttackUI.SetActive(isActive);
                     break;
                 case UIType.Null:
                     compassRotate.gameObject.SetActive(isActive);

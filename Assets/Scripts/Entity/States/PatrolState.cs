@@ -18,7 +18,7 @@ public class PatrolState : MonsterStateBase
     {
         monster.agent.isStopped = false;
         monster.target = PlayerRegistry.GetRandom().transform;
-        patrolTime = Random.Range(0, 10);
+        patrolTime = Random.Range(0, 10f);
     }
     protected override void OnFixedUpdate()
     {
