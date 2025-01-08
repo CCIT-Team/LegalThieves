@@ -32,6 +32,7 @@ namespace New_Neo_LT.Scripts.Relic
         [Networked, OnChangedRender(nameof(OnIsActiveChange))]
         private bool IsActivated { get; set; }
         
+        public bool GetIsActivated {get {return IsActivated;} }
         public override void Spawned()
         {
             base.Spawned();

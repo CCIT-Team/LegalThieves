@@ -104,7 +104,7 @@ namespace New_Neo_LT.Scripts.PlayerComponent
 
 
         [SerializeField] private int slotIndex = 0;
-
+        
         [SerializeField] private int itemSkillSlotIndex = 0;
 
 
@@ -757,7 +757,9 @@ namespace New_Neo_LT.Scripts.PlayerComponent
         {
             return (int)job;
         }
-
+        public RelicObject GetSlotRelic(){
+            return RelicInventory[slotIndex] == -1 ?  null : RelicManager.Instance.GetRelicData(RelicInventory[slotIndex]);
+        }
         public void ResetPoints()
         {
             GoldPoint = 0;

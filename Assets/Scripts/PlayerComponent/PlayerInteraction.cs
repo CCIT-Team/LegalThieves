@@ -27,10 +27,10 @@ public class PlayerInteraction : NetworkBehaviour
     {
         if (ScanCollider == null) return;
 
-        // CapsuleColliderÀÇ ³ôÀÌ¸¦ Ray ±æÀÌ¿¡ ¸ÂÃã
+        // CapsuleColliderï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ Ray ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ï¿½ï¿½ï¿½
         ScanCollider.height = maxCheckDistance;
 
-        // CapsuleColliderÀÇ Áß½ÉÀ» Raycast ¹æÇâ¿¡ ¸ÂÃç ¼³Á¤
+        // CapsuleColliderï¿½ï¿½ ï¿½ß½ï¿½ï¿½ï¿½ Raycast ï¿½ï¿½ï¿½â¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         ScanCollider.center = new Vector3(0, 0, maxCheckDistance / 2);
 
     }
