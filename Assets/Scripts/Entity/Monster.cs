@@ -84,7 +84,7 @@ public class Monster : NetworkBehaviour
             //}
         }
 
-        if (target == null)
+        if (target == null || !target.TryGetComponent(out PlayerCharacter c))
             return false;
 
         return true; ;
