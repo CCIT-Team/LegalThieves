@@ -7,7 +7,6 @@ using System;
 using New_Neo_LT.Scripts.UI;
 public class Item_GPSDevice : ItemBase
 {
-//todo 네비메쉬 이용해서 길찾기 보여주는거 구현, 아이템 목록에 추가, 애니메이션 추가
     [SerializeField] GameObject GPSDeviceObject;
       [SerializeField] GameObject GPSDeviceObjectLocal;
      [SerializeField] float effectTime=5;

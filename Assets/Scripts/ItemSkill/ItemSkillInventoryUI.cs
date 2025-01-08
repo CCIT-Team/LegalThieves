@@ -49,7 +49,7 @@ public class ItemSkillInventoryUI : MonoBehaviour
         {
             var step = 1 / delay;
             var slot = slots[index].GetComponent<Slider>();
-            Debug.Log(slot.value);
+          
             for (float i = 0; i <= 1; i += step)
             {
                 Debug.Log(slot.value);
