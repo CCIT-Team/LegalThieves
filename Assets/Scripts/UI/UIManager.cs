@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using New_Neo_LT.Scripts.PlayerComponent;
+using UI;
 using UI.MarketUI;
 using UnityEngine;
 
@@ -45,6 +46,9 @@ namespace New_Neo_LT.Scripts.UI
         public ItemSkillInventoryUI         itemSkillInventoryUI;
         public MarketUIController           marketUIController;
         public GameObject                   batAttackUI;
+        
+        [Space]
+        public SkillUIController            skillUIController;
 
         public static UIManager Instance
         {

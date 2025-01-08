@@ -264,6 +264,11 @@ namespace New_Neo_LT.Scripts.Player_Input
         private void Slot10(InputAction.CallbackContext ctx)
         {
             _accumulateInput.Buttons.Set(EInputButton.Slot10, ctx.ReadValueAsButton());
+            
+            if(!UIManager.Instance)
+                return;
+            
+            UIManager.Instance.skillUIController.TogleConsole();
         }
         private void DebugButtonF12(InputAction.CallbackContext ctx)
         {
